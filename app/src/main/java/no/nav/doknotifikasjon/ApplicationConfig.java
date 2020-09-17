@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import no.nav.doknotifikasjon.nais.DokTimedAspect;
+import no.nav.doknotifikasjon.metrics.DokTimedAspect;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,11 +14,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 public class ApplicationConfig {
 
-
     @Bean
     public DokTimedAspect timedAspect(MeterRegistry registry) {
         return new DokTimedAspect(registry);
     }
-
 
 }
