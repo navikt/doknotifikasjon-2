@@ -2,7 +2,7 @@
   "NAMESPACE": "q1",
   "SRVDOKNOTIFIKASJON": "/serviceuser/data/dev/srvdoknotifikasjon",
   "VAULT": "kv/preprod/fss/doknotifikasjon/q1",
-  "DOKNOTIFIKASJON_TMP": "TMP",
+  "DKIF_URL": "https://dkif.nais.preprod.local",
   "INGRESSES": [
     "https://doknotifikasjon-q1.nais.preprod.local"
   ]

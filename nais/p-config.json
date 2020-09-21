@@ -2,7 +2,7 @@
   "NAMESPACE": "p",
   "SRVDOKNOTIFIKASJON": "/serviceuser/data/prod/srvdoknotifikasjon",
   "VAULT": "kv/prod/fss/doknotifikasjon/p",
-  "DOKNOTIFIKASJON_TMP": "TMP",
+  "DKIF_URL": "https://dkif.nais.adeo.no",
   "INGRESSES": [
     "https://doknotifikasjon.nais.adeo.no"
   ]
