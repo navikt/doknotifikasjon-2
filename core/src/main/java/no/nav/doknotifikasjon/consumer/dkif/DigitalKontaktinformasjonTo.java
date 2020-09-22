@@ -22,7 +22,7 @@ public class DigitalKontaktinformasjonTo {
 
 	@Data
 	@Builder
-	private static class DigitalKontaktinfo {
+	static class DigitalKontaktinfo {
 		private String epostadresse;
 		private boolean kanVarsles;
 		private String mobiltelefonnummer;
