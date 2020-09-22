@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class dokEksternNotifikasjon {
+public class DokEksternNotifikasjon {
     String bestillingsId;
     String bestillerId;
     String fodselsnummer;
