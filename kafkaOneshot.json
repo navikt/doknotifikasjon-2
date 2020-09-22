@@ -1,0 +1,75 @@
+{
+  "topics": [
+    {
+      "topicName": "aapen-dok-ekstern-notifikasjon",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 10
+    },
+
+    {
+      "topicName": "privat-dok-ekstern-notifikasjon-epost",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 3
+    },
+
+    {
+      "topicName": "privat-dok-ekstern-notifikasjon-sms",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 3
+    },
+
+    {
+      "topicName": "privat-dok-ekstern-notifikasjon-status",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 3
+    }
+  ]
+}
