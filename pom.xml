@@ -19,6 +19,7 @@
     <modules>
         <module>app</module>
         <module>core</module>
+        <module>notifikasjon</module>
         <module>knot001</module>
     </modules>
 
