@@ -1,7 +1,8 @@
-package no.nav.doknotifikasjon.producer;
+package no.nav.doknotifikasjon.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.domain.DokEksternNotifikasjon;
+import no.nav.doknotifikasjon.producer.KafkaEventProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
