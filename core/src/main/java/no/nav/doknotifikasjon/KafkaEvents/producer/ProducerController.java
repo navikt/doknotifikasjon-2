@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static no.nav.doknotifikasjon.KafkaEvents.utils.KafkaTopics.KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON;
 
 @Slf4j
 @RestController
@@ -31,7 +32,7 @@ public class ProducerController {
         );
 
         publisher.publish(
-                "aapen-dok-ekstern-notifikasjon",
+                KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON,
                 "String key",
                 dokEksternNotifikasjon,
                 null
