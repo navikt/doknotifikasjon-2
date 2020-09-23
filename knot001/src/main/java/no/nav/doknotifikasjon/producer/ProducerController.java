@@ -1,12 +1,12 @@
-package no.nav.doknotifikasjon.KafkaEvents.producer;
+package no.nav.doknotifikasjon.producer;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.KafkaEvents.domain.DokEksternNotifikasjon;
+import no.nav.doknotifikasjon.domain.DokEksternNotifikasjon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import static no.nav.doknotifikasjon.KafkaEvents.utils.KafkaTopics.KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON;
+import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON;
 
 @Slf4j
 @RestController
@@ -16,7 +16,7 @@ public class ProducerController {
     private static final String KAFKA_PRODUCER_TEST_WORK = "Kafka mannaged to produce";
 
     @Autowired
-    private EventProducer publisher;
+    private KafkaEventProducer publisher;
 
     @GetMapping("/test")
     public String kafkaProduceMessage() {

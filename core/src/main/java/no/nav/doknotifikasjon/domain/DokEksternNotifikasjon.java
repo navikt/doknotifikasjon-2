@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.KafkaEvents.domain;
+package no.nav.doknotifikasjon.domain;
 
 import lombok.*;
 

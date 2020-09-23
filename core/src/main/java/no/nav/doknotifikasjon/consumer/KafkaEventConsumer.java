@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.KafkaEvents.consumer;
+package no.nav.doknotifikasjon.consumer;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
-public class EventConsumer {
+public class KafkaEventConsumer {
 
-    @KafkaListener(topics = "aapen-dok-ekstern-notifikasjon")
+    @KafkaListener(topics = "aapen-dok-ekstern-notifikasjon") // TODO create enum/constant
     @Transactional
     public void onMessage(final ConsumerRecord<?, ?> record) {
         System.out.println("record: " + record);

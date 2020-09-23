@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.KafkaEvents.utils;
+package no.nav.doknotifikasjon.utils;
 
 public class KafkaTopics {
     public static String KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON = "aapen-dok-ekstern-notifikasjon";
