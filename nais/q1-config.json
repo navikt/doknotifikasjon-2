@@ -2,15 +2,8 @@
   "NAMESPACE": "q1",
   "SRVDOKNOTIFIKASJON": "/serviceuser/data/dev/srvdoknotifikasjon",
   "VAULT": "kv/preprod/fss/doknotifikasjon/q1",
-  "DOKNOTIFIKASJON_TMP": "TMP",
-
   "SPRING_KAFKA_BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
   "SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL": "https://kafka-schema-registry.nais.preprod.local",
-  "KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON": "aapen-dok-ekstern-notifikasjon",
-  "KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON_STATUS": "privat-dok-ekstern-notifikasjon-status",
-  "KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON_SMS": "privat-dok-ekstern-notifikasjon-sms",
-  "KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON_EPOST": "privat-dok-ekstern-notifikasjon-epost",
-
   "INGRESSES": [
     "https://doknotifikasjon-q1.nais.preprod.local"
   ]
