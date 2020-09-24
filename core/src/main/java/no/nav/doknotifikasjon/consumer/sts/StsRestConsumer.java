@@ -18,6 +18,8 @@ import java.time.Duration;
 
 
 import static no.nav.doknotifikasjon.cache.LokalCacheConfig.STS_CACHE;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 
 
 /**
