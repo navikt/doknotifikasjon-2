@@ -51,6 +51,13 @@
             <version>${confluent.version}</version>
         </dependency>
 
+        <!-- Kafka: Avro-schema  -->
+        <dependency>
+            <groupId>com.github.navikt</groupId>
+            <artifactId>doknotifikasjon-schemas</artifactId>
+            <version>${notifikasjon-schema.version}</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
