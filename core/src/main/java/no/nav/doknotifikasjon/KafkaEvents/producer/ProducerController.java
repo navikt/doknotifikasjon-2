@@ -34,7 +34,7 @@ public class ProducerController {
 
         publisher.publish(
                 KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON,
-                "String key",
+                "200",
                 dokEksternNotifikasjon,
                 null
         );
