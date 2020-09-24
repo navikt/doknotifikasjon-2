@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.consumer;
+package no.nav.doknotifikasjon.KafkaEvents.producer;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.producer.KafkaEventProducer;
