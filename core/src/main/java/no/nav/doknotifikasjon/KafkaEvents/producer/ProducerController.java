@@ -41,7 +41,7 @@ public class ProducerController {
                 KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON,
                 keyGenerator.toString(),
                 dokEksternNotifikasjon,
-                null
+                keyGenerator
         );
 
         return KAFKA_PRODUCER_TEST_WORK;
