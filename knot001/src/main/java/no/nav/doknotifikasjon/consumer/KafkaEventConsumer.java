@@ -13,8 +13,6 @@ public class KafkaEventConsumer {
 
     @KafkaListener(
             topics = "aapen-dok-ekstern-notifikasjon",
-            id = "notifikasjon-listener",
-            groupId = "notifikasjon-listener",
             containerFactory = "kafkaListenerContainerFactory"
     )
     //@KafkaListener(topics = "aapen-dok-ekstern-notifikasjon") // TODO create enum/constant
