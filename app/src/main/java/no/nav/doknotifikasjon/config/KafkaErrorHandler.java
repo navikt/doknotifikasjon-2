@@ -23,9 +23,12 @@ public class KafkaErrorHandler implements ContainerAwareErrorHandler {
     }
 
     @Override
-    public void handle(Exception e, List<ConsumerRecord<?, ?>> list,
-                       Consumer<?, ?> consumer,
-                       MessageListenerContainer messageListenerContainer) {
+    public void handle(
+            Exception e,
+            List<ConsumerRecord<?, ?>> list,
+            Consumer<?, ?> consumer,
+            MessageListenerContainer messageListenerContainer
+    ) {
 
         Throwable throwable = e.getCause() == null ? e : e.getCause();
         String exceptionName = throwable.getClass().getSimpleName();
