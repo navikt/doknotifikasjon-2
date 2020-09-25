@@ -21,5 +21,6 @@ public class KafkaEventConsumer {
     @Transactional
     public void onMessage(final ConsumerRecord<?, ?> record) {
         System.out.println("record incoming for consumer: " + record);
+        log.warn("record incoming for consumer: " + record);
     }
 }
