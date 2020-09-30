@@ -9,6 +9,11 @@ spec:
   env:
     - name: DKIF_URL
       value: {{ DKIF_URL }}
+    - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+      value: {{ SPRING_KAFKA_BOOTSTRAP_SERVERS }}
+    - name: SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
+      value: {{ SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL }}
+    - name: KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}

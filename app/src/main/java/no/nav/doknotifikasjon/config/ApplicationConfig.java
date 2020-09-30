@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon;
+package no.nav.doknotifikasjon.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.doknotifikasjon.metrics.DokTimedAspect;
