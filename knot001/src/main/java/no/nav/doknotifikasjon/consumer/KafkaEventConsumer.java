@@ -15,7 +15,6 @@ public class KafkaEventConsumer {
             topics = "aapen-dok-ekstern-notifikasjon",
             containerFactory = "kafkaListenerContainerFactory"
     )
-    //@KafkaListener(topics = "aapen-dok-ekstern-notifikasjon") // TODO create enum/constant
     @Transactional
     public void onMessage(final ConsumerRecord<?, ?> record) {
         System.out.println("record incoming for consumer: " + record);
