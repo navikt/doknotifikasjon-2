@@ -42,6 +42,7 @@
         <javax.inject.version>1</javax.inject.version>
         <javax.bind.version>2.3.1</javax.bind.version>
         <confluent.version>5.5.0</confluent.version>
+        <logstash-logback-encoder.version>5.1</logstash-logback-encoder.version>
     </properties>
 
 
