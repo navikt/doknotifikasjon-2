@@ -27,7 +27,7 @@ public class LokalCacheConfig {
     @Profile({"nais", "local"})
     CacheManager cacheManager() {
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(Arrays.asList(new CaffeineCache(STS_CACHE, Caffeine.newBuilder().expireAfterWrite(55, TimeUnit.MINUTES.build()))));
+        manager.setCaches(Arrays.asList(new CaffeineCache(STS_CACHE, Caffeine.newBuilder().expireAfterWrite(55, TimeUnit.MINUTES).build())));
         return manager;
     }
 }
