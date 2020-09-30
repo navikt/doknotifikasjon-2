@@ -1,5 +1,5 @@
 naiseratorPipeline {
     applicationName = "doknotifikasjon"
     dockerfileDir = "."
-    deployEnvironmentQ = "q1"
+    deployEnvironmentQ = "teamdokumenthandtering"
 }

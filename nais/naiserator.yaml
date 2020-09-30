@@ -2,7 +2,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: doknotifikasjon
-  namespace: {{ NAMESPACE }}
+  namespace: teamdokumenthandtering
   labels:
     team: teamdokumenthandtering
 spec:
@@ -15,10 +15,6 @@ spec:
       value: {{ SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL }}
     - name: KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON
   image: {{ image }}
-  ingresses:
-    {{#each INGRESSES}}
-       - {{this }}
-      {{/each}}
   liveness:
     path: /isAlive
     port: 8080

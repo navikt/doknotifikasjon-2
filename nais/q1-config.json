@@ -1,11 +1,7 @@
 {
-  "NAMESPACE": "q1",
   "SRVDOKNOTIFIKASJON": "/serviceuser/data/dev/srvdoknotifikasjon",
   "VAULT": "kv/preprod/fss/doknotifikasjon/q1",
-  "DKIF_URL": "https://dkif.nais.preprod.local",
+  "DKIF_URL": "https://dkif.dev.adeo.no",
   "SPRING_KAFKA_BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
   "SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL": "https://kafka-schema-registry.nais.preprod.local",
-  "INGRESSES": [
-    "https://doknotifikasjon-q1.nais.preprod.local"
-  ]
 }
