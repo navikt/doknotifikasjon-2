@@ -5,7 +5,7 @@ import io.micrometer.core.instrument.*;
 import io.micrometer.core.lang.NonNullApi;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
-import no.nav.doknotifikasjon.mdc.MDCConstants;
+import no.nav.doknotifikasjon.constants.MDCConstants;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

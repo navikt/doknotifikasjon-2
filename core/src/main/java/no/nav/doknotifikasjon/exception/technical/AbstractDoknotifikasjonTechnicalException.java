@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.exception.technical;
 
-public class AbstractDoknotifikasjonTechnicalException extends RuntimeException {
+public abstract class AbstractDoknotifikasjonTechnicalException extends RuntimeException {
 
     public AbstractDoknotifikasjonTechnicalException(String message) {
         super(message);

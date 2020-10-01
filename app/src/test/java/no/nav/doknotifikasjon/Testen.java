@@ -2,6 +2,7 @@ package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.producer.KafkaEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class Testen extends AbstractIT {
 
     @Test
     @Transactional
+    @Ignore
     public void testen() {
         Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
                 "bestillingsId",

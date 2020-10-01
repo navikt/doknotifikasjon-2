@@ -2,20 +2,20 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: doknotifikasjon
-  namespace: {{ NAMESPACE }}
+  namespace: teamdokumenthandtering
   labels:
     team: teamdokumenthandtering
 spec:
   env:
+    - name: DKIF_URL
+      value: {{ DKIF_URL }}
+    - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
+      value: {{ SECURITY_TOKEN_SERVICE_TOKEN_URL }}
     - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
       value: {{ SPRING_KAFKA_BOOTSTRAP_SERVERS }}
     - name: SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
       value: {{ SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL }}
   image: {{ image }}
-  ingresses:
-    {{#each INGRESSES}}
-       - {{this }}
-      {{/each}}
   liveness:
     path: /isAlive
     port: 8080
