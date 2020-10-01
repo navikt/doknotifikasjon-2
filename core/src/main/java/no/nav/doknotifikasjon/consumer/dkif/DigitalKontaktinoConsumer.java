@@ -40,7 +40,7 @@ public class DigitalKontaktinoConsumer implements DigitalKontaktinformasjon {
     private static final String HENT_DIGITAL_KONTAKTINFORMASJON = "hentDigitalKontaktinformasjon";
 
     @Inject
-    public DigitalKontaktinoConsumer(@Value("dkif_url") String dkifUrl, RestTemplateBuilder restTemplateBuilder, StsRestConsumer stsRestConsumer) {
+    public DigitalKontaktinoConsumer(@Value("${dkif_url}") String dkifUrl, RestTemplateBuilder restTemplateBuilder, StsRestConsumer stsRestConsumer) {
         this.dkifUrl = dkifUrl;
         this.stsRestConsumer = stsRestConsumer;
         this.restTemplate = restTemplateBuilder
