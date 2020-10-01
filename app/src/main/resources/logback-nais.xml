@@ -16,8 +16,8 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="stdout_json"/>
+    <root level="WARN">
+        <appender-ref ref="applikasjonslogg"/>
     </root>
 
     <logger name="no.nav.doknotifikasjon" level="INFO" additivity="false">
