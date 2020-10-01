@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.cache;
+package no.nav.doknotifikasjon.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
