@@ -31,7 +31,7 @@ import static no.nav.doknotifikasjon.metrics.MetricLabels.PROCESS_NAME;
 
 @Slf4j
 @Component
-public class DigitalKontaktinoConsumer implements DigitalKontaktinformasjon {
+public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
 
     private final String dkifUrl;
     private final RestTemplate restTemplate;
@@ -40,7 +40,9 @@ public class DigitalKontaktinoConsumer implements DigitalKontaktinformasjon {
     private static final String HENT_DIGITAL_KONTAKTINFORMASJON = "hentDigitalKontaktinformasjon";
 
     @Inject
-    public DigitalKontaktinoConsumer(@Value("${dkif_url}") String dkifUrl, RestTemplateBuilder restTemplateBuilder, StsRestConsumer stsRestConsumer) {
+    public DigitalKontaktinfoConsumer(@Value("${dkif_url}") String dkifUrl,
+                                      RestTemplateBuilder restTemplateBuilder,
+                                      StsRestConsumer stsRestConsumer) {
         this.dkifUrl = dkifUrl;
         this.stsRestConsumer = stsRestConsumer;
         this.restTemplate = restTemplateBuilder
