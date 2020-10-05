@@ -11,11 +11,12 @@ import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
 
 @Configuration
-//@EnableJpaRepositories(basePackages = "no.nav.doknotifikasjon")
+@EnableJpaRepositories(basePackages = "no.nav.doknotifikasjon")
 @Profile("nais")
 @Slf4j
 public class DatabaseConfig {
