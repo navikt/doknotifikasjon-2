@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_EKSTERN_NOTIFKASJON;
 
 @Slf4j
-@RestController
-@RequestMapping("/kafka")
+//@RestController
+//@RequestMapping("/kafka")
 public class ProducerController {
 
     private static final String KAFKA_PRODUCER_TEST_WORK = "Kafka mannaged to produce";

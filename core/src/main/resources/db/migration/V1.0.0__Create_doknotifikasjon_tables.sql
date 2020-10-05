@@ -1,0 +1,37 @@
+CREATE TABLE T_NOTIFIKASJON
+(
+    NOTIFIKASJON_ID             INTEGER NOT NULL,
+    BESTILLING_ID               VARCHAR(20) UNIQUE NOT NULL,
+    BESTILLER_ID                VARCHAR(40) NOT NULL,
+    MOTTAKER_ID                 VARCHAR(40) NOT NULL,
+    K_MOTTAKER_ID_TYPE          VARCHAR(20) NOT NULL,           --Kodeverk K_MOTTAKER_ID_TYPE
+    K_STATUS                    VARCHAR(20) NOT NULL,
+    ANTALL_RENOTIFIKASJONER     INTEGER,
+    RENOTIFIKASJON_INTERVALL    INTEGER,
+    NESTE_RENOTIFIKASJON_DATO   DATE,   --Riktig?
+    PREFERERTE_KANALER          VARCHAR(20),
+    OPPRETTET_AV                VARCHAR(40) NOT NULL,
+    OPPRETTET_DATO              TIMESTAMP,      --Timestamp(6)
+    ENDRET_AV                   VARCHAR(40),
+    ENDRET_DATO                 TIMESTAMP,
+
+    PRIMARY KEY (NOTIFIKASJON_ID)
+);
+
+CREATE TABLE T_NOTIFIKASJON_DISTRIBUSJON
+(
+    NOTIFIKASJON_DISTRIBUSJON_ID    INTEGER NOT NULL,
+    NOTIFIKASJON_ID                 INTEGER NOT NULL,
+    K_STATUS                        VARCHAR(20) NOT NULL,
+    K_KANAL                         VARCHAR(20) NOT NULL,
+    KONTAKT_INFO                    VARCHAR(255) NOT NULL,
+    TITTEL                          VARCHAR(40) NOT NULL,
+    TEKST                           VARCHAR(4000) NOT NULL,
+    SENDT_DATO                      TIMESTAMP,
+    OPPRETTET_AV                    VARCHAR(40) NOT NULL,
+    OPPRETTET_DATO                  TIMESTAMP NOT NULL,
+    ENDRET_AV                       VARCHAR(40),
+    ENDRET_DATO                     TIMESTAMP,
+
+    PRIMARY KEY (NOTIFIKASJON_DISTRIBUSJON_ID)
+);
