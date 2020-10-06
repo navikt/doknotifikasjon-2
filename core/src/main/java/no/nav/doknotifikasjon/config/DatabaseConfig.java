@@ -11,11 +11,12 @@ import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
 
 @Configuration
-//@EnableJpaRepositories(basePackages = "no.nav.doknotifikasjon")
+@EnableJpaRepositories(basePackages = "no.nav.doknotifikasjon")
 @Profile("nais")
 @Slf4j
 public class DatabaseConfig {
@@ -25,8 +26,7 @@ public class DatabaseConfig {
 	private static final String CLUSTER_NAME = "${nais_cluster_name}";
 
 	@Bean
-	public DataSource userDataSource(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl,
-									 @Value(CLUSTER_NAME) final String cluster) {
+	public DataSource userDataSource(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl, @Value(CLUSTER_NAME) final String cluster) {
 		return dataSource("user", doknotifikasjonDbUrl, cluster);
 	}
 
@@ -34,8 +34,8 @@ public class DatabaseConfig {
 	private HikariDataSource dataSource(String user, String doknotifikasjonDbUrl, String cluster) {
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl(doknotifikasjonDbUrl);
-		config.setMaximumPoolSize(3);
-		config.setMinimumIdle(1);
+		config.setMaximumPoolSize(3);        //todo?
+		config.setMinimumIdle(1);            //todo?
 		String mountPath = getMountPath(cluster);
 		log.info("Vault mounted on {}", mountPath);
 		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, dbRole(user));
