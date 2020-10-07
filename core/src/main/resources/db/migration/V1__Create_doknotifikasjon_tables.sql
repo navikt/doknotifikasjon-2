@@ -4,8 +4,10 @@ create table T_NOTIFIKASJON
     BESTILLING_ID             varchar(40) unique not null,
     BESTILLER_ID              varchar(40)        not null,
     MOTTAKER_ID               varchar(40)        not null,
-    K_MOTTAKER_ID_TYPE        varchar(20)        not null,
-    K_STATUS                  varchar(20)        not null,
+    K_MOTTAKER_ID_TYPE        varchar(20)        not null
+        constraint CONSTRAINT_MOTTAKER_ID_TYPE references K_MOTTAKER_ID_TYPE primary key,
+    K_STATUS                  varchar(20)        not null
+        constraint CONSTRAINT_NOT_STATUS references K_STATUS primary key,
     ANTALL_RENOTIFIKASJONER   integer,
     RENOTIFIKASJON_INTERVALL  integer,
     NESTE_RENOTIFIKASJON_DATO date,
@@ -14,20 +16,21 @@ create table T_NOTIFIKASJON
     OPPRETTET_DATO            timestamp          not null,
     ENDRET_AV                 varchar(40),
     ENDRET_DATO               timestamp,
-
     primary key (ID)
 );
 
-create sequence NOTIFIKASJON_ID_SEQ; --todo
+create sequence NOTIFIKASJON_ID_SEQ cache 20;
 
-create index IDX_StatusAntallRenotifikasjonerNesteRenotifikasjonDato ON T_NOTIFIKASJON (K_STATUS, ANTALL_RENOTIFIKASJONER, NESTE_RENOTIFIKASJON_DATO); --todo
+create index IDX_STATUS_RENOTIFIKASJONER ON T_NOTIFIKASJON (K_STATUS, ANTALL_RENOTIFIKASJONER, NESTE_RENOTIFIKASJON_DATO);
 
 create table T_NOTIFIKASJON_DISTRIBUSJON
 (
     ID              integer       not null,
     NOTIFIKASJON_ID integer       not null,
-    K_STATUS        varchar(20)   not null,
-    K_KANAL         varchar(20)   not null,
+    K_STATUS        varchar(20)   not null
+        constraint CONSTRAINT_NOT_DISTR_STATUS references K_STATUS primary key,
+    K_KANAL         varchar(20)   not null
+        constraint CONSTRAIN_KANAL references K_KANAL primary key,
     KONTAKT_INFO    varchar(255)  not null,
     TITTEL          varchar(40)   not null,
     TEKST           varchar(4000) not null,
@@ -36,47 +39,39 @@ create table T_NOTIFIKASJON_DISTRIBUSJON
     OPPRETTET_DATO  timestamp     not null,
     ENDRET_AV       varchar(40),
     ENDRET_DATO     timestamp,
-
     primary key (ID),
     foreign key (NOTIFIKASJON_ID) references T_NOTIFIKASJON (ID)
 );
 
-CREATE SEQUENCE NOTIFIKASJON_DISTRIBUSJON_ID_SEQ;
+create sequence NOTIFIKASJON_DISTRIBUSJON_ID_SEQ cache 20;
 
-CREATE TABLE K_MOTTAKER_ID_TYPE
+create table K_MOTTAKER_ID_TYPE
 (
-    K_MOTTAKER_ID_TYPE VARCHAR(20) NOT NULL,
-
-    PRIMARY KEY (K_MOTTAKER_ID_TYPE)
+    K_MOTTAKER_ID_TYPE varchar(20) not null,
+    primary key (K_MOTTAKER_ID_TYPE)
 );
 
-CREATE TABLE K_STATUS
+create table K_STATUS
 (
-    K_STATUS VARCHAR(20) NOT NULL,
-
-    PRIMARY KEY (K_STATUS)
+    K_STATUS varchar(20) not null,
+    primary key (K_STATUS)
 );
 
-CREATE TABLE K_KANAL
+create table K_KANAL
 (
-    K_KANAL VARCHAR(20) NOT NULL,
-
-    PRIMARY KEY (K_KANAL)
+    K_KANAL varchar(20) not null,
+    primary key (K_KANAL)
 );
 
-INSERT INTO K_MOTTAKER_ID_TYPE(K_MOTTAKER_ID_TYPE)
-VALUES ('FNR');
+insert into K_MOTTAKER_ID_TYPE(K_MOTTAKER_ID_TYPE)
+values ('FNR');
 
-INSERT INTO K_STATUS(K_STATUS)
-VALUES ('OPPRETTET');
-INSERT INTO K_STATUS(K_STATUS)
-VALUES ('OVERSENDT');
-INSERT INTO K_STATUS(K_STATUS)
-VALUES ('FERDIGSTILT');
-INSERT INTO K_STATUS(K_STATUS)
-VALUES ('FEILET');
+insert into K_STATUS(K_STATUS)
+values ('OPPRETTET'),
+       ('OVERSENDT'),
+       ('FERDIGSTILT'),
+       ('FEILET');
 
-INSERT INTO K_KANAL(K_KANAL)
-VALUES ('SMS');
-INSERT INTO K_KANAL(K_KANAL)
-VALUES ('EPOST');
+insert into K_KANAL(K_KANAL)
+values ('SMS'),
+       ('EPOST');

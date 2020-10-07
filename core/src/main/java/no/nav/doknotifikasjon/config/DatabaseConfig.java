@@ -24,6 +24,7 @@ public class DatabaseConfig {
 	private static final String DOKNOTIFIKASJON_DB_URL = "${doknotifikasjon_db_url}";
 	private static final String APPLICATION_NAME = "doknotifikasjon";
 	private static final String CLUSTER_NAME = "${nais_cluster_name}";
+	private static final String ADMIN = "admin";
 
 	@Bean
 	public DataSource userDataSource(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl, @Value(CLUSTER_NAME) final String cluster) {
@@ -34,8 +35,8 @@ public class DatabaseConfig {
 	private HikariDataSource dataSource(String user, String doknotifikasjonDbUrl, String cluster) {
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl(doknotifikasjonDbUrl);
-		config.setMaximumPoolSize(3);        //todo?
-		config.setMinimumIdle(1);            //todo?
+		config.setMaximumPoolSize(5);
+		config.setMinimumIdle(1);
 		String mountPath = getMountPath(cluster);
 		log.info("Vault mounted on {}", mountPath);
 		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, dbRole(user));
@@ -45,8 +46,8 @@ public class DatabaseConfig {
 	public FlywayMigrationStrategy flywayMigrationStrategy(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl,
 														   @Value(CLUSTER_NAME) final String cluster) {
 		return flyway -> Flyway.configure()
-				.dataSource(dataSource("admin", doknotifikasjonDbUrl, cluster))
-				.initSql(String.format("SET ROLE \"%s\"", dbRole("admin")))
+				.dataSource(dataSource(ADMIN, doknotifikasjonDbUrl, cluster))
+				.initSql(String.format("SET ROLE \"%s\"", dbRole(ADMIN)))
 				.load()
 				.migrate();
 	}

@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
@@ -16,15 +16,19 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "T_NOTIFIKASJON")
@@ -35,50 +39,50 @@ public class Notifikasjon implements Serializable {
 	@GenericGenerator(name = "notifikasjonIdSeq", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "NOTIFIKASJON_ID_SEQ")
 	})
-	@Column(name = "ID")
-	private Integer id;
+	@Column(name = "notifikasjonId")
+	private Integer notifikasjonId;
 
-	@Column(name = "BESTILLING_ID", length = 40)
+	@Column(name = "bestillingId", length = 40)
 	private String bestillingId;
 
-	@Column(name = "BESTILLER_ID", length = 40)
+	@Column(name = "bestillerId", length = 40)
 	private String bestillerId;
 
-	@Column(name = "MOTTAKER_ID", length = 40)
+	@Column(name = "mottakerId", length = 40)
 	private String mottakerId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "K_MOTTAKER_ID_TYPE", length = 20)
+	@Column(name = "mottakerIdType", length = 20)
 	private MottakerIdType mottakerIdType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "K_STATUS", length = 20)
+	@Column(name = "status", length = 20)
 	private Status status;
 
-	@Column(name = "ANTALL_RENOTIFIKASJONER")
+	@Column(name = "antallRenotifikasjoner")
 	private Integer antallRenotifikasjoner;
 
-	@Column(name = "RENOTIFIKASJON_INTERVALL")
+	@Column(name = "renotifikasjonIntervall")
 	private Integer renotifikasjonIntervall;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "NESTE_RENOTIFIKASJON_DATO")
+	@Column(name = "nesteRenotifikasjonDato")
 	private LocalDate nesteRenotifikasjonDato;
 
-	@Column(name = "PREFERERTE_KANALER", length = 20)
+	@Column(name = "prefererteKanaler", length = 20)
 	private String prefererteKanaler;
 
-	@Column(name = "OPPRETTET_AV", length = 40)
+	@Column(name = "opprettetAv", length = 40)
 	private String opprettetAv;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "OPPRETTET_DATO")
+	@Column(name = "opprettetDato")
 	private LocalDateTime opprettetDato;
 
-	@Column(name = "ENDRET_AV", length = 40)
+	@Column(name = "endretAv", length = 40)
 	private String endretAv;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "ENDRET_DATO")
+	@Column(name = "endretDato")
 	private LocalDateTime endretDato;
+
+	@OneToMany(mappedBy = "notifikasjonId")
+	private Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
 }
