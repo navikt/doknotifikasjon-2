@@ -3,9 +3,7 @@ package no.nav.doknotifikasjon.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,8 +21,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -41,42 +37,42 @@ public class NotifikasjonDistribusjon implements Serializable {
 	@GenericGenerator(name = "notifikasjonDistribusjonIdSeq", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "NOTIFIKASJON_DISTRIBUSJON_ID_SEQ")
 	})
-	@Column(name = "notifikasjonDistribusjonId")
+	@Column(name = "ID")
 	private Integer notifikasjonDistribusjonId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "notifikasjonId", foreignKey = @ForeignKey(name = "notifikasjonId"))
+	@JoinColumn(name = "NOTIFIKASJON_ID", foreignKey = @ForeignKey(name = "notifikasjonId"))
 	private Notifikasjon notifikasjonId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", length = 20)
+	@Column(name = "K_STATUS", length = 20)
 	private Status status;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "kanal", length = 20)
+	@Column(name = "K_KANAL", length = 20)
 	private Kanal kanal;
 
-	@Column(name = "kontaktInfo", length = 255)
+	@Column(name = "KONTAKT_INFO", length = 255)
 	private String kontaktInfo;
 
-	@Column(name = "tittel", length = 40)
+	@Column(name = "TITTEL", length = 40)
 	private String tittel;
 
-	@Column(name = "tekst", length = 4000)
+	@Column(name = "TEKST", length = 4000)
 	private String tekst;
 
-	@Column(name = "sendtDato")
+	@Column(name = "SENDT_DATO")
 	private LocalDateTime sendtDato;
 
-	@Column(name = "opprettetAv", length = 40)
+	@Column(name = "OPPRETTET_AV", length = 40)
 	private String opprettetAv;
 
-	@Column(name = "opprettetDato")
+	@Column(name = "OPPRETTET_DATO")
 	private LocalDateTime opprettetDato;
 
-	@Column(name = "endretAv", length = 40)
+	@Column(name = "ENDRET_AV", length = 40)
 	private String endretAv;
 
-	@Column(name = "endretDato")
+	@Column(name = "ENDRET_DATO")
 	private LocalDateTime endretDato;
 }

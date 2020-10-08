@@ -18,8 +18,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,48 +37,48 @@ public class Notifikasjon implements Serializable {
 	@GenericGenerator(name = "notifikasjonIdSeq", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "NOTIFIKASJON_ID_SEQ")
 	})
-	@Column(name = "notifikasjonId")
+	@Column(name = "ID")
 	private Integer notifikasjonId;
 
-	@Column(name = "bestillingId", length = 40)
+	@Column(name = "BESTILLING_ID", length = 40)
 	private String bestillingId;
 
-	@Column(name = "bestillerId", length = 40)
+	@Column(name = "BESTILLER_ID", length = 40)
 	private String bestillerId;
 
-	@Column(name = "mottakerId", length = 40)
+	@Column(name = "MOTTAKER_ID", length = 40)
 	private String mottakerId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "mottakerIdType", length = 20)
+	@Column(name = "K_MOTTAKER_ID_TYPE", length = 20)
 	private MottakerIdType mottakerIdType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", length = 20)
+	@Column(name = "K_STATUS", length = 20)
 	private Status status;
 
-	@Column(name = "antallRenotifikasjoner")
+	@Column(name = "ANTALL_RENOTIFIKASJONER")
 	private Integer antallRenotifikasjoner;
 
-	@Column(name = "renotifikasjonIntervall")
+	@Column(name = "RENOTIFIKASJON_INTERVALL")
 	private Integer renotifikasjonIntervall;
 
-	@Column(name = "nesteRenotifikasjonDato")
+	@Column(name = "NESTE_RENOTIFIKASJON_DATO")
 	private LocalDate nesteRenotifikasjonDato;
 
-	@Column(name = "prefererteKanaler", length = 20)
+	@Column(name = "PREFERERTE_KANALER", length = 20)
 	private String prefererteKanaler;
 
-	@Column(name = "opprettetAv", length = 40)
+	@Column(name = "OPPRETTET_AV", length = 40)
 	private String opprettetAv;
 
-	@Column(name = "opprettetDato")
+	@Column(name = "OPPRETTET_DATO")
 	private LocalDateTime opprettetDato;
 
-	@Column(name = "endretAv", length = 40)
+	@Column(name = "ENDRET_AV", length = 40)
 	private String endretAv;
 
-	@Column(name = "endretDato")
+	@Column(name = "ENDRET_DATO")
 	private LocalDateTime endretDato;
 
 	@OneToMany(mappedBy = "notifikasjonId")

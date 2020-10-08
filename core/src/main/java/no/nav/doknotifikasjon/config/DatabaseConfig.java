@@ -25,39 +25,33 @@ public class DatabaseConfig {
 	private static final String APPLICATION_NAME = "doknotifikasjon";
 	private static final String CLUSTER_NAME = "${nais_cluster_name}";
 	private static final String ADMIN = "admin";
+	private static final String MOUNT_PATH = "${MOUNT_PATH}";
 
 	@Bean
-	public DataSource userDataSource(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl, @Value(CLUSTER_NAME) final String cluster) {
-		return dataSource("user", doknotifikasjonDbUrl, cluster);
+	public DataSource userDataSource(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl, @Value(CLUSTER_NAME) final String cluster,
+									 @Value(MOUNT_PATH) final String mountPath) {
+		return dataSource("user", doknotifikasjonDbUrl, cluster, mountPath);
 	}
 
 	@SneakyThrows
-	private HikariDataSource dataSource(String user, String doknotifikasjonDbUrl, String cluster) {
+	private HikariDataSource dataSource(String user, String doknotifikasjonDbUrl, String cluster, String mountPath) {
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl(doknotifikasjonDbUrl);
 		config.setMaximumPoolSize(5);
 		config.setMinimumIdle(1);
-		String mountPath = getMountPath(cluster);
+		log.info("Running on cluster {}", cluster);
 		log.info("Vault mounted on {}", mountPath);
 		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, dbRole(user));
 	}
 
 	@Bean
 	public FlywayMigrationStrategy flywayMigrationStrategy(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl,
-														   @Value(CLUSTER_NAME) final String cluster) {
+														   @Value(CLUSTER_NAME) final String cluster, @Value(MOUNT_PATH) final String mountPath) {
 		return flyway -> Flyway.configure()
-				.dataSource(dataSource(ADMIN, doknotifikasjonDbUrl, cluster))
+				.dataSource(dataSource(ADMIN, doknotifikasjonDbUrl, cluster, mountPath))
 				.initSql(String.format("SET ROLE \"%s\"", dbRole(ADMIN)))
 				.load()
 				.migrate();
-	}
-
-	private String getMountPath(String cluster) {
-		log.info("Running on cluster {}", cluster);
-		if (cluster.contains("dev-fss")) {
-			return "postgresql/preprod-fss";
-		}
-		return "postgresql/" + cluster;
 	}
 
 	private String dbRole(String role) {
