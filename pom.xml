@@ -48,6 +48,8 @@
 		<postgresql-version>42.2.16</postgresql-version>
 		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<spring-kafka-version>2.5.6.RELEASE</spring-kafka-version>
+		<jackson-databind-version>2.9.10.6</jackson-databind-version>
+		<jersey-core-version>2.31</jersey-core-version>
 	</properties>
 
 	<dependencyManagement>
@@ -113,6 +115,21 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-wiremock</artifactId>
 				<version>${spring-cloud-contract-wiremock-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson-databind-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.core</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>${jersey-core-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.media</groupId>
+				<artifactId>jersey-media-jaxb</artifactId>
+				<version>${jersey-core-version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

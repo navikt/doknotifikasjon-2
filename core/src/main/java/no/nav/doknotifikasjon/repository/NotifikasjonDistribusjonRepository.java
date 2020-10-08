@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotifikasjonDistribusjonRepository extends JpaRepository<NotifikasjonDistribusjon, Integer> {
 
-	NotifikasjonDistribusjon findByNotifikasjonId(Integer notifikasjonId);
+	NotifikasjonDistribusjon findByNotifikasjonDistribusjonId(Integer notifikasjonDistribusjonId);
 
 }

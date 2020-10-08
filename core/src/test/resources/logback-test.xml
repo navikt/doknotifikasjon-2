@@ -12,6 +12,6 @@
 	</logger>
 
 	<logger name="org.springframework" level="WARN" additivity="false"/>
-	<logger name="org.hibernate.SQL" level="DEBUG"/>
+<!--	<logger name="org.hibernate.SQL" level="DEBUG"/>-->
 
 </configuration>

@@ -8,6 +8,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -29,12 +30,20 @@ public class NotifikasjonRepositoryTest {
 	private static final String MOTTAKER_ID = "03116823216";
 	private static final String PREFERERTE_KANALER = Kanal.EPOST.toString();
 	private static final String OPPRETTET_AV = "srvdokument";
+	private static final String OPPRETTET_AV_2 = "srvdokopp";
 	private static final String ENDRET_AV = "srvdokumentlosninger";
+	private static final String ENDRET_AV_2 = "srvdokmot";
+	private static final String KONTAKTINFO = "Hallohallo";
+	private static final String TITTEL = "Melding";
+	private static final String TEKST = "Lang tekst";
 	private static final Integer ANTALL_RENOTIFIKASJONER = 2;
 	private static final Integer RENOTIFIKASJON_INTERVALL = 7;
 	private static final LocalDate NESTE_RENOTIFIKASJON_DATO = LocalDate.parse("2020-10-03");
 	private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
+	private static final LocalDateTime OPPRETTET_DATO_2 = LocalDateTime.parse("2020-10-06T10:15:30.000000");
+	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
 	private static final LocalDateTime ENDRET_DATO = LocalDateTime.parse("2020-10-02T10:15:30.000000");
+	private static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
 
 	@Autowired
@@ -42,6 +51,12 @@ public class NotifikasjonRepositoryTest {
 
 	@Autowired
 	NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
+
+	@BeforeEach
+	public void setup() {
+		notifikasjonRepository.deleteAll();
+		notifikasjonDistribusjonRepository.deleteAll();
+	}
 
 	@Test
 	public void shouldOpprettNotifikasjon() {
@@ -61,20 +76,48 @@ public class NotifikasjonRepositoryTest {
 		assertEquals(NESTE_RENOTIFIKASJON_DATO, notfikasjon.getNesteRenotifikasjonDato());
 		assertEquals(OPPRETTET_DATO, notfikasjon.getOpprettetDato());
 		assertEquals(ENDRET_DATO, notfikasjon.getEndretDato());
+		assertEquals(Status.OPPRETTET, notfikasjon.getStatus());
+		assertEquals(MottakerIdType.FNR, notfikasjon.getMottakerIdType());
 	}
 
 	@Test
-	public void shouldOpprettNotifikasjonDistribusjon(){
+	public void shouldOpprettNotifikasjonDistribusjon() {
 		assertEquals(0L, notifikasjonDistribusjonRepository.count());
-		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonId(1));
+		assertEquals(0L, notifikasjonRepository.count());
+
+		Notifikasjon notifikasjon = createNotifikasjon();
+		notifikasjonRepository.saveAndFlush(notifikasjon);
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon));
 
 		assertEquals(1L, notifikasjonRepository.count());
+		assertEquals(1L, notifikasjonDistribusjonRepository.count());
+
+		NotifikasjonDistribusjon notfikasjonDistribusjon = notifikasjonDistribusjonRepository.findByNotifikasjonDistribusjonId(1);
+		assertEquals(Status.FERDIGSTILT, notfikasjonDistribusjon.getStatus());
+		assertEquals(Kanal.SMS, notfikasjonDistribusjon.getKanal());
+		assertEquals(KONTAKTINFO, notfikasjonDistribusjon.getKontaktInfo());
+		assertEquals(TITTEL, notfikasjonDistribusjon.getTittel());
+		assertEquals(TEKST, notfikasjonDistribusjon.getTekst());
+		assertEquals(SENDT_DATO, notfikasjonDistribusjon.getSendtDato());
+		assertEquals(OPPRETTET_AV_2, notfikasjonDistribusjon.getOpprettetAv());
+		assertEquals(OPPRETTET_DATO_2, notfikasjonDistribusjon.getOpprettetDato());
+		assertEquals(ENDRET_AV_2, notfikasjonDistribusjon.getEndretAv());
+		assertEquals(ENDRET_DATO_2, notfikasjonDistribusjon.getEndretDato());
 	}
 
-	private NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjonId(Integer notifikasjonId) {
+	private NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjonId(Notifikasjon notifikasjon) {
 		return NotifikasjonDistribusjon.builder()
-				.notifikasjonId(notifikasjonId)
-				
+				.notifikasjonId(notifikasjon)
+				.status(Status.FERDIGSTILT)
+				.kanal(Kanal.SMS)
+				.kontaktInfo(KONTAKTINFO)
+				.tittel(TITTEL)
+				.tekst(TEKST)
+				.sendtDato(SENDT_DATO)
+				.opprettetAv(OPPRETTET_AV_2)
+				.opprettetDato(OPPRETTET_DATO_2)
+				.endretAv(ENDRET_AV_2)
+				.endretDato(ENDRET_DATO_2)
 				.build();
 	}
 
