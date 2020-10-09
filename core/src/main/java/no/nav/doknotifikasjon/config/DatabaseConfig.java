@@ -37,7 +37,7 @@ public class DatabaseConfig {
 	private HikariDataSource dataSource(String user, String doknotifikasjonDbUrl, String cluster, String mountPath) {
 		HikariConfig config = new HikariConfig();
 		config.setJdbcUrl(doknotifikasjonDbUrl);
-		config.setMaximumPoolSize(5);
+		config.setMaximumPoolSize(4);
 		config.setMinimumIdle(1);
 		log.info("Running on cluster {}", cluster);
 		log.info("Vault mounted on {}", mountPath);
