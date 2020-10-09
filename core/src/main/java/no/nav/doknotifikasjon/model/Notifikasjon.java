@@ -9,10 +9,12 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -81,6 +83,6 @@ public class Notifikasjon implements Serializable {
 	@Column(name = "ENDRET_DATO")
 	private LocalDateTime endretDato;
 
-	@OneToMany(mappedBy = "notifikasjonId")
+	@OneToMany(mappedBy = "notifikasjonId", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
 	private Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
 }

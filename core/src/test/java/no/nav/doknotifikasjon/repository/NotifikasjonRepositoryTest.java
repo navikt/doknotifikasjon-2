@@ -86,7 +86,7 @@ public class NotifikasjonRepositoryTest {
 		assertEquals(0L, notifikasjonRepository.count());
 
 		Notifikasjon notifikasjon = createNotifikasjon();
-		notifikasjonRepository.saveAndFlush(notifikasjon);
+		createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon);
 		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon));
 
 		assertEquals(1L, notifikasjonRepository.count());

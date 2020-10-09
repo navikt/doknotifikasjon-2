@@ -9,6 +9,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,7 +41,7 @@ public class NotifikasjonDistribusjon implements Serializable {
 	@Column(name = "ID")
 	private Integer notifikasjonDistribusjonId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "NOTIFIKASJON_ID", foreignKey = @ForeignKey(name = "notifikasjonId"))
 	private Notifikasjon notifikasjonId;
 
