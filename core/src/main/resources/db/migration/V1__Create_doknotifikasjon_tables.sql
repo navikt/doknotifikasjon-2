@@ -5,9 +5,9 @@ create table T_NOTIFIKASJON
     BESTILLER_ID              varchar(40)        not null,
     MOTTAKER_ID               varchar(40)        not null,
     K_MOTTAKER_ID_TYPE        varchar(20)        not null
-        constraint CONSTRAINT_MOTTAKER_ID_TYPE references K_MOTTAKER_ID_TYPE primary key,
+        constraint CONSTRAINT_MOTTAKER_ID_TYPE references K_MOTTAKER_ID_TYPE,
     K_STATUS                  varchar(20)        not null
-        constraint CONSTRAINT_NOT_STATUS references K_STATUS primary key,
+        constraint CONSTRAINT_NOT_STATUS references K_STATUS,
     ANTALL_RENOTIFIKASJONER   integer,
     RENOTIFIKASJON_INTERVALL  integer,
     NESTE_RENOTIFIKASJON_DATO date,
@@ -28,9 +28,9 @@ create table T_NOTIFIKASJON_DISTRIBUSJON
     ID              integer       not null,
     NOTIFIKASJON_ID integer       not null,
     K_STATUS        varchar(20)   not null
-        constraint CONSTRAINT_NOT_DISTR_STATUS references K_STATUS primary key,
+        constraint CONSTRAINT_NOT_DISTR_STATUS references K_STATUS,
     K_KANAL         varchar(20)   not null
-        constraint CONSTRAIN_KANAL references K_KANAL primary key,
+        constraint CONSTRAIN_KANAL references K_KANAL,
     KONTAKT_INFO    varchar(255)  not null,
     TITTEL          varchar(40)   not null,
     TEKST           varchar(4000) not null,
