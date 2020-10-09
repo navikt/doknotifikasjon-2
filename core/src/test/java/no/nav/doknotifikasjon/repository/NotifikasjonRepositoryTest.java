@@ -65,19 +65,20 @@ public class NotifikasjonRepositoryTest {
 
 		assertEquals(1L, notifikasjonRepository.count());
 
-		Notifikasjon notfikasjon = notifikasjonRepository.findByNotifikasjonId(1);
-		assertEquals(BESTILLING_ID, notfikasjon.getBestillingId());
-		assertEquals(BESTILLER_ID, notfikasjon.getBestillerId());
-		assertEquals(MOTTAKER_ID, notfikasjon.getMottakerId());
-		assertEquals(PREFERERTE_KANALER, notfikasjon.getPrefererteKanaler());
-		assertEquals(OPPRETTET_AV, notfikasjon.getOpprettetAv());
-		assertEquals(ANTALL_RENOTIFIKASJONER, notfikasjon.getAntallRenotifikasjoner());
-		assertEquals(RENOTIFIKASJON_INTERVALL, notfikasjon.getRenotifikasjonIntervall());
-		assertEquals(NESTE_RENOTIFIKASJON_DATO, notfikasjon.getNesteRenotifikasjonDato());
-		assertEquals(OPPRETTET_DATO, notfikasjon.getOpprettetDato());
-		assertEquals(ENDRET_DATO, notfikasjon.getEndretDato());
-		assertEquals(Status.OPPRETTET, notfikasjon.getStatus());
-		assertEquals(MottakerIdType.FNR, notfikasjon.getMottakerIdType());
+		Notifikasjon notifikasjon = notifikasjonRepository.findById(1).get();
+
+		assertEquals(BESTILLING_ID, notifikasjon.getBestillingId());
+		assertEquals(BESTILLER_ID, notifikasjon.getBestillerId());
+		assertEquals(MOTTAKER_ID, notifikasjon.getMottakerId());
+		assertEquals(PREFERERTE_KANALER, notifikasjon.getPrefererteKanaler());
+		assertEquals(OPPRETTET_AV, notifikasjon.getOpprettetAv());
+		assertEquals(ANTALL_RENOTIFIKASJONER, notifikasjon.getAntallRenotifikasjoner());
+		assertEquals(RENOTIFIKASJON_INTERVALL, notifikasjon.getRenotifikasjonIntervall());
+		assertEquals(NESTE_RENOTIFIKASJON_DATO, notifikasjon.getNesteRenotifikasjonDato());
+		assertEquals(OPPRETTET_DATO, notifikasjon.getOpprettetDato());
+		assertEquals(ENDRET_DATO, notifikasjon.getEndretDato());
+		assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
+		assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
 	}
 
 	@Test
@@ -92,7 +93,7 @@ public class NotifikasjonRepositoryTest {
 		assertEquals(1L, notifikasjonRepository.count());
 		assertEquals(1L, notifikasjonDistribusjonRepository.count());
 
-		NotifikasjonDistribusjon notfikasjonDistribusjon = notifikasjonDistribusjonRepository.findByNotifikasjonDistribusjonId(1);
+		NotifikasjonDistribusjon notfikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(1).get();
 		assertEquals(Status.FERDIGSTILT, notfikasjonDistribusjon.getStatus());
 		assertEquals(Kanal.SMS, notfikasjonDistribusjon.getKanal());
 		assertEquals(KONTAKTINFO, notfikasjonDistribusjon.getKontaktInfo());

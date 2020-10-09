@@ -40,7 +40,7 @@ public class Notifikasjon implements Serializable {
 			@Parameter(name = "sequence_name", value = "NOTIFIKASJON_ID_SEQ")
 	})
 	@Column(name = "ID")
-	private Integer notifikasjonId;
+	private Integer id;
 
 	@Column(name = "BESTILLING_ID", length = 40)
 	private String bestillingId;
