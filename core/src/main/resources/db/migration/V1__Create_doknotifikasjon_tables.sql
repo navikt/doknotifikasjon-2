@@ -1,3 +1,34 @@
+create table K_MOTTAKER_ID_TYPE
+(
+    K_MOTTAKER_ID_TYPE varchar(20) not null,
+    primary key (K_MOTTAKER_ID_TYPE)
+);
+
+create table K_STATUS
+(
+    K_STATUS varchar(20) not null,
+    primary key (K_STATUS)
+);
+
+create table K_KANAL
+(
+    K_KANAL varchar(20) not null,
+    primary key (K_KANAL)
+);
+
+insert into K_KANAL(K_KANAL)
+values ('SMS'),
+       ('EPOST');
+
+insert into K_MOTTAKER_ID_TYPE(K_MOTTAKER_ID_TYPE)
+values ('FNR');
+
+insert into K_STATUS(K_STATUS)
+values ('OPPRETTET'),
+       ('OVERSENDT'),
+       ('FERDIGSTILT'),
+       ('FEILET');
+
 create table T_NOTIFIKASJON
 (
     ID                        integer            not null,
@@ -44,34 +75,3 @@ create table T_NOTIFIKASJON_DISTRIBUSJON
 );
 
 create sequence NOTIFIKASJON_DISTRIBUSJON_ID_SEQ cache 20;
-
-create table K_MOTTAKER_ID_TYPE
-(
-    K_MOTTAKER_ID_TYPE varchar(20) not null,
-    primary key (K_MOTTAKER_ID_TYPE)
-);
-
-create table K_STATUS
-(
-    K_STATUS varchar(20) not null,
-    primary key (K_STATUS)
-);
-
-create table K_KANAL
-(
-    K_KANAL varchar(20) not null,
-    primary key (K_KANAL)
-);
-
-insert into K_MOTTAKER_ID_TYPE(K_MOTTAKER_ID_TYPE)
-values ('FNR');
-
-insert into K_STATUS(K_STATUS)
-values ('OPPRETTET'),
-       ('OVERSENDT'),
-       ('FERDIGSTILT'),
-       ('FEILET');
-
-insert into K_KANAL(K_KANAL)
-values ('SMS'),
-       ('EPOST');

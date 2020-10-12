@@ -17,12 +17,10 @@
 		<dependency>
 			<groupId>no.nav.doknotifikasjon</groupId>
 			<artifactId>core</artifactId>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.doknotifikasjon</groupId>
 			<artifactId>knot001</artifactId>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

@@ -53,6 +53,16 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>knot001</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
