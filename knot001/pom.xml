@@ -53,6 +53,12 @@
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.github.navikt</groupId>
+            <artifactId>doknotifikasjon-schemas</artifactId>
+            <version>1.2020.09.24-13.16-2b376a150cf1</version>
+            <scope>compile</scope>
+        </dependency>
 	</dependencies>
 
 

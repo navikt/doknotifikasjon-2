@@ -7,11 +7,11 @@
       },
       "members": [
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "CONSUMER"
         },
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "PRODUCER"
         }
       ],
@@ -25,11 +25,11 @@
       },
       "members": [
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "CONSUMER"
         },
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "PRODUCER"
         }
       ],
@@ -43,17 +43,16 @@
       },
       "members": [
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "CONSUMER"
         },
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "PRODUCER"
         }
       ],
       "numPartitions": 3
     },
-
     {
       "topicName": "privat-dok-notifikasjon-status",
       "configEntries": {
@@ -61,11 +60,11 @@
       },
       "members": [
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "CONSUMER"
         },
         {
-          "member": "srvdoknotifikasjon",
+          "member": "igroup",
           "role": "PRODUCER"
         }
       ],
