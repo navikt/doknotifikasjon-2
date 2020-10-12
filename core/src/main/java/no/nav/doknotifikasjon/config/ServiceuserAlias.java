@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.alias;
+package no.nav.doknotifikasjon.config;
 
 import lombok.Getter;
 import lombok.Setter;

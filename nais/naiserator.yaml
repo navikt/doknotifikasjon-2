@@ -15,6 +15,8 @@ spec:
       value: {{ SPRING_KAFKA_BOOTSTRAP_SERVERS }}
     - name: SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
       value: {{ SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL }}
+    - name: MOUNT_PATH
+      value: {{ MOUNT_PATH }}
   image: {{ image }}
   liveness:
     path: /isAlive
