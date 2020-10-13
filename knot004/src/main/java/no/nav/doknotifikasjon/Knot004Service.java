@@ -6,4 +6,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class Knot004Service {
+
+	public Knot004Service() {
+	}
+
+	public void shouldUpdateStatus(DoknotifikasjonStatusDto doknotifikasjonStatusDto){}
 }

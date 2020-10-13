@@ -43,7 +43,7 @@ public class KafkaEventProducer {
             if(log.isDebugEnabled()) {
                 log.info("Published to partittion " + sendResult.getRecordMetadata().partition());
                 log.info("Published to offset " + sendResult.getRecordMetadata().offset());
-                log.info("Published to offset " + sendResult.getRecordMetadata().topic());
+                log.info("Published to topic " + sendResult.getRecordMetadata().topic());
             }
         }
         catch (ExecutionException e) {
