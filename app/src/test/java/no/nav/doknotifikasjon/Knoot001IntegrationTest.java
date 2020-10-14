@@ -26,7 +26,8 @@ public class Knoot001IntegrationTest extends EmbededKafkaBroker {
                 0,
                 0,
                 "tittel",
-                "tekst",
+                "epostTekst",
+                "smsTekst",
                 "prefererteKanaler"
         );
 
@@ -34,7 +35,6 @@ public class Knoot001IntegrationTest extends EmbededKafkaBroker {
 
         KafkaEventProducer.publish(
                 KAFKA_TOPIC_DOK_NOTIFKASJON,
-                keyGenerator.toString(),
                 dokEksternNotifikasjon,
                 keyGenerator
         );
