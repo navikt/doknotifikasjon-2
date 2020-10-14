@@ -44,7 +44,7 @@ public class KafkaDoknotifikasjonStatusProducer {
         );
     }
 
-    private void publishDoknotifikasjonStatus(String topic, String bestillingsId, String bestillerId,
+    public void publishDoknotifikasjonStatus(String topic, String bestillingsId, String bestillerId,
                                               Status status, String melding, Long distribusjonId)
     {
         DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
