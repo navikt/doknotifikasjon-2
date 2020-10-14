@@ -5,7 +5,9 @@ import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
+import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -17,11 +19,17 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.service.NotifikasjonDistrbusjonService;
 import no.nav.doknotifikasjon.service.NotifikasjonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.LocalDate;
 
+import static java.lang.String.format;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_ALREADY_EXIST_IN_DATABASE;
+import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
@@ -48,10 +56,14 @@ public class DoknotifikasjonService {
     DigitalKontaktinfoConsumer kontaktinfoConsumer;
 
     public DigitalKontaktinformasjonTo.DigitalKontaktinfo getKontaktInfoByFnr(Doknotifikasjon doknotifikasjon) {
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo;
 
-        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = kontaktinfoConsumer.hentDigitalKontaktinfo(
-                doknotifikasjon.getFodselsnummer()
-        );
+        try {
+            kontaktinfo = kontaktinfoConsumer.hentDigitalKontaktinfo(doknotifikasjon.getFodselsnummer());
+        } catch (Exception e) {
+            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, "Melding"); // TODO change name of message
+            throw e;
+        }
 
         if (kontaktinfo == null) {
             publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
@@ -74,7 +86,7 @@ public class DoknotifikasjonService {
                 null
         );
 
-        //TODO throw new exception
+        throw new InvalidAvroSchemaFieldException("DKIF exception BestillingsId: [" + doknotifikasjon.getBestillingsId() + "], BestillerId[" + doknotifikasjon.getBestillerId() + "]"); //TODO throw new exception
     }
 
 
@@ -86,7 +98,7 @@ public class DoknotifikasjonService {
                     FEILET_ALREADY_EXIST_IN_DATABASE,
                     null
             );
-            //TODO throw new exception
+            throw new InvalidAvroSchemaFieldException("BestillingsId already exist in database. BestillingsId: [" + doknotifikasjon.getBestillingsId() + "], BestillerId[" + doknotifikasjon.getBestillerId() + "]"); //TODO throw new exception
         }
 
         Notifikasjon notifikasjon = this.createNotifikasjonByDoknotikasjon(doknotifikasjon);
@@ -138,25 +150,47 @@ public class DoknotifikasjonService {
 
     public void validateAvroDoknotifikasjon(Doknotifikasjon doknotifikasjon)  throws InvalidAvroSchemaFieldException
     {
-        this.validateString(doknotifikasjon,doknotifikasjon.getBestillingsId());
-        this.validateString(doknotifikasjon,doknotifikasjon.getBestillerId());
-        this.validateString(doknotifikasjon,doknotifikasjon.getFodselsnummer());
-        this.validateString(doknotifikasjon,doknotifikasjon.getTittel());
-        this.validateString(doknotifikasjon,doknotifikasjon.getEpostTekst());
-        this.validateString(doknotifikasjon,doknotifikasjon.getSmsTekst());
-        this.validateString(doknotifikasjon,doknotifikasjon.getPrefererteKanaler());
+        this.validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), "BestillingsId");
+        this.validateString(doknotifikasjon, doknotifikasjon.getBestillerId(),"BestillerId");
+        this.validateString(doknotifikasjon, doknotifikasjon.getFodselsnummer(), "Fodselsnummer");
+        this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), "Tittel");
+        this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), "EpostTekst");
+        this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), "SmsTekst");
+        this.validateString(doknotifikasjon, doknotifikasjon.getPrefererteKanaler(), "PrefererteKanaler");
+        this.validateNumber(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "AntallRenotifikasjoner");
+        this.validateNumber(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "RenotifikasjonIntervall");
+
+        if ((doknotifikasjon.getAntallRenotifikasjoner() != null || doknotifikasjon.getAntallRenotifikasjoner() == 0) && doknotifikasjon.getRenotifikasjonIntervall() < 1) {
+            StatusProducer.publishDoknotikfikasjonStatusFeilet(
+                    doknotifikasjon.getBestillingsId(),
+                    Doknotifikasjon.newBuilder().getBestillerId(),
+                    FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER,
+                    null
+            );
+        }
     }
 
-    public void validateString(Doknotifikasjon doknotifikasjon, String string) throws InvalidAvroSchemaFieldException {
+    public void validateString(Doknotifikasjon doknotifikasjon, String string, String fieldName) throws InvalidAvroSchemaFieldException {
         if (string.trim().isEmpty() || string.equals("null")) {
             StatusProducer.publishDoknotikfikasjonStatusFeilet(
                     doknotifikasjon.getBestillingsId(),
                     Doknotifikasjon.newBuilder().getBestillerId(),
-                    "påkrevd felt <feltnavn> ikke satt", // todo create message for message,
+                    "påkrevd felt " + fieldName + " ikke satt", // todo create message
                     null
             );
-            throw new InvalidAvroSchemaFieldException("");         //TODO throw new exception
+            throw new InvalidAvroSchemaFieldException("Field [" + fieldName + "] was not valid. BestillingsId: [" + doknotifikasjon.getBestillingsId() + "], BestillerId[" + doknotifikasjon.getBestillerId() + "]");
         }
+    }
+
+    public void validateNumber(Doknotifikasjon doknotifikasjon, Integer number, String fieldName) throws InvalidAvroSchemaFieldException {
+        if (number > 0) {
+            StatusProducer.publishDoknotikfikasjonStatusFeilet(
+                    doknotifikasjon.getBestillingsId(),
+                    Doknotifikasjon.newBuilder().getBestillerId(),
+                    "påkrevd felt " + fieldName + " kan ikke være negativ", // todo create message
+                    null
+            );
+            throw new InvalidAvroSchemaFieldException("Field [" + fieldName + "] was not valid. BestillingsId: [" + doknotifikasjon.getBestillingsId() + "], BestillerId[" + doknotifikasjon.getBestillerId() + "]");        }
     }
 
     public void publishDoknotikfikasjonSms(String bestillingsId) {
