@@ -20,27 +20,15 @@ public class ProducerController {
     private KafkaEventProducer publisher;
 
     @GetMapping("/test")
-    public String kafkaProduceMessage() {
-        Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
-                "bestillingsId",
-                "bestillerId",
-                "fodselsnummer",
-                0,
-                0,
-                "tittel",
-                "tekst",
-                "prefererteKanaler"
-        );
-
+    public void kafkaProduceMessage() {
         Long keyGenerator = System.currentTimeMillis();
 
         publisher.publish(
                 KAFKA_TOPIC_DOK_NOTIFKASJON,
                 keyGenerator.toString(),
-                dokEksternNotifikasjon,
+                new Doknotifikasjon(),
                 keyGenerator
         );
 
-        return KAFKA_PRODUCER_TEST_WORK;
     }
 }
