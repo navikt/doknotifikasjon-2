@@ -21,14 +21,24 @@ public class ProducerController {
 
     @GetMapping("/test")
     public void kafkaProduceMessage() {
+        Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
+                "bestillingsId",
+                "bestillerId",
+                "fodselsnummer",
+                0,
+                0,
+                "tittel",
+                "epostTekst",
+                "smsTekst",
+                "prefererteKanaler"
+        );
+
         Long keyGenerator = System.currentTimeMillis();
 
         publisher.publish(
                 KAFKA_TOPIC_DOK_NOTIFKASJON,
-                keyGenerator.toString(),
-                new Doknotifikasjon(),
+                dokEksternNotifikasjon,
                 keyGenerator
         );
-
     }
 }
