@@ -4,7 +4,6 @@ package no.nav.doknotifikasjon.KafkaProducer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
-import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,9 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @Component
 public class KafkaEventProducer {
+
+    private static String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
+    private static String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -59,11 +61,12 @@ public class KafkaEventProducer {
             if (executionException.getCause() != null && executionException.getCause() instanceof KafkaProducerException) {
                 KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
                 if (kafkaProducerException.getCause() != null && kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
-                    throw new AuthenticationFailedException("Not authenticated to publish to topic '" + topic + "'", kafkaProducerException.getCause());
+                    throw new AuthenticationFailedException(KAFKA_NOT_AUTHENTICATED + topic, kafkaProducerException.getCause());
                 }
             }
+            throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, executionException);
         } catch (InterruptedException e) {
-            throw new KafkaTechnicalException("Failed to send message to kafka. Topic: " + topic, e);
+            throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
         }
     }
 }
