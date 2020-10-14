@@ -8,7 +8,6 @@ import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaException;
-import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.service.NotifikasjonService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
 
 @Slf4j
 @Component
@@ -55,18 +53,14 @@ public class DoknotifikasjonConsumer {
 
         doknotifikasjonService.validateAvroDoknotifikasjon(doknotifikasjon);
 
-        // DKIF
-        DigitalKontaktinformasjonTo.DigitalKontaktinfo digitalKontaktinfo = kontaktinfoConsumer.hentDigitalKontaktinfo(
-                doknotifikasjon.getFodselsnummer()
-        );
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = doknotifikasjonService.getKontaktInfoByFnr(doknotifikasjon);
 
-        doknotifikasjonService.createNotifikasjonFromDoknotifikasjon(doknotifikasjon, digitalKontaktinfo);
+        doknotifikasjonService.createNotifikasjonFromDoknotifikasjon(doknotifikasjon, kontaktinfo);
 
         doknotifikasjonService.publishDoknotikfikasjonSms(doknotifikasjon.getBestillingsId());
         doknotifikasjonService.publishDoknotikfikasjonEpost(doknotifikasjon.getBestillingsId());
 
         StatusProducer.publishDoknotikfikasjonStatusOversendt(
-                KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
                 doknotifikasjon.getBestillingsId(),
                 doknotifikasjon.getBestillerId(),
                 OVERSENDT_NOTIFIKASJON_PROCESSED,

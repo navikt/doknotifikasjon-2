@@ -64,8 +64,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
             if (isDigitalkontaktinformasjonValid(response, fnrTrimmed)) {
                 return response.getKontaktinfo().get(fnrTrimmed);
             } else {
-                //todo: skriv notifikasjon-feilet hendelse til kafka-topic dokeksternnotifikasjon-status og avslutt behandlingen
-                return null; //??
+                return null;
             }
         } catch (HttpClientErrorException e) {
             throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e

@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon.consumer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
+import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -21,9 +22,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_ALREADY_EXIST_IN_DATABASE;
+import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
+import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
 import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
 import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
 
 @Slf4j
 @Component
@@ -41,21 +44,59 @@ public class DoknotifikasjonService {
     @Autowired
     KafkaEventProducer producer;
 
+    @Autowired
+    DigitalKontaktinfoConsumer kontaktinfoConsumer;
+
+    public DigitalKontaktinformasjonTo.DigitalKontaktinfo getKontaktInfoByFnr(Doknotifikasjon doknotifikasjon) {
+
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = kontaktinfoConsumer.hentDigitalKontaktinfo(
+                doknotifikasjon.getFodselsnummer()
+        );
+
+        if (kontaktinfo == null) {
+            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
+        } else if(kontaktinfo.isReservert()) {
+            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
+        } else if (kontaktinfo.isKanVarsles()) {
+            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION);
+        } else if(kontaktinfo.getEpostadresse() != null && kontaktinfo.getMobiltelefonnummer() != null) {
+            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION);
+        }
+
+        return kontaktinfo;
+    }
+
+    public void publishDoknotikfikasjonStatusDKIF(Doknotifikasjon doknotifikasjon, String message) {
+        StatusProducer.publishDoknotikfikasjonStatusFeilet(
+                doknotifikasjon.getBestillingsId(),
+                doknotifikasjon.getBestillerId(),
+                message,
+                null
+        );
+
+        //TODO throw new exception
+    }
+
+
     public void  createNotifikasjonFromDoknotifikasjon(Doknotifikasjon doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
         if (notifikasjonService.notifikasjonExistByBestillingsId(doknotifikasjon.getBestillingsId())) {
             StatusProducer.publishDoknotikfikasjonStatusFeilet(
-                    KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
                     doknotifikasjon.getBestillingsId(),
                     doknotifikasjon.getBestillerId(),
                     FEILET_ALREADY_EXIST_IN_DATABASE,
                     null
             );
+            //TODO throw new exception
         }
 
         Notifikasjon notifikasjon = this.createNotifikasjonByDoknotikasjon(doknotifikasjon);
 
-        this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(),Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
-        this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(),Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
+        if (kontaktinformasjon.getEpostadresse() != null) {
+            this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(),Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
+        }
+        if (kontaktinformasjon.getMobiltelefonnummer() != null) {
+            this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(),Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
+        }
     }
 
     public Notifikasjon createNotifikasjonByDoknotikasjon(Doknotifikasjon doknotifikasjon) {
@@ -109,13 +150,12 @@ public class DoknotifikasjonService {
     public void validateString(Doknotifikasjon doknotifikasjon, String string) throws InvalidAvroSchemaFieldException {
         if (string.trim().isEmpty() || string.equals("null")) {
             StatusProducer.publishDoknotikfikasjonStatusFeilet(
-                    KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
                     doknotifikasjon.getBestillingsId(),
                     Doknotifikasjon.newBuilder().getBestillerId(),
                     "påkrevd felt <feltnavn> ikke satt", // todo create message for message,
                     null
             );
-            throw new InvalidAvroSchemaFieldException("");
+            throw new InvalidAvroSchemaFieldException("");         //TODO throw new exception
         }
     }
 
