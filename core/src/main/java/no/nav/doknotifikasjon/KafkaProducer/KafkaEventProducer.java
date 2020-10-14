@@ -53,13 +53,13 @@ public class KafkaEventProducer {
             if (log.isDebugEnabled()) {
                 log.info("Published to partittion " + sendResult.getRecordMetadata().partition());
                 log.info("Published to offset " + sendResult.getRecordMetadata().offset());
-                log.info("Published to offset " + sendResult.getRecordMetadata().topic());
+                log.info("Published to topic " + sendResult.getRecordMetadata().topic());
             }
-        } catch (ExecutionException e) {
-            if (e.getCause() != null && e.getCause() instanceof KafkaProducerException) {
-                KafkaProducerException ee = (KafkaProducerException) e.getCause();
-                if (ee.getCause() != null && ee.getCause() instanceof TopicAuthorizationException) {
-                    throw new AuthenticationFailedException("Not authenticated to publish to topic '" + topic + "'", ee.getCause());
+        } catch (ExecutionException executionException) {
+            if (executionException.getCause() != null && executionException.getCause() instanceof KafkaProducerException) {
+                KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
+                if (kafkaProducerException.getCause() != null && kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
+                    throw new AuthenticationFailedException("Not authenticated to publish to topic '" + topic + "'", kafkaProducerException.getCause());
                 }
             }
         } catch (InterruptedException e) {
