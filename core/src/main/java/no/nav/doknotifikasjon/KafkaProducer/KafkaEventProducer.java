@@ -14,6 +14,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -22,6 +23,15 @@ public class KafkaEventProducer {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
+
+    public void publish(String topic, Object event, Long timestamp) {
+        this.publish(
+                topic,
+                UUID.randomUUID().toString(),
+                event,
+                timestamp
+        );
+    }
 
     @Transactional
     public void publish(
@@ -40,16 +50,15 @@ public class KafkaEventProducer {
 
         try {
             SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.info("Published to partittion " + sendResult.getRecordMetadata().partition());
                 log.info("Published to offset " + sendResult.getRecordMetadata().offset());
                 log.info("Published to offset " + sendResult.getRecordMetadata().topic());
             }
-        }
-        catch (ExecutionException e) {
-            if(e.getCause() != null && e.getCause() instanceof KafkaProducerException) {
+        } catch (ExecutionException e) {
+            if (e.getCause() != null && e.getCause() instanceof KafkaProducerException) {
                 KafkaProducerException ee = (KafkaProducerException) e.getCause();
-                if(ee.getCause() != null && ee.getCause() instanceof TopicAuthorizationException) {
+                if (ee.getCause() != null && ee.getCause() instanceof TopicAuthorizationException) {
                     throw new AuthenticationFailedException("Not authenticated to publish to topic '" + topic + "'", ee.getCause());
                 }
             }
