@@ -4,7 +4,8 @@ import lombok.Builder;
 import lombok.Value;
 
 @Builder
-public class DoknotifikasjonStatusDto {
+@Value
+public class DoknotifikasjonStatusTo {
 	String bestillingId;
 	String bestillerId;
 	String status;

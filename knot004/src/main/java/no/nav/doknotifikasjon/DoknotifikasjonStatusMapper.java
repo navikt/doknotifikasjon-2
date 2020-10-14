@@ -4,8 +4,8 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 
 public class DoknotifikasjonStatusMapper {
 
-	public DoknotifikasjonStatusDto map(DoknotifikasjonStatus doknotifikasjonStatus){
-		return new DoknotifikasjonStatusDto().builder()
+	public DoknotifikasjonStatusTo map(DoknotifikasjonStatus doknotifikasjonStatus){
+		return new DoknotifikasjonStatusTo().builder()
 				.bestillerId(doknotifikasjonStatus.getBestillerId())
 				.bestillingId(doknotifikasjonStatus.getBestillingsId())
 				.status(doknotifikasjonStatus.getStatus())
