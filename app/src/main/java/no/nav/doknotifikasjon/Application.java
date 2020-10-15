@@ -1,18 +1,15 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.config.ApplicationConfig;
-import no.nav.doknotifikasjon.config.ServiceuserAlias;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 
 
-@Import(value = ApplicationConfig.class)
+@Import(value = CoreConfig.class)
 @SpringBootApplication
 @EnableRetry
-@EnableConfigurationProperties({ServiceuserAlias.class})
 public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
