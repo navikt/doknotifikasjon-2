@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -31,14 +30,16 @@ public class KafkaEventKnot004Consumer {
 	}
 
 	@KafkaListener(
-			topics = "privat-dok-ekstern-notifikasjon-status",
-			containerFactory = "kafkaListenerContainerFactory"
+			topics = "privat-dok-notifikasjon-status",
+			containerFactory = "kafkaListenerContainerFactory",
+			groupId = "asd"
 	)
-	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+//	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
-			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value().toString(), DoknotifikasjonStatus.class);
+			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value()
+					.toString(), DoknotifikasjonStatus.class);
 
 			knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
 		} catch (JsonProcessingException e) {

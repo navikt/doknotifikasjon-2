@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon;
+package no.nav.doknotifikasjon.utils;
 
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;

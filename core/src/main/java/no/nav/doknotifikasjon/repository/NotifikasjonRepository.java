@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Integer> {
     public Optional<Notifikasjon> findFirstByBestillerId(String bestillerId);
+
+    Notifikasjon findByBestillingId(String bestillingId);
 }

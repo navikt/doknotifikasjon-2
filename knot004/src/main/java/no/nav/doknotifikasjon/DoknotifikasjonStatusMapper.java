@@ -1,7 +1,9 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DoknotifikasjonStatusMapper {
 
 	public DoknotifikasjonStatusTo map(DoknotifikasjonStatus doknotifikasjonStatus) {

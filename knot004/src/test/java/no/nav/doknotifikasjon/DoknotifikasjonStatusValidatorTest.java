@@ -1,11 +1,11 @@
 package no.nav.doknotifikasjon;
 
-import static no.nav.doknotifikasjon.TestUtils.BESTILLER_ID;
-import static no.nav.doknotifikasjon.TestUtils.BESTILLING_ID;
-import static no.nav.doknotifikasjon.TestUtils.DISTRIBUSJON_ID;
-import static no.nav.doknotifikasjon.TestUtils.MELDING;
-import static no.nav.doknotifikasjon.TestUtils.STATUS;
-import static no.nav.doknotifikasjon.TestUtils.UGYLDIG_STATUS;
+import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
+import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLING_ID;
+import static no.nav.doknotifikasjon.utils.TestUtils.DISTRIBUSJON_ID;
+import static no.nav.doknotifikasjon.utils.TestUtils.MELDING;
+import static no.nav.doknotifikasjon.utils.TestUtils.STATUS;
+import static no.nav.doknotifikasjon.utils.TestUtils.UGYLDIG_STATUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

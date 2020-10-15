@@ -31,7 +31,7 @@ public class Knot004Service {
 				.getBestillingId());
 
 		doknotifikasjonStatusValidator.shouldValidateInput(doknotifikasjonStatusTo);
-		Notifikasjon notifikasjon = notifikasjonRepository.getByBestillingId(doknotifikasjonStatusTo.getBestillingId());
+		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingId(doknotifikasjonStatusTo.getBestillingId());
 
 		if (notifikasjon == null) {
 			log.warn("Notifikasjon med bestillingId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ", doknotifikasjonStatusTo.getBestillingId());
@@ -40,7 +40,7 @@ public class Knot004Service {
 			log.info("Alle distribusjoner knyttet til notifikasjon med bestillingId={} har status={}. Ny hendelse skrives til kafka-topic dok-eksternotifikasjon-status.", doknotifikasjonStatusTo
 					.getBestillingId(), doknotifikasjonStatusTo.getStatus());
 
-			kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatus("dok-eksternnotifikasjon-status", doknotifikasjonStatusTo
+			kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatus(doknotifikasjonStatusTo
 							.getBestillingId(), doknotifikasjonStatusTo.getBestillerId(),
 					Status.valueOf(doknotifikasjonStatusTo.getStatus()), "notifikasjon er " + doknotifikasjonStatusTo
 							.getStatus(), null);
