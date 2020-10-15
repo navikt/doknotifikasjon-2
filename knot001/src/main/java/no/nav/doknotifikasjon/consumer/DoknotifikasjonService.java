@@ -5,9 +5,7 @@ import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
-import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
-import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -19,15 +17,10 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.service.NotifikasjonDistrbusjonService;
 import no.nav.doknotifikasjon.service.NotifikasjonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.LocalDate;
 
-import static java.lang.String.format;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_ALREADY_EXIST_IN_DATABASE;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
@@ -61,17 +54,17 @@ public class DoknotifikasjonService {
         try {
             kontaktinfo = kontaktinfoConsumer.hentDigitalKontaktinfo(doknotifikasjon.getFodselsnummer());
         } catch (Exception e) {
-            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, "Melding"); // TODO change name of message
             throw e;
+//            publishDoknotikfikasjonStatusDKIF(doknotifikasjon, "Melding"); // TODO change name of message fix excep
         }
 
         if (kontaktinfo == null) {
             publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
         } else if(kontaktinfo.isReservert()) {
             publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
-        } else if (kontaktinfo.isKanVarsles()) {
+        } else if (!kontaktinfo.isKanVarsles()) {
             publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION);
-        } else if(kontaktinfo.getEpostadresse() != null && kontaktinfo.getMobiltelefonnummer() != null) {
+        } else if(kontaktinfo.getEpostadresse() == null && kontaktinfo.getMobiltelefonnummer() == null) { // TODO may test for empty as well
             publishDoknotikfikasjonStatusDKIF(doknotifikasjon, FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION);
         }
 

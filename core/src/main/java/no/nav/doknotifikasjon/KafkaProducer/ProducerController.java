@@ -14,8 +14,6 @@ import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 @RequestMapping("/kafka")
 public class ProducerController {
 
-    private static final String KAFKA_PRODUCER_TEST_WORK = "Kafka mannaged to produce";
-
     @Autowired
     private KafkaEventProducer publisher;
 
@@ -24,7 +22,7 @@ public class ProducerController {
         Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
                 "bestillingsId",
                 "bestillerId",
-                "fodselsnummer",
+                "24117423766",
                 0,
                 0,
                 "tittel",

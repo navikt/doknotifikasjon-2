@@ -59,6 +59,11 @@
             <version>${notifikasjon-schema.version}</version>
             <scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test-autoconfigure</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 

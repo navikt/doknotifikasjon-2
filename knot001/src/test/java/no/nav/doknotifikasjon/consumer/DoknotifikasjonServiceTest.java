@@ -1,68 +1,95 @@
-package no.nav.doknotifikasjon;
+package no.nav.doknotifikasjon.consumer;
 
+import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
-import no.nav.doknotifikasjon.itest.EmbededKafkaBroker;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
+import no.nav.doknotifikasjon.service.NotifikasjonDistrbusjonService;
+import no.nav.doknotifikasjon.service.NotifikasjonService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.concurrent.TimeUnit;
-
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@ActiveProfiles("itest")
-public class Knoot001IntegrationTest extends EmbededKafkaBroker {
+class DoknotifikasjonServiceTest {
+
+    public static String validFnr = "123456789012345";
+
 
     @Autowired
-    KafkaEventProducer KafkaEventProducer;
+    DoknotifikasjonService doknotifikasjonService;
 
     @MockBean
-    DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;
+    KafkaDoknotifikasjonStatusProducer StatusProducer;
+
+    @MockBean
+    NotifikasjonService notifikasjonService;
+
+    @MockBean
+    NotifikasjonDistrbusjonService notifikasjonDistrbusjonService;
+
+    @MockBean
+    KafkaEventProducer producer;
+
+    @MockBean
+    DigitalKontaktinfoConsumer kontaktinfoConsumer;
+
 
     @BeforeAll
     public void beforeAll() {
-        when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(anyString()))
+        when(kontaktinfoConsumer.hentDigitalKontaktinfo(validFnr))
                 .thenReturn(this.createValidKontaktInfo());
     }
 
     @Test
-    public void TestPosetiveConsumer() throws InterruptedException {
-        Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
-                "bestillingsId",
-                "bestillerId",
-                "fodselsnummer",
-                0,
-                0,
-                "tittel",
-                "epostTekst",
-                "smsTekst",
-                "prefererteKanaler"
-        );
-
-        Long keyGenerator = System.currentTimeMillis();
-
-        KafkaEventProducer.publish(
-                KAFKA_TOPIC_DOK_NOTIFKASJON,
-                dokEksternNotifikasjon,
-                keyGenerator
-        );
-
-        TimeUnit.SECONDS.sleep(30);
+    void getKontaktInfoByFnr() {
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = doknotifikasjonService.getKontaktInfoByFnr(createDoknotifikasjon());
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo2 = createValidKontaktInfo();
     }
+
+    @Test
+    void publishDoknotikfikasjonStatusDKIF() {
+    }
+
+    @Test
+    void createNotifikasjonFromDoknotifikasjon() {
+    }
+
+    @Test
+    void createNotifikasjonByDoknotikasjon() {
+    }
+
+    @Test
+    void createNotifikasjonDistrubisjon() {
+    }
+
+    @Test
+    void validateAvroDoknotifikasjon() {
+    }
+
+    @Test
+    void validateString() {
+    }
+
+    @Test
+    void validateNumber() {
+    }
+
+    @Test
+    void publishDoknotikfikasjonSms() {
+    }
+
+    @Test
+    void publishDoknotikfikasjonEpost() {
+    }
+
+
+
+
+
 
 
 
@@ -98,5 +125,22 @@ public class Knoot001IntegrationTest extends EmbededKafkaBroker {
                 .kanVarsles(false)
                 .reservert(true)
                 .build();
+    }
+
+
+
+
+    public Doknotifikasjon createDoknotifikasjon() {
+        return new Doknotifikasjon(
+                "bestillingsId",
+                "bestillerId",
+                validFnr,
+                0,
+                0,
+                "tittel",
+                "epostTekst",
+                "smsTekst",
+                "prefererteKanaler"
+        );
     }
 }
