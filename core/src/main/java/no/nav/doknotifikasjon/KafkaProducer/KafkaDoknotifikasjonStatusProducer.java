@@ -6,6 +6,8 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+
 @Slf4j
 @Component
 public class KafkaDoknotifikasjonStatusProducer {
@@ -13,29 +15,28 @@ public class KafkaDoknotifikasjonStatusProducer {
     @Autowired
     KafkaEventProducer producer;
 
-    public void publishDoknotikfikasjonStatusOversendt(String topic, String bestillingsId, String bestillerId,
+    public void publishDoknotikfikasjonStatusOversendt(String bestillingsId, String bestillerId,
                                                        String melding, Long distribusjonId)
     {
-        this.publishDoknotifikasjonStatus(topic, bestillingsId, bestillerId, Status.OVERSENDT, melding, distribusjonId);
+        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OVERSENDT, melding, distribusjonId);
     }
 
-    public void publishDoknotikfikasjonStatusOpprettet(String topic, String bestillingsId, String bestillerId,
+    public void publishDoknotikfikasjonStatusOpprettet(String bestillingsId, String bestillerId,
                                                        String melding, Long distribusjonId)
     {
-        this.publishDoknotifikasjonStatus(topic, bestillingsId, bestillerId, Status.OPPRETTET, melding, distribusjonId);
+        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OPPRETTET, melding, distribusjonId);
     }
 
-    public void publishDoknotikfikasjonStatusFerdigstilt(String topic, String bestillingsId, String bestillerId,
+    public void publishDoknotikfikasjonStatusFerdigstilt(String bestillingsId, String bestillerId,
                                                        String melding, Long distribusjonId)
     {
-        this.publishDoknotifikasjonStatus(topic, bestillingsId, bestillerId, Status.FERDIGSTILT, melding, distribusjonId);
+        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.FERDIGSTILT, melding, distribusjonId);
     }
 
-    public void publishDoknotikfikasjonStatusFeilet(String topic, String bestillingsId, String bestillerId,
+    public void publishDoknotikfikasjonStatusFeilet(String bestillingsId, String bestillerId,
                                                     String melding, Long distribusjonId)
     {
         this.publishDoknotifikasjonStatus(
-                topic,
                 bestillingsId == null ? "Ukjent" : bestillingsId,
                 bestillerId == null ? "Ukjent" : bestillingsId,
                 Status.FEILET,
@@ -44,17 +45,17 @@ public class KafkaDoknotifikasjonStatusProducer {
         );
     }
 
-    public void publishDoknotifikasjonStatus(String topic, String bestillingsId, String bestillerId,
+    private void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
                                               Status status, String melding, Long distribusjonId)
     {
         DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
-        this.publishDoknotifikasjonStatus(topic, doknotifikasjonStatus);
+        this.publishDoknotifikasjonStatus(doknotifikasjonStatus);
     }
 
-    public void publishDoknotifikasjonStatus(String topic, DoknotifikasjonStatus doknotifikasjonStatus)
+    public void publishDoknotifikasjonStatus(DoknotifikasjonStatus doknotifikasjonStatus)
     {
         producer.publish(
-                topic,
+                KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
                 doknotifikasjonStatus,
                 System.currentTimeMillis()
         );
