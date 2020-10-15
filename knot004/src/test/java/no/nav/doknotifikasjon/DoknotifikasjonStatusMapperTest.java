@@ -4,7 +4,7 @@ import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLING_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.DISTRIBUSJON_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.MELDING;
-import static no.nav.doknotifikasjon.utils.TestUtils.STATUS;
+import static no.nav.doknotifikasjon.utils.TestUtils.STATUS_OPPRETTET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
@@ -16,9 +16,9 @@ class DoknotifikasjonStatusMapperTest {
 
 	@Test
 	void shouldMap() {
-		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID, STATUS, MELDING, DISTRIBUSJON_ID);
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
 
-		DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID, STATUS, MELDING, DISTRIBUSJON_ID));
+		DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID));
 
 		assertEquals(doknotifikasjonStatus.getBestillingsId(), doknotifikasjonStatusTo.getBestillingId());
 		assertEquals(doknotifikasjonStatus.getBestillerId(), doknotifikasjonStatusTo.getBestillerId());
