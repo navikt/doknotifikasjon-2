@@ -55,9 +55,23 @@
         <dependency>
             <groupId>com.github.navikt</groupId>
             <artifactId>doknotifikasjon-schemas</artifactId>
-            <version>1.2020.09.24-13.16-2b376a150cf1</version>
+            <version>${notifikasjon-schema.version}</version>
             <scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test-autoconfigure</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>no.nav.doknotifikasjon</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 
