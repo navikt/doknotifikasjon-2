@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.List;
 
-/**
- * @author Martin Burheim Tingstad, Visma Consulting
- */
 @Component
 @Slf4j
 public class KafkaErrorHandler implements ContainerAwareErrorHandler {

@@ -127,9 +127,6 @@ class DoknotifikasjonServiceTest {
                 .build();
     }
 
-
-
-
     public Doknotifikasjon createDoknotifikasjon() {
         return new Doknotifikasjon(
                 "bestillingsId",

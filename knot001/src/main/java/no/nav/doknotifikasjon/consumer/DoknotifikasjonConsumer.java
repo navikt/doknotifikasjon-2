@@ -39,7 +39,8 @@ public class DoknotifikasjonConsumer {
 
     @KafkaListener(
             topics = "privat-dok-notifikasjon",
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "kafkaListenerContainerFactory",
+            groupId = "asd"
     )
     @Transactional
     public void onMessage(final ConsumerRecord<String, Object> record) {
