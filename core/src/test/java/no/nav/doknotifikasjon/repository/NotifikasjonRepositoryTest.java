@@ -47,10 +47,10 @@ public class NotifikasjonRepositoryTest {
 
 
 	@Autowired
-	NotifikasjonRepository notifikasjonRepository;
+	private NotifikasjonRepository notifikasjonRepository;
 
 	@Autowired
-	NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
+	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@BeforeEach
 	public void setup() {
