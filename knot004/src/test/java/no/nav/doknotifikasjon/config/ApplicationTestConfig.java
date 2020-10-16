@@ -11,4 +11,5 @@ import org.springframework.context.annotation.Import;
         CoreConfig.class,
         RepositoryConfig.class
 })
-public class ApplicationTestConfig { }
+public class ApplicationTestConfig {
+}

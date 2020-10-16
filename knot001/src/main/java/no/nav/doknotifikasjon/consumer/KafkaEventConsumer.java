@@ -15,23 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class KafkaEventConsumer {
 
-	@Autowired
-	ObjectMapper objectMapper;
+    @Autowired
+    ObjectMapper objectMapper;
 
-	@KafkaListener(
-			topics = "privat-dok-notifikasjon",
-			containerFactory = "kafkaListenerContainerFactory"
-	)
-	@Transactional
-	public void onMessage(final ConsumerRecord<String, Object> record) {
-		Doknotifikasjon doknotifikasjon = null;
+    @KafkaListener(
+            topics = "privat-dok-notifikasjon",
+            containerFactory = "kafkaListenerContainerFactory"
+    )
+    @Transactional
+    public void onMessage(final ConsumerRecord<String, Object> record) {
+        Doknotifikasjon doknotifikasjon = null;
 
-		try {
-			doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+        try {
+            doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
-		doknotifikasjon.getAntallRenotifikasjoner();
-	}
+        doknotifikasjon.getAntallRenotifikasjoner();
+    }
 }

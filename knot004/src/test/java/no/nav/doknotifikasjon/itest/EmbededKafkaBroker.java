@@ -15,8 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("itest")
 @EmbeddedKafka(
         topics = {
-            "test_topic",
-            "privat-dok-notifikasjon-status"
+                "test_topic",
+                "privat-dok-notifikasjon-status"
         },
         bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )

@@ -6,9 +6,9 @@ import lombok.Value;
 @Builder
 @Value
 public class DoknotifikasjonStatusTo {
-	String bestillingId;
-	String bestillerId;
-	String status;
-	String melding;
-	Long distribusjonId;
+    String bestillingId;
+    String bestillerId;
+    String status;
+    String melding;
+    Long distribusjonId;
 }
