@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.itest;
 
-import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
+import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID_2;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLING_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.DISTRIBUSJON_ID;
@@ -8,8 +8,7 @@ import static no.nav.doknotifikasjon.utils.TestUtils.MELDING;
 import static no.nav.doknotifikasjon.utils.TestUtils.STATUS_FERDIGSTILT;
 import static no.nav.doknotifikasjon.utils.TestUtils.STATUS_OPPRETTET;
 import static no.nav.doknotifikasjon.utils.TestUtils.createNotifikasjon;
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
-import static no.nav.doknotifikasjon.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonId;
+import static no.nav.doknotifikasjon.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -26,10 +25,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class Knot004ITest extends EmbededKafkaBroker {
+class Knot004ITest extends EmbededKafkaBroker {
 
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;
@@ -47,7 +46,7 @@ public class Knot004ITest extends EmbededKafkaBroker {
 	}
 
 	@Test
-	public void shouldUpdateStatus() {
+	void shouldUpdateStatus() {
 		notifikasjonRepository.saveAndFlush(createNotifikasjon());
 
 		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_OPPRETTET, MELDING, null);
@@ -60,7 +59,7 @@ public class Knot004ITest extends EmbededKafkaBroker {
 	}
 
 	@Test
-	public void sholdNotUpdateStatusWhenNotifikasjonDoesNotExist() {
+	void shouldNotUpdateStatusWhenNotifikasjonDoesNotExist() {
 		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_OPPRETTET, MELDING, null);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
@@ -68,7 +67,7 @@ public class Knot004ITest extends EmbededKafkaBroker {
 	}
 
 	@Test
-	public void sholdNotUpdateStatusWhenStatusIsFerdigstiltAndAntallRenotifikasjonerIsMoreThanZero() {
+	void shouldNotUpdateStatusWhenStatusIsFerdigstiltAndAntallRenotifikasjonerIsMoreThanZero() {
 		notifikasjonRepository.saveAndFlush(createNotifikasjon());
 
 		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_FERDIGSTILT, MELDING, null);
@@ -81,7 +80,7 @@ public class Knot004ITest extends EmbededKafkaBroker {
 	}
 
 	@Test
-	public void sholdNotUpdateStatusWhenDistribusjonIdIsNotZero() {
+	void shouldNotUpdateStatusWhenDistribusjonIdIsNotZero() {
 		notifikasjonRepository.saveAndFlush(createNotifikasjon());
 
 		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
@@ -93,20 +92,36 @@ public class Knot004ITest extends EmbededKafkaBroker {
 		assertNull(updatedNotifikasjon.getEndretDato());
 	}
 
-//	@Test
-//	public void sholdPublishNewHendelseWhenDistribusjonIdIsNotZeroAndInputStautsEqualsNotifikasjonStatus() {
-//		Notifikasjon notifikasjon = createNotifikasjon();
-//		createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon);
-//		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon));
-//
-//		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
-//		putMessageOnKafkaTopic(doknotifikasjonStatus);
-//
-//		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingId(BESTILLING_ID);
-//		assertEquals(Status.FEILET.toString(), updatedNotifikasjon.getStatus().toString());
-//		assertNull(updatedNotifikasjon.getEndretAv());
-//		assertNull(updatedNotifikasjon.getEndretDato());
-//	}
+	@Test
+	void shouldPublishNewHendelseWhenDistribusjonIdIsNotZeroAndInputStatusEqualsNotifikasjonStatus() {
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), Status.OPPRETTET));
+
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
+		putMessageOnKafkaTopic(doknotifikasjonStatus);
+
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingId(BESTILLING_ID);
+		assertEquals(Status.OPPRETTET, updatedNotifikasjon.getStatus());
+		assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
+		assertNotNull(updatedNotifikasjon.getEndretDato());
+	}
+
+	@Test
+	public void shouldNotPublishNewHendelseWhenDistribusjonIdIsNotZeroAndInputStatusNotEqualsOneNotifikasjonStatus() {
+		Notifikasjon notifikasjon = createNotifikasjon();
+		NotifikasjonDistribusjon notifikasjonDistribusjon_1 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, Status.OPPRETTET);
+		NotifikasjonDistribusjon notifikasjonDistribusjon_2 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, Status.FEILET);
+		notifikasjon.setNotifikasjonDistribusjon(Set.of(notifikasjonDistribusjon_1, notifikasjonDistribusjon_2));
+
+		notifikasjonRepository.saveAndFlush(notifikasjon);
+
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID_2, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
+		putMessageOnKafkaTopic(doknotifikasjonStatus);
+
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingId(BESTILLING_ID);
+		assertEquals(Status.FEILET.toString(), updatedNotifikasjon.getStatus().toString());
+		assertNull(updatedNotifikasjon.getEndretAv());
+		assertNull(updatedNotifikasjon.getEndretDato());
+	}
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonStatus doknotifikasjonStatus) {
 		try {
@@ -119,7 +134,7 @@ public class Knot004ITest extends EmbededKafkaBroker {
 			);
 
 			TimeUnit.SECONDS.sleep(30);
-		}catch(InterruptedException exception){
+		} catch (InterruptedException exception) {
 			fail();
 		}
 	}

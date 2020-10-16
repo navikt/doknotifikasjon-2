@@ -3,7 +3,9 @@ package no.nav.doknotifikasjon.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import org.hibernate.annotations.GenericGenerator;
@@ -83,6 +85,8 @@ public class Notifikasjon implements Serializable {
 	@Column(name = "ENDRET_DATO")
 	private LocalDateTime endretDato;
 
-	@OneToMany(mappedBy = "notifikasjonId", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	@OneToMany(mappedBy = "notifikasjonId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
 }

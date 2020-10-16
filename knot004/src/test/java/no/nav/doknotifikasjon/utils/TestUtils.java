@@ -40,10 +40,10 @@ public final class TestUtils {
 				.build();
 	}
 
-	public static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjonId(Notifikasjon notifikasjon) {
+	public static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(Notifikasjon notifikasjon, Status status) {
 		return NotifikasjonDistribusjon.builder()
 				.notifikasjonId(notifikasjon)
-				.status(Status.OPPRETTET)
+				.status(status)
 				.kanal(Kanal.SMS)
 				.kontaktInfo(KONTAKTINFO)
 				.tittel(TITTEL)
