@@ -1,7 +1,5 @@
 package no.nav.doknotifikasjon.repository;
 
-import static org.junit.Assert.assertEquals;
-
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -27,25 +25,25 @@ import static org.junit.Assert.assertEquals;
 @ActiveProfiles("itest")
 public class NotifikasjonRepositoryTest {
 
-	private static final String BESTILLING_ID = "1234-5678-9101";
-	private static final String BESTILLER_ID = "teamdokumenthandtering";
-	private static final String MOTTAKER_ID = "03116823216";
-	private static final String PREFERERTE_KANALER = Kanal.EPOST.toString();
-	private static final String OPPRETTET_AV = "srvdokument";
-	private static final String OPPRETTET_AV_2 = "srvdokopp";
-	private static final String ENDRET_AV = "srvdokumentlosninger";
-	private static final String ENDRET_AV_2 = "srvdokmot";
-	private static final String KONTAKTINFO = "Hallohallo";
-	private static final String TITTEL = "Melding";
-	private static final String TEKST = "Lang tekst";
-	private static final Integer ANTALL_RENOTIFIKASJONER = 2;
-	private static final Integer RENOTIFIKASJON_INTERVALL = 7;
-	private static final LocalDate NESTE_RENOTIFIKASJON_DATO = LocalDate.parse("2020-10-03");
-	private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
-	private static final LocalDateTime OPPRETTET_DATO_2 = LocalDateTime.parse("2020-10-06T10:15:30.000000");
-	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
-	private static final LocalDateTime ENDRET_DATO = LocalDateTime.parse("2020-10-02T10:15:30.000000");
-	private static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
+    private static final String BESTILLING_ID = "1234-5678-9101";
+    private static final String BESTILLER_ID = "teamdokumenthandtering";
+    private static final String MOTTAKER_ID = "03116823216";
+    private static final String PREFERERTE_KANALER = Kanal.EPOST.toString();
+    private static final String OPPRETTET_AV = "srvdokument";
+    private static final String OPPRETTET_AV_2 = "srvdokopp";
+    private static final String ENDRET_AV = "srvdokumentlosninger";
+    private static final String ENDRET_AV_2 = "srvdokmot";
+    private static final String KONTAKTINFO = "Hallohallo";
+    private static final String TITTEL = "Melding";
+    private static final String TEKST = "Lang tekst";
+    private static final Integer ANTALL_RENOTIFIKASJONER = 2;
+    private static final Integer RENOTIFIKASJON_INTERVALL = 7;
+    private static final LocalDate NESTE_RENOTIFIKASJON_DATO = LocalDate.parse("2020-10-03");
+    private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
+    private static final LocalDateTime OPPRETTET_DATO_2 = LocalDateTime.parse("2020-10-06T10:15:30.000000");
+    private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
+    private static final LocalDateTime ENDRET_DATO = LocalDateTime.parse("2020-10-02T10:15:30.000000");
+    private static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
 
     @Autowired

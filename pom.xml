@@ -51,6 +51,7 @@
 		<jersey-core-version>2.31</jersey-core-version>
         <springframework-boot>2.3.1.RELEASE</springframework-boot>
         <junit-jupiter>5.7.0</junit-jupiter>
+		<spring-retry-version>1.2.5.RELEASE</spring-retry-version>
     </properties>
 
 	<dependencyManagement>
@@ -140,6 +141,11 @@
 				<groupId>org.glassfish.jersey.media</groupId>
 				<artifactId>jersey-media-jaxb</artifactId>
 				<version>${jersey-core-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.retry</groupId>
+				<artifactId>spring-retry</artifactId>
+				<version>${spring-retry-version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
