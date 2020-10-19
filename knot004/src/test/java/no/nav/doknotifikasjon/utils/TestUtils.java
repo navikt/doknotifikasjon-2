@@ -18,7 +18,7 @@ public final class TestUtils {
     public static final String BESTILLER_ID_2 = "teamsaf";
     public static final String STATUS_OPPRETTET = Status.OPPRETTET.toString();
     public static final String STATUS_FERDIGSTILT = Status.FERDIGSTILT.toString();
-    public static final String UGYLDIG_STATUS = "OPRETET";
+    public static final String INVALID_STATUS = "OPRETET";
     public static final String MELDING = "Heiheihei";
     private static final String KONTAKTINFO = "Hallohallo";
     private static final String TITTEL = "Melding";

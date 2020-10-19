@@ -15,7 +15,7 @@ public class DoknotifikasjonStatusValidator {
     }
 
     private void isNullOrEmpty(String field, String fieldName) {
-        if (field == null || field.isEmpty()) {
+        if (field == null || field.trim().isEmpty()) {
             throw new DoknotifikasjonValidationException(String.format("Valideringsfeil i knot004: Hendelse på kafka-topic " +
                     "dok-eksternnotifikasjon-status har tom variabel: %s. ", fieldName));
         }

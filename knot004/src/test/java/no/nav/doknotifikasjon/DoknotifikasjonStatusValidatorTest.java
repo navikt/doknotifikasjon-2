@@ -3,12 +3,7 @@ package no.nav.doknotifikasjon;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import org.junit.Test;
 
-import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
-import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLING_ID;
-import static no.nav.doknotifikasjon.utils.TestUtils.DISTRIBUSJON_ID;
-import static no.nav.doknotifikasjon.utils.TestUtils.MELDING;
-import static no.nav.doknotifikasjon.utils.TestUtils.STATUS_OPPRETTET;
-import static no.nav.doknotifikasjon.utils.TestUtils.UGYLDIG_STATUS;
+import static no.nav.doknotifikasjon.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -57,7 +52,7 @@ public class DoknotifikasjonStatusValidatorTest {
     @Test
     public void shouldNotValidateWithUgyldigStatus() {
         DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
-                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, UGYLDIG_STATUS, MELDING, DISTRIBUSJON_ID)));
+                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, INVALID_STATUS, MELDING, DISTRIBUSJON_ID)));
         assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic dok-eksternnotifikasjon-status har ugyldig status: OPRETET.", exception.getMessage());
     }
 }
