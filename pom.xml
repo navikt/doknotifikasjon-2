@@ -14,6 +14,7 @@
 		<module>app</module>
 		<module>core</module>
 		<module>knot001</module>
+		<module>knot002</module>
 	</modules>
 
 	<parent>
@@ -34,9 +35,10 @@
 	</repositories>
 
 	<properties>
-		<notifikasjon-schema.version>1.2020.09.24-13.16-2b376a150cf1</notifikasjon-schema.version>
+		<notifikasjon-schema.version>1.2020.10.13-11.57-126b24008aa6</notifikasjon-schema.version>
 		<java.version>11</java.version>
 		<lombok.version>1.18.12</lombok.version>
+		<vavr.version>0.10.3</vavr.version>
 		<javax.activation.version>1.1.1</javax.activation.version>
 		<javax.inject.version>1</javax.inject.version>
 		<javax.bind.version>2.3.1</javax.bind.version>
@@ -47,9 +49,11 @@
 		<postgresql-version>42.2.16</postgresql-version>
 		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<spring-kafka-version>2.5.6.RELEASE</spring-kafka-version>
+		<spring-web-services-version>2.3.4.RELEASE</spring-web-services-version>
 		<jersey-core-version>2.31</jersey-core-version>
         <springframework-boot>2.3.1.RELEASE</springframework-boot>
         <junit-jupiter>5.7.0</junit-jupiter>
+		<jaxb2-maven.version>0.14.0</jaxb2-maven.version>
     </properties>
 
 	<dependencyManagement>
@@ -65,10 +69,20 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>knot002</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vavr</groupId>
+				<artifactId>vavr</artifactId>
+				<version>${vavr.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.inject</groupId>
@@ -127,6 +141,17 @@
 				<version>${spring-cloud-contract-wiremock-version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web-services</artifactId>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-tomcat</artifactId>
+					</exclusion>
+				</exclusions>
+				<version>${spring-web-services-version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
 				<artifactId>jersey-client</artifactId>
 				<version>${jersey-core-version}</version>
@@ -135,6 +160,12 @@
 				<groupId>org.glassfish.jersey.media</groupId>
 				<artifactId>jersey-media-jaxb</artifactId>
 				<version>${jersey-core-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>${jaxb2-maven.version}</version>
+				<scope>compile</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

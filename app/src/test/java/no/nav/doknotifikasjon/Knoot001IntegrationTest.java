@@ -26,7 +26,8 @@ public class Knoot001IntegrationTest extends EmbededKafkaBroker {
                 0,
                 0,
                 "tittel",
-                "tekst",
+                "emailTekst",
+                "smstekst",
                 "prefererteKanaler"
         );
 

@@ -28,7 +28,8 @@ public class ProducerController {
                 0,
                 0,
                 "tittel",
-                "tekst",
+                "epostTekst",
+                "smsTekst",
                 "prefererteKanaler"
         );
 
