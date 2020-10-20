@@ -118,11 +118,4 @@ public class AltinnConsumer extends WebServiceGatewaySupport {
         return objectFactory.createReceiverEndPointBEList(receiverEndPointBEList);
     }
 
-    public void setUsername(String username){
-        this.username = username;
-    }
-    public void setPassword(String password){
-        this.password = password;
-    }
-
 }

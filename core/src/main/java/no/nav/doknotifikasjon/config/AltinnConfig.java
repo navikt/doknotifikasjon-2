@@ -22,7 +22,7 @@ public class AltinnConfig {
     }
 
     @Bean
-    public AltinnConsumer altinnClient(
+    public AltinnConsumer altinnConsumer(
             Jaxb2Marshaller marshaller,
             @Value(USERNAME) final String username,
             @Value(PASSWORD) final String password,
@@ -32,8 +32,6 @@ public class AltinnConfig {
         client.setDefaultUri(url);
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
-        client.setUsername(username);
-        client.setPassword(password);
 
         return client;
     }
