@@ -1,4 +1,4 @@
-package domain;
+package no.nav.doknotifikasjon.domain;
 
 import lombok.Getter;
 import lombok.Setter;

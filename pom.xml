@@ -14,6 +14,7 @@
 		<module>app</module>
 		<module>core</module>
 		<module>knot001</module>
+		<module>knot004</module>
 	</modules>
 
 	<parent>
@@ -22,7 +23,7 @@
 		<version>2.3.4.RELEASE</version>
 	</parent>
 
- 	<repositories>
+	<repositories>
 		<repository>
 			<id>confluent</id>
 			<url>http://packages.confluent.io/maven/</url>
@@ -50,6 +51,7 @@
 		<jersey-core-version>2.31</jersey-core-version>
         <springframework-boot>2.3.1.RELEASE</springframework-boot>
         <junit-jupiter>5.7.0</junit-jupiter>
+		<spring-retry-version>1.2.5.RELEASE</spring-retry-version>
     </properties>
 
 	<dependencyManagement>
@@ -65,10 +67,14 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>knot004</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>javax.inject</groupId>
@@ -136,6 +142,11 @@
 				<artifactId>jersey-media-jaxb</artifactId>
 				<version>${jersey-core-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.retry</groupId>
+				<artifactId>spring-retry</artifactId>
+				<version>${spring-retry-version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -143,6 +154,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

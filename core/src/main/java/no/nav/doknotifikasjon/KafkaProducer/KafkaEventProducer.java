@@ -24,6 +24,7 @@ public class KafkaEventProducer {
     private static String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") // todo look at this one
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     public void publish(String topic, Object event, Long timestamp) {
