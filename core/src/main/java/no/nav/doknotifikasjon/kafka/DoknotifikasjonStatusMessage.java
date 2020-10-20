@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.KafkaProducer;
+package no.nav.doknotifikasjon.kafka;
 
 public class DoknotifikasjonStatusMessage {
 

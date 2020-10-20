@@ -15,6 +15,7 @@
 		<module>core</module>
 		<module>knot001</module>
 		<module>knot004</module>
+		<module>knot005</module>
 	</modules>
 
 	<parent>
@@ -35,7 +36,7 @@
 	</repositories>
 
 	<properties>
-		<notifikasjon-schema.version>1.2020.10.13-11.57-126b24008aa6</notifikasjon-schema.version>
+		<notifikasjon-schema.version>1.2020.10.16-08.47-c6bead3ff28c</notifikasjon-schema.version>
 		<java.version>11</java.version>
 		<lombok.version>1.18.12</lombok.version>
 		<javax.activation.version>1.1.1</javax.activation.version>

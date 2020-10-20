@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.KafkaProducer;
+package no.nav.doknotifikasjon.kafka;
 
 
 import lombok.extern.slf4j.Slf4j;

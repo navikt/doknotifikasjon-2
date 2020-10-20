@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.KafkaProducer;
+package no.nav.doknotifikasjon.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 
 @Slf4j
 @RestController
