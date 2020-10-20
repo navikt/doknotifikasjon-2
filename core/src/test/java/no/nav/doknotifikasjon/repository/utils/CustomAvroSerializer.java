@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.itest;
+package no.nav.doknotifikasjon.repository.utils;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
