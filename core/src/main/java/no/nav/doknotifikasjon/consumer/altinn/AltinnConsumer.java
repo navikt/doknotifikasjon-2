@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.altinn.springsoap.client.gen.*;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.SoapFaultClientException;
-import org.springframework.ws.soap.client.core.SoapActionCallback;
 
 import javax.xml.bind.JAXBElement;
 import java.util.Optional;
@@ -41,9 +40,7 @@ public class AltinnConsumer extends WebServiceGatewaySupport {
         request.setSystemPassword(password);
 
         try {
-            getWebServiceTemplate().marshalSendAndReceive("http://localhost:8080/ws/countries", request,
-                            new SoapActionCallback(
-                                    "http://spring.io/guides/gs-producing-web-service/GetCountryRequest"));
+            getWebServiceTemplate().marshalSendAndReceive(request);
             return Optional.empty();
         } catch (SoapFaultClientException exception) {
             log.error("SoapFaultClientException:", exception);
