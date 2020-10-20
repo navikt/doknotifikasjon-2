@@ -22,10 +22,6 @@
             <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>knot001</artifactId>
         </dependency>
-        <dependency>
-            <groupId>no.nav.doknotifikasjon</groupId>
-            <artifactId>knot004</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.kafka</groupId>

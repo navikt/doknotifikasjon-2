@@ -13,46 +13,39 @@ public class DoknotifikasjonStatusValidatorTest {
 
     @Test
     public void shouldValidateInput() {
-        doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID));
+        doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID));
     }
 
     @Test
-    public void shouldValidateOkWithoutDistribusjonId() {
-        doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, STATUS_OPPRETTET, MELDING, null));
+    public void shouldValidateWithoutDistribusjonIdSet() {
+        doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, STATUS_OPPRETTET, MELDING, null));
     }
 
     @Test
-    public void shouldNotValidateWithoutBestillingId() {
+    public void shouldNotValidateWithoutBestillingsId() {
         DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
-                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(null, BESTILLING_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID)));
-        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic dok-eksternnotifikasjon-status har tom variabel: bestillingId. ", exception.getMessage());
+                doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(null, BESTILLINGS_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID)));
+        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for bestillingsId.", exception.getMessage());
     }
 
     @Test
     public void shouldNotValidateWithoutBestillerId() {
         DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
-                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, null, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID)));
-        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic dok-eksternnotifikasjon-status har tom variabel: bestillerId. ", exception.getMessage());
+                doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, null, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID)));
+        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for bestillerId.", exception.getMessage());
     }
 
     @Test
     public void shouldNotValidateWithoutMelding() {
         DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
-                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, STATUS_OPPRETTET, null, DISTRIBUSJON_ID)));
-        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic dok-eksternnotifikasjon-status har tom variabel: melding. ", exception.getMessage());
+                doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, STATUS_OPPRETTET, null, DISTRIBUSJON_ID)));
+        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for melding.", exception.getMessage());
     }
 
     @Test
     public void shouldNotValidateWithoutStatus() {
         DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
-                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, null, MELDING, DISTRIBUSJON_ID)));
-        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic dok-eksternnotifikasjon-status har tom variabel: status. ", exception.getMessage());
-    }
-
-    @Test
-    public void shouldNotValidateWithUgyldigStatus() {
-        DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
-                doknotifikasjonStatusValidator.shouldValidateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLING_ID, INVALID_STATUS, MELDING, DISTRIBUSJON_ID)));
-        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic dok-eksternnotifikasjon-status har ugyldig status: OPRETET.", exception.getMessage());
+                doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, null, MELDING, DISTRIBUSJON_ID)));
+        assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for status.", exception.getMessage());
     }
 }

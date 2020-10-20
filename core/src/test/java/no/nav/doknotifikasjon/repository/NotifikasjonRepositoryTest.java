@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 @ActiveProfiles("itest")
 public class NotifikasjonRepositoryTest {
 
-    private static final String BESTILLING_ID = "1234-5678-9101";
+    private static final String BESTILLINGS_ID = "1234-5678-9101";
     private static final String BESTILLER_ID = "teamdokumenthandtering";
     private static final String MOTTAKER_ID = "03116823216";
     private static final String PREFERERTE_KANALER = Kanal.EPOST.toString();
@@ -67,7 +67,7 @@ public class NotifikasjonRepositoryTest {
 
         Notifikasjon notifikasjon = notifikasjonRepository.findById(1).get();
 
-        assertEquals(BESTILLING_ID, notifikasjon.getBestillingId());
+        assertEquals(BESTILLINGS_ID, notifikasjon.getBestillingsId());
         assertEquals(BESTILLER_ID, notifikasjon.getBestillerId());
         assertEquals(MOTTAKER_ID, notifikasjon.getMottakerId());
         assertEquals(PREFERERTE_KANALER, notifikasjon.getPrefererteKanaler());
@@ -87,8 +87,8 @@ public class NotifikasjonRepositoryTest {
         assertEquals(0L, notifikasjonRepository.count());
 
         Notifikasjon notifikasjon = createNotifikasjon();
-        createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon);
-        notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonId(notifikasjon));
+        createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon);
+        notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon));
 
         assertEquals(1L, notifikasjonRepository.count());
         assertEquals(1L, notifikasjonDistribusjonRepository.count());
@@ -106,9 +106,9 @@ public class NotifikasjonRepositoryTest {
         assertEquals(ENDRET_DATO_2, notfikasjonDistribusjon.getEndretDato());
     }
 
-    private NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjonId(Notifikasjon notifikasjon) {
+    private NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjon(Notifikasjon notifikasjon) {
         return NotifikasjonDistribusjon.builder()
-                .notifikasjonId(notifikasjon)
+                .notifikasjon(notifikasjon)
                 .status(Status.FERDIGSTILT)
                 .kanal(Kanal.SMS)
                 .kontaktInfo(KONTAKTINFO)
@@ -125,7 +125,7 @@ public class NotifikasjonRepositoryTest {
     private Notifikasjon createNotifikasjon() {
         return Notifikasjon.builder()
                 .bestillerId(BESTILLER_ID)
-                .bestillingId(BESTILLING_ID)
+                .bestillingsId(BESTILLINGS_ID)
                 .mottakerId(MOTTAKER_ID)
                 .mottakerIdType(MottakerIdType.FNR)
                 .status(Status.OPPRETTET)

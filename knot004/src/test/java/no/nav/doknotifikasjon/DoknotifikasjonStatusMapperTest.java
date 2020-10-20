@@ -1,13 +1,10 @@
 package no.nav.doknotifikasjon;
 
+import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.junit.jupiter.api.Test;
 
-import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
-import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLING_ID;
-import static no.nav.doknotifikasjon.utils.TestUtils.DISTRIBUSJON_ID;
-import static no.nav.doknotifikasjon.utils.TestUtils.MELDING;
-import static no.nav.doknotifikasjon.utils.TestUtils.STATUS_OPPRETTET;
+import static no.nav.doknotifikasjon.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DoknotifikasjonStatusMapperTest {
@@ -16,14 +13,14 @@ class DoknotifikasjonStatusMapperTest {
 
     @Test
     void shouldMap() {
-        DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
+        DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID, STATUS_OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID);
 
-        DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(new DoknotifikasjonStatus(BESTILLING_ID, BESTILLER_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID));
+        DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID, STATUS_OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID));
 
-        assertEquals(doknotifikasjonStatus.getBestillingsId(), doknotifikasjonStatusTo.getBestillingId());
+        assertEquals(doknotifikasjonStatus.getBestillingsId(), doknotifikasjonStatusTo.getBestillingsId());
         assertEquals(doknotifikasjonStatus.getBestillerId(), doknotifikasjonStatusTo.getBestillerId());
         assertEquals(doknotifikasjonStatus.getMelding(), doknotifikasjonStatusTo.getMelding());
-        assertEquals(doknotifikasjonStatus.getStatus(), doknotifikasjonStatusTo.getStatus());
+        assertEquals(Status.valueOf(doknotifikasjonStatus.getStatus()), doknotifikasjonStatusTo.getStatus());
         assertEquals(doknotifikasjonStatus.getDistribusjonId(), doknotifikasjonStatusTo.getDistribusjonId());
     }
 }

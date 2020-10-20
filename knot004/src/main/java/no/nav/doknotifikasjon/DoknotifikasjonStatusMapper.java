@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon;
 
+import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +10,8 @@ public class DoknotifikasjonStatusMapper {
     public DoknotifikasjonStatusTo map(DoknotifikasjonStatus doknotifikasjonStatus) {
         return DoknotifikasjonStatusTo.builder()
                 .bestillerId(doknotifikasjonStatus.getBestillerId())
-                .bestillingId(doknotifikasjonStatus.getBestillingsId())
-                .status(doknotifikasjonStatus.getStatus())
+                .bestillingsId(doknotifikasjonStatus.getBestillingsId())
+                .status(Status.valueOf(doknotifikasjonStatus.getStatus()))
                 .melding(doknotifikasjonStatus.getMelding())
                 .distribusjonId(doknotifikasjonStatus.getDistribusjonId())
                 .build();

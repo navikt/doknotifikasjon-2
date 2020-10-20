@@ -33,7 +33,7 @@ public class KafkaEventKnot004Consumer {
     @KafkaListener(
             topics = "privat-dok-notifikasjon-status",
             containerFactory = "kafkaListenerContainerFactory",
-            groupId = "asd"
+            groupId = "doknotifikasjon-knot004"
     )
     @Metrics(value = "dok_request", percentiles = {0.5, 0.95})
     @Transactional
@@ -44,9 +44,11 @@ public class KafkaEventKnot004Consumer {
 
             knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
         } catch (JsonProcessingException e) {
-            log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+            log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
         } catch (DoknotifikasjonValidationException e) {
-            log.error("Valideringsfeil oppstod i knot004. Feilmelding: {}", e.getMessage());
+            log.error("Valideringsfeil i knot004. Avslutter behandlingen. ", e);
+        } catch (IllegalArgumentException e) {
+            log.error("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
         }
     }
 }
