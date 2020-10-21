@@ -76,16 +76,12 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
     }
 
     private boolean isDigitalkontaktinformasjonValid(DigitalKontaktinformasjonTo response, String fnr) {
-        if (isResponsValid(response, fnr)) {
+        if (response != null && response.getKontaktinfo() != null) {
             DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = response.getKontaktinfo().get(fnr);
             return kontaktinfo.isKanVarsles() && !kontaktinfo.isReservert() && isEpostOrSmsValid(kontaktinfo);
         } else {
             return false;
         }
-    }
-
-    private boolean isResponsValid(DigitalKontaktinformasjonTo response, String fnr) {
-        return response != null && response.getKontaktinfo() != null && response.getKontaktinfo().get(fnr) != null;
     }
 
     private boolean isEpostOrSmsValid(DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo) {
