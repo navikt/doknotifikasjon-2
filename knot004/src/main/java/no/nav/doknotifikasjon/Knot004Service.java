@@ -31,18 +31,24 @@ public class Knot004Service {
         log.info("Ny hendelse med bestillingsId={} på kafka-topic {} hentet av knot004.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
                 doknotifikasjonStatusTo.getBestillingsId());
 
+        if (Status.INFO.equals(doknotifikasjonStatusTo.getStatus())) {
+            log.info("Input status er {}. Behandlingen av hendelse avsluttets.", Status.INFO);
+            return;
+        }
+
         doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo);
         Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
 
         if (notifikasjon == null) {
             log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
                     doknotifikasjonStatusTo.getBestillingsId());
+            return;
+        }
+
+        if (doknotifikasjonStatusTo.getDistribusjonId() != null) {
+            handleEventWithDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
         } else {
-            if (doknotifikasjonStatusTo.getDistribusjonId() != null) {
-                handleEventWithDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
-            } else {
-                handleEventWithoutDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
-            }
+            handleEventWithoutDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
         }
     }
 
