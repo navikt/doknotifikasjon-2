@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.utils;
+package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -17,7 +17,7 @@ public final class TestUtils {
     public static final String BESTILLER_ID_2 = "teamsaf";
     public static final int ANTALL_RENOTIFIKASJONER = 3;
     private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
-    public static final LocalDate NESTE_RENOTIFIKASJONSDATO = LocalDate.parse("2020-10-01");
+    public static final LocalDate NESTE_RENOTIFIKASJONSDATO = LocalDate.parse("2020-10-04");
 
     public static Notifikasjon createNotifikasjonWithStatus(Status status) {
         return Notifikasjon.builder()
@@ -26,8 +26,8 @@ public final class TestUtils {
                 .status(status)
                 .notifikasjonDistribusjon(Collections.emptySet())
                 .opprettetDato(OPPRETTET_DATO)
-                .antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
                 .nesteRenotifikasjonDato(NESTE_RENOTIFIKASJONSDATO)
+                .antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
                 .build();
     }
 }

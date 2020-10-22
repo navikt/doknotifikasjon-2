@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.repository;
 
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext()
 @ActiveProfiles({"itest", "itestWiremock"})
-public class DigitalKontaktinfoConsumerTest {
+class DigitalKontaktinfoConsumerTest {
 
+    private static final String FNR = "12345678911";
     private static final String MOBIL = "+4799999999";
     private static final String EPOST = "epost";
 
@@ -37,47 +37,52 @@ public class DigitalKontaktinfoConsumerTest {
     private DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         stubSecurityToken();
     }
 
     @Test
-    void shouldReturnKontaktinfoWhenFullResponseFromDkif(){
+    void shouldReturnKontaktinfoWhenFullResponseFromDkif() {
         stubDkifWithBodyFile("dkif/dkif-full-response.json");
 
-        DigitalKontaktinformasjonTo.DigitalKontaktinfo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo("12345678911");
+        DigitalKontaktinformasjonTo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getKontaktinfo().get(FNR);
 
-        assertEquals(EPOST, digitalKontaktinfo.getEpostadresse());
-        assertEquals(MOBIL, digitalKontaktinfo.getMobiltelefonnummer());
-        assertTrue(digitalKontaktinfo.isKanVarsles());
-        assertFalse(digitalKontaktinfo.isReservert());
+        assertEquals(EPOST, kontaktinfo.getEpostadresse());
+        assertEquals(MOBIL, kontaktinfo.getMobiltelefonnummer());
+        assertTrue(kontaktinfo.isKanVarsles());
+        assertFalse(kontaktinfo.isReservert());
     }
 
     @Test
-    void shouldReturnKontaktinfoWhenOnlyKontaktinfoFromDkif(){
+    void shouldReturnKontaktinfoWhenOnlyKontaktinfoFromDkif() {
         stubDkifWithBodyFile("dkif/dkif-kontaktinfo-response.json");
 
-        DigitalKontaktinformasjonTo.DigitalKontaktinfo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo("12345678911");
+        DigitalKontaktinformasjonTo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
+        DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getKontaktinfo().get(FNR);
 
-        assertEquals(EPOST, digitalKontaktinfo.getEpostadresse());
-        assertEquals(MOBIL, digitalKontaktinfo.getMobiltelefonnummer());
-        assertTrue(digitalKontaktinfo.isKanVarsles());
-        assertFalse(digitalKontaktinfo.isReservert());
+        assertEquals(EPOST, kontaktinfo.getEpostadresse());
+        assertEquals(MOBIL, kontaktinfo.getMobiltelefonnummer());
+        assertTrue(kontaktinfo.isKanVarsles());
+        assertFalse(kontaktinfo.isReservert());
     }
 
     @Test
-    void shouldReturnNullWhenFeilFromDkif(){
+    void shouldReturnNullWhenFeilFromDkif() {
         stubDkifWithBodyFile("dkif/dkif-feil.json");
-        assertNull(digitalKontaktinfoConsumer.hentDigitalKontaktinfo("12345678911"));
+        DigitalKontaktinformasjonTo digitalKontaktinformasjon = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
+
+        assertNull(digitalKontaktinformasjon.getKontaktinfo());
+        assertEquals("Ingen kontaktinformasjon er registrert på personen", digitalKontaktinformasjon.getFeil().get(FNR).getMelding());
     }
 
     @Test
-    void shouldThrowErrorWhenNoResponseFromDkif(){
+    void shouldThrowErrorWhenNoResponseFromDkif() {
         stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
                 .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
         DigitalKontaktinformasjonTechnicalException exception = assertThrows(DigitalKontaktinformasjonTechnicalException.class, () ->
-                digitalKontaktinfoConsumer.hentDigitalKontaktinfo("12345678911"));
+                digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR));
         assertEquals("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=500 Server Error: [no body]", exception.getMessage());
     }
 

@@ -1,13 +1,13 @@
 package no.nav.doknotifikasjon.consumer;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
-import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
+import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -23,15 +23,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_ALREADY_EXIST_IN_DATABASE;
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_CANT_CONNECT_TO_DKIF;
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.*;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.*;
 
 @Slf4j
 @Component
@@ -81,13 +74,13 @@ public class Knot001Service {
                     FEILET_CANT_CONNECT_TO_DKIF,
                     null
             );
-            log.warn("Problemer med å hente kontaktinfo med bestillingsId={}. Feilmelding: {}", doknotifikasjon.getBestillingsId() , e.getMessage());
+            log.warn("Problemer med å hente kontaktinfo med bestillingsId={}. Feilmelding: {}", doknotifikasjon.getBestillingsId(), e.getMessage());
             throw e;
         }
 
         DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinformasjon.getKontaktinfo() != null ? digitalKontaktinformasjon.getKontaktinfo().get(fnrTrimmed) : null;
 
-        if(kontaktinfo == null) {
+        if (kontaktinfo == null) {
             if (digitalKontaktinformasjon.getFeil() != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed) != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding() != null) {
                 publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding());
             }
@@ -96,7 +89,7 @@ public class Knot001Service {
             publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
         } else if (!kontaktinfo.isKanVarsles()) {
             publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION);
-        } else if ((kontaktinfo.getEpostadresse() == null || kontaktinfo.getEpostadresse().trim().isEmpty())  &&
+        } else if ((kontaktinfo.getEpostadresse() == null || kontaktinfo.getEpostadresse().trim().isEmpty()) &&
                 (kontaktinfo.getMobiltelefonnummer() == null || kontaktinfo.getMobiltelefonnummer().trim().isEmpty())) {
             publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION);
         }
@@ -169,7 +162,7 @@ public class Knot001Service {
 
     private String buildPrefererteKanaler(List<Kanal> prefererteKanaler) {
         StringBuilder stringBuilder = new StringBuilder();
-        prefererteKanaler.forEach(s -> stringBuilder.append(prefererteKanaler.indexOf(s) == prefererteKanaler.size() - 1 ? s.toString() : s.toString() + ", ") );
+        prefererteKanaler.forEach(s -> stringBuilder.append(prefererteKanaler.indexOf(s) == prefererteKanaler.size() - 1 ? s.toString() : s.toString() + ", "));
         return stringBuilder.toString();
     }
 
@@ -190,7 +183,7 @@ public class Knot001Service {
     }
 
     public void publishDoknotifikasjonSms(String bestillingsId) {
-        log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}",KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, bestillingsId);
+        log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, bestillingsId);
         DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(bestillingsId);
         producer.publish(
                 KAFKA_TOPIC_DOK_NOTIFKASJON_SMS,
@@ -199,7 +192,7 @@ public class Knot001Service {
     }
 
     public void publishDoknotifikasjonEpost(String bestillingsId) {
-        log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}",KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, bestillingsId);
+        log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, bestillingsId);
         DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(bestillingsId);
         producer.publish(
                 KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,

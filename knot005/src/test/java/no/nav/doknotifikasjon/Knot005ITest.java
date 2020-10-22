@@ -1,9 +1,10 @@
-package no.nav.doknotifikasjon.itest;
+package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
+import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.TimeUnit;
 
+import static no.nav.doknotifikasjon.TestUtils.*;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
-import static no.nav.doknotifikasjon.utils.TestUtils.*;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
