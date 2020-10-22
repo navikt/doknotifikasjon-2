@@ -53,7 +53,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
 
     @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = 5, backoff = @Backoff(delay = 200))
     @Metrics(value = DOK_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON}, percentiles = {0.5, 0.95}, histogram = true)
-    public DigitalKontaktinformasjonTo.DigitalKontaktinfo hentDigitalKontaktinfo(final String personidentifikator) {
+    public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
         HttpHeaders headers = createHeaders();
         String fnrTrimmed = personidentifikator.trim();
         headers.add(NAV_PERSONIDENTER, fnrTrimmed);
@@ -61,11 +61,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
         try {
             DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
                     HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
-            if (isDigitalkontaktinformasjonValid(response, fnrTrimmed)) {
-                return response.getKontaktinfo().get(fnrTrimmed);
-            } else {
-                return null;
-            }
+            return response;
         } catch (HttpClientErrorException e) {
             throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
                     .getMessage()), e);
@@ -73,23 +69,6 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
             throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
                     .getMessage()), e);
         }
-    }
-
-    private boolean isDigitalkontaktinformasjonValid(DigitalKontaktinformasjonTo response, String fnr) {
-        if (isResponsValid(response, fnr)) {
-            DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = response.getKontaktinfo().get(fnr);
-            return kontaktinfo.isKanVarsles() && !kontaktinfo.isReservert() && isEpostOrSmsValid(kontaktinfo);
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isResponsValid(DigitalKontaktinformasjonTo response, String fnr) {
-        return response != null && response.getKontaktinfo() != null && response.getKontaktinfo().get(fnr) != null;
-    }
-
-    private boolean isEpostOrSmsValid(DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo) {
-        return kontaktinfo.getEpostadresse() != null || kontaktinfo.getMobiltelefonnummer() != null;
     }
 
     private HttpHeaders createHeaders() {
