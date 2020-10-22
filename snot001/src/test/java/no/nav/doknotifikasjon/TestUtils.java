@@ -1,0 +1,53 @@
+package no.nav.doknotifikasjon;
+
+import no.nav.doknotifikasjon.kodeverk.Kanal;
+import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.model.Notifikasjon;
+import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+
+public final class TestUtils {
+
+    public TestUtils() {
+    }
+
+    public static final String BESTILLINGS_ID = "1234-5678-9101";
+    public static final String BESTILLER_ID = "teamdokumenthandtering";
+    public static final String BESTILLER_ID_2 = "teamsaf";
+    private static final String KONTAKTINFO = "Hallohallo";
+    private static final String TITTEL = "Melding";
+    private static final String TEKST = "Lang tekst";
+    private static final String OPPRETTET_AV = "srvdokument";
+    public static final int ANTALL_RENOTIFIKASJONER = 3;
+    private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
+    private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
+    private static final LocalDate NESTE_RENOTIFIKASJONS_DATO = LocalDate.parse("2020-10-01");
+
+    public static Notifikasjon createNotifikasjon() {
+        return Notifikasjon.builder()
+                .bestillingsId(BESTILLINGS_ID)
+                .bestillerId(BESTILLER_ID)
+                .status(Status.OVERSENDT)
+                .notifikasjonDistribusjon(Collections.emptySet())
+                .antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
+                .nesteRenotifikasjonDato(NESTE_RENOTIFIKASJONS_DATO)
+                .build();
+    }
+
+    public static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjonAndKanal(Notifikasjon notifikasjon, Kanal kanal) {
+        return NotifikasjonDistribusjon.builder()
+                .notifikasjon(notifikasjon)
+                .status(Status.OVERSENDT)
+                .kanal(kanal)
+                .kontaktInfo(KONTAKTINFO)
+                .tittel(TITTEL)
+                .tekst(TEKST)
+                .sendtDato(SENDT_DATO)
+                .opprettetAv(OPPRETTET_AV)
+                .opprettetDato(OPPRETTET_DATO)
+                .build();
+    }
+}

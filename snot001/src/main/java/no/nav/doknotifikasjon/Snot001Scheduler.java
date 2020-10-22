@@ -14,11 +14,12 @@ public class Snot001Scheduler {
         this.snot001Service = snot001Service;
     }
 
-    @Scheduled
+    @Scheduled(cron = "30 8 * * *")
     public void scheduledJob() {
         try {
             snot001Service.resendNotifikasjoner();
         } catch (Exception exception) {
+            log.error("Feil i SNOT001: ", exception);
         }
     }
 
