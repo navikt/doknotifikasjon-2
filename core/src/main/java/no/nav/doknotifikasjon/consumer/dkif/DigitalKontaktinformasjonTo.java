@@ -14,21 +14,20 @@ import java.util.Map;
 @AllArgsConstructor
 public class DigitalKontaktinformasjonTo {
 
-    private Map<String, Melding> feil;
-    private Map<String, DigitalKontaktinfo> kontaktinfo;
+	private Map<String, Melding> feil;
+	private Map<String, DigitalKontaktinfo> kontaktinfo;
 
-    @Data
-    private static class Melding {
-        private String melding;
-    }
+	@Data
+	public static class Melding {
+		private String melding;
+	}
 
-    @Data
-    @Builder
-    public static class DigitalKontaktinfo {
-        private String epostadresse;
-        private boolean kanVarsles;
-        private String mobiltelefonnummer;
-        private boolean reservert;
-    }
-
+	@Data
+	@Builder
+	public static class DigitalKontaktinfo {
+		private String epostadresse;
+		private boolean kanVarsles;
+		private String mobiltelefonnummer;
+		private boolean reservert;
+	}
 }

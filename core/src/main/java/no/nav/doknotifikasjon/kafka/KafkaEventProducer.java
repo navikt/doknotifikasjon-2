@@ -23,9 +23,21 @@ public class KafkaEventProducer {
     private static String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
     private static String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
 
-    @Autowired
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") // todo look at this one
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    KafkaEventProducer(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    public void publish(String topic, Object event) {
+        this.publish(
+                topic,
+                UUID.randomUUID().toString(),
+                event,
+                System.currentTimeMillis()
+        );
+    }
+
 
     public void publish(String topic, Object event, Long timestamp) {
         this.publish(
