@@ -1,11 +1,11 @@
-package no.nav.doknotifikasjon.KafkaProducer;
+package no.nav.doknotifikasjon.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
 
 @Slf4j
 @Component

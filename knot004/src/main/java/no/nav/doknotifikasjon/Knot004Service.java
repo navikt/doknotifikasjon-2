@@ -1,12 +1,12 @@
 package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
-import no.nav.doknotifikasjon.utils.KafkaTopics;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

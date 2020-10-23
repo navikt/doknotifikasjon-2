@@ -1,17 +1,17 @@
 package no.nav.doknotifikasjon.consumer.test;
 
-import no.nav.doknotifikasjon.KafkaProducer.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.consumer.DoknotifikasjonValidator;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
+import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static no.nav.doknotifikasjon.KafkaProducer.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjon;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidAntallRenotifikasjoner;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 

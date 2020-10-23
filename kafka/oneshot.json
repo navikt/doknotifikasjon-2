@@ -17,7 +17,6 @@
       ],
       "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-epost",
       "configEntries": {
@@ -35,7 +34,6 @@
       ],
       "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-sms",
       "configEntries": {
@@ -53,9 +51,25 @@
       ],
       "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-status",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 10
+    },
+    {
+      "topicName": "privat-dok-notifikasjon-stopp",
       "configEntries": {
         "retention.ms": -1
       },
