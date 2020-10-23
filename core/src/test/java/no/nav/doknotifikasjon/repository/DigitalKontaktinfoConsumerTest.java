@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureWireMock(port = 0)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext()
-@ActiveProfiles({"itest", "itestWiremock"})
+@ActiveProfiles({"itest", "itestWeb"})
 class DigitalKontaktinfoConsumerTest {
 
     private static final String FNR = "12345678911";
@@ -87,7 +87,7 @@ class DigitalKontaktinfoConsumerTest {
     }
 
     private void stubSecurityToken() {
-        stubFor(get("/sts?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+        stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(HttpStatus.OK.value())
                 .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .withBodyFile("sts-response.json")));
     }

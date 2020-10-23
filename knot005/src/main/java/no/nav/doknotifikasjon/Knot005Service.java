@@ -1,9 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
-import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
@@ -11,21 +9,26 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_STANSET;
+
 @Slf4j
 @Component
 public class Knot005Service {
 
     private final NotifikasjonRepository notifikasjonRepository;
     private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
+    private final DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator;
 
     public Knot005Service(NotifikasjonRepository notifikasjonRepository,
-                          KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer) {
+                          KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer,
+                          DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator) {
         this.notifikasjonRepository = notifikasjonRepository;
         this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
+        this.doknotifikasjonStoppValidadator = doknotifikasjonStoppValidadator;
     }
 
     public void shouldStopResending(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
-        validateInput(doknotifikasjonStoppTo);
+        doknotifikasjonStoppValidadator.validateInput(doknotifikasjonStoppTo);
 
         Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjonStoppTo.getBestillingsId());
 
@@ -44,7 +47,7 @@ public class Knot005Service {
     private void publishNewDoknotifikasjonStatus(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
         kafkaDoknotifikasjonStatusProducer.publishDoknotikfikasjonStatusFerdigstilt(
                 doknotifikasjonStoppTo.getBestillingsId(),
-                doknotifikasjonStoppTo.getBestillerId(), "renotifikasjon er stanset", null);
+                doknotifikasjonStoppTo.getBestillerId(), RENOTIFIKASJON_STANSET, null);
     }
 
     private void updateNotifikasjon(Notifikasjon notifikasjon, DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
@@ -52,17 +55,5 @@ public class Knot005Service {
         notifikasjon.setNesteRenotifikasjonDato(null);
         notifikasjon.setEndretAv(doknotifikasjonStoppTo.getBestillerId());
         notifikasjon.setEndretDato(LocalDateTime.now());
-    }
-
-    private void validateInput(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
-        validateField(doknotifikasjonStoppTo.getBestillerId(), "bestillerId");
-        validateField(doknotifikasjonStoppTo.getBestillingsId(), "bestillingsId");
-    }
-
-    private void validateField(String field, String fieldName) {
-        if (field == null || field.trim().isEmpty()) {
-            throw new DoknotifikasjonValidationException(String.format("Valideringsfeil i knot005: Hendelse på kafka-topic " +
-                    "%s har tom verdi for %s.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP, fieldName));
-        }
     }
 }
