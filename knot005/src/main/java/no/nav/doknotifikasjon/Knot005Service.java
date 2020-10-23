@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_STANSET;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_RENOTIFIKASJON_STANSET;
 
 @Slf4j
 @Component
@@ -47,7 +47,7 @@ public class Knot005Service {
     private void publishNewDoknotifikasjonStatus(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
         kafkaDoknotifikasjonStatusProducer.publishDoknotikfikasjonStatusFerdigstilt(
                 doknotifikasjonStoppTo.getBestillingsId(),
-                doknotifikasjonStoppTo.getBestillerId(), RENOTIFIKASJON_STANSET, null);
+                doknotifikasjonStoppTo.getBestillerId(), FERDIGSTILT_RENOTIFIKASJON_STANSET, null);
     }
 
     private void updateNotifikasjon(Notifikasjon notifikasjon, DoknotifikasjonStoppTo doknotifikasjonStoppTo) {

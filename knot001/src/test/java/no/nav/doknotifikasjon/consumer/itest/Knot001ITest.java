@@ -65,7 +65,7 @@ public class Knot001ITest extends EmbededKafkaBroker {
     }
 
     @Test
-    public void knoot001ConsumerOnlySaveEpostWhenSmsAsPreferedKanalAndOnlyEpostIsValidKontaktInfo() {
+    public void knot001ConsumerOnlySaveEpostWhenSmsAsPreferedKanalAndOnlyEpostIsValidKontaktInfo() {
         Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
 
         this.stubGetKontaktInfoWithoutSmsInKontaktInfo();
@@ -104,7 +104,7 @@ public class Knot001ITest extends EmbededKafkaBroker {
 
 
     @Test
-    public void knoot001ConsumerShouldRunSmoothlyWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
+    public void knot001ConsumerShouldRunSmoothlyWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
         Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
         this.stubGetKontaktInfo();
 
@@ -141,7 +141,7 @@ public class Knot001ITest extends EmbededKafkaBroker {
     }
 
     @Test
-    public void knoot001ConsumerShouldReceiveAndKafkaEventProcessWhenReceivingOneKafkaEvent() {
+    public void knot001ConsumerShouldReceiveAndKafkaEventProcessWhenReceivingOneKafkaEvent() {
         Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
         this.stubGetKontaktInfo();
 
