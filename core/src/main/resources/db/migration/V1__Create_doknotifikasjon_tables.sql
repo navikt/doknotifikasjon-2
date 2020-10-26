@@ -32,7 +32,7 @@ values ('OPPRETTET'),
 create table T_NOTIFIKASJON
 (
     ID                        integer            not null,
-    BESTILLING_ID             varchar(40) unique not null,
+    BESTILLINGS_ID            varchar(40) unique not null,
     BESTILLER_ID              varchar(40)        not null,
     MOTTAKER_ID               varchar(40)        not null,
     K_MOTTAKER_ID_TYPE        varchar(20)        not null

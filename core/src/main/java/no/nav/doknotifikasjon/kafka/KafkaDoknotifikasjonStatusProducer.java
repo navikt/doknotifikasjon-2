@@ -1,19 +1,21 @@
-package no.nav.doknotifikasjon.KafkaProducer;
+package no.nav.doknotifikasjon.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.utils.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
 
 @Slf4j
 @Component
 public class KafkaDoknotifikasjonStatusProducer {
 
-    @Autowired
-    KafkaEventProducer producer;
+    private final KafkaEventProducer producer;
+
+    KafkaDoknotifikasjonStatusProducer(KafkaEventProducer producer) {
+        this.producer = producer;
+    }
 
     public void publishDoknotikfikasjonStatusOversendt(String bestillingsId, String bestillerId,
                                                        String melding, Long distribusjonId)
@@ -45,7 +47,7 @@ public class KafkaDoknotifikasjonStatusProducer {
         );
     }
 
-    private void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
+    public void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
                                               Status status, String melding, Long distribusjonId)
     {
         DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
