@@ -22,7 +22,7 @@ import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifik
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.NOTIFIKASJONDISTRIBUSJONID;
 
 class Knot002ITest extends EmbededKafkaBroker {
-
+/*
 	private static WebServiceTemplate mockWebServiceTemplate = Mockito.mock(WebServiceTemplate.class);
 
 	@Autowired
@@ -110,5 +110,6 @@ class Knot002ITest extends EmbededKafkaBroker {
 			return new NotifikasjonDistribusjonConsumer(notifikasjonEntityMapper, KafkaEventProducer, altinnConsumer(marshaller()));
 		}
 	}
-	*/
+
+*/
 }
