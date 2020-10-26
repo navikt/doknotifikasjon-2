@@ -43,7 +43,7 @@ public class NotifikasjonDistribusjonConsumer {
         try{
             doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjon(notifikasjonDistribusjonId);
         } catch(Exception exception) {
-            log.error("Kunne ikke hente notifikasjon", exception);
+            log.error("NotifikasjonDistribusjonConsumer kunne ikke hente notifikasjon", exception);
             return;
         }
 
@@ -63,13 +63,13 @@ public class NotifikasjonDistribusjonConsumer {
                     doknotifikasjonSms.tekst
             );
 
-            log.info(FERDIGSTILLT + " notifikasjonDistribusjonId=${}", notifikasjonDistribusjonId);
+            log.info("NotifikasjonDistribusjonConsumer" + FERDIGSTILLT + " notifikasjonDistribusjonId=${}", notifikasjonDistribusjonId);
         } catch (SoapFaultClientException soapFault) {
-            log.error("Soapfault: fault reason=${}",soapFault.getFaultStringOrReason(), soapFault);
+            log.error("NotifikasjonDistribusjonConsumer soapfault: fault reason=${}",soapFault.getFaultStringOrReason(), soapFault);
             publishStatus(doknotifikasjonSms, Status.FEILET, soapFault.getFaultStringOrReason());
             return;
         } catch (Exception altinnException) {
-            log.error("annen exception:", altinnException);
+            log.error("NotifikasjonDistribusjonConsumer annen exception:", altinnException);
             publishStatus(doknotifikasjonSms, Status.FEILET, altinnException.getMessage());
             return;
         }

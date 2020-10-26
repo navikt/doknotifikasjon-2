@@ -34,7 +34,6 @@ public class KafkaEventConsumer {
     public void onMessage(final ConsumerRecord<String, Object> record) {
         try {
             DoknotifikasjonSms doknotifikasjonSms = objectMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);
-
             notifikasjonDistribusjonConsumer.konsumerDistribusjonId(doknotifikasjonSms.getNotifikasjonDistribusjonId());
         } catch (JsonMappingException exception) {
             log.error("knot002 klarte ikke å mappe melding fra kø til objekt", exception);
