@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.knot002.consumer;
 
-import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnConsumer;
@@ -11,13 +10,12 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import no.nav.doknotifikasjon.utils.KafkaTopics;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
 
 @Slf4j
 @Component
-public class NotifikasjonDistribusjonIdConsumer {
+public class NotifikasjonDistribusjonConsumer {
 
     private final NotifikasjonEntityMapper notifikasjonEntityMapper;
     private final KafkaEventProducer kafkaEventProducer;
@@ -26,8 +24,9 @@ public class NotifikasjonDistribusjonIdConsumer {
     private final String FERDIGSTILLT = "notifikasjon sendt via sms";
     private final String UGYLDIG_STATUS = "distribusjon til sms feilet: ugyldig status";
     private final String UGYLDIG_KANAL = "distribusjon til sms feilet: ugyldig kanal";
+    private final String IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
 
-    NotifikasjonDistribusjonIdConsumer(
+    NotifikasjonDistribusjonConsumer(
             NotifikasjonEntityMapper notifikasjonEntityMapper,
             KafkaEventProducer kafkaEventProducer,
             AltinnConsumer altinnConsumer
@@ -38,14 +37,15 @@ public class NotifikasjonDistribusjonIdConsumer {
     }
 
     public void konsumerDistribusjonId(String notifikasjonDistribusjonId){
-        Either<Throwable, DoknotifikasjonSms> either = notifikasjonEntityMapper.mapNotifikasjon(notifikasjonDistribusjonId);
 
-        if(either.isLeft()){
-          log.error("logg error og avslutt", either.getLeft());
-          return;
+        DoknotifikasjonSms doknotifikasjonSms;
+
+        try{
+            doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjon(notifikasjonDistribusjonId);
+        } catch(Exception exception) {
+            log.error("Kunne ikke hente notifikasjon", exception);
+            return;
         }
-
-        DoknotifikasjonSms doknotifikasjonSms = either.get();
 
         if(!validateDistribusjonStatusOgKanal(doknotifikasjonSms)){
             String melding = doknotifikasjonSms.distribusjonStatus == Status.OPPRETTET
@@ -56,24 +56,34 @@ public class NotifikasjonDistribusjonIdConsumer {
             return;
         }
 
-        Optional<String> altinnError = altinnConsumer.sendStandaloneNotificationV3(
-                Kanal.SMS.name(),
-                doknotifikasjonSms.kontakt,
-                doknotifikasjonSms.tekst
-        );
+        try{
+            altinnConsumer.sendStandaloneNotificationV3(
+                    Kanal.SMS,
+                    doknotifikasjonSms.kontakt,
+                    doknotifikasjonSms.tekst
+            );
 
-        if(altinnError.isPresent()){
-            publishStatus(doknotifikasjonSms, Status.FEILET, altinnError.get());
+            log.info(FERDIGSTILLT + " notifikasjonDistribusjonId=${}", notifikasjonDistribusjonId);
+        } catch (SoapFaultClientException soapFault) {
+            log.error("Soapfault: fault reason=${}",soapFault.getFaultStringOrReason(), soapFault);
+            publishStatus(doknotifikasjonSms, Status.FEILET, soapFault.getFaultStringOrReason());
+            return;
+        } catch (Exception altinnException) {
+            log.error("annen exception:", altinnException);
+            publishStatus(doknotifikasjonSms, Status.FEILET, altinnException.getMessage());
             return;
         }
 
-        Optional<Throwable> updateError = notifikasjonEntityMapper.updateEntity(
-                notifikasjonDistribusjonId,
-                doknotifikasjonSms.bestillerId
-        );
 
-        if(updateError.isPresent()){
-            //TODO error handling
+        try{
+            notifikasjonEntityMapper.updateEntity(
+                    notifikasjonDistribusjonId,
+                    doknotifikasjonSms.bestillerId
+            );
+        } catch(Exception exception) {
+            log.error(IKKE_OPPDATERT, exception);
+            // TODO feilhåndtering?
+            return;
         }
 
         publishStatus(doknotifikasjonSms, Status.FERDIGSTILT, FERDIGSTILLT);
@@ -91,10 +101,10 @@ public class NotifikasjonDistribusjonIdConsumer {
                 doknotifikasjonSms.notifikasjonDistribusjonId,
                 DoknotifikasjonStatus.newBuilder()
                         .setBestillerId(doknotifikasjonSms.bestillerId)
-                        .setBestillingsId(doknotifikasjonSms.bestillingId)
+                        .setBestillingsId(doknotifikasjonSms.bestillingsId)
                         .setStatus(status.name())
                         .setMelding(melding)
-                        .setDistribusjonId(Long.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId(), 10))
+                        .setDistribusjonId(Long.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()))
                         .build(),
                 System.currentTimeMillis()
         );

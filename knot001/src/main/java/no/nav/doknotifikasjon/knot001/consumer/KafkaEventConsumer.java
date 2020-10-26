@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.knot002.consumer;
+package no.nav.doknotifikasjon.knot001.consumer;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -6,6 +6,9 @@ import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
+import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -18,44 +21,69 @@ import java.util.Optional;
 @Slf4j
 @Component
 public class NotifikasjonEntityMapper {
-    private final JpaRepository<NotifikasjonDistribusjon, Integer> repository;
-    NotifikasjonEntityMapper(JpaRepository<NotifikasjonDistribusjon, Integer> repository){
+    private final NotifikasjonDistribusjonRepository repository;
+    NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository){
         this.repository = repository;
     }
 
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public Either<Throwable, DoknotifikasjonSms> mapNotifikasjon(String notifikasjonDistribusjonId){
-        try{
-            Integer id = Integer.valueOf(notifikasjonDistribusjonId, 10);
+    public DoknotifikasjonSms mapNotifikasjon(String notifikasjonDistribusjonId) {
+        try {
+            Integer id = Integer.valueOf(notifikasjonDistribusjonId);
             NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(id).orElseThrow();
             Notifikasjon notifikasjonEntity = notifikasjonDistribusjonEntity.getNotifikasjonId();
 
-            return Either.right(DoknotifikasjonSms
+            return DoknotifikasjonSms
                     .builder()
                     .notifikasjonDistribusjonId(notifikasjonDistribusjonId)
                     .bestillerId(notifikasjonEntity.getBestillerId())
-                    .bestillingId(notifikasjonEntity.getBestillingId())
+                    .bestillingsId(notifikasjonEntity.getBestillingId())
                     .distribusjonStatus(notifikasjonDistribusjonEntity.getStatus())
                     .kanal(notifikasjonDistribusjonEntity.getKanal())
                     .kontakt(notifikasjonDistribusjonEntity.getKontaktInfo())
                     .tekst(notifikasjonDistribusjonEntity.getTekst())
-                    .build());
-        } catch(Exception e){
-            log.error("foo");
-            throw e;
+                    .build();
+        } catch (TransientDataAccessException exception){
+            log.warn(
+                    "knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=${}",
+                    notifikasjonDistribusjonId,
+                    exception
+            );
+            throw exception;
+        } catch(DataAccessException exception){
+            log.warn(
+                    "knot002 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId=${}",
+                    notifikasjonDistribusjonId,
+                    exception
+            );
+            throw exception;
+        } catch (Exception exception) {
+            log.warn(
+                    "knot002 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId=${}",
+                    notifikasjonDistribusjonId,
+                    exception
+            );
+            throw exception;
         }
     }
-
+/*
     @Recover
-    public Either<Throwable, DoknotifikasjonSms> recoverForMapNotifikasjon(Exception e, String notifikasjonDistribusjonId){
-        return Either.left(e);
+    public DoknotifikasjonSms recoverForMapNotifikasjon(Exception exception, String notifikasjonDistribusjonId) throws Exception {
+        log.warn(
+                "knot002 mapNotifikasjon retry feilet 3 ganger notifikasjonDistribusjonId=${}",
+                notifikasjonDistribusjonId,
+                exception
+        );
+        throw exception;
     }
 
+ */
+
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public Optional<Throwable> updateEntity(String notifikasjonDistribusjonId, String bestillerId) {
+    public void updateEntity(String notifikasjonDistribusjonId, String bestillerId) {
 
         try {
-            Integer id = Integer.valueOf(notifikasjonDistribusjonId, 10);
+            Integer id = Integer.valueOf(notifikasjonDistribusjonId);
 
             NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(id).orElseThrow();
 
@@ -67,20 +95,43 @@ public class NotifikasjonEntityMapper {
             notifikasjonDistribusjonEntity.setSendtDato(now);
             notifikasjonDistribusjonEntity.setEndretDato(now);
 
-            repository.save(notifikasjonDistribusjonEntity);
-
-            return Optional.empty();
-
-        } catch(Exception e){
-            log.error("foo");
-            throw e;
+        } catch (TransientDataAccessException exception){
+            log.warn(
+                    "knot002 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=${} bestillerId=${}",
+                    notifikasjonDistribusjonId,
+                    bestillerId,
+                    exception
+            );
+            throw exception;
+        } catch(DataAccessException exception){
+            log.warn(
+                    "knot002 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId=${} bestillerId=${}",
+                    notifikasjonDistribusjonId,
+                    bestillerId,
+                    exception
+            );
+            throw exception;
+        } catch (Exception exception) {
+            log.warn(
+                    "knot002 updateEntity feilet med ukjent feil notifikasjonDistribusjonId=${} bestillerId=${}",
+                    notifikasjonDistribusjonId,
+                    bestillerId,
+                    exception
+            );
+            throw exception;
         }
     }
-
+/*
     @Recover
-    public Optional<Throwable> recoverForUpdateEntity(Exception e, String notifikasjonDistribusjonId, String bestillerId){
-        log.error("feilet update entity", e);
-        return Optional.of(e);
+    public void recoverForUpdateEntity(Exception exception, String notifikasjonDistribusjonId, String bestillerId){
+        log.warn(
+                "knot002 updateEntity retry feilet 3 ganger notifikasjonDistribusjonId=${} bestillerId=${}",
+                notifikasjonDistribusjonId,
+                bestillerId,
+                exception
+        );
     }
+
+ */
 
 }
