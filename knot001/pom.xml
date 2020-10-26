@@ -11,7 +11,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>knot001</artifactId>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>no.nav.doknotifikasjon</groupId>
