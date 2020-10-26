@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.knot002.mapper;
 
-import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -22,7 +21,7 @@ import java.util.Optional;
 @Component
 public class NotifikasjonEntityMapper {
     private final NotifikasjonDistribusjonRepository repository;
-    NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository){
+    public NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository){
         this.repository = repository;
     }
 
@@ -31,13 +30,13 @@ public class NotifikasjonEntityMapper {
         try {
             Integer id = Integer.valueOf(notifikasjonDistribusjonId);
             NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(id).orElseThrow();
-            Notifikasjon notifikasjonEntity = notifikasjonDistribusjonEntity.getNotifikasjonId();
+            Notifikasjon notifikasjonEntity = notifikasjonDistribusjonEntity.getNotifikasjon();
 
             return DoknotifikasjonSms
                     .builder()
                     .notifikasjonDistribusjonId(notifikasjonDistribusjonId)
                     .bestillerId(notifikasjonEntity.getBestillerId())
-                    .bestillingsId(notifikasjonEntity.getBestillingId())
+                    .bestillingsId(notifikasjonEntity.getBestillingsId())
                     .distribusjonStatus(notifikasjonDistribusjonEntity.getStatus())
                     .kanal(notifikasjonDistribusjonEntity.getKanal())
                     .kontakt(notifikasjonDistribusjonEntity.getKontaktInfo())

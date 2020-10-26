@@ -3,8 +3,10 @@ package no.nav.doknotifikasjon.consumer.altinn;
 import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3;
 import org.mockito.ArgumentMatcher;
 
-public class RequestMatcher implements ArgumentMatcher<SendStandaloneNotificationBasicV3> {
-
+public class RequestMatcher
+        //implements ArgumentMatcher<SendStandaloneNotificationBasicV3>
+{
+/*
     private final SendStandaloneNotificationBasicV3 objectToCompareWith;
 
     RequestMatcher(SendStandaloneNotificationBasicV3 objectToCompareWith) {
@@ -21,4 +23,6 @@ public class RequestMatcher implements ArgumentMatcher<SendStandaloneNotificatio
         }
         return true;
     }
+
+ */
 }

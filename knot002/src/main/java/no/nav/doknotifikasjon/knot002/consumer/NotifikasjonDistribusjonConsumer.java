@@ -1,14 +1,14 @@
 package no.nav.doknotifikasjon.knot002.consumer;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.KafkaProducer.KafkaEventProducer;
+import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnConsumer;
 import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.knot002.mapper.NotifikasjonEntityMapper;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
-import no.nav.doknotifikasjon.utils.KafkaTopics;
+import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
@@ -26,7 +26,7 @@ public class NotifikasjonDistribusjonConsumer {
     private final String UGYLDIG_KANAL = "distribusjon til sms feilet: ugyldig kanal";
     private final String IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
 
-    NotifikasjonDistribusjonConsumer(
+    public NotifikasjonDistribusjonConsumer(
             NotifikasjonEntityMapper notifikasjonEntityMapper,
             KafkaEventProducer kafkaEventProducer,
             AltinnConsumer altinnConsumer

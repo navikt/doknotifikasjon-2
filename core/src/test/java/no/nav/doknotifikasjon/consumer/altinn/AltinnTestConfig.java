@@ -13,9 +13,9 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
-@Configuration
+//@Configuration
 public class AltinnTestConfig {
-
+/*
     private static final String USERNAME = "${doknotifikasjon_altinn_username}";
     private static final String PASSWORD = "${doknotifikasjon_altinn_password}";
     private static final String ALTINNURL = "${doknotifikasjon_altinn_url}";
@@ -54,4 +54,6 @@ public class AltinnTestConfig {
         return request;
     }
 
+
+ */
 }
