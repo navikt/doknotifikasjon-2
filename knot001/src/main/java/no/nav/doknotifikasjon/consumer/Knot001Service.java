@@ -5,6 +5,7 @@ import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
+import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
@@ -24,7 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.*;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.*;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+
 
 @Slf4j
 @Component
@@ -68,19 +72,19 @@ public class Knot001Service {
             log.info("Henter kontaktinfo fra DKIF for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
             digitalKontaktinformasjon = kontaktinfoConsumer.hentDigitalKontaktinfo(fnrTrimmed);
         } catch (DigitalKontaktinformasjonTechnicalException | DigitalKontaktinformasjonFunctionalException e) {
-            statusProducer.publishDoknotikfikasjonStatusFeilet(
+            statusProducer.publishDoknotikfikasjonStatusInfo(
                     doknotifikasjon.getBestillingsId(),
                     doknotifikasjon.getBestillerId(),
-                    FEILET_CANT_CONNECT_TO_DKIF,
+                    INFO_CANT_CONNECT_TO_DKIF,
                     null
             );
-            log.warn("Problemer med å hente kontaktinfo med bestillingsId={}. Feilmelding: {}", doknotifikasjon.getBestillingsId(), e.getMessage());
+            log.warn("Problemer med å hente kontaktinfo med bestillingsId={}. Feilmelding: {}", doknotifikasjon.getBestillingsId() , e.getMessage());
             throw e;
         }
 
         DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinformasjon.getKontaktinfo() != null ? digitalKontaktinformasjon.getKontaktinfo().get(fnrTrimmed) : null;
 
-        if (kontaktinfo == null) {
+        if(kontaktinfo == null) {
             if (digitalKontaktinformasjon.getFeil() != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed) != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding() != null) {
                 publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding());
             }
@@ -104,7 +108,7 @@ public class Knot001Service {
                 message,
                 null
         );
-        throw new DigitalKontaktinformasjonFunctionalException(String.format("Problemer med å hente kontaktinfo fra DKIF med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
+        throw new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra DKIF med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
     }
 
     public void createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
@@ -113,10 +117,10 @@ public class Knot001Service {
         boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
 
         if (notifikasjonRepository.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
-            statusProducer.publishDoknotikfikasjonStatusFeilet(
+            statusProducer.publishDoknotikfikasjonStatusInfo(
                     doknotifikasjon.getBestillingsId(),
                     doknotifikasjon.getBestillerId(),
-                    FEILET_ALREADY_EXIST_IN_DATABASE,
+                    INFO_ALREADY_EXIST_IN_DATABASE,
                     null
             );
             throw new DuplicateNotifikasjonInDBException(String.format("Notifikasjon med bestillingsId=%s finnes allerede i notifikasjonsdatabasen. Avslutter behandlingen.",

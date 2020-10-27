@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
+import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -46,6 +47,8 @@ public class Knot001Consumer {
             log.error("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
         } catch (DuplicateNotifikasjonInDBException e) {
             log.error("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
+        } catch (KontaktInfoValidationFunctionalException e) {
+            log.error("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
         }
     }
 }
