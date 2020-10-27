@@ -35,6 +35,11 @@ public class KafkaDoknotifikasjonStatusProducer {
         this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.FERDIGSTILT, melding, distribusjonId);
     }
 
+    public void publishDoknotikfikasjonStatusInfo(String bestillingsId, String bestillerId,
+                                                  String melding, Long distribusjonId) {
+        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.INFO, melding, distribusjonId);
+    }
+
     public void publishDoknotikfikasjonStatusFeilet(String bestillingsId, String bestillerId,
                                                     String melding, Long distribusjonId)
     {
