@@ -17,9 +17,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -95,7 +97,7 @@ public class NotifikasjonRepositoryTest {
         assertEquals(1L, notifikasjonRepository.count());
         assertEquals(1L, notifikasjonDistribusjonRepository.count());
 
-        NotifikasjonDistribusjon notfikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(1).get();
+        NotifikasjonDistribusjon notfikasjonDistribusjon = notifikasjonDistribusjonRepository.findAllByNotifikasjonIn(Collections.singletonList(notifikasjon)).get(0);
         assertEquals(Status.FERDIGSTILT, notfikasjonDistribusjon.getStatus());
         assertEquals(Kanal.SMS, notfikasjonDistribusjon.getKanal());
         assertEquals(KONTAKTINFO, notfikasjonDistribusjon.getKontaktInfo());
@@ -109,7 +111,7 @@ public class NotifikasjonRepositoryTest {
     }
 
     @Test
-    public void shouldGetNotifikasjonerForSnot001(){
+    public void shouldGetNotifikasjonerForSnot001() {
         List<Notifikasjon> notifikasjonList = new ArrayList<>();
         notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.FEILET, 2, LocalDate.now().minusDays(1)));
         notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 2, LocalDate.now().minusDays(1)));
@@ -129,7 +131,7 @@ public class NotifikasjonRepositoryTest {
     }
 
     @Test
-    public void shouldGetNotifikasjonDistribusjonForSnot001(){
+    public void shouldGetNotifikasjonDistribusjonForSnot001() {
         Notifikasjon notifikasjon_1 = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 3, LocalDate.now().minusDays(1));
         Notifikasjon notifikasjon_2 = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 3, LocalDate.now().minusDays(1));
         notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon_1));

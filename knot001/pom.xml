@@ -85,7 +85,16 @@
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.github.navikt</groupId>
+            <artifactId>doknotifikasjon-schemas</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.navikt</groupId>
+            <artifactId>doknotifikasjon-schemas</artifactId>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

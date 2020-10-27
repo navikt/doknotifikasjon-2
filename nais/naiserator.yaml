@@ -18,6 +18,7 @@ spec:
     - name: MOUNT_PATH
       value: {{ MOUNT_PATH }}
   image: {{ image }}
+  leaderElection: true
   liveness:
     path: /isAlive
     port: 8080

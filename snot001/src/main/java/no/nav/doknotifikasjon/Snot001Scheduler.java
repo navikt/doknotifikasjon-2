@@ -1,23 +1,30 @@
 package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.leaderelection.LeaderElection;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
 public class Snot001Scheduler {
 
     private final Snot001Service snot001Service;
+    private final LeaderElection leaderElection;
 
-    public Snot001Scheduler(Snot001Service snot001Service) {
+    public Snot001Scheduler(Snot001Service snot001Service, LeaderElection leaderElection) {
         this.snot001Service = snot001Service;
+        this.leaderElection = leaderElection;
     }
 
-    @Scheduled(cron = "30 8 * * *")
+    @Transactional
+    @Scheduled(cron = "0 30 8 * * *")
     public void scheduledJob() {
         try {
-            snot001Service.resendNotifikasjoner();
+            if (leaderElection.isLeader()) {
+                snot001Service.resendNotifikasjoner();
+            }
         } catch (Exception exception) {
             log.error("Feil i SNOT001: ", exception);
         }
