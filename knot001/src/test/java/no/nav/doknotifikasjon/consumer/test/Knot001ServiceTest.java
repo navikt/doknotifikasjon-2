@@ -4,8 +4,8 @@ import no.nav.doknotifikasjon.consumer.DoknotifikasjonTO;
 import no.nav.doknotifikasjon.consumer.Knot001Service;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
-import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
+import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
@@ -16,8 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static no.nav.doknotifikasjon.consumer.TestUtils.*;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.*;
+import static no.nav.doknotifikasjon.consumer.TestUtils.FODSELSNUMMER;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfo;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfoWithErrorMessage;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createEmptyDigitalKontaktinformasjonInfo;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createInvalidKontaktInfo;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createInvalidKontaktInfoWithoutKontaktInfo;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createValidKontaktInfo;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createValidKontaktInfoReserved;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_CANT_CONNECT_TO_DKIF;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -66,8 +78,8 @@ class Knot001ServiceTest {
         DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
         assertThrows(DigitalKontaktinformasjonTechnicalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
-        verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_CANT_CONNECT_TO_DKIF, null
+        verify(statusProducer).publishDoknotikfikasjonStatusInfo(
+                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), INFO_CANT_CONNECT_TO_DKIF, null
         );
     }
 
@@ -76,7 +88,7 @@ class Knot001ServiceTest {
         when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
                 .thenReturn(createEmptyDigitalKontaktinformasjonInfo());
         DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-        assertThrows(DigitalKontaktinformasjonFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+        assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
         verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
                 doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET, null
@@ -90,7 +102,7 @@ class Knot001ServiceTest {
 
         DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
 
-        assertThrows(DigitalKontaktinformasjonFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+        assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
         verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
                 doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "Ingen kontaktinformasjon er registrert på personen", null
@@ -103,7 +115,7 @@ class Knot001ServiceTest {
                 .thenReturn(createValidKontaktInfoReserved());
 
         DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-        assertThrows(DigitalKontaktinformasjonFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+        assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
         verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
                 doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, null
@@ -116,7 +128,7 @@ class Knot001ServiceTest {
                 .thenReturn(createInvalidKontaktInfo());
 
         DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-        assertThrows(DigitalKontaktinformasjonFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+        assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
         verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
                 doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION, null
@@ -129,7 +141,7 @@ class Knot001ServiceTest {
                 .thenReturn(createInvalidKontaktInfoWithoutKontaktInfo());
 
         DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-        assertThrows(DigitalKontaktinformasjonFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+        assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
         verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
                 doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION, null
@@ -146,8 +158,8 @@ class Knot001ServiceTest {
                 knot001Service.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, createValidKontaktInfo())
         );
 
-        verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_ALREADY_EXIST_IN_DATABASE, null
+        verify(statusProducer).publishDoknotikfikasjonStatusInfo(
+                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), INFO_ALREADY_EXIST_IN_DATABASE, null
         );
     }
 }
