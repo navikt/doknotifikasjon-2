@@ -17,7 +17,6 @@
       ],
       "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-epost",
       "configEntries": {
@@ -33,9 +32,8 @@
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-sms",
       "configEntries": {
@@ -51,9 +49,8 @@
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-status",
       "configEntries": {
@@ -69,7 +66,24 @@
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 10
+    },
+    {
+      "topicName": "privat-dok-notifikasjon-stopp",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 10
     }
   ]
 }

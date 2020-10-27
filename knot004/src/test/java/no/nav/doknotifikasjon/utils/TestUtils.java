@@ -21,8 +21,6 @@ public final class TestUtils {
     private static final String TITTEL = "Melding";
     private static final String TEKST = "Lang tekst";
     private static final String OPPRETTET_AV = "srvdokument";
-    public static final String STATUS_OPPRETTET_STRING = Status.OPPRETTET.toString();
-    public static final String STATUS_FERDIGSTILT_STRING = Status.FERDIGSTILT.toString();
     public static final int ANTALL_RENOTIFIKASJONER = 3;
     public static final Long DISTRIBUSJON_ID = 987654321L;
     private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");

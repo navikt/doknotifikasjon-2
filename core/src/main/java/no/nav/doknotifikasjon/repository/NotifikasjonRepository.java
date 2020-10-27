@@ -12,5 +12,7 @@ import java.util.List;
 public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Integer> {
     Notifikasjon findByBestillingsId(String bestillingsId);
 
+    boolean existsByBestillingsId(String bestillingsId);
+
     List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato);
 }

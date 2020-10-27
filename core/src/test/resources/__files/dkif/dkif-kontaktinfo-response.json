@@ -1,0 +1,10 @@
+{
+  "kontaktinfo": {
+    "12345678911": {
+      "kanVarsles": true,
+      "reservert": false,
+      "epostadresse": "epost",
+      "mobiltelefonnummer": "+4799999999"
+    }
+  }
+}

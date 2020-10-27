@@ -1,22 +1,24 @@
 package no.nav.doknotifikasjon.consumer.dkif;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Value;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DigitalKontaktinformasjonTo {
 
-	private Map<String, Feil> feil;
+	private Map<String, Melding> feil;
 	private Map<String, DigitalKontaktinfo> kontaktinfo;
 
 	@Data
-	@Builder
-	private static class Feil {
+	public static class Melding {
 		private String melding;
 	}
 
@@ -28,5 +30,4 @@ public class DigitalKontaktinformasjonTo {
 		private String mobiltelefonnummer;
 		private boolean reservert;
 	}
-
 }

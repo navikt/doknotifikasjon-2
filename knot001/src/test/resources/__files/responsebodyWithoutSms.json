@@ -1,0 +1,10 @@
+{
+  "kontaktinfo": {
+    "123456789012341": {
+      "epostadresse": "epost",
+      "kanVarsles": true,
+      "mobiltelefonnummer": null,
+      "reservert": false
+    }
+  }
+}

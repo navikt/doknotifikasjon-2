@@ -1,0 +1,15 @@
+{
+  "feil": {
+    "12345678911": {
+      "melding": null
+    }
+  },
+  "kontaktinfo": {
+    "12345678911": {
+      "epostadresse": "epost",
+      "kanVarsles": true,
+      "mobiltelefonnummer": "+4799999999",
+      "reservert": false
+    }
+  }
+}

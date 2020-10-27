@@ -17,7 +17,6 @@
       ],
       "numPartitions": 10
     },
-
     {
       "topicName": "privat-dok-notifikasjon-epost",
       "configEntries": {
@@ -35,7 +34,6 @@
       ],
       "numPartitions": 3
     },
-
     {
       "topicName": "privat-dok-notifikasjon-sms",
       "configEntries": {
@@ -55,6 +53,23 @@
     },
     {
       "topicName": "privat-dok-notifikasjon-status",
+      "configEntries": {
+        "retention.ms": -1
+      },
+      "members": [
+        {
+          "member": "igroup",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "igroup",
+          "role": "PRODUCER"
+        }
+      ],
+      "numPartitions": 3
+    },
+    {
+      "topicName": "privat-dok-notifikasjon-stopp",
       "configEntries": {
         "retention.ms": -1
       },

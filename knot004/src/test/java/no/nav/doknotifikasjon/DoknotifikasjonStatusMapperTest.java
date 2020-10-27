@@ -15,7 +15,7 @@ class DoknotifikasjonStatusMapperTest {
     void shouldMap() {
         DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID, STATUS_OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID);
 
-        DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID, STATUS_OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID));
+        DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(doknotifikasjonStatus);
 
         assertEquals(doknotifikasjonStatus.getBestillingsId(), doknotifikasjonStatusTo.getBestillingsId());
         assertEquals(doknotifikasjonStatus.getBestillerId(), doknotifikasjonStatusTo.getBestillerId());
