@@ -77,13 +77,12 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), Status.OPPRETTET));
 
-		Integer integerId = notifikasjonDistribusjon.getId();
-		String stringId = Integer.toString(integerId);
+		Integer id = notifikasjonDistribusjon.getId();
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(stringId);
+		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(id);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
-		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(integerId).orElseThrow(()->new RuntimeException("Failed test!"));
+		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(()->new RuntimeException("Failed test!"));
 
 
 		assertEquals(Status.FERDIGSTILT, updatedNotifikasjonDistribusjon.getStatus());
@@ -95,15 +94,15 @@ class Knot002ITest extends EmbededKafkaBroker {
 	@Test
 	void shouldAbortIfDistribusjonNotFound() {
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms("1234");
+		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(1234);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
 		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(1234).orElse(null);
 
 		assertNull(updatedNotifikasjonDistribusjon);
 		try{
-			verify(NotifikasjonEntityMapper, times(3)).mapNotifikasjon("1234");
-			verify(NotifikasjonEntityMapper, times(1)).recoverMapNotifikasjon(any(), eq("1234"));
+			verify(NotifikasjonEntityMapper, times(3)).mapNotifikasjon(1234);
+			verify(NotifikasjonEntityMapper, times(1)).recoverMapNotifikasjon(any(), eq(1234));
 		} catch(Exception e){
 			fail();
 		}

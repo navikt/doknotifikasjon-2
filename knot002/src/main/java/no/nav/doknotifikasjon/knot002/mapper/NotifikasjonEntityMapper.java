@@ -27,15 +27,14 @@ public class NotifikasjonEntityMapper {
     }
 
     @Retryable(maxAttempts = MAX_ATTEMPTS, backoff = @Backoff(delay = 3000))
-    public DoknotifikasjonSms mapNotifikasjon(String notifikasjonDistribusjonId) throws Exception {
+    public DoknotifikasjonSms mapNotifikasjon(int notifikasjonDistribusjonId) throws Exception {
         try {
-            Integer id = Integer.valueOf(notifikasjonDistribusjonId);
-            NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(id).orElseThrow();
+            NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(notifikasjonDistribusjonId).orElseThrow();
             Notifikasjon notifikasjonEntity = notifikasjonDistribusjonEntity.getNotifikasjon();
 
             return DoknotifikasjonSms
                     .builder()
-                    .notifikasjonDistribusjonId(notifikasjonDistribusjonId)
+                    .notifikasjonDistribusjonId(String.valueOf(notifikasjonDistribusjonId))
                     .bestillerId(notifikasjonEntity.getBestillerId())
                     .bestillingsId(notifikasjonEntity.getBestillingsId())
                     .distribusjonStatus(notifikasjonDistribusjonEntity.getStatus())
@@ -75,24 +74,21 @@ public class NotifikasjonEntityMapper {
     }
 
     @Recover
-    public DoknotifikasjonSms recoverMapNotifikasjon(Exception e, String notifikasjonDistribusjonId) throws Exception {
+    public DoknotifikasjonSms recoverMapNotifikasjon(Exception e, int notifikasjonDistribusjonId) throws Exception {
         log.error(
                 "knot002 mapNotifikasjon retry mislykkes, antall forsøk=${}, DistribusjonId=${}",
                 MAX_ATTEMPTS,
                 notifikasjonDistribusjonId,
                 e
         );
-        NoSuchElementException noSuchElementException;
         throw e;
     }
 
     @Retryable(maxAttempts = MAX_ATTEMPTS, backoff = @Backoff(delay = 3000))
-    public void updateEntity(String notifikasjonDistribusjonId, String bestillerId) {
+    public void updateEntity(int notifikasjonDistribusjonId, String bestillerId) {
 
         try {
-            Integer id = Integer.valueOf(notifikasjonDistribusjonId);
-
-            NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(id).orElseThrow();
+            NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(notifikasjonDistribusjonId).orElseThrow();
 
             notifikasjonDistribusjonEntity.setEndretAv(bestillerId);
             notifikasjonDistribusjonEntity.setStatus(Status.FERDIGSTILT);

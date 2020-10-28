@@ -36,7 +36,7 @@ public class NotifikasjonDistribusjonConsumer {
         this.altinnConsumer = altinnConsumer;
     }
 
-    public void konsumerDistribusjonId(String notifikasjonDistribusjonId){
+    public void konsumerDistribusjonId(int notifikasjonDistribusjonId){
 
         DoknotifikasjonSms doknotifikasjonSms;
 

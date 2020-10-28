@@ -88,9 +88,9 @@ public class Snot001Service {
         Object doknotifikasjon;
 
         if (kanal.equals(Kanal.SMS)) {
-            doknotifikasjon = new DoknotifikasjonSms(notifikasjonDistribusjonId);
+            doknotifikasjon = new DoknotifikasjonSms(Integer.valueOf(notifikasjonDistribusjonId));
         } else {
-            doknotifikasjon = new DoknotifikasjonEpost(notifikasjonDistribusjonId);
+            doknotifikasjon = new DoknotifikasjonEpost(Integer.valueOf(notifikasjonDistribusjonId));
         }
 
         kafkaEventProducer.publish(
