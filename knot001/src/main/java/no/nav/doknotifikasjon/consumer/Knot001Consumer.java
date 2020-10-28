@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
+import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -35,6 +36,7 @@ public class Knot001Consumer {
             containerFactory = "kafkaListenerContainerFactory",
             groupId = "doknotifikasjon-knot001"
     )
+    @Metrics(value = "dok_request", percentiles = {0.5, 0.95})
     @Transactional
     public void onMessage(final ConsumerRecord<String, Object> record) {
         try {

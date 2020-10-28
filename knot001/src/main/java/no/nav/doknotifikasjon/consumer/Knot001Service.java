@@ -14,6 +14,7 @@ import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
+import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
@@ -24,7 +25,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.*;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_CANT_CONNECT_TO_DKIF;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
@@ -38,14 +44,21 @@ public class Knot001Service {
     private final NotifikasjonRepository notifikasjonRepository;
     private final KafkaEventProducer producer;
     private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
+    private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-    Knot001Service(DigitalKontaktinfoConsumer kontaktinfoConsumer, KafkaEventProducer producer,
-                   NotifikasjonRepository notifikasjonRepository, KafkaDoknotifikasjonStatusProducer statusProducer) {
+    Knot001Service(
+            DigitalKontaktinfoConsumer kontaktinfoConsumer,
+            KafkaEventProducer producer,
+            NotifikasjonRepository notifikasjonRepository,
+            KafkaDoknotifikasjonStatusProducer statusProducer,
+           NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository
+    ) {
 
         this.statusProducer = statusProducer;
         this.notifikasjonRepository = notifikasjonRepository;
         this.producer = producer;
         this.kontaktinfoConsumer = kontaktinfoConsumer;
+        this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
 
     }
 
@@ -130,12 +143,12 @@ public class Knot001Service {
         Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon);
 
         if (kontaktinformasjon.getEpostadresse() != null && (shouldStoreEpost || kontaktinformasjon.getMobiltelefonnummer() == null)) {
-            this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
-            this.publishDoknotifikasjonEpost(doknotifikasjon.getBestillingsId());
+            NotifikasjonDistribusjon email = this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
+            this.publishDoknotifikasjonEpost(email.getId());
         }
         if (kontaktinformasjon.getMobiltelefonnummer() != null && (shouldStoreSms || kontaktinformasjon.getEpostadresse() == null)) {
-            this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
-            this.publishDoknotifikasjonSms(doknotifikasjon.getBestillingsId());
+            NotifikasjonDistribusjon sms = this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
+            this.publishDoknotifikasjonSms(sms.getId());
         }
     }
 
@@ -170,7 +183,7 @@ public class Knot001Service {
         return stringBuilder.toString();
     }
 
-    public void createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
+    public NotifikasjonDistribusjon createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
         NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
                 .notifikasjon(notifikasjon)
                 .status(Status.OPPRETTET)
@@ -182,11 +195,10 @@ public class Knot001Service {
                 .opprettetAv(notifikasjon.getBestillingsId())
                 .build();
 
-        notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
-        notifikasjonRepository.save(notifikasjon);
+        return notifikasjonDistribusjonRepository.save(notifikasjonDistribusjon);
     }
 
-    public void publishDoknotifikasjonSms(String bestillingsId) {
+    public void publishDoknotifikasjonSms(Integer bestillingsId) {
         log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, bestillingsId);
         DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(bestillingsId);
         producer.publish(
@@ -195,7 +207,7 @@ public class Knot001Service {
         );
     }
 
-    public void publishDoknotifikasjonEpost(String bestillingsId) {
+    public void publishDoknotifikasjonEpost(Integer bestillingsId) {
         log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, bestillingsId);
         DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(bestillingsId);
         producer.publish(
