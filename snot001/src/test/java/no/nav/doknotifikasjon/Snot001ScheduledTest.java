@@ -39,21 +39,6 @@ class Snot001ScheduledTest extends EmbededKafkaBroker {
     }
 
     @Test
-    void shouldNotResendNotifikasjonWhenNoNotifikasjonToResend() {
-
-        notifikasjonRepository.saveAndFlush(TestUtils.createNotifikasjonWithStatus(Status.FERDIGSTILT));
-        snot001Scheduler.scheduledJob();
-
-        Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-
-        assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
-        assertEquals(NESTE_RENOTIFIKASJONS_DATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
-        assertNull(updatedNotifikasjon.getEndretAv());
-        assertNull(updatedNotifikasjon.getEndretDato());
-        assertTrue(updatedNotifikasjon.getNotifikasjonDistribusjon().isEmpty());
-    }
-
-    @Test
     void shouldResendNotifikasjonDistribusjon() {
         Notifikasjon notifikasjon = createNotifikasjon();
         notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.EPOST)));
@@ -81,5 +66,20 @@ class Snot001ScheduledTest extends EmbededKafkaBroker {
             assertNotNull(notifikasjonDistribusjon.getOpprettetDato());
             assertThat(notifikasjonDistribusjon.getKanal(), anyOf(is(Kanal.SMS), is(Kanal.EPOST)));
         });
+    }
+
+    @Test
+    void shouldNotResendNotifikasjonWhenNoNotifikasjonToResend() {
+
+        notifikasjonRepository.saveAndFlush(TestUtils.createNotifikasjonWithStatus(Status.FERDIGSTILT));
+        snot001Scheduler.scheduledJob();
+
+        Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+
+        assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
+        assertEquals(NESTE_RENOTIFIKASJONS_DATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
+        assertNull(updatedNotifikasjon.getEndretAv());
+        assertNull(updatedNotifikasjon.getEndretDato());
+        assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
     }
 }

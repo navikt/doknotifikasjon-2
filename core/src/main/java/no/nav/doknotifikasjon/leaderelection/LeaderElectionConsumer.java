@@ -16,6 +16,8 @@ public class LeaderElectionConsumer implements LeaderElection {
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
 
+    private final static String ELECTOR_PATH = "ELECTOR_PATH";
+
     public LeaderElectionConsumer(RestTemplateBuilder restTemplateBuilder, ObjectMapper mapper) {
         this.restTemplate = restTemplateBuilder
                 .setReadTimeout(Duration.ofSeconds(20))
@@ -25,9 +27,9 @@ public class LeaderElectionConsumer implements LeaderElection {
     }
 
     public boolean isLeader() {
-        String electorPath = System.getenv("ELECTOR_PATH");
+        String electorPath = System.getenv(ELECTOR_PATH);
         if (electorPath == null) {
-            log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel ELECTOR_PATH.");
+            log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel {}.", ELECTOR_PATH);
             return true;
         }
 

@@ -46,6 +46,8 @@ public class Snot001Service {
             return;
         }
 
+        log.info("{} notifikasjoner ble funnet for resending i snot001. ", notifikasjonList.size());
+
         List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonIn(notifikasjonList);
 
         for (NotifikasjonDistribusjon notifikasjonDistribusjon : notifikasjonDistribusjonList) {
@@ -93,8 +95,7 @@ public class Snot001Service {
 
         kafkaEventProducer.publish(
                 topic,
-                doknotifikasjon,
-                System.currentTimeMillis()
+                doknotifikasjon
         );
     }
 }

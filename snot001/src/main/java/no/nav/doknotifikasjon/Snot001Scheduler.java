@@ -6,6 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
+
 @Slf4j
 @Component
 public class Snot001Scheduler {
@@ -13,6 +15,7 @@ public class Snot001Scheduler {
     private final Snot001Service snot001Service;
     private final LeaderElection leaderElection;
 
+    @Inject
     public Snot001Scheduler(Snot001Service snot001Service, LeaderElection leaderElection) {
         this.snot001Service = snot001Service;
         this.leaderElection = leaderElection;
@@ -29,5 +32,4 @@ public class Snot001Scheduler {
             log.error("Feil i SNOT001: ", exception);
         }
     }
-
 }
