@@ -12,7 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
         classes = {ApplicationTestConfig.class, RepositoryConfig.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.main.allow-bean-definition-overriding=true"
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext()

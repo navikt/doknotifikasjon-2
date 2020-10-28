@@ -13,14 +13,11 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
-//@Configuration
+@Configuration
 public class AltinnTestConfig {
-/*
-    private static final String USERNAME = "${doknotifikasjon_altinn_username}";
-    private static final String PASSWORD = "${doknotifikasjon_altinn_password}";
-    private static final String ALTINNURL = "${doknotifikasjon_altinn_url}";
 
     private ObjectFactory objectFactory = new ObjectFactory();
+    private static WebServiceTemplate webServiceTemplate = Mockito.mock(WebServiceTemplate.class);
 
     @Bean
     public Jaxb2Marshaller marshaller() {
@@ -33,12 +30,8 @@ public class AltinnTestConfig {
     public AltinnConsumer altinnConsumer(
             Jaxb2Marshaller marshaller
     ) {
-        WebServiceTemplate webServiceTemplate = Mockito.mock(WebServiceTemplate.class);
-
-        //when(webServiceTemplate.marshalSendAndReceive(argThat(new RequestMatcher(generateRequest()))));
-
         AltinnConsumer client = new AltinnConsumer("username", "password");
-        client.setDefaultUri("url");
+        client.setDefaultUri("localhost");
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
         client.setWebServiceTemplate(webServiceTemplate);
@@ -54,6 +47,8 @@ public class AltinnTestConfig {
         return request;
     }
 
+    public static WebServiceTemplate getWebServiceTemplateMock(){
+        return webServiceTemplate;
+    }
 
- */
 }

@@ -8,25 +8,26 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.TransientDataAccessException;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Component
 public class NotifikasjonEntityMapper {
+    private final int MAX_ATTEMPTS = 3;
+
     private final NotifikasjonDistribusjonRepository repository;
     public NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository){
         this.repository = repository;
     }
 
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 3000))
-    public DoknotifikasjonSms mapNotifikasjon(String notifikasjonDistribusjonId) {
+    @Retryable(maxAttempts = MAX_ATTEMPTS, backoff = @Backoff(delay = 3000))
+    public DoknotifikasjonSms mapNotifikasjon(String notifikasjonDistribusjonId) throws Exception {
         try {
             Integer id = Integer.valueOf(notifikasjonDistribusjonId);
             NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(id).orElseThrow();
@@ -42,6 +43,13 @@ public class NotifikasjonEntityMapper {
                     .kontakt(notifikasjonDistribusjonEntity.getKontaktInfo())
                     .tekst(notifikasjonDistribusjonEntity.getTekst())
                     .build();
+        } catch (NoSuchElementException exception){
+            log.warn(
+                    "knot002 mapNotifikasjon fant ikke distribusjon notifikasjonDistribusjonId=${}",
+                    notifikasjonDistribusjonId,
+                    exception
+            );
+            throw exception;
         } catch (TransientDataAccessException exception){
             log.warn(
                     "knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=${}",
@@ -65,20 +73,20 @@ public class NotifikasjonEntityMapper {
             throw exception;
         }
     }
-/*
+
     @Recover
-    public DoknotifikasjonSms recoverForMapNotifikasjon(Exception exception, String notifikasjonDistribusjonId) throws Exception {
-        log.warn(
-                "knot002 mapNotifikasjon retry feilet 3 ganger notifikasjonDistribusjonId=${}",
+    public DoknotifikasjonSms recoverMapNotifikasjon(Exception e, String notifikasjonDistribusjonId) throws Exception {
+        log.error(
+                "knot002 mapNotifikasjon retry mislykkes, antall forsøk=${}, DistribusjonId=${}",
+                MAX_ATTEMPTS,
                 notifikasjonDistribusjonId,
-                exception
+                e
         );
-        throw exception;
+        NoSuchElementException noSuchElementException;
+        throw e;
     }
 
- */
-
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 3000))
+    @Retryable(maxAttempts = MAX_ATTEMPTS, backoff = @Backoff(delay = 3000))
     public void updateEntity(String notifikasjonDistribusjonId, String bestillerId) {
 
         try {
@@ -120,17 +128,4 @@ public class NotifikasjonEntityMapper {
             throw exception;
         }
     }
-/*
-    @Recover
-    public void recoverForUpdateEntity(Exception exception, String notifikasjonDistribusjonId, String bestillerId){
-        log.warn(
-                "knot002 updateEntity retry feilet 3 ganger notifikasjonDistribusjonId=${} bestillerId=${}",
-                notifikasjonDistribusjonId,
-                bestillerId,
-                exception
-        );
-    }
-
- */
-
 }

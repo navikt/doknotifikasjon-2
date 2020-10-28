@@ -11,6 +11,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+
 @Slf4j
 @Component
 public class KafkaEventConsumer {
@@ -27,8 +29,9 @@ public class KafkaEventConsumer {
     }
 
     @KafkaListener(
-            topics = "dok-eksternnotifikasjon-sms",
-            containerFactory = "kafkaListenerContainerFactory"
+            topics = "privat-dok-notifikasjon-sms",
+            containerFactory = "kafkaListenerContainerFactory",
+            groupId = "doknotifikasjon-knot002"
     )
     @Transactional
     public void onMessage(final ConsumerRecord<String, Object> record) {
