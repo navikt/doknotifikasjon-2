@@ -53,11 +53,11 @@ public class Snot001Service {
         for (NotifikasjonDistribusjon notifikasjonDistribusjon : notifikasjonDistribusjonList) {
             if (Kanal.SMS.equals(notifikasjonDistribusjon.getKanal())) {
                 NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(notifikasjonDistribusjon, Kanal.SMS);
-                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, newNotifikasjonDistribusjon.getId().toString(), Kanal.SMS);
+                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, newNotifikasjonDistribusjon.getId(), Kanal.SMS);
             }
             if (Kanal.EPOST.equals(notifikasjonDistribusjon.getKanal())) {
                 NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(notifikasjonDistribusjon, Kanal.EPOST);
-                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, newNotifikasjonDistribusjon.getId().toString(), Kanal.EPOST);
+                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, newNotifikasjonDistribusjon.getId(), Kanal.EPOST);
             }
             updateNotifikasjon(notifikasjonDistribusjon.getNotifikasjon());
         }
@@ -84,7 +84,7 @@ public class Snot001Service {
         return notifikasjonDistribusjonRepository.save(newNotifikasjonDistribusjon);
     }
 
-    private void publishHendelseOnTopic(String topic, String notifikasjonDistribusjonId, Kanal kanal) {
+    private void publishHendelseOnTopic(String topic, int notifikasjonDistribusjonId, Kanal kanal) {
         Object doknotifikasjon;
 
         if (kanal.equals(Kanal.SMS)) {
