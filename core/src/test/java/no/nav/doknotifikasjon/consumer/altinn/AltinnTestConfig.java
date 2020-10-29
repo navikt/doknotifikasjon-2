@@ -18,8 +18,12 @@ import static org.mockito.Mockito.when;
 @Configuration
 public class AltinnTestConfig {
 
-	private ObjectFactory objectFactory = new ObjectFactory();
 	private static WebServiceTemplate webServiceTemplate = Mockito.mock(WebServiceTemplate.class);
+	private ObjectFactory objectFactory = new ObjectFactory();
+
+	public static WebServiceTemplate getWebServiceTemplateMock() {
+		return webServiceTemplate;
+	}
 
 	@Bean
 	public Jaxb2Marshaller marshaller() {
@@ -48,10 +52,6 @@ public class AltinnTestConfig {
 		request.setSystemPassword("password");
 
 		return request;
-	}
-
-	public static WebServiceTemplate getWebServiceTemplateMock() {
-		return webServiceTemplate;
 	}
 
 }

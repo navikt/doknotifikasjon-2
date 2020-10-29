@@ -11,18 +11,18 @@ import org.springframework.kafka.core.ConsumerFactory;
 @Configuration
 public class KafkaConfig {
 
-    @Bean("kafkaListenerContainerFactory")
-    ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerFactory(
-            ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
-            ConsumerFactory<Object, Object> kafkaConsumerFactory,
-            KafkaErrorHandler errorHandler
-    ) {
+	@Bean("kafkaListenerContainerFactory")
+	ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerFactory(
+			ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
+			ConsumerFactory<Object, Object> kafkaConsumerFactory,
+			KafkaErrorHandler errorHandler
+	) {
 
-        ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConcurrency(6);
-        factory.setErrorHandler(errorHandler);
+		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConcurrency(6);
+		factory.setErrorHandler(errorHandler);
 
-        configurer.configure(factory, kafkaConsumerFactory);
-        return factory;
-    }
+		configurer.configure(factory, kafkaConsumerFactory);
+		return factory;
+	}
 }

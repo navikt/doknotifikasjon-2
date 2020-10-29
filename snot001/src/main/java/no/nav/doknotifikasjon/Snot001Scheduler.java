@@ -12,24 +12,24 @@ import javax.inject.Inject;
 @Component
 public class Snot001Scheduler {
 
-    private final Snot001Service snot001Service;
-    private final LeaderElection leaderElection;
+	private final Snot001Service snot001Service;
+	private final LeaderElection leaderElection;
 
-    @Inject
-    public Snot001Scheduler(Snot001Service snot001Service, LeaderElection leaderElection) {
-        this.snot001Service = snot001Service;
-        this.leaderElection = leaderElection;
-    }
+	@Inject
+	public Snot001Scheduler(Snot001Service snot001Service, LeaderElection leaderElection) {
+		this.snot001Service = snot001Service;
+		this.leaderElection = leaderElection;
+	}
 
-    @Transactional
-    @Scheduled(cron = "0 30 8 * * *")
-    public void scheduledJob() {
-        try {
-            if (leaderElection.isLeader()) {
-                snot001Service.resendNotifikasjoner();
-            }
-        } catch (Exception exception) {
-            log.error("Feil i SNOT001: ", exception);
-        }
-    }
+	@Transactional
+	@Scheduled(cron = "0 30 8 * * *")
+	public void scheduledJob() {
+		try {
+			if (leaderElection.isLeader()) {
+				snot001Service.resendNotifikasjoner();
+			}
+		} catch (Exception exception) {
+			log.error("Feil i SNOT001: ", exception);
+		}
+	}
 }

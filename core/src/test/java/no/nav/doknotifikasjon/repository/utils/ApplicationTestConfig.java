@@ -13,4 +13,5 @@ import org.springframework.context.annotation.Import;
 		RepositoryConfig.class,
 		AltinnTestConfig.class
 })
-public class ApplicationTestConfig { }
+public class ApplicationTestConfig {
+}

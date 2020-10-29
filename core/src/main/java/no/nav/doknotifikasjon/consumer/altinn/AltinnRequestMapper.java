@@ -21,7 +21,7 @@ public class AltinnRequestMapper {
 	private static final String DEFAULTNOTIFICATIONEPOSTADDRESSE = "ikke-besvar-denne@nav.no";
 	private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
 
-	public static SendStandaloneNotificationBasicV3 createRequest (
+	public static SendStandaloneNotificationBasicV3 createRequest(
 			Kanal kanal,
 			String kontaktInfo,
 			String tekst,
@@ -40,7 +40,7 @@ public class AltinnRequestMapper {
 		return request;
 	}
 
-	private static StandaloneNotificationBEList createStandaloneNotificationBEList (TransportType transportType, String kontaktInfo, String tekst, String tittel) {
+	private static StandaloneNotificationBEList createStandaloneNotificationBEList(TransportType transportType, String kontaktInfo, String tekst, String tittel) {
 		StandaloneNotification standaloneNotification = objectFactory.createStandaloneNotification();
 
 		standaloneNotification.setNotificationType(objectFactory.createStandaloneNotificationNotificationType(DEFAULTNOTIFICATIONTYPE));
@@ -48,10 +48,10 @@ public class AltinnRequestMapper {
 		standaloneNotification.setTextTokens(createTextTokenSubstitutionBEList(transportType, tekst, tittel));
 		standaloneNotification.setReceiverEndPoints(createReceiverEndPointBEList(transportType, kontaktInfo));
 
-		if(transportType == TransportType.EMAIL) {
+		if (transportType == TransportType.EMAIL) {
 			standaloneNotification.setFromAddress(objectFactory.createStandaloneNotificationFromAddress(DEFAULTNOTIFICATIONEPOSTADDRESSE));
 		}
-		if(transportType == TransportType.SMS) {
+		if (transportType == TransportType.SMS) {
 			standaloneNotification.setUseServiceOwnerShortNameAsSenderOfSms(
 					objectFactory.createStandaloneNotificationUseServiceOwnerShortNameAsSenderOfSms(true)
 			);
@@ -69,7 +69,7 @@ public class AltinnRequestMapper {
 		TextToken textToken2 = objectFactory.createTextToken();
 
 
-		if(transportType == TransportType.SMS) {
+		if (transportType == TransportType.SMS) {
 
 			/*
 			 * Kevin Sillerud 08/04/2019 20:55 Send a empty string for SMS titles
@@ -85,7 +85,7 @@ public class AltinnRequestMapper {
 			textToken2.setTokenValue(objectFactory.createTextTokenTokenValue(""));
 		}
 
-		if(transportType == TransportType.EMAIL) {
+		if (transportType == TransportType.EMAIL) {
 			textToken1.setTokenNum(0);
 			textToken1.setTokenValue(objectFactory.createTextTokenTokenValue(tittel));
 
@@ -111,9 +111,10 @@ public class AltinnRequestMapper {
 
 		return objectFactory.createReceiverEndPointBEList(receiverEndPointBEList);
 	}
+
 	private static TransportType kanalToTransportType(Kanal kanal) {
-		if(Kanal.SMS == kanal) return TransportType.SMS;
-		if(Kanal.EPOST == kanal) return TransportType.EMAIL;
+		if (Kanal.SMS == kanal) return TransportType.SMS;
+		if (Kanal.EPOST == kanal) return TransportType.EMAIL;
 		throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
 	}
 }

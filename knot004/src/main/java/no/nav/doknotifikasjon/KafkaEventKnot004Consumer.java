@@ -18,37 +18,37 @@ import javax.inject.Inject;
 @Component
 public class KafkaEventKnot004Consumer {
 
-    private final ObjectMapper objectMapper;
-    private final Knot004Service knot004Service;
-    private final DoknotifikasjonStatusMapper doknotifikasjonStatusMapper;
+	private final ObjectMapper objectMapper;
+	private final Knot004Service knot004Service;
+	private final DoknotifikasjonStatusMapper doknotifikasjonStatusMapper;
 
-    @Inject
-    public KafkaEventKnot004Consumer(ObjectMapper objectMapper, Knot004Service knot004Service,
-                                     DoknotifikasjonStatusMapper doknotifikasjonStatusMapper) {
-        this.objectMapper = objectMapper;
-        this.knot004Service = knot004Service;
-        this.doknotifikasjonStatusMapper = doknotifikasjonStatusMapper;
-    }
+	@Inject
+	public KafkaEventKnot004Consumer(ObjectMapper objectMapper, Knot004Service knot004Service,
+									 DoknotifikasjonStatusMapper doknotifikasjonStatusMapper) {
+		this.objectMapper = objectMapper;
+		this.knot004Service = knot004Service;
+		this.doknotifikasjonStatusMapper = doknotifikasjonStatusMapper;
+	}
 
-    @KafkaListener(
-            topics = "privat-dok-notifikasjon-status",
-            containerFactory = "kafkaListenerContainerFactory",
-            groupId = "doknotifikasjon-knot004"
-    )
-    @Metrics(value = "dok_request", percentiles = {0.5, 0.95})
-    @Transactional
-    public void onMessage(final ConsumerRecord<String, Object> record) {
-        try {
-            DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value()
-                    .toString(), DoknotifikasjonStatus.class);
+	@KafkaListener(
+			topics = "privat-dok-notifikasjon-status",
+			containerFactory = "kafkaListenerContainerFactory",
+			groupId = "doknotifikasjon-knot004"
+	)
+	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+	@Transactional
+	public void onMessage(final ConsumerRecord<String, Object> record) {
+		try {
+			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value()
+					.toString(), DoknotifikasjonStatus.class);
 
-            knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
-        } catch (JsonProcessingException e) {
-            log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
-        } catch (DoknotifikasjonValidationException e) {
-            log.error("Valideringsfeil i knot004. Avslutter behandlingen. ", e);
-        } catch (IllegalArgumentException e) {
-            log.error("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
-        }
-    }
+			knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
+		} catch (JsonProcessingException e) {
+			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
+		} catch (DoknotifikasjonValidationException e) {
+			log.error("Valideringsfeil i knot004. Avslutter behandlingen. ", e);
+		} catch (IllegalArgumentException e) {
+			log.error("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+		}
+	}
 }

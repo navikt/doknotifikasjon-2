@@ -13,24 +13,24 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 @EnableConfigurationProperties(AltinnProps.class)
 public class AltinnConfig {
 
-    @Bean
-    public Jaxb2Marshaller marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("no.altinn.springsoap.client.gen");
-        return marshaller;
-    }
+	@Bean
+	public Jaxb2Marshaller marshaller() {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setContextPath("no.altinn.springsoap.client.gen");
+		return marshaller;
+	}
 
-    @Bean
-    public AltinnConsumer altinnConsumer(
-            Jaxb2Marshaller marshaller,
-            AltinnProps altinnProps
-    ) {
-        AltinnConsumer client = new AltinnConsumer(altinnProps.getUsername(), altinnProps.getPassword());
-        client.setDefaultUri(altinnProps.getUrl());
-        client.setMarshaller(marshaller);
-        client.setUnmarshaller(marshaller);
+	@Bean
+	public AltinnConsumer altinnConsumer(
+			Jaxb2Marshaller marshaller,
+			AltinnProps altinnProps
+	) {
+		AltinnConsumer client = new AltinnConsumer(altinnProps.getUsername(), altinnProps.getPassword());
+		client.setDefaultUri(altinnProps.getUrl());
+		client.setMarshaller(marshaller);
+		client.setUnmarshaller(marshaller);
 
-        return client;
-    }
+		return client;
+	}
 
 }

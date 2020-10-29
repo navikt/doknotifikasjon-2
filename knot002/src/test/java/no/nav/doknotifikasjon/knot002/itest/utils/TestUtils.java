@@ -10,19 +10,17 @@ import java.util.Collections;
 
 public final class TestUtils {
 
-	public TestUtils() {
-	}
-
 	public static final String BESTILLINGS_ID = "1234-5678-9101";
 	public static final String BESTILLER_ID = "teamdokumenthandtering";
 	public static final String KONTAKTINFO = "Hallohallo";
+	public static final int ANTALL_RENOTIFIKASJONER = 3;
 	private static final String TITTEL = "Melding";
 	private static final String TEKST = "Lang tekst";
 	private static final String OPPRETTET_AV = "srvdokument";
-	public static final int ANTALL_RENOTIFIKASJONER = 3;
 	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
 	private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
-
+	public TestUtils() {
+	}
 
 	public static Notifikasjon createNotifikasjon() {
 		return Notifikasjon.builder()

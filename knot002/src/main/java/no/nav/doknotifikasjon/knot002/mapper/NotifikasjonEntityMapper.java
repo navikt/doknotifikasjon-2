@@ -28,6 +28,7 @@ public class NotifikasjonEntityMapper {
 	private final int MAX_ATTEMPTS = 3;
 
 	private final NotifikasjonDistribusjonRepository repository;
+
 	public NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository) {
 		this.repository = repository;
 	}
@@ -65,7 +66,7 @@ public class NotifikasjonEntityMapper {
 					"knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
 					exception
 			);
-		} catch(DataAccessException exception) {
+		} catch (DataAccessException exception) {
 			log.error(
 					"knot002 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId={}",
 					notifikasjonDistribusjonId,
@@ -124,7 +125,7 @@ public class NotifikasjonEntityMapper {
 					),
 					exception
 			);
-		} catch(DataAccessException exception) {
+		} catch (DataAccessException exception) {
 			log.error(
 					"knot002 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
 					notifikasjonDistribusjonId,

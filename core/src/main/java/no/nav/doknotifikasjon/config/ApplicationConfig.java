@@ -16,9 +16,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 public class ApplicationConfig {
 
-    @Bean
-    public DokTimedAspect timedAspect(MeterRegistry registry) {
-        return new DokTimedAspect(registry);
-    }
+	@Bean
+	public DokTimedAspect timedAspect(MeterRegistry registry) {
+		return new DokTimedAspect(registry);
+	}
 
 }

@@ -9,13 +9,13 @@ import java.util.List;
 @Builder
 @Value
 public class DoknotifikasjonTO {
-    String bestillingsId;
-    String bestillerId;
-    String fodselsnummer;
-    Integer antallRenotifikasjoner;
-    Integer renotifikasjonIntervall;
-    String tittel;
-    String epostTekst;
-    String smsTekst;
-    List<Kanal> prefererteKanaler;
+	String bestillingsId;
+	String bestillerId;
+	String fodselsnummer;
+	Integer antallRenotifikasjoner;
+	Integer renotifikasjonIntervall;
+	String tittel;
+	String epostTekst;
+	String smsTekst;
+	List<Kanal> prefererteKanaler;
 }

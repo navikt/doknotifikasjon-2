@@ -6,6 +6,6 @@ import lombok.Value;
 @Builder
 @Value
 public class DoknotifikasjonStoppTo {
-    String bestillingsId;
-    String bestillerId;
+	String bestillingsId;
+	String bestillerId;
 }

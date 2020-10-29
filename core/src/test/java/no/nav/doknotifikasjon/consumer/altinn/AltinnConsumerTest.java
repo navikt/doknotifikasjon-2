@@ -38,17 +38,17 @@ public class AltinnConsumerTest {
 	private static final String KONTAKTINFO = "dummy adresse";
 	private static final String TEKST = "dummy tekst";
 
-    @Autowired
-    AltinnConsumer altinnConsumer;
+	@Autowired
+	AltinnConsumer altinnConsumer;
 
-    private WebServiceTemplate webServiceTemplate = AltinnTestConfig.getWebServiceTemplateMock();
+	private WebServiceTemplate webServiceTemplate = AltinnTestConfig.getWebServiceTemplateMock();
 
-    @BeforeEach
+	@BeforeEach
 	public void resetMock() {
-    	Mockito.reset(webServiceTemplate);
+		Mockito.reset(webServiceTemplate);
 	}
 
-    @Test
+	@Test
 	public void shouldNotThrowWhenHappyPath() {
 		when(webServiceTemplate.marshalSendAndReceive(any())).thenReturn(generateAltinnResponse(TransportType.SMS, KONTAKTINFO));
 
@@ -64,7 +64,9 @@ public class AltinnConsumerTest {
 
 		AltinnFunctionalException exception = assertThrows(
 				AltinnFunctionalException.class,
-				()->{ altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST); }
+				() -> {
+					altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST);
+				}
 		);
 
 		assertEquals("Respons inneholder ikke notifikasjon", exception.getMessage());
@@ -77,7 +79,9 @@ public class AltinnConsumerTest {
 
 		AltinnFunctionalException exception = assertThrows(
 				AltinnFunctionalException.class,
-				()->{ altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST); }
+				() -> {
+					altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST);
+				}
 		);
 
 		assertEquals("Respons inneholder ikke notifikasjon", exception.getMessage());
@@ -87,7 +91,9 @@ public class AltinnConsumerTest {
 	public void shouldthrowFunctionalExceptionIfKanalIsNull() {
 		AltinnFunctionalException exception = assertThrows(
 				AltinnFunctionalException.class,
-				()->{ altinnConsumer.sendStandaloneNotificationV3(null, KONTAKTINFO, TEKST); }
+				() -> {
+					altinnConsumer.sendStandaloneNotificationV3(null, KONTAKTINFO, TEKST);
+				}
 		);
 
 		assertEquals("Kanal er verken SMS eller EMAIL, kanal=null", exception.getMessage());
@@ -101,7 +107,9 @@ public class AltinnConsumerTest {
 
 		SoapFaultClientException exception = assertThrows(
 				SoapFaultClientException.class,
-				()->{ altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST); }
+				() -> {
+					altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST);
+				}
 		);
 
 		assertEquals("Dummy reason", exception.getMessage());
@@ -114,7 +122,9 @@ public class AltinnConsumerTest {
 
 		AltinnTechnicalException exception = assertThrows(
 				AltinnTechnicalException.class,
-				()->{ altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST); }
+				() -> {
+					altinnConsumer.sendStandaloneNotificationV3(Kanal.SMS, KONTAKTINFO, TEKST);
+				}
 		);
 
 		assertEquals("sendStandaloneNotificationV3 ukjent feil, feilmelding=Boom!", exception.getMessage());

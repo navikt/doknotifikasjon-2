@@ -42,14 +42,14 @@ public class Knot002Service {
 
 		DoknotifikasjonSms doknotifikasjonSms;
 
-		try{
+		try {
 			doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjonId);
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			log.error("NotifikasjonDistribusjonConsumer kunne ikke hente notifikasjon", exception);
 			return;
 		}
 
-		if(!validateDistribusjonStatusOgKanal(doknotifikasjonSms)) {
+		if (!validateDistribusjonStatusOgKanal(doknotifikasjonSms)) {
 			String melding = doknotifikasjonSms.distribusjonStatus == Status.OPPRETTET
 					? FEILET_SMS_UGYLDIG_KANAL
 					: FEILET_SMS_UGYLDIG_STATUS;
@@ -58,7 +58,7 @@ public class Knot002Service {
 			return;
 		}
 
-		try{
+		try {
 			altinnConsumer.sendStandaloneNotificationV3(
 					Kanal.SMS,
 					doknotifikasjonSms.kontakt,
@@ -86,12 +86,12 @@ public class Knot002Service {
 		}
 
 
-		try{
+		try {
 			notifikasjonEntityMapper.updateEntity(
 					notifikasjonDistribusjonId,
 					doknotifikasjonSms.bestillerId
 			);
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			log.error(FEILET_DATABASE_IKKE_OPPDATERT, exception);
 			// TODO feilhåndtering? Udefinert i spec
 			return;

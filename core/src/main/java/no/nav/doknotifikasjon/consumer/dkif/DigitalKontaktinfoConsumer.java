@@ -33,50 +33,49 @@ import static no.nav.doknotifikasjon.metrics.MetricLabels.PROCESS_NAME;
 @Component
 public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
 
-    private final String dkifUrl;
-    private final RestTemplate restTemplate;
-    private final StsRestConsumer stsRestConsumer;
+	private static final String HENT_DIGITAL_KONTAKTINFORMASJON = "hentDigitalKontaktinformasjon";
+	private final String dkifUrl;
+	private final RestTemplate restTemplate;
+	private final StsRestConsumer stsRestConsumer;
 
-    private static final String HENT_DIGITAL_KONTAKTINFORMASJON = "hentDigitalKontaktinformasjon";
+	@Inject
+	public DigitalKontaktinfoConsumer(@Value("${dkif_url}") String dkifUrl,
+									  RestTemplateBuilder restTemplateBuilder,
+									  StsRestConsumer stsRestConsumer) {
+		this.dkifUrl = dkifUrl;
+		this.stsRestConsumer = stsRestConsumer;
+		this.restTemplate = restTemplateBuilder
+				.setReadTimeout(Duration.ofSeconds(20))
+				.setConnectTimeout(Duration.ofSeconds(5))
+				.build();
+	}
 
-    @Inject
-    public DigitalKontaktinfoConsumer(@Value("${dkif_url}") String dkifUrl,
-                                      RestTemplateBuilder restTemplateBuilder,
-                                      StsRestConsumer stsRestConsumer) {
-        this.dkifUrl = dkifUrl;
-        this.stsRestConsumer = stsRestConsumer;
-        this.restTemplate = restTemplateBuilder
-                .setReadTimeout(Duration.ofSeconds(20))
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .build();
-    }
+	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = 5, backoff = @Backoff(delay = 200))
+	@Metrics(value = DOK_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON}, percentiles = {0.5, 0.95}, histogram = true)
+	public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
+		HttpHeaders headers = createHeaders();
+		String fnrTrimmed = personidentifikator.trim();
+		headers.add(NAV_PERSONIDENTER, fnrTrimmed);
 
-    @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = 5, backoff = @Backoff(delay = 200))
-    @Metrics(value = DOK_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON}, percentiles = {0.5, 0.95}, histogram = true)
-    public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
-        HttpHeaders headers = createHeaders();
-        String fnrTrimmed = personidentifikator.trim();
-        headers.add(NAV_PERSONIDENTER, fnrTrimmed);
+		try {
+			DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
+					HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
+			return response;
+		} catch (HttpClientErrorException e) {
+			throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
+					.getMessage()), e);
+		} catch (HttpServerErrorException e) {
+			throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
+					.getMessage()), e);
+		}
+	}
 
-        try {
-            DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
-                    HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
-            return response;
-        } catch (HttpClientErrorException e) {
-            throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
-                    .getMessage()), e);
-        } catch (HttpServerErrorException e) {
-            throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
-                    .getMessage()), e);
-        }
-    }
-
-    private HttpHeaders createHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
-        headers.add(NAV_CONSUMER_ID, APP_NAME);
-        headers.add(NAV_CALL_ID, MDC.get(MDC_CALL_ID));
-        return headers;
-    }
+	private HttpHeaders createHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
+		headers.add(NAV_CONSUMER_ID, APP_NAME);
+		headers.add(NAV_CALL_ID, MDC.get(MDC_CALL_ID));
+		return headers;
+	}
 }

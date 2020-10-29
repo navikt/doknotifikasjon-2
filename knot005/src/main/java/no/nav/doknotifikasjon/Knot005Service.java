@@ -15,45 +15,45 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGST
 @Component
 public class Knot005Service {
 
-    private final NotifikasjonRepository notifikasjonRepository;
-    private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
-    private final DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator;
+	private final NotifikasjonRepository notifikasjonRepository;
+	private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
+	private final DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator;
 
-    public Knot005Service(NotifikasjonRepository notifikasjonRepository,
-                          KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer,
-                          DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator) {
-        this.notifikasjonRepository = notifikasjonRepository;
-        this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
-        this.doknotifikasjonStoppValidadator = doknotifikasjonStoppValidadator;
-    }
+	public Knot005Service(NotifikasjonRepository notifikasjonRepository,
+						  KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer,
+						  DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator) {
+		this.notifikasjonRepository = notifikasjonRepository;
+		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
+		this.doknotifikasjonStoppValidadator = doknotifikasjonStoppValidadator;
+	}
 
-    public void shouldStopResending(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
-        doknotifikasjonStoppValidadator.validateInput(doknotifikasjonStoppTo);
+	public void shouldStopResending(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
+		doknotifikasjonStoppValidadator.validateInput(doknotifikasjonStoppTo);
 
-        Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjonStoppTo.getBestillingsId());
+		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjonStoppTo.getBestillingsId());
 
-        if (notifikasjon == null) {
-            log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
-                    doknotifikasjonStoppTo.getBestillingsId());
-        } else if (Status.FERDIGSTILT.equals(notifikasjon.getStatus())) {
-            log.warn("Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
-                    doknotifikasjonStoppTo.getBestillingsId(), Status.FERDIGSTILT);
-        } else {
-            updateNotifikasjon(notifikasjon, doknotifikasjonStoppTo);
-            publishNewDoknotifikasjonStatus(doknotifikasjonStoppTo);
-        }
-    }
+		if (notifikasjon == null) {
+			log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
+					doknotifikasjonStoppTo.getBestillingsId());
+		} else if (Status.FERDIGSTILT.equals(notifikasjon.getStatus())) {
+			log.warn("Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
+					doknotifikasjonStoppTo.getBestillingsId(), Status.FERDIGSTILT);
+		} else {
+			updateNotifikasjon(notifikasjon, doknotifikasjonStoppTo);
+			publishNewDoknotifikasjonStatus(doknotifikasjonStoppTo);
+		}
+	}
 
-    private void publishNewDoknotifikasjonStatus(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
-        kafkaDoknotifikasjonStatusProducer.publishDoknotikfikasjonStatusFerdigstilt(
-                doknotifikasjonStoppTo.getBestillingsId(),
-                doknotifikasjonStoppTo.getBestillerId(), FERDIGSTILT_RENOTIFIKASJON_STANSET, null);
-    }
+	private void publishNewDoknotifikasjonStatus(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
+		kafkaDoknotifikasjonStatusProducer.publishDoknotikfikasjonStatusFerdigstilt(
+				doknotifikasjonStoppTo.getBestillingsId(),
+				doknotifikasjonStoppTo.getBestillerId(), FERDIGSTILT_RENOTIFIKASJON_STANSET, null);
+	}
 
-    private void updateNotifikasjon(Notifikasjon notifikasjon, DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
-        notifikasjon.setAntallRenotifikasjoner(0);
-        notifikasjon.setNesteRenotifikasjonDato(null);
-        notifikasjon.setEndretAv(doknotifikasjonStoppTo.getBestillerId());
-        notifikasjon.setEndretDato(LocalDateTime.now());
-    }
+	private void updateNotifikasjon(Notifikasjon notifikasjon, DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
+		notifikasjon.setAntallRenotifikasjoner(0);
+		notifikasjon.setNesteRenotifikasjonDato(null);
+		notifikasjon.setEndretAv(doknotifikasjonStoppTo.getBestillerId());
+		notifikasjon.setEndretDato(LocalDateTime.now());
+	}
 }

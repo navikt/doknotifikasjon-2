@@ -19,67 +19,67 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Knot005ITest extends EmbededKafkaBroker {
 
-    @Autowired
-    private KafkaEventProducer KafkaEventProducer;
+	@Autowired
+	private KafkaEventProducer KafkaEventProducer;
 
-    @Autowired
-    private NotifikasjonRepository notifikasjonRepository;
+	@Autowired
+	private NotifikasjonRepository notifikasjonRepository;
 
-    @BeforeEach
-    public void setup() {
-        notifikasjonRepository.deleteAll();
-    }
+	@BeforeEach
+	public void setup() {
+		notifikasjonRepository.deleteAll();
+	}
 
-    @Test
-    void shouldUpdateStatus() {
-        notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(Status.OPPRETTET));
+	@Test
+	void shouldUpdateStatus() {
+		notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(Status.OPPRETTET));
 
-        DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
-        putMessageOnKafkaTopic(doknotifikasjonStopp);
+		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
+		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
-        Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-        assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
-        assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
-        assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
-        assertNotNull(updatedNotifikasjon.getEndretDato());
-    }
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
+		assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
+		assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
+		assertNotNull(updatedNotifikasjon.getEndretDato());
+	}
 
-    @Test
-    void shouldNotUpdateStatusWhenNotifikasjonDoesNotExist() {
-        DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
-        putMessageOnKafkaTopic(doknotifikasjonStopp);
+	@Test
+	void shouldNotUpdateStatusWhenNotifikasjonDoesNotExist() {
+		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
+		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
-        assertNull(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID));
-    }
+		assertNull(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID));
+	}
 
-    @Test
-    void shouldNotUpdateStatusWhenNotifikasjonHasStatusFerdigstilt() {
-        notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(Status.FERDIGSTILT));
+	@Test
+	void shouldNotUpdateStatusWhenNotifikasjonHasStatusFerdigstilt() {
+		notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(Status.FERDIGSTILT));
 
-        DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
-        putMessageOnKafkaTopic(doknotifikasjonStopp);
+		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
+		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
-        Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-        assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
-        assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
-        assertEquals(BESTILLER_ID, updatedNotifikasjon.getBestillerId());
-        assertNull(updatedNotifikasjon.getEndretAv());
-        assertNull(updatedNotifikasjon.getEndretDato());
-    }
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
+		assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
+		assertEquals(BESTILLER_ID, updatedNotifikasjon.getBestillerId());
+		assertNull(updatedNotifikasjon.getEndretAv());
+		assertNull(updatedNotifikasjon.getEndretDato());
+	}
 
-    private void putMessageOnKafkaTopic(DoknotifikasjonStopp doknotifikasjonStopp) {
-        try {
-            Long keyGenerator = System.currentTimeMillis();
+	private void putMessageOnKafkaTopic(DoknotifikasjonStopp doknotifikasjonStopp) {
+		try {
+			Long keyGenerator = System.currentTimeMillis();
 
-            KafkaEventProducer.publish(
-                    KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
-                    doknotifikasjonStopp,
-                    keyGenerator
-            );
+			KafkaEventProducer.publish(
+					KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
+					doknotifikasjonStopp,
+					keyGenerator
+			);
 
-            TimeUnit.SECONDS.sleep(30);
-        } catch (InterruptedException exception) {
-            fail();
-        }
-    }
+			TimeUnit.SECONDS.sleep(30);
+		} catch (InterruptedException exception) {
+			fail();
+		}
+	}
 }

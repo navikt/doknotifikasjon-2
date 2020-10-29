@@ -59,10 +59,10 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 	@BeforeEach
 	public void setup() {
-			notifikasjonDistribusjonRepository.deleteAll();
-			notifikasjonRepository.deleteAll();
-			reset(AltinnTestConfig.getWebServiceTemplateMock());
-			reset(kafkaEventProducer);
+		notifikasjonDistribusjonRepository.deleteAll();
+		notifikasjonRepository.deleteAll();
+		reset(AltinnTestConfig.getWebServiceTemplateMock());
+		reset(kafkaEventProducer);
 	}
 
 	@Test
@@ -76,10 +76,10 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 		Integer id = notifikasjonDistribusjon.getId();
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(id);
+		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
-		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(()->new RuntimeException("Failed test!"));
+		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
 
 
 		assertEquals(Status.FERDIGSTILT, updatedNotifikasjonDistribusjon.getStatus());
@@ -98,17 +98,17 @@ class Knot002ITest extends EmbededKafkaBroker {
 	@Test
 	void shouldAbortIfDistribusjonNotFound() {
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(1234);
+		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(1234);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
 		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(1234).orElse(null);
 
 		assertNull(updatedNotifikasjonDistribusjon);
-		try{
+		try {
 			//needed because backoff is 3 seconds
 			TimeUnit.SECONDS.sleep(10);
 			verify(NotifikasjonEntityMapper, times(3)).mapNotifikasjonDistrubisjon(1234);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			fail();
 		}
 	}
@@ -120,7 +120,7 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 		Integer id = notifikasjonDistribusjon.getId();
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(id);
+		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(
@@ -138,7 +138,7 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 		Integer id = notifikasjonDistribusjon.getId();
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(id);
+		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(
@@ -160,10 +160,10 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 		Integer id = notifikasjonDistribusjon.getId();
 
-		DoknotifikasjonSms doknotifikasjonSms= new DoknotifikasjonSms(id);
+		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
 		putMessageOnKafkaTopic(doknotifikasjonSms);
 
-		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(()->new RuntimeException("Failed test!"));
+		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
 
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(

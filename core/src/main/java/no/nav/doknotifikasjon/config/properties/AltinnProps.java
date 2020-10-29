@@ -20,6 +20,7 @@ public class AltinnProps {
 	private String password;
 	@NotNull
 	private String url;
+
 	AltinnProps(String username, String password, String url) {
 		this.username = username;
 		this.password = password;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -52,96 +52,96 @@
         <spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
         <spring-kafka-version>2.5.6.RELEASE</spring-kafka-version>
         <spring-web-services-version>2.3.4.RELEASE</spring-web-services-version>
-		<jersey-core-version>2.31</jersey-core-version>
+        <jersey-core-version>2.31</jersey-core-version>
         <springframework-boot>2.3.1.RELEASE</springframework-boot>
         <junit-jupiter>5.7.0</junit-jupiter>
-		<jaxb2-maven.version>0.14.0</jaxb2-maven.version>
-		<spring-retry-version>1.2.5.RELEASE</spring-retry-version>
+        <jaxb2-maven.version>0.14.0</jaxb2-maven.version>
+        <spring-retry-version>1.2.5.RELEASE</spring-retry-version>
     </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>no.nav.doknotifikasjon</groupId>
-				<artifactId>core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.doknotifikasjon</groupId>
-				<artifactId>knot001</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>no.nav.doknotifikasjon</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.doknotifikasjon</groupId>
+                <artifactId>knot001</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>no.nav.doknotifikasjon</groupId>
                 <artifactId>knot002</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			<dependency>
-				<groupId>no.nav.doknotifikasjon</groupId>
-				<artifactId>knot004</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.inject</groupId>
-				<artifactId>javax.inject</artifactId>
-				<version>${javax.inject.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.activation</groupId>
-				<artifactId>activation</artifactId>
-				<version>${javax.activation.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.xml.bind</groupId>
-				<artifactId>jaxb-api</artifactId>
-				<version>${javax.bind.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>${junit.jupiter.api.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>net.logstash.logback</groupId>
-				<artifactId>logstash-logback-encoder</artifactId>
-				<version>${logstash-logback-encoder.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.kafka</groupId>
-				<artifactId>spring-kafka</artifactId>
-				<version>${spring-kafka-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.confluent</groupId>
-				<artifactId>kafka-avro-serializer</artifactId>
-				<version>${confluent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.confluent</groupId>
-				<artifactId>kafka-json-serializer</artifactId>
-				<version>${confluent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.github.navikt</groupId>
-				<artifactId>doknotifikasjon-schemas</artifactId>
-				<version>${notifikasjon-schema.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav</groupId>
-				<artifactId>vault-jdbc</artifactId>
-				<version>${vault-jdbc-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-wiremock</artifactId>
-				<version>${spring-cloud-contract-wiremock-version}</version>
-			</dependency>
+            <dependency>
+                <groupId>no.nav.doknotifikasjon</groupId>
+                <artifactId>knot004</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>${javax.activation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${javax.bind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.jupiter.api.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback-encoder.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring-kafka-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-avro-serializer</artifactId>
+                <version>${confluent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-json-serializer</artifactId>
+                <version>${confluent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.navikt</groupId>
+                <artifactId>doknotifikasjon-schemas</artifactId>
+                <version>${notifikasjon-schema.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav</groupId>
+                <artifactId>vault-jdbc</artifactId>
+                <version>${vault-jdbc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-wiremock</artifactId>
+                <version>${spring-cloud-contract-wiremock-version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web-services</artifactId>
@@ -153,23 +153,23 @@
                 </exclusions>
                 <version>${spring-web-services-version}</version>
             </dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.core</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey-core-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-jaxb</artifactId>
-				<version>${jersey-core-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.retry</groupId>
-				<artifactId>spring-retry</artifactId>
-				<version>${spring-retry-version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${jersey-core-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-jaxb</artifactId>
+                <version>${jersey-core-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.retry</groupId>
+                <artifactId>spring-retry</artifactId>
+                <version>${spring-retry-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>

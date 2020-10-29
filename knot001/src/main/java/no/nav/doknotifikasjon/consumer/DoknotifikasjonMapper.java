@@ -11,35 +11,35 @@ import java.util.List;
 @Component
 public class DoknotifikasjonMapper {
 
-    public DoknotifikasjonTO map(Doknotifikasjon doknotifikasjon) {
-        return DoknotifikasjonTO.builder()
-                .bestillerId(doknotifikasjon.getBestillerId())
-                .bestillingsId(doknotifikasjon.getBestillingsId())
-                .fodselsnummer(doknotifikasjon.getFodselsnummer())
-                .antallRenotifikasjoner(doknotifikasjon.getAntallRenotifikasjoner())
-                .renotifikasjonIntervall(doknotifikasjon.getRenotifikasjonIntervall())
-                .tittel(doknotifikasjon.getTittel())
-                .epostTekst(doknotifikasjon.getEpostTekst())
-                .smsTekst(doknotifikasjon.getSmsTekst())
-                .prefererteKanaler(this.setDefaultPrefererteKanaler(doknotifikasjon.getPrefererteKanaler()))
-                .build();
-    }
+	public DoknotifikasjonTO map(Doknotifikasjon doknotifikasjon) {
+		return DoknotifikasjonTO.builder()
+				.bestillerId(doknotifikasjon.getBestillerId())
+				.bestillingsId(doknotifikasjon.getBestillingsId())
+				.fodselsnummer(doknotifikasjon.getFodselsnummer())
+				.antallRenotifikasjoner(doknotifikasjon.getAntallRenotifikasjoner())
+				.renotifikasjonIntervall(doknotifikasjon.getRenotifikasjonIntervall())
+				.tittel(doknotifikasjon.getTittel())
+				.epostTekst(doknotifikasjon.getEpostTekst())
+				.smsTekst(doknotifikasjon.getSmsTekst())
+				.prefererteKanaler(this.setDefaultPrefererteKanaler(doknotifikasjon.getPrefererteKanaler()))
+				.build();
+	}
 
-    private List<Kanal> setDefaultPrefererteKanaler(List<PrefererteKanal> preferteKanaler) {
-        List<Kanal> preferteKanalerTO = new ArrayList<>();
+	private List<Kanal> setDefaultPrefererteKanaler(List<PrefererteKanal> preferteKanaler) {
+		List<Kanal> preferteKanalerTO = new ArrayList<>();
 
-        if (preferteKanaler != null && !preferteKanaler.isEmpty()) {
-            preferteKanaler.forEach(s -> {
-                if (s.equals(PrefererteKanal.EPOST)) {
-                    preferteKanalerTO.add(Kanal.EPOST);
-                } else {
-                    preferteKanalerTO.add(Kanal.SMS);
-                }
-            });
-        } else {
-            preferteKanalerTO.add(Kanal.EPOST);
-        }
+		if (preferteKanaler != null && !preferteKanaler.isEmpty()) {
+			preferteKanaler.forEach(s -> {
+				if (s.equals(PrefererteKanal.EPOST)) {
+					preferteKanalerTO.add(Kanal.EPOST);
+				} else {
+					preferteKanalerTO.add(Kanal.SMS);
+				}
+			});
+		} else {
+			preferteKanalerTO.add(Kanal.EPOST);
+		}
 
-        return preferteKanalerTO;
-    }
+		return preferteKanalerTO;
+	}
 }

@@ -23,63 +23,63 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Snot001ScheduledTest extends EmbededKafkaBroker {
 
-    @Autowired
-    private NotifikasjonRepository notifikasjonRepository;
+	@Autowired
+	private NotifikasjonRepository notifikasjonRepository;
 
-    @Autowired
-    private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
+	@Autowired
+	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-    @Autowired
-    private Snot001Scheduler snot001Scheduler;
+	@Autowired
+	private Snot001Scheduler snot001Scheduler;
 
-    @BeforeEach
-    public void setup() {
-        notifikasjonDistribusjonRepository.deleteAll();
-        notifikasjonRepository.deleteAll();
-    }
+	@BeforeEach
+	public void setup() {
+		notifikasjonDistribusjonRepository.deleteAll();
+		notifikasjonRepository.deleteAll();
+	}
 
-    @Test
-    void shouldResendNotifikasjonDistribusjon() {
-        Notifikasjon notifikasjon = createNotifikasjon();
-        notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.EPOST)));
-        notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.SMS)));
+	@Test
+	void shouldResendNotifikasjonDistribusjon() {
+		Notifikasjon notifikasjon = createNotifikasjon();
+		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.EPOST)));
+		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.SMS)));
 
-        notifikasjonRepository.saveAndFlush(notifikasjon);
-        snot001Scheduler.scheduledJob();
+		notifikasjonRepository.saveAndFlush(notifikasjon);
+		snot001Scheduler.scheduledJob();
 
-        Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-        LocalDate now = LocalDate.now();
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		LocalDate now = LocalDate.now();
 
-        assertEquals(ANTALL_RENOTIFIKASJONER - 1, updatedNotifikasjon.getAntallRenotifikasjoner());
-        assertEquals(now.plusDays(updatedNotifikasjon.getRenotifikasjonIntervall()), updatedNotifikasjon.getNesteRenotifikasjonDato());
-        assertEquals(SNOT001, updatedNotifikasjon.getEndretAv());
-        assertNotNull(updatedNotifikasjon.getEndretDato());
+		assertEquals(ANTALL_RENOTIFIKASJONER - 1, updatedNotifikasjon.getAntallRenotifikasjoner());
+		assertEquals(now.plusDays(updatedNotifikasjon.getRenotifikasjonIntervall()), updatedNotifikasjon.getNesteRenotifikasjonDato());
+		assertEquals(SNOT001, updatedNotifikasjon.getEndretAv());
+		assertNotNull(updatedNotifikasjon.getEndretDato());
 
-        List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, Status.OPPRETTET);
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, Status.OPPRETTET);
 
-        notifikasjonDistribusjonList.forEach(notifikasjonDistribusjon -> {
-            assertEquals(Status.OPPRETTET, notifikasjonDistribusjon.getStatus());
-            assertEquals(KONTAKTINFO, notifikasjonDistribusjon.getKontaktInfo());
-            assertEquals(TITTEL, notifikasjonDistribusjon.getTittel());
-            assertEquals(PAAMINNELSE_TEKST, notifikasjonDistribusjon.getTekst());
-            assertEquals(SNOT001, notifikasjonDistribusjon.getOpprettetAv());
-            assertNotNull(notifikasjonDistribusjon.getOpprettetDato());
-            assertThat(notifikasjonDistribusjon.getKanal(), anyOf(is(Kanal.SMS), is(Kanal.EPOST)));
-        });
-    }
+		notifikasjonDistribusjonList.forEach(notifikasjonDistribusjon -> {
+			assertEquals(Status.OPPRETTET, notifikasjonDistribusjon.getStatus());
+			assertEquals(KONTAKTINFO, notifikasjonDistribusjon.getKontaktInfo());
+			assertEquals(TITTEL, notifikasjonDistribusjon.getTittel());
+			assertEquals(PAAMINNELSE_TEKST, notifikasjonDistribusjon.getTekst());
+			assertEquals(SNOT001, notifikasjonDistribusjon.getOpprettetAv());
+			assertNotNull(notifikasjonDistribusjon.getOpprettetDato());
+			assertThat(notifikasjonDistribusjon.getKanal(), anyOf(is(Kanal.SMS), is(Kanal.EPOST)));
+		});
+	}
 
-    @Test
-    void shouldNotResendNotifikasjonWhenNoNotifikasjonToResend() {
+	@Test
+	void shouldNotResendNotifikasjonWhenNoNotifikasjonToResend() {
 
-        notifikasjonRepository.saveAndFlush(TestUtils.createNotifikasjonWithStatus(Status.FERDIGSTILT));
-        snot001Scheduler.scheduledJob();
+		notifikasjonRepository.saveAndFlush(TestUtils.createNotifikasjonWithStatus(Status.FERDIGSTILT));
+		snot001Scheduler.scheduledJob();
 
-        Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
 
-        assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
-        assertEquals(NESTE_RENOTIFIKASJONS_DATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
-        assertNull(updatedNotifikasjon.getEndretAv());
-        assertNull(updatedNotifikasjon.getEndretDato());
-        assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
-    }
+		assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
+		assertEquals(NESTE_RENOTIFIKASJONS_DATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
+		assertNull(updatedNotifikasjon.getEndretAv());
+		assertNull(updatedNotifikasjon.getEndretDato());
+		assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
+	}
 }

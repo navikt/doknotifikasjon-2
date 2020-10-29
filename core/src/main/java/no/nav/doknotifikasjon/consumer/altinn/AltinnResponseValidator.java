@@ -26,31 +26,41 @@ public class AltinnResponseValidator {
 		return validateSendNotificationResultList(kanal, kontaktInfo, sendNotificationResultList);
 	}
 
-	private static boolean validateSendNotificationResultList (Kanal kanal, String kontaktInfo, SendNotificationResultList sendNotificationResultList) {
-		if(sendNotificationResultList == null) { return false; }
+	private static boolean validateSendNotificationResultList(Kanal kanal, String kontaktInfo, SendNotificationResultList sendNotificationResultList) {
+		if (sendNotificationResultList == null) {
+			return false;
+		}
 
 		List<NotificationResult> notificationResults = sendNotificationResultList.getNotificationResult();
 
-		if(notificationResults == null) { return false; }
+		if (notificationResults == null) {
+			return false;
+		}
 
 		return notificationResults.stream().anyMatch(notificationResult -> validateSendNotificationResult(kanal, kontaktInfo, notificationResult));
 	}
 
-	private static boolean validateSendNotificationResult (Kanal kanal, String kontaktInfo, NotificationResult notificationResult) {
-		if(notificationResult == null) { return false; }
+	private static boolean validateSendNotificationResult(Kanal kanal, String kontaktInfo, NotificationResult notificationResult) {
+		if (notificationResult == null) {
+			return false;
+		}
 
 		List<EndPointResult> endPointResults = Optional.of(notificationResult)
 				.map(NotificationResult::getEndPoints)
 				.map(JAXBElement::getValue)
 				.map(EndPointResultList::getEndPointResult).orElse(null);
 
-		if(endPointResults == null) { return false; }
+		if (endPointResults == null) {
+			return false;
+		}
 
 		return endPointResults.stream().anyMatch(endPointResult -> validateEndpointResult(kanal, kontaktInfo, endPointResult));
 	}
 
-	private static boolean validateEndpointResult (Kanal kanal, String kontaktInfo, EndPointResult endPointResult) {
-		if(endPointResult == null) { return false; }
+	private static boolean validateEndpointResult(Kanal kanal, String kontaktInfo, EndPointResult endPointResult) {
+		if (endPointResult == null) {
+			return false;
+		}
 
 		String endPointAddress = Optional.of(endPointResult)
 				.map(EndPointResult::getReceiverAddress)
@@ -58,18 +68,22 @@ public class AltinnResponseValidator {
 
 		Kanal endpointKanal = transportTypeToKanal(endPointResult.getTransportType());
 
-		if(endPointAddress == null || endpointKanal == null) { return false; }
+		if (endPointAddress == null || endpointKanal == null) {
+			return false;
+		}
 
 		return kanal == endpointKanal && kontaktInfo.equals(endPointAddress);
 	}
 
 	private static Kanal transportTypeToKanal(TransportType transportType) {
-		if(transportType == null) { return null; }
+		if (transportType == null) {
+			return null;
+		}
 
-		if(transportType == TransportType.SMS) {
+		if (transportType == TransportType.SMS) {
 			return Kanal.SMS;
 		}
-		if(transportType == TransportType.EMAIL) {
+		if (transportType == TransportType.EMAIL) {
 			return Kanal.EPOST;
 		}
 		return null;

@@ -41,219 +41,219 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("itestWeb")
 public class Knot001ITest extends EmbededKafkaBroker {
 
-    @Autowired
-    private KafkaEventProducer KafkaEventProducer;
+	@Autowired
+	private KafkaEventProducer KafkaEventProducer;
 
-    @MockBean
-    private KafkaDoknotifikasjonStatusProducer statusProducer;
+	@MockBean
+	private KafkaDoknotifikasjonStatusProducer statusProducer;
 
-    @Autowired
-    private NotifikasjonRepository notifikasjonRepository;
+	@Autowired
+	private NotifikasjonRepository notifikasjonRepository;
 
-    @Autowired
-    private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
+	@Autowired
+	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-    @BeforeAll
-    public void beforeAll() {
-        this.stubGetSecurityToken();
-    }
+	@BeforeAll
+	public void beforeAll() {
+		this.stubGetSecurityToken();
+	}
 
-    @BeforeEach
-    public void setup() {
-        notifikasjonRepository.deleteAll();
-        notifikasjonDistribusjonRepository.deleteAll();
-    }
+	@BeforeEach
+	public void setup() {
+		notifikasjonRepository.deleteAll();
+		notifikasjonDistribusjonRepository.deleteAll();
+	}
 
-    @Test
-    public void knot001ConsumerOnlySaveEpostWhenSmsAsPreferedKanalAndOnlyEpostIsValidKontaktInfo() {
-        Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
+	@Test
+	public void knot001ConsumerOnlySaveEpostWhenSmsAsPreferedKanalAndOnlyEpostIsValidKontaktInfo() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
 
-        this.stubGetKontaktInfoWithoutSmsInKontaktInfo();
+		this.stubGetKontaktInfoWithoutSmsInKontaktInfo();
 
-        this.putMessageOnKafkaTopic(doknotifikasjon);
+		this.putMessageOnKafkaTopic(doknotifikasjon);
 
-        verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
-        );
+		verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
+		);
 
-        Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
+		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
 
-        assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
-        assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
-        assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
-        assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-        assertEquals(doknotifikasjon.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
-        assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
+		assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
+		assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
+		assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
+		assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
+		assertEquals(doknotifikasjon.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+		assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
 
-        assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
-        assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
+		assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
+		assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
 
-        List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
 
-        assertEquals(1, notifikasjonDistribusjonList.size());
+		assertEquals(1, notifikasjonDistribusjonList.size());
 
-        NotifikasjonDistribusjon epost = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.EPOST).findFirst().get();
+		NotifikasjonDistribusjon epost = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.EPOST).findFirst().get();
 
-        assertEquals(Kanal.EPOST, epost.getKanal());
-        assertEquals(notifikasjon.getBestillingsId(), epost.getOpprettetAv());
-        assertEquals(notifikasjon.getId(), epost.getNotifikasjon().getId());
-        assertEquals(Status.OPPRETTET, epost.getStatus());
-        assertEquals(doknotifikasjon.getEpostTekst(), epost.getTekst());
-        assertEquals(doknotifikasjon.getTittel(), epost.getTittel());
-    }
-
-
-    @Test
-    public void knot001ConsumerShouldRunSmoothlyWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
-        Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
-        this.stubGetKontaktInfo();
-
-        this.putMessageOnKafkaTopic(doknotifikasjon);
-
-        verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
-        );
-
-        Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
-
-        assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
-        assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
-        assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
-        assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-        assertEquals(doknotifikasjon.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
-        assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
-
-        assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
-        assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
-
-        List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
-
-        assertEquals(1, notifikasjonDistribusjonList.size());
-
-        NotifikasjonDistribusjon sms = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.SMS).findFirst().get();
-
-        assertEquals(Kanal.SMS, sms.getKanal());
-        assertEquals(notifikasjon.getBestillingsId(), sms.getOpprettetAv());
-        assertEquals(notifikasjon.getId(), sms.getNotifikasjon().getId());
-        assertEquals(Status.OPPRETTET, sms.getStatus());
-        assertEquals(doknotifikasjon.getSmsTekst(), sms.getTekst());
-        assertEquals(doknotifikasjon.getTittel(), sms.getTittel());
-    }
-
-    @Test
-    public void knot001ConsumerShouldReceiveAndKafkaEventProcessWhenReceivingOneKafkaEvent() {
-        Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
-        this.stubGetKontaktInfo();
-
-        this.putMessageOnKafkaTopic(doknotifikasjon);
-
-        verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
-        );
-
-        Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
-
-        assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
-        assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
-        assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
-        assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-        assertEquals(doknotifikasjon.getPrefererteKanaler().get(0) + ", " + doknotifikasjon.getPrefererteKanaler().get(1), notifikasjon.getPrefererteKanaler());
-        assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
-
-        assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
-        assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
-
-        List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
-
-        assertEquals(2, notifikasjonDistribusjonList.size());
-
-        NotifikasjonDistribusjon epost = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.EPOST).findFirst().get();
-        NotifikasjonDistribusjon sms = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.SMS).findFirst().get();
-
-        assertEquals(Kanal.EPOST, epost.getKanal());
-        assertEquals(notifikasjon.getBestillingsId(), epost.getOpprettetAv());
-        assertEquals(notifikasjon.getId(), epost.getNotifikasjon().getId());
-        assertEquals(Status.OPPRETTET, epost.getStatus());
-        assertEquals(doknotifikasjon.getEpostTekst(), epost.getTekst());
-        assertEquals(doknotifikasjon.getTittel(), epost.getTittel());
-
-        assertEquals(Kanal.SMS, sms.getKanal());
-        assertEquals(notifikasjon.getBestillingsId(), sms.getOpprettetAv());
-        assertEquals(notifikasjon.getId(), sms.getNotifikasjon().getId());
-        assertEquals(Status.OPPRETTET, sms.getStatus());
-        assertEquals(doknotifikasjon.getSmsTekst(), sms.getTekst());
-        assertEquals(doknotifikasjon.getTittel(), sms.getTittel());
-    }
-
-    @Test
-    public void shouldNotPersistInDatabaseWhenExceptionIsThrown() {
-        Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
-        this.stubGetKontaktInfo();
-
-        statusProducer.publishDoknotikfikasjonStatusOversendt(
-                doknotifikasjon.getBestillingsId(),
-                doknotifikasjon.getBestillerId(),
-                OVERSENDT_NOTIFIKASJON_PROCESSED,
-                null
-        );
-
-        doThrow(KafkaTechnicalException.class)
-                .when(statusProducer)
-                .publishDoknotikfikasjonStatusOversendt(doknotifikasjon.getBestillingsId(),
-                        doknotifikasjon.getBestillerId(),
-                        OVERSENDT_NOTIFIKASJON_PROCESSED,
-                        null);
-
-        this.putMessageOnKafkaTopic(doknotifikasjon);
-
-        Boolean isNotifikasjonPersistint = notifikasjonRepository.existsByBestillingsId(doknotifikasjon.getBestillerId());
-
-        assertEquals(false, isNotifikasjonPersistint);
-        assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
-
-        verify(statusProducer, atLeast(1)).publishDoknotikfikasjonStatusOversendt(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
-        );
-    }
+		assertEquals(Kanal.EPOST, epost.getKanal());
+		assertEquals(notifikasjon.getBestillingsId(), epost.getOpprettetAv());
+		assertEquals(notifikasjon.getId(), epost.getNotifikasjon().getId());
+		assertEquals(Status.OPPRETTET, epost.getStatus());
+		assertEquals(doknotifikasjon.getEpostTekst(), epost.getTekst());
+		assertEquals(doknotifikasjon.getTittel(), epost.getTittel());
+	}
 
 
-    private void putMessageOnKafkaTopic(Doknotifikasjon doknotifikasjon) {
-        try {
-            Long keyGenerator = System.currentTimeMillis();
+	@Test
+	public void knot001ConsumerShouldRunSmoothlyWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
+		this.stubGetKontaktInfo();
 
-            KafkaEventProducer.publish(
-                    KAFKA_TOPIC_DOK_NOTIFKASJON,
-                    doknotifikasjon,
-                    keyGenerator
-            );
+		this.putMessageOnKafkaTopic(doknotifikasjon);
 
-            TimeUnit.SECONDS.sleep(30);
-        } catch (InterruptedException exception) {
-            fail();
-        }
-    }
+		verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
+		);
 
-    private void stubGetSecurityToken() {
-        stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(HttpStatus.OK.value())
-                .withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                .withBodyFile("stsResponse_happy.json")));
+		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
+
+		assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
+		assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
+		assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
+		assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
+		assertEquals(doknotifikasjon.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+		assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
+
+		assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
+		assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
+
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
+
+		assertEquals(1, notifikasjonDistribusjonList.size());
+
+		NotifikasjonDistribusjon sms = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.SMS).findFirst().get();
+
+		assertEquals(Kanal.SMS, sms.getKanal());
+		assertEquals(notifikasjon.getBestillingsId(), sms.getOpprettetAv());
+		assertEquals(notifikasjon.getId(), sms.getNotifikasjon().getId());
+		assertEquals(Status.OPPRETTET, sms.getStatus());
+		assertEquals(doknotifikasjon.getSmsTekst(), sms.getTekst());
+		assertEquals(doknotifikasjon.getTittel(), sms.getTittel());
+	}
+
+	@Test
+	public void knot001ConsumerShouldReceiveAndKafkaEventProcessWhenReceivingOneKafkaEvent() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
+		this.stubGetKontaktInfo();
+
+		this.putMessageOnKafkaTopic(doknotifikasjon);
+
+		verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
+		);
+
+		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
+
+		assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
+		assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
+		assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
+		assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
+		assertEquals(doknotifikasjon.getPrefererteKanaler().get(0) + ", " + doknotifikasjon.getPrefererteKanaler().get(1), notifikasjon.getPrefererteKanaler());
+		assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
+
+		assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
+		assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
+
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
+
+		assertEquals(2, notifikasjonDistribusjonList.size());
+
+		NotifikasjonDistribusjon epost = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.EPOST).findFirst().get();
+		NotifikasjonDistribusjon sms = notifikasjonDistribusjonList.stream().filter(s -> s.getKanal() == Kanal.SMS).findFirst().get();
+
+		assertEquals(Kanal.EPOST, epost.getKanal());
+		assertEquals(notifikasjon.getBestillingsId(), epost.getOpprettetAv());
+		assertEquals(notifikasjon.getId(), epost.getNotifikasjon().getId());
+		assertEquals(Status.OPPRETTET, epost.getStatus());
+		assertEquals(doknotifikasjon.getEpostTekst(), epost.getTekst());
+		assertEquals(doknotifikasjon.getTittel(), epost.getTittel());
+
+		assertEquals(Kanal.SMS, sms.getKanal());
+		assertEquals(notifikasjon.getBestillingsId(), sms.getOpprettetAv());
+		assertEquals(notifikasjon.getId(), sms.getNotifikasjon().getId());
+		assertEquals(Status.OPPRETTET, sms.getStatus());
+		assertEquals(doknotifikasjon.getSmsTekst(), sms.getTekst());
+		assertEquals(doknotifikasjon.getTittel(), sms.getTittel());
+	}
+
+	@Test
+	public void shouldNotPersistInDatabaseWhenExceptionIsThrown() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
+		this.stubGetKontaktInfo();
+
+		statusProducer.publishDoknotikfikasjonStatusOversendt(
+				doknotifikasjon.getBestillingsId(),
+				doknotifikasjon.getBestillerId(),
+				OVERSENDT_NOTIFIKASJON_PROCESSED,
+				null
+		);
+
+		doThrow(KafkaTechnicalException.class)
+				.when(statusProducer)
+				.publishDoknotikfikasjonStatusOversendt(doknotifikasjon.getBestillingsId(),
+						doknotifikasjon.getBestillerId(),
+						OVERSENDT_NOTIFIKASJON_PROCESSED,
+						null);
+
+		this.putMessageOnKafkaTopic(doknotifikasjon);
+
+		Boolean isNotifikasjonPersistint = notifikasjonRepository.existsByBestillingsId(doknotifikasjon.getBestillerId());
+
+		assertEquals(false, isNotifikasjonPersistint);
+		assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
+
+		verify(statusProducer, atLeast(1)).publishDoknotikfikasjonStatusOversendt(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
+		);
+	}
 
 
-    }
+	private void putMessageOnKafkaTopic(Doknotifikasjon doknotifikasjon) {
+		try {
+			Long keyGenerator = System.currentTimeMillis();
 
-    private void stubGetKontaktInfo() {
-        stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-                .willReturn(aResponse().withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                        .withBodyFile("happy-responsebody.json")));
+			KafkaEventProducer.publish(
+					KAFKA_TOPIC_DOK_NOTIFKASJON,
+					doknotifikasjon,
+					keyGenerator
+			);
 
-    }
+			TimeUnit.SECONDS.sleep(30);
+		} catch (InterruptedException exception) {
+			fail();
+		}
+	}
 
-    private void stubGetKontaktInfoWithoutSmsInKontaktInfo() {
-        stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-                .willReturn(aResponse().withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                        .withBodyFile("responsebodyWithoutSms.json")));
+	private void stubGetSecurityToken() {
+		stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+				.withBodyFile("stsResponse_happy.json")));
 
-    }
+
+	}
+
+	private void stubGetKontaktInfo() {
+		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("happy-responsebody.json")));
+
+	}
+
+	private void stubGetKontaktInfoWithoutSmsInKontaktInfo() {
+		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("responsebodyWithoutSms.json")));
+
+	}
 }

@@ -9,14 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DoknotifikasjonStoppMapperTest {
 
-    private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper = new DoknotifikasjonStoppMapper();
+	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper = new DoknotifikasjonStoppMapper();
 
-    @Test
-    void shouldMap() {
-        DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID);
-        DoknotifikasjonStoppTo doknotifikasjonStoppTo = doknotifikasjonStoppMapper.map(doknotifikasjonStopp);
+	@Test
+	void shouldMap() {
+		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID);
+		DoknotifikasjonStoppTo doknotifikasjonStoppTo = doknotifikasjonStoppMapper.map(doknotifikasjonStopp);
 
-        assertEquals(doknotifikasjonStopp.getBestillingsId(), doknotifikasjonStoppTo.getBestillingsId());
-        assertEquals(doknotifikasjonStopp.getBestillerId(), doknotifikasjonStoppTo.getBestillerId());
-    }
+		assertEquals(doknotifikasjonStopp.getBestillingsId(), doknotifikasjonStoppTo.getBestillingsId());
+		assertEquals(doknotifikasjonStopp.getBestillerId(), doknotifikasjonStoppTo.getBestillerId());
+	}
 }
