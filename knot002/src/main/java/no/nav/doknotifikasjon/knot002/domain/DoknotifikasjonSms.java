@@ -10,11 +10,11 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 @Setter
 @Builder
 public class DoknotifikasjonSms {
-    public String notifikasjonDistribusjonId;
-    public String bestillingsId;
-    public String bestillerId;
-    public Status distribusjonStatus;
-    public Kanal kanal;
-    public String kontakt;
-    public String tekst;
+	public String notifikasjonDistribusjonId;
+	public String bestillingsId;
+	public String bestillerId;
+	public Status distribusjonStatus;
+	public Kanal kanal;
+	public String kontakt;
+	public String tekst;
 }

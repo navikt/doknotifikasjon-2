@@ -13,107 +13,113 @@ import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILLT;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.UGYLDIG_STATUS;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.UGYLDIG_KANAL;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.IKKE_OPPDATERT;
+import java.util.Optional;
+
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_STATUS;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_KANAL;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 
 @Slf4j
 @Component
 public class Knot002Service {
 
-    private final NotifikasjonEntityMapper notifikasjonEntityMapper;
-    private final KafkaEventProducer kafkaEventProducer;
-    private final AltinnConsumer altinnConsumer;
+	private final NotifikasjonEntityMapper notifikasjonEntityMapper;
+	private final KafkaEventProducer kafkaEventProducer;
+	private final AltinnConsumer altinnConsumer;
 
-    public Knot002Service(
-            NotifikasjonEntityMapper notifikasjonEntityMapper,
-            KafkaEventProducer kafkaEventProducer,
-            AltinnConsumer altinnConsumer
-    ) {
-        this.notifikasjonEntityMapper = notifikasjonEntityMapper;
-        this.kafkaEventProducer = kafkaEventProducer;
-        this.altinnConsumer = altinnConsumer;
-    }
+	public Knot002Service(
+			NotifikasjonEntityMapper notifikasjonEntityMapper,
+			KafkaEventProducer kafkaEventProducer,
+			AltinnConsumer altinnConsumer
+	) {
+		this.notifikasjonEntityMapper = notifikasjonEntityMapper;
+		this.kafkaEventProducer = kafkaEventProducer;
+		this.altinnConsumer = altinnConsumer;
+	}
 
-    public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
+	public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
 
-        DoknotifikasjonSms doknotifikasjonSms;
+		DoknotifikasjonSms doknotifikasjonSms;
 
-        try{
-            doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjonId);
-        } catch(Exception exception) {
-            log.error("NotifikasjonDistribusjonConsumer kunne ikke hente notifikasjon", exception);
-            return;
-        }
+		try{
+			doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjonId);
+		} catch(Exception exception) {
+			log.error("NotifikasjonDistribusjonConsumer kunne ikke hente notifikasjon", exception);
+			return;
+		}
 
-        if(!validateDistribusjonStatusOgKanal(doknotifikasjonSms)) {
-            String melding = doknotifikasjonSms.distribusjonStatus == Status.OPPRETTET
-                    ? UGYLDIG_KANAL
-                    : UGYLDIG_STATUS;
+		if(!validateDistribusjonStatusOgKanal(doknotifikasjonSms)) {
+			String melding = doknotifikasjonSms.distribusjonStatus == Status.OPPRETTET
+					? FEILET_SMS_UGYLDIG_KANAL
+					: FEILET_SMS_UGYLDIG_STATUS;
 
-            publishStatus(doknotifikasjonSms, Status.FEILET, melding);
-            return;
-        }
+			publishStatus(doknotifikasjonSms, Status.FEILET, melding);
+			return;
+		}
 
-        try{
-            altinnConsumer.sendStandaloneNotificationV3(
-                    Kanal.SMS,
-                    doknotifikasjonSms.kontakt,
-                    doknotifikasjonSms.tekst
-            );
+		try{
+			altinnConsumer.sendStandaloneNotificationV3(
+					Kanal.SMS,
+					doknotifikasjonSms.kontakt,
+					doknotifikasjonSms.tekst
+			);
 
-            log.info("Knot002 NotifikasjonDistribusjonConsumer" + FERDIGSTILLT + " notifikasjonDistribusjonId=${}", notifikasjonDistribusjonId);
-        } catch (SoapFaultClientException soapFault) {
-            log.error("Knot002 NotifikasjonDistribusjonConsumer soapfault: fault reason=${}", soapFault.getFaultStringOrReason(), soapFault);
-            publishStatus(doknotifikasjonSms, Status.FEILET, soapFault.getFaultStringOrReason());
-            return;
+			log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
+		} catch (SoapFaultClientException soapFault) {
+			log.error("Knot002 NotifikasjonDistribusjonConsumer har mottatt faultmelding fra altinn fault reason={}", soapFault.getFaultStringOrReason(), soapFault);
+			publishStatus(doknotifikasjonSms, Status.FEILET, soapFault.getFaultStringOrReason());
+			return;
 
-        } catch (AltinnFunctionalException altinnFunctionalException) {
-            log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: fault reason=${}", altinnFunctionalException.getMessage(), altinnFunctionalException);
-            publishStatus(doknotifikasjonSms, Status.FEILET, altinnFunctionalException.getMessage());
-            return;
-        } catch (Exception altinnException) {
-            log.error("Knot002 NotifikasjonDistribusjonConsumer annen exception:", altinnException);
-            // TODO udefinert spec for teknisk feil mot altinn, ANNTAR at behandling skal avsluttes og status legges på kø.
-            publishStatus(doknotifikasjonSms, Status.FEILET, altinnException.getMessage());
-            return;
-        }
+		} catch (AltinnFunctionalException altinnFunctionalException) {
+			log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
+			publishStatus(doknotifikasjonSms, Status.FEILET, altinnFunctionalException.getMessage());
+			return;
+		} catch (Exception unknownException) {
+			log.error("Knot002 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
+			publishStatus(
+					doknotifikasjonSms,
+					Status.FEILET,
+					Optional.of(unknownException).map(Exception::getMessage).orElse("")
+			);
+			return;
+		}
 
 
-        try{
-            notifikasjonEntityMapper.updateEntity(
-                    notifikasjonDistribusjonId,
-                    doknotifikasjonSms.bestillerId
-            );
-        } catch(Exception exception) {
-            log.error(IKKE_OPPDATERT, exception);
-            // TODO feilhåndtering? Udefinert i spec
-            return;
-        }
+		try{
+			notifikasjonEntityMapper.updateEntity(
+					notifikasjonDistribusjonId,
+					doknotifikasjonSms.bestillerId
+			);
+		} catch(Exception exception) {
+			log.error(FEILET_DATABASE_IKKE_OPPDATERT, exception);
+			// TODO feilhåndtering? Udefinert i spec
+			return;
+		}
 
-        publishStatus(doknotifikasjonSms, Status.FERDIGSTILT, FERDIGSTILLT);
+		publishStatus(doknotifikasjonSms, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
 
-    }
+	}
 
-    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSms doknotifikasjonSms) {
-        return doknotifikasjonSms.getDistribusjonStatus().equals(Status.OPPRETTET)
-                && doknotifikasjonSms.kanal.equals(Kanal.SMS);
-    }
+	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSms doknotifikasjonSms) {
+		return doknotifikasjonSms.getDistribusjonStatus().equals(Status.OPPRETTET)
+				&& doknotifikasjonSms.kanal.equals(Kanal.SMS);
+	}
 
-    private void publishStatus(DoknotifikasjonSms doknotifikasjonSms, Status status, String melding) {
-        kafkaEventProducer.publish(
-                KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-                doknotifikasjonSms.notifikasjonDistribusjonId,
-                DoknotifikasjonStatus.newBuilder()
-                        .setBestillerId(doknotifikasjonSms.bestillerId)
-                        .setBestillingsId(doknotifikasjonSms.bestillingsId)
-                        .setStatus(status.name())
-                        .setMelding(melding)
-                        .setDistribusjonId(Long.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()))
-                        .build(),
-                System.currentTimeMillis()
-        );
-    }
+
+	private void publishStatus(DoknotifikasjonSms doknotifikasjonSms, Status status, String melding) {
+		kafkaEventProducer.publish(
+				KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				doknotifikasjonSms.notifikasjonDistribusjonId,
+				DoknotifikasjonStatus.newBuilder()
+						.setBestillerId(doknotifikasjonSms.bestillerId)
+						.setBestillingsId(doknotifikasjonSms.bestillingsId)
+						.setStatus(status.name())
+						.setMelding(melding)
+						.setDistribusjonId(Long.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()))
+						.build(),
+				System.currentTimeMillis()
+		);
+	}
 
 }

@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({
-        CoreConfig.class,
-        RepositoryConfig.class,
+		CoreConfig.class,
+		RepositoryConfig.class,
 		AltinnTestConfig.class
 })
 public class ApplicationTestConfig { }

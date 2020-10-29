@@ -108,7 +108,6 @@ class Knot002ITest extends EmbededKafkaBroker {
 			//needed because backoff is 3 seconds
 			TimeUnit.SECONDS.sleep(10);
 			verify(NotifikasjonEntityMapper, times(3)).mapNotifikasjonDistrubisjon(1234);
-			verify(NotifikasjonEntityMapper, times(1)).recoverMapNotifikasjonDistrubisjon(any(), eq(1234));
 		} catch(Exception e) {
 			fail();
 		}
@@ -150,11 +149,6 @@ class Knot002ITest extends EmbededKafkaBroker {
 		);
 	}
 
-	/*
-	TODO
-	applikasjonen skiller ikke enda på funksjonelle og tekniske feil fra altinn da spec'en er udefinert for tekniske
-	feil og jeg da gjorde anntagelsen at behandlingen da også skulle avsluttes
-	 */
 	@Test
 	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() {
 

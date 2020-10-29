@@ -21,7 +21,8 @@ public class AltinnResponseValidator {
 	) {
 		SendNotificationResultList sendNotificationResultList = Optional.ofNullable(response)
 				.map(SendStandaloneNotificationBasicV3Response::getSendStandaloneNotificationBasicV3Result)
-				.map(JAXBElement::getValue).orElse(null);
+				.map(JAXBElement::getValue)
+				.orElse(null);
 		return validateSendNotificationResultList(kanal, kontaktInfo, sendNotificationResultList);
 	}
 

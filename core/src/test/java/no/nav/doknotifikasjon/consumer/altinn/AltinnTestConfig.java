@@ -18,40 +18,40 @@ import static org.mockito.Mockito.when;
 @Configuration
 public class AltinnTestConfig {
 
-    private ObjectFactory objectFactory = new ObjectFactory();
-    private static WebServiceTemplate webServiceTemplate = Mockito.mock(WebServiceTemplate.class);
+	private ObjectFactory objectFactory = new ObjectFactory();
+	private static WebServiceTemplate webServiceTemplate = Mockito.mock(WebServiceTemplate.class);
 
-    @Bean
-    public Jaxb2Marshaller marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("no.altinn.springsoap.client.gen");
-        return marshaller;
-    }
+	@Bean
+	public Jaxb2Marshaller marshaller() {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		marshaller.setContextPath("no.altinn.springsoap.client.gen");
+		return marshaller;
+	}
 
-    @Bean
-    public AltinnConsumer altinnConsumer(
-            Jaxb2Marshaller marshaller
-    ) {
-        AltinnConsumer client = new AltinnConsumer("username", "password");
-        client.setDefaultUri("localhost");
-        client.setMarshaller(marshaller);
-        client.setUnmarshaller(marshaller);
-        client.setWebServiceTemplate(webServiceTemplate);
-        return client;
+	@Bean
+	public AltinnConsumer altinnConsumer(
+			Jaxb2Marshaller marshaller
+	) {
+		AltinnConsumer client = new AltinnConsumer("username", "password");
+		client.setDefaultUri("localhost");
+		client.setMarshaller(marshaller);
+		client.setUnmarshaller(marshaller);
+		client.setWebServiceTemplate(webServiceTemplate);
+		return client;
 
-    }
+	}
 
-    private SendStandaloneNotificationBasicV3 generateRequest() {
-        SendStandaloneNotificationBasicV3 request = objectFactory.createSendStandaloneNotificationBasicV3();
+	private SendStandaloneNotificationBasicV3 generateRequest() {
+		SendStandaloneNotificationBasicV3 request = objectFactory.createSendStandaloneNotificationBasicV3();
 
-        request.setSystemUserName("username");
-        request.setSystemPassword("password");
+		request.setSystemUserName("username");
+		request.setSystemPassword("password");
 
-        return request;
-    }
+		return request;
+	}
 
-    public static WebServiceTemplate getWebServiceTemplateMock() {
-        return webServiceTemplate;
-    }
+	public static WebServiceTemplate getWebServiceTemplateMock() {
+		return webServiceTemplate;
+	}
 
 }

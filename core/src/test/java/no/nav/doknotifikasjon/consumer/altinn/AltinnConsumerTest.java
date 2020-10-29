@@ -8,40 +8,13 @@ import no.nav.doknotifikasjon.repository.RepositoryConfig;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.core.io.InputStreamSource;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.mime.Attachment;
-import org.springframework.ws.mime.AttachmentException;
-import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.SoapBodyException;
-import org.springframework.ws.soap.SoapEnvelope;
-import org.springframework.ws.soap.SoapEnvelopeException;
-import org.springframework.ws.soap.SoapHeader;
-import org.springframework.ws.soap.SoapHeaderException;
-import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.client.SoapFaultClientException;
-import org.w3c.dom.Document;
 
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
 
 import static no.nav.doknotifikasjon.consumer.altinn.AltinResponseFactory.generateAltinnResponse;
 import static no.nav.doknotifikasjon.consumer.altinn.AltinResponseFactory.generateEmptyAltinnResponse;
@@ -146,7 +119,5 @@ public class AltinnConsumerTest {
 
 		assertEquals("sendStandaloneNotificationV3 ukjent feil, feilmelding=Boom!", exception.getMessage());
 	}
-
-
 
 }
