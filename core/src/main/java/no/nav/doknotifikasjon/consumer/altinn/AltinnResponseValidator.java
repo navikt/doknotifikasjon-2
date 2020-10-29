@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class AltinnResponseValidator {
 
-	public static boolean validateResponse(
+	public static boolean isValidResponse(
 			Kanal kanal,
 			String kontaktInfo,
 			SendStandaloneNotificationBasicV3Response response
@@ -23,10 +23,10 @@ public class AltinnResponseValidator {
 				.map(SendStandaloneNotificationBasicV3Response::getSendStandaloneNotificationBasicV3Result)
 				.map(JAXBElement::getValue)
 				.orElse(null);
-		return validateSendNotificationResultList(kanal, kontaktInfo, sendNotificationResultList);
+		return isValidSendNotificationResultList(kanal, kontaktInfo, sendNotificationResultList);
 	}
 
-	private static boolean validateSendNotificationResultList(Kanal kanal, String kontaktInfo, SendNotificationResultList sendNotificationResultList) {
+	private static boolean isValidSendNotificationResultList(Kanal kanal, String kontaktInfo, SendNotificationResultList sendNotificationResultList) {
 		if (sendNotificationResultList == null) {
 			return false;
 		}
@@ -37,10 +37,10 @@ public class AltinnResponseValidator {
 			return false;
 		}
 
-		return notificationResults.stream().anyMatch(notificationResult -> validateSendNotificationResult(kanal, kontaktInfo, notificationResult));
+		return notificationResults.stream().anyMatch(notificationResult -> isValidSendNotificationResult(kanal, kontaktInfo, notificationResult));
 	}
 
-	private static boolean validateSendNotificationResult(Kanal kanal, String kontaktInfo, NotificationResult notificationResult) {
+	private static boolean isValidSendNotificationResult(Kanal kanal, String kontaktInfo, NotificationResult notificationResult) {
 		if (notificationResult == null) {
 			return false;
 		}
@@ -48,23 +48,25 @@ public class AltinnResponseValidator {
 		List<EndPointResult> endPointResults = Optional.of(notificationResult)
 				.map(NotificationResult::getEndPoints)
 				.map(JAXBElement::getValue)
-				.map(EndPointResultList::getEndPointResult).orElse(null);
+				.map(EndPointResultList::getEndPointResult)
+				.orElse(null);
 
 		if (endPointResults == null) {
 			return false;
 		}
 
-		return endPointResults.stream().anyMatch(endPointResult -> validateEndpointResult(kanal, kontaktInfo, endPointResult));
+		return endPointResults.stream().anyMatch(endPointResult -> isValidEndpointResult(kanal, kontaktInfo, endPointResult));
 	}
 
-	private static boolean validateEndpointResult(Kanal kanal, String kontaktInfo, EndPointResult endPointResult) {
+	private static boolean isValidEndpointResult(Kanal kanal, String kontaktInfo, EndPointResult endPointResult) {
 		if (endPointResult == null) {
 			return false;
 		}
 
 		String endPointAddress = Optional.of(endPointResult)
 				.map(EndPointResult::getReceiverAddress)
-				.map(JAXBElement::getValue).orElse(null);
+				.map(JAXBElement::getValue)
+				.orElse(null);
 
 		Kanal endpointKanal = transportTypeToKanal(endPointResult.getTransportType());
 

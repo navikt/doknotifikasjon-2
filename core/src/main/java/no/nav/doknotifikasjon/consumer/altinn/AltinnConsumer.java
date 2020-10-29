@@ -43,16 +43,16 @@ public class AltinnConsumer extends WebServiceGatewaySupport {
 
 			SendStandaloneNotificationBasicV3Response response = (SendStandaloneNotificationBasicV3Response) getWebServiceTemplate().marshalSendAndReceive(request);
 
-			if (!AltinnResponseValidator.validateResponse(kanal, kontaktInfo, response)) {
-				throw new AltinnFunctionalException("Respons inneholder ikke notifikasjon");
+			if (!AltinnResponseValidator.isValidResponse(kanal, kontaktInfo, response)) {
+				throw new AltinnFunctionalException("SendStandaloneNotificationBasicV3Response inneholder ikke notifikasjon som ble forsøkt sendt");
 			}
 
 		} catch (AltinnFunctionalException exception) {
-			log.error("sendStandaloneNotificationV3 funksjonell feil ved sending av notifikasjon feilmelding={}", exception.getMessage(), exception);
+			log.error("Det oppstod en funksjonell feil i sendStandaloneNotificationV3 ved sending av request feilmelding={}", exception.getMessage(), exception);
 			throw exception;
 		} catch (SoapFaultClientException exception) {
 			log.error(
-					"sendStandaloneNotificationV3 Det oppstod en feil ved sending av request: faultCode={} faultStringOrReason={}",
+					"Det oppstod en SoapFault i sendStandaloneNotificationV3 ved sending av request: feilkode={} feilmelding={}",
 					Optional.of(exception).map(SoapFaultClientException::getFaultCode).map(QName::getLocalPart).orElse(null),
 					exception.getFaultStringOrReason(),
 					exception
