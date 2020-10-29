@@ -1,6 +1,7 @@
-package no.nav.doknotifikasjon.knot002.consumer;
+package no.nav.doknotifikasjon.knot002.service;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnConsumer;
 import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
@@ -12,45 +13,44 @@ import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILLT;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.UGYLDIG_STATUS;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.UGYLDIG_KANAL;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.IKKE_OPPDATERT;
 
 @Slf4j
 @Component
-public class NotifikasjonDistribusjonConsumer {
+public class Knot002Service {
 
     private final NotifikasjonEntityMapper notifikasjonEntityMapper;
     private final KafkaEventProducer kafkaEventProducer;
     private final AltinnConsumer altinnConsumer;
 
-    private final String FERDIGSTILLT = "notifikasjon sendt via sms";
-    private final String UGYLDIG_STATUS = "distribusjon til sms feilet: ugyldig status";
-    private final String UGYLDIG_KANAL = "distribusjon til sms feilet: ugyldig kanal";
-    private final String IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
-
-    public NotifikasjonDistribusjonConsumer(
+    public Knot002Service(
             NotifikasjonEntityMapper notifikasjonEntityMapper,
             KafkaEventProducer kafkaEventProducer,
             AltinnConsumer altinnConsumer
-    ){
+    ) {
         this.notifikasjonEntityMapper = notifikasjonEntityMapper;
         this.kafkaEventProducer = kafkaEventProducer;
         this.altinnConsumer = altinnConsumer;
     }
 
-    public void konsumerDistribusjonId(int notifikasjonDistribusjonId){
+    public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
 
         DoknotifikasjonSms doknotifikasjonSms;
 
         try{
-            doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjon(notifikasjonDistribusjonId);
+            doknotifikasjonSms = notifikasjonEntityMapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjonId);
         } catch(Exception exception) {
             log.error("NotifikasjonDistribusjonConsumer kunne ikke hente notifikasjon", exception);
             return;
         }
 
-        if(!validateDistribusjonStatusOgKanal(doknotifikasjonSms)){
+        if(!validateDistribusjonStatusOgKanal(doknotifikasjonSms)) {
             String melding = doknotifikasjonSms.distribusjonStatus == Status.OPPRETTET
-                    ? UGYLDIG_STATUS
-                    : UGYLDIG_KANAL;
+                    ? UGYLDIG_KANAL
+                    : UGYLDIG_STATUS;
 
             publishStatus(doknotifikasjonSms, Status.FEILET, melding);
             return;
@@ -63,13 +63,19 @@ public class NotifikasjonDistribusjonConsumer {
                     doknotifikasjonSms.tekst
             );
 
-            log.info("NotifikasjonDistribusjonConsumer" + FERDIGSTILLT + " notifikasjonDistribusjonId=${}", notifikasjonDistribusjonId);
+            log.info("Knot002 NotifikasjonDistribusjonConsumer" + FERDIGSTILLT + " notifikasjonDistribusjonId=${}", notifikasjonDistribusjonId);
         } catch (SoapFaultClientException soapFault) {
-            log.error("NotifikasjonDistribusjonConsumer soapfault: fault reason=${}",soapFault.getFaultStringOrReason(), soapFault);
+            log.error("Knot002 NotifikasjonDistribusjonConsumer soapfault: fault reason=${}", soapFault.getFaultStringOrReason(), soapFault);
             publishStatus(doknotifikasjonSms, Status.FEILET, soapFault.getFaultStringOrReason());
             return;
+
+        } catch (AltinnFunctionalException altinnFunctionalException) {
+            log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: fault reason=${}", altinnFunctionalException.getMessage(), altinnFunctionalException);
+            publishStatus(doknotifikasjonSms, Status.FEILET, altinnFunctionalException.getMessage());
+            return;
         } catch (Exception altinnException) {
-            log.error("NotifikasjonDistribusjonConsumer annen exception:", altinnException);
+            log.error("Knot002 NotifikasjonDistribusjonConsumer annen exception:", altinnException);
+            // TODO udefinert spec for teknisk feil mot altinn, ANNTAR at behandling skal avsluttes og status legges på kø.
             publishStatus(doknotifikasjonSms, Status.FEILET, altinnException.getMessage());
             return;
         }
@@ -82,7 +88,7 @@ public class NotifikasjonDistribusjonConsumer {
             );
         } catch(Exception exception) {
             log.error(IKKE_OPPDATERT, exception);
-            // TODO feilhåndtering?
+            // TODO feilhåndtering? Udefinert i spec
             return;
         }
 
@@ -90,7 +96,7 @@ public class NotifikasjonDistribusjonConsumer {
 
     }
 
-    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSms doknotifikasjonSms){
+    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSms doknotifikasjonSms) {
         return doknotifikasjonSms.getDistribusjonStatus().equals(Status.OPPRETTET)
                 && doknotifikasjonSms.kanal.equals(Kanal.SMS);
     }

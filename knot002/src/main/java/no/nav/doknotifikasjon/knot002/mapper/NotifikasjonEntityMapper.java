@@ -22,12 +22,12 @@ public class NotifikasjonEntityMapper {
     private final int MAX_ATTEMPTS = 3;
 
     private final NotifikasjonDistribusjonRepository repository;
-    public NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository){
+    public NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository) {
         this.repository = repository;
     }
 
     @Retryable(maxAttempts = MAX_ATTEMPTS, backoff = @Backoff(delay = 3000))
-    public DoknotifikasjonSms mapNotifikasjon(int notifikasjonDistribusjonId) throws Exception {
+    public DoknotifikasjonSms mapNotifikasjonDistrubisjon(int notifikasjonDistribusjonId) throws Exception {
         try {
             NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(notifikasjonDistribusjonId).orElseThrow();
             Notifikasjon notifikasjonEntity = notifikasjonDistribusjonEntity.getNotifikasjon();
@@ -42,30 +42,30 @@ public class NotifikasjonEntityMapper {
                     .kontakt(notifikasjonDistribusjonEntity.getKontaktInfo())
                     .tekst(notifikasjonDistribusjonEntity.getTekst())
                     .build();
-        } catch (NoSuchElementException exception){
+        } catch (NoSuchElementException exception) {
             log.warn(
-                    "knot002 mapNotifikasjon fant ikke distribusjon notifikasjonDistribusjonId=${}",
+                    "knot002 mapNotifikasjon fant ikke distribusjon notifikasjonDistribusjonId={}",
                     notifikasjonDistribusjonId,
                     exception
             );
             throw exception;
-        } catch (TransientDataAccessException exception){
+        } catch (TransientDataAccessException exception) {
             log.warn(
-                    "knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=${}",
+                    "knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId={}",
                     notifikasjonDistribusjonId,
                     exception
             );
             throw exception;
-        } catch(DataAccessException exception){
+        } catch(DataAccessException exception) {
             log.warn(
-                    "knot002 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId=${}",
+                    "knot002 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId={}",
                     notifikasjonDistribusjonId,
                     exception
             );
             throw exception;
         } catch (Exception exception) {
             log.warn(
-                    "knot002 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId=${}",
+                    "knot002 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId={}",
                     notifikasjonDistribusjonId,
                     exception
             );
@@ -74,9 +74,9 @@ public class NotifikasjonEntityMapper {
     }
 
     @Recover
-    public DoknotifikasjonSms recoverMapNotifikasjon(Exception e, int notifikasjonDistribusjonId) throws Exception {
+    public DoknotifikasjonSms recoverMapNotifikasjonDistrubisjon(Exception e, int notifikasjonDistribusjonId) throws Exception {
         log.error(
-                "knot002 mapNotifikasjon retry mislykkes, antall forsøk=${}, DistribusjonId=${}",
+                "knot002 mapNotifikasjon retry mislykkes, antall forsøk={}, DistribusjonId={}",
                 MAX_ATTEMPTS,
                 notifikasjonDistribusjonId,
                 e
@@ -98,17 +98,17 @@ public class NotifikasjonEntityMapper {
             notifikasjonDistribusjonEntity.setSendtDato(now);
             notifikasjonDistribusjonEntity.setEndretDato(now);
 
-        } catch (TransientDataAccessException exception){
+        } catch (TransientDataAccessException exception) {
             log.warn(
-                    "knot002 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=${} bestillerId=${}",
+                    "knot002 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
                     notifikasjonDistribusjonId,
                     bestillerId,
                     exception
             );
             throw exception;
-        } catch(DataAccessException exception){
+        } catch(DataAccessException exception) {
             log.warn(
-                    "knot002 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId=${} bestillerId=${}",
+                    "knot002 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
                     notifikasjonDistribusjonId,
                     bestillerId,
                     exception
@@ -116,12 +116,24 @@ public class NotifikasjonEntityMapper {
             throw exception;
         } catch (Exception exception) {
             log.warn(
-                    "knot002 updateEntity feilet med ukjent feil notifikasjonDistribusjonId=${} bestillerId=${}",
+                    "knot002 updateEntity feilet med ukjent feil notifikasjonDistribusjonId={} bestillerId={}",
                     notifikasjonDistribusjonId,
                     bestillerId,
                     exception
             );
             throw exception;
         }
+    }
+
+    @Recover
+    public void recoverUpdateEntity(Exception e, int notifikasjonDistribusjonId, String bestillerId) throws Exception {
+        log.error(
+                "knot002 recoverUpdateEntity retry mislykkes, antall forsøk={}, DistribusjonId={}, BestillerId={}",
+                MAX_ATTEMPTS,
+                notifikasjonDistribusjonId,
+                bestillerId,
+                e
+        );
+        throw e;
     }
 }

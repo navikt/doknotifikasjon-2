@@ -23,11 +23,11 @@ public class DokCounter {
 
     private static MeterRegistry meterRegistry;
     @Inject
-    public DokCounter(MeterRegistry meterRegistry){
+    public DokCounter(MeterRegistry meterRegistry) {
         DokCounter.meterRegistry = meterRegistry;
     }
 
-    public static void incrementCounter(Map<String, String> metadata){
+    public static void incrementCounter(Map<String, String> metadata) {
         metadata.forEach(DokCounter::incrementCounter);
     }
 
@@ -46,7 +46,7 @@ public class DokCounter {
                 .increment();
     }
 
-    public static void incrementError(Throwable throwable, String domain){
+    public static void incrementError(Throwable throwable, String domain) {
         Counter.builder(DOK_DOKNOTIFIKASJON + EXCEPTION)
                 .tags(ERROR_TYPE, isFunctionalException(throwable) ? FUNCTIONAL_ERROR : TECHNICAL_ERROR)
                 .tags(EXCEPTION_NAME, throwable.getClass().getSimpleName())
