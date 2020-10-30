@@ -13,34 +13,33 @@ import java.time.Duration;
 @Component
 public class LeaderElectionConsumer implements LeaderElection {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper mapper;
+	private final static String ELECTOR_PATH = "ELECTOR_PATH";
+	private final RestTemplate restTemplate;
+	private final ObjectMapper mapper;
 
-    private final static String ELECTOR_PATH = "ELECTOR_PATH";
+	public LeaderElectionConsumer(RestTemplateBuilder restTemplateBuilder, ObjectMapper mapper) {
+		this.restTemplate = restTemplateBuilder
+				.setReadTimeout(Duration.ofSeconds(20))
+				.setConnectTimeout(Duration.ofSeconds(5))
+				.build();
+		this.mapper = mapper;
+	}
 
-    public LeaderElectionConsumer(RestTemplateBuilder restTemplateBuilder, ObjectMapper mapper) {
-        this.restTemplate = restTemplateBuilder
-                .setReadTimeout(Duration.ofSeconds(20))
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .build();
-        this.mapper = mapper;
-    }
+	public boolean isLeader() {
+		String electorPath = System.getenv(ELECTOR_PATH);
+		if (electorPath == null) {
+			log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel {}.", ELECTOR_PATH);
+			return true;
+		}
 
-    public boolean isLeader() {
-        String electorPath = System.getenv(ELECTOR_PATH);
-        if (electorPath == null) {
-            log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel {}.", ELECTOR_PATH);
-            return true;
-        }
-
-        try {
-            String response = restTemplate.getForObject("http://" + electorPath, String.class);
-            String leader = mapper.readTree(response).get("name").asText();
-            String hostname = InetAddress.getLocalHost().getHostName();
-            return hostname.equals(leader);
-        } catch (Exception e) {
-            log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
-            return true;
-        }
-    }
+		try {
+			String response = restTemplate.getForObject("http://" + electorPath, String.class);
+			String leader = mapper.readTree(response).get("name").asText();
+			String hostname = InetAddress.getLocalHost().getHostName();
+			return hostname.equals(leader);
+		} catch (Exception e) {
+			log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
+			return true;
+		}
+	}
 }

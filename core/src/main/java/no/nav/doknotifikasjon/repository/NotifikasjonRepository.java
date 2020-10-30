@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Integer> {
-    Notifikasjon findByBestillingsId(String bestillingsId);
+	Notifikasjon findByBestillingsId(String bestillingsId);
 
-    boolean existsByBestillingsId(String bestillingsId);
+	boolean existsByBestillingsId(String bestillingsId);
 
-    List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato);
+	List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato);
 }

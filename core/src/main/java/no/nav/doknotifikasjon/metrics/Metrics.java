@@ -6,17 +6,17 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Metrics {
-    String value() default "";
+	String value() default "";
 
-    String[] extraTags() default {};
+	String[] extraTags() default {};
 
-    double[] percentiles() default {};
+	double[] percentiles() default {};
 
-    String description() default "";
+	String description() default "";
 
-    boolean histogram() default false;
+	boolean histogram() default false;
 
-    boolean logExceptions() default true;
+	boolean logExceptions() default true;
 
-    boolean createErrorMetric() default false;
+	boolean createErrorMetric() default false;
 }

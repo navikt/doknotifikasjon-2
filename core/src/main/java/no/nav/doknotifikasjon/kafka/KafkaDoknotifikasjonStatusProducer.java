@@ -11,60 +11,54 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 @Component
 public class KafkaDoknotifikasjonStatusProducer {
 
-    private final KafkaEventProducer producer;
+	private final KafkaEventProducer producer;
 
-    KafkaDoknotifikasjonStatusProducer(KafkaEventProducer producer) {
-        this.producer = producer;
-    }
+	KafkaDoknotifikasjonStatusProducer(KafkaEventProducer producer) {
+		this.producer = producer;
+	}
 
-    public void publishDoknotikfikasjonStatusOversendt(String bestillingsId, String bestillerId,
-                                                       String melding, Long distribusjonId)
-    {
-        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OVERSENDT, melding, distribusjonId);
-    }
+	public void publishDoknotikfikasjonStatusOversendt(String bestillingsId, String bestillerId,
+													   String melding, Long distribusjonId) {
+		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OVERSENDT, melding, distribusjonId);
+	}
 
-    public void publishDoknotikfikasjonStatusOpprettet(String bestillingsId, String bestillerId,
-                                                       String melding, Long distribusjonId)
-    {
-        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OPPRETTET, melding, distribusjonId);
-    }
+	public void publishDoknotikfikasjonStatusOpprettet(String bestillingsId, String bestillerId,
+													   String melding, Long distribusjonId) {
+		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OPPRETTET, melding, distribusjonId);
+	}
 
-    public void publishDoknotikfikasjonStatusFerdigstilt(String bestillingsId, String bestillerId,
-                                                       String melding, Long distribusjonId)
-    {
-        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.FERDIGSTILT, melding, distribusjonId);
-    }
+	public void publishDoknotikfikasjonStatusFerdigstilt(String bestillingsId, String bestillerId,
+														 String melding, Long distribusjonId) {
+		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.FERDIGSTILT, melding, distribusjonId);
+	}
 
-    public void publishDoknotikfikasjonStatusInfo(String bestillingsId, String bestillerId,
-                                                  String melding, Long distribusjonId) {
-        this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.INFO, melding, distribusjonId);
-    }
+	public void publishDoknotikfikasjonStatusInfo(String bestillingsId, String bestillerId,
+												  String melding, Long distribusjonId) {
+		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.INFO, melding, distribusjonId);
+	}
 
-    public void publishDoknotikfikasjonStatusFeilet(String bestillingsId, String bestillerId,
-                                                    String melding, Long distribusjonId)
-    {
-        this.publishDoknotifikasjonStatus(
-                bestillingsId == null ? "Ukjent" : bestillingsId,
-                bestillerId == null ? "Ukjent" : bestillingsId,
-                Status.FEILET,
-                melding,
-                distribusjonId
-        );
-    }
+	public void publishDoknotikfikasjonStatusFeilet(String bestillingsId, String bestillerId,
+													String melding, Long distribusjonId) {
+		this.publishDoknotifikasjonStatus(
+				bestillingsId == null ? "Ukjent" : bestillingsId,
+				bestillerId == null ? "Ukjent" : bestillingsId,
+				Status.FEILET,
+				melding,
+				distribusjonId
+		);
+	}
 
-    public void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
-                                              Status status, String melding, Long distribusjonId)
-    {
-        DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
-        this.publishDoknotifikasjonStatus(doknotifikasjonStatus);
-    }
+	public void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
+											 Status status, String melding, Long distribusjonId) {
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
+		this.publishDoknotifikasjonStatus(doknotifikasjonStatus);
+	}
 
-    public void publishDoknotifikasjonStatus(DoknotifikasjonStatus doknotifikasjonStatus)
-    {
-        producer.publish(
-                KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-                doknotifikasjonStatus,
-                System.currentTimeMillis()
-        );
-    }
+	public void publishDoknotifikasjonStatus(DoknotifikasjonStatus doknotifikasjonStatus) {
+		producer.publish(
+				KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				doknotifikasjonStatus,
+				System.currentTimeMillis()
+		);
+	}
 }

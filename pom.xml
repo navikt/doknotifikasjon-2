@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,6 +14,7 @@
         <module>app</module>
         <module>core</module>
         <module>knot001</module>
+        <module>knot002</module>
         <module>knot004</module>
         <module>knot005</module>
         <module>snot001</module>
@@ -50,9 +51,11 @@
         <postgresql-version>42.2.16</postgresql-version>
         <spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
         <spring-kafka-version>2.5.6.RELEASE</spring-kafka-version>
+        <spring-web-services-version>2.3.4.RELEASE</spring-web-services-version>
         <jersey-core-version>2.31</jersey-core-version>
         <springframework-boot>2.3.1.RELEASE</springframework-boot>
         <junit-jupiter>5.7.0</junit-jupiter>
+        <jaxb2-maven.version>0.14.0</jaxb2-maven.version>
         <spring-retry-version>1.2.5.RELEASE</spring-retry-version>
     </properties>
 
@@ -66,6 +69,11 @@
             <dependency>
                 <groupId>no.nav.doknotifikasjon</groupId>
                 <artifactId>knot001</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.doknotifikasjon</groupId>
+                <artifactId>knot002</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -133,6 +141,17 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-contract-wiremock</artifactId>
                 <version>${spring-cloud-contract-wiremock-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web-services</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                </exclusions>
+                <version>${spring-web-services-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>

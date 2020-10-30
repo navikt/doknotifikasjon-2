@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface NotifikasjonDistribusjonRepository extends JpaRepository<NotifikasjonDistribusjon, Integer> {
 
-    List<NotifikasjonDistribusjon> findAllByNotifikasjonIn(List<Notifikasjon> notifikasjonList);
+	List<NotifikasjonDistribusjon> findAllByNotifikasjonIn(List<Notifikasjon> notifikasjonList);
 
-    List<NotifikasjonDistribusjon> findAllByNotifikasjonAndStatus(Notifikasjon notifikasjon, Status status);
+	List<NotifikasjonDistribusjon> findAllByNotifikasjonAndStatus(Notifikasjon notifikasjon, Status status);
 }

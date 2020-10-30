@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class DoknotifikasjonStatusMapper {
 
-    public DoknotifikasjonStatusTo map(DoknotifikasjonStatus doknotifikasjonStatus) {
-        return DoknotifikasjonStatusTo.builder()
-                .bestillerId(doknotifikasjonStatus.getBestillerId())
-                .bestillingsId(doknotifikasjonStatus.getBestillingsId())
-                .status(Status.valueOf(doknotifikasjonStatus.getStatus()))
-                .melding(doknotifikasjonStatus.getMelding())
-                .distribusjonId(doknotifikasjonStatus.getDistribusjonId())
-                .build();
-    }
+	public DoknotifikasjonStatusTo map(DoknotifikasjonStatus doknotifikasjonStatus) {
+		return DoknotifikasjonStatusTo.builder()
+				.bestillerId(doknotifikasjonStatus.getBestillerId())
+				.bestillingsId(doknotifikasjonStatus.getBestillingsId())
+				.status(Status.valueOf(doknotifikasjonStatus.getStatus()))
+				.melding(doknotifikasjonStatus.getMelding())
+				.distribusjonId(doknotifikasjonStatus.getDistribusjonId())
+				.build();
+	}
 }

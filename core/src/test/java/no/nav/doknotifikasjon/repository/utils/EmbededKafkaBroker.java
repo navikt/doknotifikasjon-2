@@ -11,25 +11,26 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
-        classes = {ApplicationTestConfig.class, RepositoryConfig.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+		classes = {ApplicationTestConfig.class, RepositoryConfig.class},
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = "spring.main.allow-bean-definition-overriding=true"
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext()
 @ActiveProfiles("itestKafka")
 @EmbeddedKafka(
-        topics = {
-                "privat-dok-notifikasjon",
-                "privat-dok-notifikasjon-status",
-                "privat-dok-notifikasjon-sms",
-                "privat-dok-notifikasjon-epost"
-        },
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers"
+		topics = {
+				"privat-dok-notifikasjon",
+				"privat-dok-notifikasjon-status",
+				"privat-dok-notifikasjon-sms",
+				"privat-dok-notifikasjon-epost"
+		},
+		bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
 @AutoConfigureWireMock(port = 0)
 public class EmbededKafkaBroker {
 
-    @Autowired
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public EmbeddedKafkaBroker kafkaEmbedded;
+	@Autowired
+	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+	public EmbeddedKafkaBroker kafkaEmbedded;
 }

@@ -23,79 +23,79 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 @Component
 public class Snot001Service {
 
-    private static final String SNOT001 = "SNOT001";
+	private static final String SNOT001 = "SNOT001";
 
-    private final NotifikasjonRepository notifikasjonRepository;
-    private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
-    private final KafkaEventProducer kafkaEventProducer;
+	private final NotifikasjonRepository notifikasjonRepository;
+	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
+	private final KafkaEventProducer kafkaEventProducer;
 
-    public Snot001Service(NotifikasjonRepository notifikasjonRepository, KafkaEventProducer kafkaEventProducer,
-                          NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
-        this.notifikasjonRepository = notifikasjonRepository;
-        this.kafkaEventProducer = kafkaEventProducer;
-        this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
-    }
+	public Snot001Service(NotifikasjonRepository notifikasjonRepository, KafkaEventProducer kafkaEventProducer,
+						  NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
+		this.notifikasjonRepository = notifikasjonRepository;
+		this.kafkaEventProducer = kafkaEventProducer;
+		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
+	}
 
-    public void resendNotifikasjoner() {
-        log.info("Starter Snot001 for å finne notifikasjoner som skal resendes.");
+	public void resendNotifikasjoner() {
+		log.info("Starter Snot001 for å finne notifikasjoner som skal resendes.");
 
-        List<Notifikasjon> notifikasjonList = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status.OVERSENDT, 0, LocalDate.now());
+		List<Notifikasjon> notifikasjonList = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status.OVERSENDT, 0, LocalDate.now());
 
-        if (notifikasjonList.isEmpty()) {
-            log.info("Ingen notifikasjoner ble funnet for resending. Avslutter snot001.");
-            return;
-        }
+		if (notifikasjonList.isEmpty()) {
+			log.info("Ingen notifikasjoner ble funnet for resending. Avslutter snot001.");
+			return;
+		}
 
-        log.info("{} notifikasjoner ble funnet for resending i snot001. ", notifikasjonList.size());
+		log.info("{} notifikasjoner ble funnet for resending i snot001. ", notifikasjonList.size());
 
-        List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonIn(notifikasjonList);
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonIn(notifikasjonList);
 
-        for (NotifikasjonDistribusjon notifikasjonDistribusjon : notifikasjonDistribusjonList) {
-            if (Kanal.SMS.equals(notifikasjonDistribusjon.getKanal())) {
-                NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(notifikasjonDistribusjon, Kanal.SMS);
-                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, newNotifikasjonDistribusjon.getId(), Kanal.SMS);
-            }
-            if (Kanal.EPOST.equals(notifikasjonDistribusjon.getKanal())) {
-                NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(notifikasjonDistribusjon, Kanal.EPOST);
-                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, newNotifikasjonDistribusjon.getId(), Kanal.EPOST);
-            }
-            updateNotifikasjon(notifikasjonDistribusjon.getNotifikasjon());
-        }
-    }
+		for (NotifikasjonDistribusjon notifikasjonDistribusjon : notifikasjonDistribusjonList) {
+			if (Kanal.SMS.equals(notifikasjonDistribusjon.getKanal())) {
+				NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(notifikasjonDistribusjon, Kanal.SMS);
+				publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, newNotifikasjonDistribusjon.getId(), Kanal.SMS);
+			}
+			if (Kanal.EPOST.equals(notifikasjonDistribusjon.getKanal())) {
+				NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(notifikasjonDistribusjon, Kanal.EPOST);
+				publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, newNotifikasjonDistribusjon.getId(), Kanal.EPOST);
+			}
+			updateNotifikasjon(notifikasjonDistribusjon.getNotifikasjon());
+		}
+	}
 
-    private void updateNotifikasjon(Notifikasjon notifikasjon) {
-        notifikasjon.setAntallRenotifikasjoner(notifikasjon.getAntallRenotifikasjoner() - 1);
-        notifikasjon.setNesteRenotifikasjonDato(notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null);
-        notifikasjon.setEndretAv(SNOT001);
-        notifikasjon.setEndretDato(LocalDateTime.now());
-    }
+	private void updateNotifikasjon(Notifikasjon notifikasjon) {
+		notifikasjon.setAntallRenotifikasjoner(notifikasjon.getAntallRenotifikasjoner() - 1);
+		notifikasjon.setNesteRenotifikasjonDato(notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null);
+		notifikasjon.setEndretAv(SNOT001);
+		notifikasjon.setEndretDato(LocalDateTime.now());
+	}
 
-    private NotifikasjonDistribusjon persistToDBWithKanal(NotifikasjonDistribusjon notifikasjonDistribusjon, Kanal kanal) {
-        NotifikasjonDistribusjon newNotifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
-                .notifikasjon(notifikasjonDistribusjon.getNotifikasjon())
-                .status(Status.OPPRETTET)
-                .kanal(kanal)
-                .kontaktInfo(notifikasjonDistribusjon.getKontaktInfo())
-                .tittel(notifikasjonDistribusjon.getTittel())
-                .tekst("Påminnelse: " + notifikasjonDistribusjon.getTekst())
-                .opprettetAv(SNOT001)
-                .opprettetDato(LocalDateTime.now())
-                .build();
-        return notifikasjonDistribusjonRepository.save(newNotifikasjonDistribusjon);
-    }
+	private NotifikasjonDistribusjon persistToDBWithKanal(NotifikasjonDistribusjon notifikasjonDistribusjon, Kanal kanal) {
+		NotifikasjonDistribusjon newNotifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
+				.notifikasjon(notifikasjonDistribusjon.getNotifikasjon())
+				.status(Status.OPPRETTET)
+				.kanal(kanal)
+				.kontaktInfo(notifikasjonDistribusjon.getKontaktInfo())
+				.tittel(notifikasjonDistribusjon.getTittel())
+				.tekst("Påminnelse: " + notifikasjonDistribusjon.getTekst())
+				.opprettetAv(SNOT001)
+				.opprettetDato(LocalDateTime.now())
+				.build();
+		return notifikasjonDistribusjonRepository.save(newNotifikasjonDistribusjon);
+	}
 
-    private void publishHendelseOnTopic(String topic, int notifikasjonDistribusjonId, Kanal kanal) {
-        Object doknotifikasjon;
+	private void publishHendelseOnTopic(String topic, int notifikasjonDistribusjonId, Kanal kanal) {
+		Object doknotifikasjon;
 
-        if (kanal.equals(Kanal.SMS)) {
-            doknotifikasjon = new DoknotifikasjonSms(notifikasjonDistribusjonId);
-        } else {
-            doknotifikasjon = new DoknotifikasjonEpost(notifikasjonDistribusjonId);
-        }
+		if (kanal.equals(Kanal.SMS)) {
+			doknotifikasjon = new DoknotifikasjonSms(Integer.valueOf(notifikasjonDistribusjonId));
+		} else {
+			doknotifikasjon = new DoknotifikasjonEpost(Integer.valueOf(notifikasjonDistribusjonId));
+		}
 
-        kafkaEventProducer.publish(
-                topic,
-                doknotifikasjon
-        );
-    }
+		kafkaEventProducer.publish(
+				topic,
+				doknotifikasjon
+		);
+	}
 }

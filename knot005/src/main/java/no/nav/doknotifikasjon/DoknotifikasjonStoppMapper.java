@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class DoknotifikasjonStoppMapper {
 
-    DoknotifikasjonStoppTo map(DoknotifikasjonStopp doknotifikasjonStopp) {
-        return DoknotifikasjonStoppTo.builder()
-                .bestillerId(doknotifikasjonStopp.getBestillerId())
-                .bestillingsId(doknotifikasjonStopp.getBestillingsId())
-                .build();
-    }
+	DoknotifikasjonStoppTo map(DoknotifikasjonStopp doknotifikasjonStopp) {
+		return DoknotifikasjonStoppTo.builder()
+				.bestillerId(doknotifikasjonStopp.getBestillerId())
+				.bestillingsId(doknotifikasjonStopp.getBestillingsId())
+				.build();
+	}
 }

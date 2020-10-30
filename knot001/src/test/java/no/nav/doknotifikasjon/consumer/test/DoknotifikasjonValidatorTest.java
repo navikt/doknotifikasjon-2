@@ -18,60 +18,60 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(classes = {DoknotifikasjonValidator.class})
 class DoknotifikasjonValidatorTest {
 
-    @Autowired
-    DoknotifikasjonValidator doknotifikasjonValidator;
+	@Autowired
+	DoknotifikasjonValidator doknotifikasjonValidator;
 
-    @MockBean
-    KafkaDoknotifikasjonStatusProducer statusProducer;
+	@MockBean
+	KafkaDoknotifikasjonStatusProducer statusProducer;
 
-    @Test
-    void shouldValidateAvroSchemaWhenSendingValidAvroSchema() {
-        doknotifikasjonValidator.validate(createDoknotifikasjon());
-    }
+	@Test
+	void shouldValidateAvroSchemaWhenSendingValidAvroSchema() {
+		doknotifikasjonValidator.validate(createDoknotifikasjon());
+	}
 
-    @Test
-    void shouldFailValidateAvroSchemaWhenSendingInvalidAvroSchema() {
-        Doknotifikasjon doknotifikasjon = createDoknotifikasjonWithInvalidAntallRenotifikasjoner();
-        assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(doknotifikasjon));
+	@Test
+	void shouldFailValidateAvroSchemaWhenSendingInvalidAvroSchema() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjonWithInvalidAntallRenotifikasjoner();
+		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(doknotifikasjon));
 
-        verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
-        );
-    }
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
+		);
+	}
 
-    @Test
-    void shouldFailValidateNumberWhenFieldIsNegative() {
-        Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
-        assertThrows(InvalidAvroSchemaFieldException.class, () ->
-                doknotifikasjonValidator.validateNumber(doknotifikasjon, -200, "number")
-        );
+	@Test
+	void shouldFailValidateNumberWhenFieldIsNegative() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		assertThrows(InvalidAvroSchemaFieldException.class, () ->
+				doknotifikasjonValidator.validateNumber(doknotifikasjon, -200, "number")
+		);
 
-        verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt number kan ikke være negativ", null
-        );
-    }
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt number kan ikke være negativ", null
+		);
+	}
 
-    @Test
-    void shouldFailValidateStringWhenFieldIsNull() {
-        Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
-        assertThrows(InvalidAvroSchemaFieldException.class, () ->
-                doknotifikasjonValidator.validateString(doknotifikasjon, null, "string")
-        );
+	@Test
+	void shouldFailValidateStringWhenFieldIsNull() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		assertThrows(InvalidAvroSchemaFieldException.class, () ->
+				doknotifikasjonValidator.validateString(doknotifikasjon, null, "string")
+		);
 
-        verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
-        );
-    }
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
+		);
+	}
 
-    @Test
-    void shouldFailValidateStringWhenFieldIsEmpty() {
-        Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
-        assertThrows(InvalidAvroSchemaFieldException.class, () ->
-                doknotifikasjonValidator.validateString(doknotifikasjon, "         ", "string")
-        );
+	@Test
+	void shouldFailValidateStringWhenFieldIsEmpty() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		assertThrows(InvalidAvroSchemaFieldException.class, () ->
+				doknotifikasjonValidator.validateString(doknotifikasjon, "         ", "string")
+		);
 
-        verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
-                doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
-        );
-    }
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
+		);
+	}
 }

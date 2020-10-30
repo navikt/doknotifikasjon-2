@@ -18,35 +18,35 @@ import javax.inject.Inject;
 @Component
 public class KafkaEventKnot005Consumer {
 
-    private final ObjectMapper objectMapper;
-    private final Knot005Service knot005Service;
-    private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
+	private final ObjectMapper objectMapper;
+	private final Knot005Service knot005Service;
+	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 
-    @Inject
-    public KafkaEventKnot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
-                                     DoknotifikasjonStoppMapper doknotifikasjonStoppMapper) {
-        this.objectMapper = objectMapper;
-        this.knot005Service = knot005Service;
-        this.doknotifikasjonStoppMapper = doknotifikasjonStoppMapper;
-    }
+	@Inject
+	public KafkaEventKnot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
+									 DoknotifikasjonStoppMapper doknotifikasjonStoppMapper) {
+		this.objectMapper = objectMapper;
+		this.knot005Service = knot005Service;
+		this.doknotifikasjonStoppMapper = doknotifikasjonStoppMapper;
+	}
 
-    @KafkaListener(
-            topics = "privat-dok-notifikasjon-stopp",
-            containerFactory = "kafkaListenerContainerFactory",
-            groupId = "doknotifikasjon-knot005"
-    )
-    @Metrics(value = "dok_request", percentiles = {0.5, 0.95})
-    @Transactional
-    public void onMessage(final ConsumerRecord<String, Object> record) {
-        log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
-        try {
-            DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value()
-                    .toString(), DoknotifikasjonStopp.class);
-            knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));
-        } catch (JsonProcessingException e) {
-            log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
-        } catch (DoknotifikasjonValidationException e) {
-            log.error("Valideringsfeil oppstod i knot005. Feilmelding: {}", e.getMessage());
-        }
-    }
+	@KafkaListener(
+			topics = "privat-dok-notifikasjon-stopp",
+			containerFactory = "kafkaListenerContainerFactory",
+			groupId = "doknotifikasjon-knot005"
+	)
+	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+	@Transactional
+	public void onMessage(final ConsumerRecord<String, Object> record) {
+		log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
+		try {
+			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value()
+					.toString(), DoknotifikasjonStopp.class);
+			knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));
+		} catch (JsonProcessingException e) {
+			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+		} catch (DoknotifikasjonValidationException e) {
+			log.error("Valideringsfeil oppstod i knot005. Feilmelding: {}", e.getMessage());
+		}
+	}
 }
