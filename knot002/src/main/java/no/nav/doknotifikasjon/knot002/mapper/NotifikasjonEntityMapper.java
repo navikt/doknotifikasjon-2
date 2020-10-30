@@ -89,7 +89,7 @@ public class NotifikasjonEntityMapper {
 		}
 	}
 
-	@Retryable(include = AbstractDoknotifikasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void updateEntity(int notifikasjonDistribusjonId, String bestillerId) {
 
 		try {

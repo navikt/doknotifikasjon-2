@@ -93,7 +93,12 @@ public class Knot002Service {
 			);
 		} catch (Exception exception) {
 			log.error(FEILET_DATABASE_IKKE_OPPDATERT, exception);
-			// TODO feilhåndtering? Udefinert i spec
+			// Uendelig retry ved databasefeil
+			// Alexander-Haugli:
+			// "og så har vi tenkt "uendelig" retry med overvåkning på grafana dashboard.
+			// ikke helt overbevist om at det er optimalt, men hvis altinn eller db gir tekniske feil,
+			// så har det ikke så mye for seg å gå videre (ingen grunn til å tro at det går bedre med neste melding)
+			// - så at vi får en "propp" i behandlingen er kanskje ikke så feil"
 			return;
 		}
 
