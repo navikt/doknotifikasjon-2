@@ -105,8 +105,8 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 		assertNull(updatedNotifikasjonDistribusjon);
 		try {
-			//needed because backoff is 3 seconds
-			TimeUnit.SECONDS.sleep(10);
+			//needed because backoff
+			TimeUnit.SECONDS.sleep(30);
 			verify(NotifikasjonEntityMapper, times(3)).mapNotifikasjonDistrubisjon(1234);
 		} catch (Exception e) {
 			fail();
@@ -184,7 +184,7 @@ class Knot002ITest extends EmbededKafkaBroker {
 					keyGenerator
 			);
 
-			TimeUnit.SECONDS.sleep(1);
+			TimeUnit.SECONDS.sleep(5);
 		} catch (InterruptedException exception) {
 			fail();
 		}
