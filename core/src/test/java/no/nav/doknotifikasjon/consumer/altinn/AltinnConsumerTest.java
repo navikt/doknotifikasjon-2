@@ -69,7 +69,7 @@ public class AltinnConsumerTest {
 				}
 		);
 
-		assertEquals("Respons inneholder ikke notifikasjon", exception.getMessage());
+		assertEquals("SendStandaloneNotificationBasicV3Response inneholder ikke notifikasjon som ble forsøkt sendt", exception.getMessage());
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class AltinnConsumerTest {
 				}
 		);
 
-		assertEquals("Respons inneholder ikke notifikasjon", exception.getMessage());
+		assertEquals("SendStandaloneNotificationBasicV3Response inneholder ikke notifikasjon som ble forsøkt sendt", exception.getMessage());
 	}
 
 	@Test
