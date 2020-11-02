@@ -77,7 +77,7 @@ class Knot005ITest extends EmbededKafkaBroker {
 					keyGenerator
 			);
 
-			TimeUnit.SECONDS.sleep(30);
+			TimeUnit.SECONDS.sleep(10);
 		} catch (InterruptedException exception) {
 			fail();
 		}

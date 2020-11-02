@@ -67,11 +67,11 @@ public class KafkaEventProducer {
 
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
-			if (log.isDebugEnabled()) {
+			//if (log.isDebugEnabled()) {  //TODO add back after testing
 				log.info("Published to partittion " + sendResult.getRecordMetadata().partition());
 				log.info("Published to offset " + sendResult.getRecordMetadata().offset());
 				log.info("Published to topic " + sendResult.getRecordMetadata().topic());
-			}
+			//}
 		} catch (ExecutionException executionException) {
 			if (executionException.getCause() != null && executionException.getCause() instanceof KafkaProducerException) {
 				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
