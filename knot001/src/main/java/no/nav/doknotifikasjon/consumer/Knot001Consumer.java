@@ -14,6 +14,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
+
 @Slf4j
 @Component
 public class Knot001Consumer {
@@ -23,6 +25,7 @@ public class Knot001Consumer {
 	private final DoknotifikasjonMapper doknotifikasjonMapper;
 	private final DoknotifikasjonValidator doknotifikasjonValidator;
 
+	@Inject
 	Knot001Consumer(ObjectMapper objectMapper, Knot001Service knot001Service, DoknotifikasjonMapper doknotifikasjonMapper,
 					DoknotifikasjonValidator doknotifikasjonValidator) {
 		this.objectMapper = objectMapper;

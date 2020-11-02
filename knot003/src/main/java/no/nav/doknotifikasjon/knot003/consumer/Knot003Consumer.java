@@ -13,6 +13,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
+
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.setDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
@@ -26,6 +28,7 @@ public class Knot003Consumer {
 	private final ObjectMapper objectMapper;
 	private final Knot003Service knot003Service;
 
+	@Inject
 	Knot003Consumer(
 			Knot003Service knot003Service,
 			ObjectMapper objectMapper
