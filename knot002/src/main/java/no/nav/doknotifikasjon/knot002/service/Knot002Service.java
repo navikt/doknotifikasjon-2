@@ -5,7 +5,7 @@ import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnConsumer;
 import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
-import no.nav.doknotifikasjon.knot002.mapper.NotifikasjonEntityMapper;
+import no.nav.doknotifikasjon.knot002.mapper.Knot002NotifikasjonEntityMapper;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
@@ -24,12 +24,12 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_D
 @Component
 public class Knot002Service {
 
-	private final NotifikasjonEntityMapper notifikasjonEntityMapper;
+	private final Knot002NotifikasjonEntityMapper notifikasjonEntityMapper;
 	private final KafkaEventProducer kafkaEventProducer;
 	private final AltinnConsumer altinnConsumer;
 
 	public Knot002Service(
-			NotifikasjonEntityMapper notifikasjonEntityMapper,
+			Knot002NotifikasjonEntityMapper notifikasjonEntityMapper,
 			KafkaEventProducer kafkaEventProducer,
 			AltinnConsumer altinnConsumer
 	) {

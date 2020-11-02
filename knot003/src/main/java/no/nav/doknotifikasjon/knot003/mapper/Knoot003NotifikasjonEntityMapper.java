@@ -1,10 +1,10 @@
-package no.nav.doknotifikasjon.knot002.mapper;
+package no.nav.doknotifikasjon.knot003.mapper;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
 import no.nav.doknotifikasjon.exception.technical.DoknotifikasjonDBTechnicalException;
-import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
+import no.nav.doknotifikasjon.knot003.domain.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
@@ -12,34 +12,32 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.TransientDataAccessException;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 
 @Slf4j
 @Component
-public class NotifikasjonEntityMapper {
+public class Knoot003NotifikasjonEntityMapper {
 	private final int MAX_ATTEMPTS = 3;
 
 	private final NotifikasjonDistribusjonRepository repository;
 
-	public NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository) {
+	public Knoot003NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository) {
 		this.repository = repository;
 	}
 
 	@Retryable(include = AbstractDoknotifikasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
-	public DoknotifikasjonSms mapNotifikasjonDistrubisjon(int notifikasjonDistribusjonId) throws Exception {
+	public DoknotifikasjonEpost mapNotifikasjonDistrubisjon(int notifikasjonDistribusjonId) throws Exception {
 		try {
 			NotifikasjonDistribusjon notifikasjonDistribusjonEntity = repository.findById(notifikasjonDistribusjonId).orElseThrow();
 			Notifikasjon notifikasjonEntity = notifikasjonDistribusjonEntity.getNotifikasjon();
 
-			return DoknotifikasjonSms
+			return DoknotifikasjonEpost
 					.builder()
 					.notifikasjonDistribusjonId(String.valueOf(notifikasjonDistribusjonId))
 					.bestillerId(notifikasjonEntity.getBestillerId())
@@ -51,39 +49,39 @@ public class NotifikasjonEntityMapper {
 					.build();
 		} catch (DoknotifikasjonDistribusjonIkkeFunnetException exception) {
 			log.error(
-					"knot002 mapNotifikasjon fant ikke distribusjon notifikasjonDistribusjonId={}",
+					"knot003 mapNotifikasjon fant ikke distribusjon notifikasjonDistribusjonId={}",
 					notifikasjonDistribusjonId,
 					exception
 			);
 			throw exception;
 		} catch (TransientDataAccessException exception) {
 			log.error(
-					"knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId={}",
+					"knot003 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId={}",
 					notifikasjonDistribusjonId,
 					exception
 			);
 			throw new DoknotifikasjonDBTechnicalException(
-					"knot002 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
+					"knot003 mapNotifikasjon feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
 					exception
 			);
 		} catch (DataAccessException exception) {
 			log.error(
-					"knot002 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId={}",
+					"knot003 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId={}",
 					notifikasjonDistribusjonId,
 					exception
 			);
 			throw new DoknotifikasjonDBTechnicalException(
-					"knot002 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
+					"knot003 mapNotifikasjon feilet ved henting av distribusjon notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
 					exception
 			);
 		} catch (Exception exception) {
 			log.error(
-					"knot002 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId={}",
+					"knot003 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId={}",
 					notifikasjonDistribusjonId,
 					exception
 			);
 			throw new DoknotifikasjonDBTechnicalException(
-					"knot002 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
+					"knot003 mapNotifikasjon feilet med ukjent feil notifikasjonDistribusjonId=" + notifikasjonDistribusjonId,
 					exception
 			);
 		}
@@ -105,21 +103,21 @@ public class NotifikasjonEntityMapper {
 
 		} catch (DoknotifikasjonDistribusjonIkkeFunnetException exception) {
 			log.error(
-					"knot002 updateEntity fant ikke distribusjon notifikasjonDistribusjonId={}",
+					"knot003 updateEntity fant ikke distribusjon notifikasjonDistribusjonId={}",
 					notifikasjonDistribusjonId,
 					exception
 			);
 			throw exception;
 		} catch (TransientDataAccessException exception) {
 			log.error(
-					"knot002 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
+					"knot003 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
 					notifikasjonDistribusjonId,
 					bestillerId,
 					exception
 			);
 			throw new DoknotifikasjonDBTechnicalException(
 					String.format(
-							"knot002 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=%d bestillerId=%s",
+							"knot003 updateEntity feilet midlertidig ved henting av distribusjon notifikasjonDistribusjonId=%d bestillerId=%s",
 							notifikasjonDistribusjonId,
 							bestillerId
 					),
@@ -127,14 +125,14 @@ public class NotifikasjonEntityMapper {
 			);
 		} catch (DataAccessException exception) {
 			log.error(
-					"knot002 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
+					"knot003 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId={} bestillerId={}",
 					notifikasjonDistribusjonId,
 					bestillerId,
 					exception
 			);
 			throw new DoknotifikasjonDBTechnicalException(
 					String.format(
-							"knot002 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId=%d bestillerId=%s",
+							"knot003 updateEntity feilet ved henting av distribusjon notifikasjonDistribusjonId=%d bestillerId=%s",
 							notifikasjonDistribusjonId,
 							bestillerId
 					),
@@ -142,14 +140,14 @@ public class NotifikasjonEntityMapper {
 			);
 		} catch (Exception exception) {
 			log.error(
-					"knot002 updateEntity feilet med ukjent feil notifikasjonDistribusjonId={} bestillerId={}",
+					"knot003 updateEntity feilet med ukjent feil notifikasjonDistribusjonId={} bestillerId={}",
 					notifikasjonDistribusjonId,
 					bestillerId,
 					exception
 			);
 			throw new DoknotifikasjonDBTechnicalException(
 					String.format(
-							"knot002 updateEntity feilet med ukjent feil notifikasjonDistribusjonId=%d bestillerId=%s",
+							"knot003 updateEntity feilet med ukjent feil notifikasjonDistribusjonId=%d bestillerId=%s",
 							notifikasjonDistribusjonId,
 							bestillerId
 					),

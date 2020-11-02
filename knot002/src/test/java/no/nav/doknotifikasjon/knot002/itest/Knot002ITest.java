@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
-import no.nav.doknotifikasjon.knot002.mapper.NotifikasjonEntityMapper;
+import no.nav.doknotifikasjon.knot002.mapper.Knot002NotifikasjonEntityMapper;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
@@ -52,7 +52,7 @@ class Knot002ITest extends EmbededKafkaBroker {
 	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@SpyBean
-	private NotifikasjonEntityMapper NotifikasjonEntityMapper;
+	private Knot002NotifikasjonEntityMapper NotifikasjonEntityMapper;
 
 	@SpyBean
 	private KafkaEventProducer kafkaEventProducer;
