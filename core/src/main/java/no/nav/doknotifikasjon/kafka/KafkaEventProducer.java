@@ -63,6 +63,8 @@ public class KafkaEventProducer {
 				event
 		);
 
+		log.info("Published to topic " + topic + "with key " + key);
+
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
 			if (log.isDebugEnabled()) {
@@ -81,5 +83,7 @@ public class KafkaEventProducer {
 		} catch (InterruptedException e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
 		}
+
+		log.info("Published successfully to topic " + topic + "with key " + key);
 	}
 }

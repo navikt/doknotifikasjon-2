@@ -51,7 +51,7 @@ public class NaisContract {
 
 	//TODO remove after testing
 	@GetMapping("/isAlive2")
-	public void kafkaProduceMessage() {
+	public String kafkaProduceMessage() {
 		List<PrefererteKanal> preferteKanaler = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
 
 		Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
@@ -70,5 +70,7 @@ public class NaisContract {
 				KAFKA_TOPIC_DOK_NOTIFKASJON,
 				dokEksternNotifikasjon
 		);
+
+		return "Published to topic";
 	}
 }
