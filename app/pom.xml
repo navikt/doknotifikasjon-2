@@ -16,10 +16,6 @@
     <dependencies>
         <dependency>
             <groupId>no.nav.doknotifikasjon</groupId>
-            <artifactId>core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>knot001</artifactId>
         </dependency>
         <dependency>
