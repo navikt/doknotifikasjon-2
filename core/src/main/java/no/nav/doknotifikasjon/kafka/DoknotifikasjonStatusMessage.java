@@ -11,11 +11,15 @@ public class DoknotifikasjonStatusMessage {
 	public static final String FERDIGSTILT_RENOTIFIKASJON_STANSET = "renotifikasjon er stanset";
 
 	public static final String OVERSENDT_NOTIFIKASJON_PROCESSED = "Notifikasjon er behandlet og distribusjon er bestilt";
+	public static final String FEILET_DATABASE_IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
+
 	public static final String FERDIGSTILT_NOTIFIKASJON_SMS = "notifikasjon sendt via sms";
 	public static final String FEILET_SMS_UGYLDIG_STATUS = "distribusjon til sms feilet: ugyldig status";
 	public static final String FEILET_SMS_UGYLDIG_KANAL = "distribusjon til sms feilet: ugyldig kanal";
-	public static final String FEILET_DATABASE_IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
 
+	public static final String FERDIGSTILT_NOTIFIKASJON_EPOST = "notifikasjon sendt via epost";
+	public static final String FEILET_EPOST_UGYLDIG_STATUS = "distribusjon til epost feilet: ugyldig status";
+	public static final String FEILET_EPOST_UGYLDIG_KANAL = "distribusjon til epost feilet: ugyldig kanal";
 }
 
 

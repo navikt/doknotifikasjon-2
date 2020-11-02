@@ -28,6 +28,10 @@
         </dependency>
         <dependency>
             <groupId>no.nav.doknotifikasjon</groupId>
+            <artifactId>knot003</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>knot004</artifactId>
         </dependency>
         <dependency>
