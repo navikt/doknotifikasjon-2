@@ -28,6 +28,7 @@ public class ProducerController {
         this.publisher = publisher;
     }
 
+    //TODO remove after testing
     @GetMapping("/test")
     public void kafkaProduceMessage() {
         List<PrefererteKanal> preferteKanaler = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);

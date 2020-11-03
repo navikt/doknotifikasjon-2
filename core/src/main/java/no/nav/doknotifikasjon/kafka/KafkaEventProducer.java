@@ -63,15 +63,13 @@ public class KafkaEventProducer {
 				event
 		);
 
-		log.info("Published to topic " + topic + "with key " + key);
-
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
-			//if (log.isDebugEnabled()) {  //TODO add back after testing
+			if (log.isDebugEnabled()) {
 				log.info("Published to partittion " + sendResult.getRecordMetadata().partition());
 				log.info("Published to offset " + sendResult.getRecordMetadata().offset());
 				log.info("Published to topic " + sendResult.getRecordMetadata().topic());
-			//}
+			}
 		} catch (ExecutionException executionException) {
 			if (executionException.getCause() != null && executionException.getCause() instanceof KafkaProducerException) {
 				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
@@ -83,7 +81,5 @@ public class KafkaEventProducer {
 		} catch (InterruptedException e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
 		}
-
-		log.info("Published successfully to topic " + topic + "with key " + key);
 	}
 }
