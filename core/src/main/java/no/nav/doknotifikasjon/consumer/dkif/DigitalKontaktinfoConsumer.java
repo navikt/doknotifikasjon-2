@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.time.Duration;
+import java.util.UUID;
 
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.DomainConstants.APP_NAME;
@@ -57,25 +58,33 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
 		String fnrTrimmed = personidentifikator.trim();
 		headers.add(NAV_PERSONIDENTER, fnrTrimmed);
 
-		try {
-			DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
-					HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
-			return response;
-		} catch (HttpClientErrorException e) {
-			throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
-					.getMessage()), e);
-		} catch (HttpServerErrorException e) {
-			throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
-					.getMessage()), e);
-		}
-	}
 
-	private HttpHeaders createHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
-		headers.add(NAV_CONSUMER_ID, APP_NAME);
-		headers.add(NAV_CALL_ID, MDC.get(MDC_CALL_ID));
-		return headers;
-	}
+        try {
+            DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
+                    HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
+            return response;
+        } catch (HttpClientErrorException e) {
+            throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
+                    .getMessage()), e);
+        } catch (HttpServerErrorException e) {
+            throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
+                    .getMessage()), e);
+        }
+    }
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
+        headers.add(NAV_CONSUMER_ID, APP_NAME);
+        headers.add(NAV_CALL_ID, this.getDefaultUuidIfNoCallIdIsSett());
+        return headers;
+    }
+
+    private String getDefaultUuidIfNoCallIdIsSett() {
+        if (MDC.get(MDC_CALL_ID) != null && !MDC.get(MDC_CALL_ID).trim().isEmpty()) {
+            return MDC.get(MDC_CALL_ID);
+        }
+        return UUID.randomUUID().toString();
+    }
 }
