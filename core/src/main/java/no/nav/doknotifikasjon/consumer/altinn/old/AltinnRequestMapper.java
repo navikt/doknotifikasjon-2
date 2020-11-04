@@ -1,21 +1,21 @@
-package no.nav.doknotifikasjon.consumer.altinn;
+package no.nav.doknotifikasjon.consumer.altinn.old;
 
-import no.altinn.springsoap.client.gen.ObjectFactory;
-import no.altinn.springsoap.client.gen.ReceiverEndPoint;
-import no.altinn.springsoap.client.gen.ReceiverEndPointBEList;
-import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3;
-import no.altinn.springsoap.client.gen.StandaloneNotification;
-import no.altinn.springsoap.client.gen.StandaloneNotificationBEList;
-import no.altinn.springsoap.client.gen.TextToken;
-import no.altinn.springsoap.client.gen.TextTokenSubstitutionBEList;
-import no.altinn.springsoap.client.gen.TransportType;
+import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
+import no.altinn.schemas.services.serviceengine.notification._2009._10.ObjectFactory;
+import no.altinn.schemas.services.serviceengine.notification._2009._10.ReceiverEndPoint;
+import no.altinn.schemas.services.serviceengine.notification._2009._10.ReceiverEndPointBEList;
+import no.altinn.schemas.services.serviceengine.notification._2009._10.StandaloneNotification;
+import no.altinn.schemas.services.serviceengine.notification._2009._10.TextToken;
+import no.altinn.schemas.services.serviceengine.notification._2009._10.TextTokenSubstitutionBEList;
+import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
+import no.altinn.services.serviceengine.notification._2010._10.SendStandaloneNotificationBasicV3;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 
 import javax.xml.bind.JAXBElement;
 
 public class AltinnRequestMapper {
-
+/*
 	private static final ObjectFactory objectFactory = new ObjectFactory();
 
 	private static final String DEFAULTNOTIFICATIONEPOSTADDRESSE = "ikke-besvar-denne@nav.no";
@@ -57,7 +57,7 @@ public class AltinnRequestMapper {
 			);
 		}
 
-		StandaloneNotificationBEList standaloneNotificationBEList = objectFactory.createStandaloneNotificationBEList();
+		StandaloneNotificationBEList standaloneNotificationBEList = objectFactory.beLis//createStandaloneNotificationBEList();
 		standaloneNotificationBEList.getStandaloneNotification().add(standaloneNotification);
 
 		return standaloneNotificationBEList;
@@ -78,6 +78,7 @@ public class AltinnRequestMapper {
 			 * so SMS notifications sent after 17:00 would fail and result in an error while persisting
 			 */
 
+/*
 			textToken1.setTokenNum(0);
 			textToken1.setTokenValue(objectFactory.createTextTokenTokenValue(tekst));
 
@@ -117,4 +118,5 @@ public class AltinnRequestMapper {
 		if (Kanal.EPOST == kanal) return TransportType.EMAIL;
 		throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
 	}
+	*/
 }

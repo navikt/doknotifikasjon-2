@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
-import no.altinn.springsoap.client.gen.TransportType;
+import no.nav.doknotifikasjon.consumer.altinn.old.AltinnConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -16,9 +16,6 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
 
-import static no.nav.doknotifikasjon.consumer.altinn.AltinResponseFactory.generateAltinnResponse;
-import static no.nav.doknotifikasjon.consumer.altinn.AltinResponseFactory.generateEmptyAltinnResponse;
-import static no.nav.doknotifikasjon.consumer.altinn.AltinResponseFactory.generateSoapFaultClientException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -34,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 )
 @ActiveProfiles("itestKafka")
 public class AltinnConsumerTest {
-
+/*
 	private static final String KONTAKTINFO = "dummy adresse";
 	private static final String TEKST = "dummy tekst";
 
@@ -130,4 +127,6 @@ public class AltinnConsumerTest {
 		assertEquals("sendStandaloneNotificationV3 ukjent feil, feilmelding=Boom!", exception.getMessage());
 	}
 
+
+ */
 }

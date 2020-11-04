@@ -1,12 +1,5 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
-import no.altinn.springsoap.client.gen.EndPointResult;
-import no.altinn.springsoap.client.gen.EndPointResultList;
-import no.altinn.springsoap.client.gen.NotificationResult;
-import no.altinn.springsoap.client.gen.ObjectFactory;
-import no.altinn.springsoap.client.gen.SendNotificationResultList;
-import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3Response;
-import no.altinn.springsoap.client.gen.TransportType;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.ws.mime.Attachment;
 import org.springframework.ws.mime.AttachmentException;
@@ -31,6 +24,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 
 public class AltinResponseFactory {
+	/*
 	private static ObjectFactory objectfactory = new ObjectFactory();
 
 	public static SendStandaloneNotificationBasicV3Response generateAltinnResponse(
@@ -185,5 +179,7 @@ public class AltinResponseFactory {
 				}
 		);
 	}
+
+	 */
 
 }

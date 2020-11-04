@@ -1,8 +1,8 @@
-package no.nav.doknotifikasjon.consumer.altinn;
+package no.nav.doknotifikasjon.consumer.altinn.old;
 
 import lombok.extern.slf4j.Slf4j;
-import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3Response;
-import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3;
+import no.altinn.services.serviceengine.notification._2010._10.SendStandaloneNotificationBasicV3;
+import no.altinn.services.serviceengine.notification._2010._10.SendStandaloneNotificationBasicV3Response;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -19,7 +19,7 @@ import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 
 @Slf4j
 public class AltinnConsumer extends WebServiceGatewaySupport {
-
+/*
 	private final int MAX_ATTEMPTS = 3;
 
 	private String username;
@@ -36,7 +36,6 @@ public class AltinnConsumer extends WebServiceGatewaySupport {
 
 	@Retryable(include = AltinnTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	public void sendStandaloneNotificationV3(Kanal kanal, String kontaktInfo, String tekst, String tittel) {
-
 
 		try {
 			SendStandaloneNotificationBasicV3 request = AltinnRequestMapper.createRequest(kanal, kontaktInfo, tekst, tittel, password, username);
@@ -63,4 +62,6 @@ public class AltinnConsumer extends WebServiceGatewaySupport {
 			throw new AltinnTechnicalException("sendStandaloneNotificationV3 ukjent feil, feilmelding=" + exception.getMessage(), exception);
 		}
 	}
+
+ */
 }

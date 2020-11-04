@@ -1,23 +1,15 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
-import no.altinn.springsoap.client.gen.ObjectFactory;
-import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3;
+import no.nav.doknotifikasjon.consumer.altinn.old.AltinnConsumer;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.webservices.client.WebServiceTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.transport.WebServiceMessageSender;
-
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.when;
 
 @Configuration
 public class AltinnTestConfig {
-
+/*
 	private static WebServiceTemplate webServiceTemplate = Mockito.mock(WebServiceTemplate.class);
 	private ObjectFactory objectFactory = new ObjectFactory();
 
@@ -53,5 +45,7 @@ public class AltinnTestConfig {
 
 		return request;
 	}
+
+ */
 
 }

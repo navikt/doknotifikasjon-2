@@ -17,4 +17,5 @@ public class DoknotifikasjonEpost {
 	public Kanal kanal;
 	public String kontakt;
 	public String tekst;
+	public String tittel;
 }

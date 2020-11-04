@@ -58,6 +58,8 @@
         <junit-jupiter>5.7.0</junit-jupiter>
         <jaxb2-maven.version>0.14.0</jaxb2-maven.version>
         <spring-retry-version>1.2.5.RELEASE</spring-retry-version>
+        <tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
+        <appache-cxf.version>3.4.0</appache-cxf.version>
     </properties>
 
     <dependencyManagement>
@@ -93,6 +95,12 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
+                <artifactId>altinn-notification-agency-external-basic</artifactId>
+                <version>${tjenestespesifikasjon.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
@@ -112,6 +120,23 @@
                 <artifactId>jaxb-api</artifactId>
                 <version>${javax.bind.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+                <version>${appache-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-features-logging</artifactId>
+                <version>${appache-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-ws-security</artifactId>
+                <version>${appache-cxf.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>

@@ -1,11 +1,5 @@
-package no.nav.doknotifikasjon.consumer.altinn;
+package no.nav.doknotifikasjon.consumer.altinn.old;
 
-import no.altinn.springsoap.client.gen.EndPointResult;
-import no.altinn.springsoap.client.gen.EndPointResultList;
-import no.altinn.springsoap.client.gen.NotificationResult;
-import no.altinn.springsoap.client.gen.SendNotificationResultList;
-import no.altinn.springsoap.client.gen.SendStandaloneNotificationBasicV3Response;
-import no.altinn.springsoap.client.gen.TransportType;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 
 import javax.xml.bind.JAXBElement;
@@ -13,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class AltinnResponseValidator {
-
+/*
 	public static boolean isValidResponse(
 			Kanal kanal,
 			String kontaktInfo,
@@ -90,4 +84,6 @@ public class AltinnResponseValidator {
 		}
 		return null;
 	}
+
+ */
 }

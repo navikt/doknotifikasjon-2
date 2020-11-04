@@ -1,9 +1,9 @@
 package no.nav.doknotifikasjon.knot002.service;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselAdapter;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
-import no.nav.doknotifikasjon.consumer.altinn.AltinnConsumer;
 import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.knot002.mapper.Knot002NotifikasjonEntityMapper;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -26,16 +26,16 @@ public class Knot002Service {
 
 	private final Knot002NotifikasjonEntityMapper notifikasjonEntityMapper;
 	private final KafkaEventProducer kafkaEventProducer;
-	private final AltinnConsumer altinnConsumer;
+	private final AltinnVarselAdapter altinnVarselAdapter;
 
 	public Knot002Service(
 			Knot002NotifikasjonEntityMapper notifikasjonEntityMapper,
 			KafkaEventProducer kafkaEventProducer,
-			AltinnConsumer altinnConsumer
+			AltinnVarselAdapter altinnVarselAdapter
 	) {
 		this.notifikasjonEntityMapper = notifikasjonEntityMapper;
 		this.kafkaEventProducer = kafkaEventProducer;
-		this.altinnConsumer = altinnConsumer;
+		this.altinnVarselAdapter = altinnVarselAdapter;
 	}
 
 	public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
@@ -59,11 +59,7 @@ public class Knot002Service {
 		}
 
 		try {
-			altinnConsumer.sendStandaloneNotificationV3(
-					Kanal.SMS,
-					doknotifikasjonSms.kontakt,
-					doknotifikasjonSms.tekst
-			);
+			altinnVarselAdapter.sendVarsel(Kanal.SMS, doknotifikasjonSms.kontakt, doknotifikasjonSms.tekst, "");
 
 			log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
 		} catch (SoapFaultClientException soapFault) {

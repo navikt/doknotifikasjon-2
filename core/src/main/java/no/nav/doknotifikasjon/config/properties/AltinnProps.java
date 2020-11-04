@@ -26,4 +26,9 @@ public class AltinnProps {
 		this.password = password;
 		this.url = url;
 	}
+
+	@Override
+	public String toString() {
+		return url;
+	}
 }

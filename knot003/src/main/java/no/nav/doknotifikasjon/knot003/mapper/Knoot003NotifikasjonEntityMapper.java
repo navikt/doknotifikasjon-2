@@ -46,6 +46,7 @@ public class Knoot003NotifikasjonEntityMapper {
 					.kanal(notifikasjonDistribusjonEntity.getKanal())
 					.kontakt(notifikasjonDistribusjonEntity.getKontaktInfo())
 					.tekst(notifikasjonDistribusjonEntity.getTekst())
+					.tittel(notifikasjonDistribusjonEntity.getTittel())
 					.build();
 		} catch (DoknotifikasjonDistribusjonIkkeFunnetException exception) {
 			log.error(
