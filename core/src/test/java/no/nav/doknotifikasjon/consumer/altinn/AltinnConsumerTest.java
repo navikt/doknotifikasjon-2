@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
-import no.nav.doknotifikasjon.consumer.altinn.old.AltinnConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -36,7 +35,7 @@ public class AltinnConsumerTest {
 	private static final String TEKST = "dummy tekst";
 
 	@Autowired
-	AltinnConsumer altinnConsumer;
+
 
 	private WebServiceTemplate webServiceTemplate = AltinnTestConfig.getWebServiceTemplateMock();
 

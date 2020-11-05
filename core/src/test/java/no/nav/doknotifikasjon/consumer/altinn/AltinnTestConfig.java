@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
-import no.nav.doknotifikasjon.consumer.altinn.old.AltinnConsumer;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +24,9 @@ public class AltinnTestConfig {
 	}
 
 	@Bean
-	public AltinnConsumer altinnConsumer(
+
 			Jaxb2Marshaller marshaller
 	) {
-		AltinnConsumer client = new AltinnConsumer("username", "password");
 		client.setDefaultUri("localhost");
 		client.setMarshaller(marshaller);
 		client.setUnmarshaller(marshaller);

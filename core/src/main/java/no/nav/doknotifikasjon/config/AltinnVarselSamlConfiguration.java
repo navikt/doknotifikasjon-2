@@ -24,7 +24,7 @@ public class AltinnVarselSamlConfiguration {
             AltinnProps altinnProps,
             ServiceuserAlias serviceuserAlias,
             //TODO set property in prop class
-            @Value("${security-token-service-token.url}") String stsUrl
+            @Value("${security-token-service-saml-token.url}") String stsUrl
     ) {
         this.altinnProps = altinnProps;
         this.serviceuserAlias = serviceuserAlias;
