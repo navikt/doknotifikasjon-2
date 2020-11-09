@@ -34,7 +34,7 @@ public class AltinnVarselSamlConfiguration {
     @Bean
     public INotificationAgencyExternalBasic iNotificationAgencyExternalBasic() throws URISyntaxException {
         INotificationAgencyExternalBasic port = WsClient.createPort(altinnProps.getUrl(), INotificationAgencyExternalBasic.class);
-        STSClientConfigurer configurer = new STSClientConfigurer(new URI(stsUrl), altinnProps.getUsername(), altinnProps.getPassword());
+        STSClientConfigurer configurer = new STSClientConfigurer(new URI(stsUrl), serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
         configurer.configureRequestSamlToken(port);
         return port;
     }
