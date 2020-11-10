@@ -34,6 +34,10 @@
             <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>knot005</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.doknotifikasjon</groupId>
+            <artifactId>snot001</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

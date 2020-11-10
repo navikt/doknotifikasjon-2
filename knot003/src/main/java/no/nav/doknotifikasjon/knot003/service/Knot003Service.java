@@ -5,7 +5,7 @@ import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnConsumer;
 import no.nav.doknotifikasjon.knot003.domain.DoknotifikasjonEpost;
-import no.nav.doknotifikasjon.knot003.mapper.Knoot003NotifikasjonEntityMapper;
+import no.nav.doknotifikasjon.knot003.mapper.Knot003NotifikasjonEntityMapper;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
@@ -24,14 +24,14 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_D
 @Component
 public class Knot003Service {
 
-	private final Knoot003NotifikasjonEntityMapper notifikasjonEntityMapper;
+	private final Knot003NotifikasjonEntityMapper notifikasjonEntityMapper;
 	private final KafkaEventProducer kafkaEventProducer;
 	private final AltinnConsumer altinnConsumer;
 
 	public Knot003Service(
-            Knoot003NotifikasjonEntityMapper notifikasjonEntityMapper,
-            KafkaEventProducer kafkaEventProducer,
-            AltinnConsumer altinnConsumer
+			Knot003NotifikasjonEntityMapper notifikasjonEntityMapper,
+			KafkaEventProducer kafkaEventProducer,
+			AltinnConsumer altinnConsumer
 	) {
 		this.notifikasjonEntityMapper = notifikasjonEntityMapper;
 		this.kafkaEventProducer = kafkaEventProducer;
@@ -67,20 +67,20 @@ public class Knot003Service {
 
 			log.info(FERDIGSTILT_NOTIFIKASJON_EPOST + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
 		} catch (SoapFaultClientException soapFault) {
-			log.error("Knot003 NotifikasjonDistribusjonConsumer har mottatt faultmelding fra altinn fault reason={}", soapFault.getFaultStringOrReason(), soapFault);
+			log.error("Knot003Service har mottatt faultmelding fra altinn fault reason={}", soapFault.getFaultStringOrReason(), soapFault);
 			publishStatus(doknotifikasjonEpost, Status.FEILET, soapFault.getFaultStringOrReason());
 			return;
 
 		} catch (AltinnFunctionalException altinnFunctionalException) {
-			log.error("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
+			log.error("Knot003Service funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
 			publishStatus(doknotifikasjonEpost, Status.FEILET, altinnFunctionalException.getMessage());
 			return;
 		} catch (Exception unknownException) {
-			log.error("Knot003 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
+			log.error("Knot003Service ukjent exception", unknownException);
 			publishStatus(
 					doknotifikasjonEpost,
 					Status.FEILET,
-					Optional.of(unknownException).map(Exception::getMessage).orElse("")
+					Optional.of(unknownException).map(Exception::getMessage).orElse("Knot003Service ukjent exception")
 			);
 			return;
 		}

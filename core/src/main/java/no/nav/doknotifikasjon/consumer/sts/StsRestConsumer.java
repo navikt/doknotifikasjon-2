@@ -11,6 +11,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
@@ -52,6 +53,8 @@ public class StsRestConsumer {
 		} catch (HttpStatusCodeException e) {
 			throw new StsTechnicalException(String.format("Kall mot STS feilet med status=%s feilmelding=%s.", e.getStatusCode(), e
 					.getMessage()), e);
+		} catch (ResourceAccessException e) {
+			throw new StsTechnicalException(String.format("Kall mot STS feilet med manglende tilgang: %s", e.getMessage()), e);
 		}
 	}
 }

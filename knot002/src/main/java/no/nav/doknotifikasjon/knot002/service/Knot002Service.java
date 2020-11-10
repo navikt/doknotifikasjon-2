@@ -67,20 +67,20 @@ public class Knot002Service {
 
 			log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
 		} catch (SoapFaultClientException soapFault) {
-			log.error("Knot002 NotifikasjonDistribusjonConsumer har mottatt faultmelding fra altinn fault reason={}", soapFault.getFaultStringOrReason(), soapFault);
+			log.error("Knot002Service har mottatt faultmelding fra altinn fault reason={}", soapFault.getFaultStringOrReason(), soapFault);
 			publishStatus(doknotifikasjonSms, Status.FEILET, soapFault.getFaultStringOrReason());
 			return;
 
 		} catch (AltinnFunctionalException altinnFunctionalException) {
-			log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
+			log.error("Knot002Service  funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
 			publishStatus(doknotifikasjonSms, Status.FEILET, altinnFunctionalException.getMessage());
 			return;
 		} catch (Exception unknownException) {
-			log.error("Knot002 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
+			log.error("Knot002Service ukjent exception", unknownException);
 			publishStatus(
 					doknotifikasjonSms,
 					Status.FEILET,
-					Optional.of(unknownException).map(Exception::getMessage).orElse("")
+					Optional.of(unknownException).map(Exception::getMessage).orElse("Knot002Service ukjent exception")
 			);
 			return;
 		}

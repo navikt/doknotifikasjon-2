@@ -6,7 +6,6 @@ import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -65,11 +64,12 @@ public class KafkaEventProducer {
 
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
-			if (log.isDebugEnabled()) {
-				log.info("Published to partittion " + sendResult.getRecordMetadata().partition());
-				log.info("Published to offset " + sendResult.getRecordMetadata().offset());
-				log.info("Published to topic " + sendResult.getRecordMetadata().topic());
-			}
+			log.info("Message stored on topic. Timestamp: {}, partition: {}, offset: {}, topic: {}",
+					timestamp,
+					sendResult.getRecordMetadata().partition(),
+					sendResult.getRecordMetadata().offset(),
+					sendResult.getRecordMetadata().topic()
+			);
 		} catch (ExecutionException executionException) {
 			if (executionException.getCause() != null && executionException.getCause() instanceof KafkaProducerException) {
 				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();

@@ -68,7 +68,7 @@ For dev-fss:
 ```shell script
 kubectl config use-context dev-fss
 kubectl get pods -n q1 | grep doknotifikasjon
-kubectl logs -f doknotifikasjon-<POD-ID> -n q1 -c doknotifikasjon
+kubectl logs -f doknotifikasjon-<POD-ID> -n teamdokumenthandtering -c doknotifikasjon
 ```
 
 For prod-fss:

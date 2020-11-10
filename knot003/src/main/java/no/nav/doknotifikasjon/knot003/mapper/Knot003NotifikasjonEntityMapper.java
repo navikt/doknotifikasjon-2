@@ -22,12 +22,12 @@ import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 
 @Slf4j
 @Component
-public class Knoot003NotifikasjonEntityMapper {
+public class Knot003NotifikasjonEntityMapper {
 	private final int MAX_ATTEMPTS = 3;
 
 	private final NotifikasjonDistribusjonRepository repository;
 
-	public Knoot003NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository) {
+	public Knot003NotifikasjonEntityMapper(NotifikasjonDistribusjonRepository repository) {
 		this.repository = repository;
 	}
 

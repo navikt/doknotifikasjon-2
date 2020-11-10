@@ -120,7 +120,7 @@ public class NotifikasjonRepositoryTest {
 		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 3, LocalDate.now().minusDays(1)));
 		notifikasjonRepository.saveAll(notifikasjonList);
 
-		List<Notifikasjon> notifikasjonsForSnot001 = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status.OVERSENDT, 0, LocalDate.now());
+		List<Notifikasjon> notifikasjonsForSnot001 = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status.OVERSENDT, 0, LocalDate.now());
 
 		assertEquals(2, notifikasjonsForSnot001.size());
 		notifikasjonsForSnot001.forEach(notifikasjon -> {
