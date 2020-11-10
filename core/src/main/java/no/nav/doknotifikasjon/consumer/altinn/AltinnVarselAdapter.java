@@ -66,10 +66,10 @@ public class AltinnVarselAdapter {
                     altinnProps.getPassword(),
                     standaloneNotification
             );
-        } catch (AltinnFunctionalException e){
-            throw new AltinnFunctionalException("functional exception", e);
-        } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage | RuntimeException e) {
-            throw new AltinnTechnicalException("Feil ved varsling gjennom Altinn", e);
+        } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+            throw new AltinnTechnicalException("Funksjonell feil fra Altinn. ", e);
+        } catch(RuntimeException e) {
+            throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
         }
     }
 
