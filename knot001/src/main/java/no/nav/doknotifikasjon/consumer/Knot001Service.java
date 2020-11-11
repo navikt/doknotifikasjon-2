@@ -7,6 +7,7 @@ import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunc
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
+import no.nav.doknotifikasjon.exception.technical.StsTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -53,13 +54,11 @@ public class Knot001Service {
 			KafkaDoknotifikasjonStatusProducer statusProducer,
 			NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository
 	) {
-
 		this.statusProducer = statusProducer;
 		this.notifikasjonRepository = notifikasjonRepository;
 		this.producer = producer;
 		this.kontaktinfoConsumer = kontaktinfoConsumer;
 		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
-
 	}
 
 	public void processDoknotifikasjon(DoknotifikasjonTO doknotifikasjon) {
@@ -84,7 +83,7 @@ public class Knot001Service {
 		try {
 			log.info("Henter kontaktinfo fra DKIF for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 			digitalKontaktinformasjon = kontaktinfoConsumer.hentDigitalKontaktinfo(fnrTrimmed);
-		} catch (DigitalKontaktinformasjonTechnicalException | DigitalKontaktinformasjonFunctionalException e) {
+		} catch (DigitalKontaktinformasjonTechnicalException | DigitalKontaktinformasjonFunctionalException | StsTechnicalException e) {
 			statusProducer.publishDoknotikfikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),

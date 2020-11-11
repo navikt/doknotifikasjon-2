@@ -2,26 +2,20 @@
   "topics": [
     {
       "topicName": "privat-dok-notifikasjon",
-      "configEntries": {
-        "retention.ms": -1
-      },
       "members": [
         {
           "member": "srvdoknotifikasjon",
           "role": "CONSUMER"
         },
         {
-          "member": "srvdoknotifikasjon",
+          "member": "srvdittnav-varsel-b",
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 10
+      "numPartitions": 3
     },
     {
       "topicName": "privat-dok-notifikasjon-epost",
-      "configEntries": {
-        "retention.ms": -1
-      },
       "members": [
         {
           "member": "srvdoknotifikasjon",
@@ -32,13 +26,10 @@
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 10
+      "numPartitions": 3
     },
     {
       "topicName": "privat-dok-notifikasjon-sms",
-      "configEntries": {
-        "retention.ms": -1
-      },
       "members": [
         {
           "member": "srvdoknotifikasjon",
@@ -49,13 +40,10 @@
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 10
+      "numPartitions": 3
     },
     {
       "topicName": "privat-dok-notifikasjon-status",
-      "configEntries": {
-        "retention.ms": -1
-      },
       "members": [
         {
           "member": "srvdoknotifikasjon",
@@ -64,26 +52,27 @@
         {
           "member": "srvdoknotifikasjon",
           "role": "PRODUCER"
+        },
+        {
+          "member": "srvdittnav-varsel-b",
+          "role": "CONSUMER"
         }
       ],
-      "numPartitions": 10
+      "numPartitions": 3
     },
     {
       "topicName": "privat-dok-notifikasjon-stopp",
-      "configEntries": {
-        "retention.ms": -1
-      },
       "members": [
         {
           "member": "srvdoknotifikasjon",
           "role": "CONSUMER"
         },
         {
-          "member": "srvdoknotifikasjon",
+          "member": "srvdittnav-varsel-b",
           "role": "PRODUCER"
         }
       ],
-      "numPartitions": 10
+      "numPartitions": 3
     }
   ]
 }

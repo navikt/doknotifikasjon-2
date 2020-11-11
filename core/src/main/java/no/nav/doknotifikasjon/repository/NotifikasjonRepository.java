@@ -14,5 +14,5 @@ public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Inte
 
 	boolean existsByBestillingsId(String bestillingsId);
 
-	List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoBefore(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato);
+	List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato);
 }

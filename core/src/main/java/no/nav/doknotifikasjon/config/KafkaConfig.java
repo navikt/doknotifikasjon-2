@@ -1,28 +1,32 @@
 package no.nav.doknotifikasjon.config;
 
-import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
+import org.springframework.util.backoff.FixedBackOff;
 
+@Slf4j
 @EnableKafka
 @Configuration
 public class KafkaConfig {
 
 	@Bean("kafkaListenerContainerFactory")
+	@Primary
 	ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerFactory(
-			ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
-			ConsumerFactory<Object, Object> kafkaConsumerFactory,
-			KafkaErrorHandler errorHandler
+			ConsumerFactory<Object, Object> kafkaConsumerFactory
 	) {
-
 		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConcurrency(3);
-		factory.setErrorHandler(errorHandler);
+		factory.setConsumerFactory(kafkaConsumerFactory);
 
-		configurer.configure(factory, kafkaConsumerFactory);
+		factory.setConcurrency(3);
+		factory.setErrorHandler(new SeekToCurrentErrorHandler( // todo change maxAttempts
+				(rec, thr) -> log.error("exhausted on topic" + rec.topic() + " with key " + rec.key()),
+				new FixedBackOff(FixedBackOff.DEFAULT_INTERVAL, 2)));
 		return factory;
 	}
 }

@@ -1,16 +1,47 @@
 package no.nav.doknotifikasjon.knot003.itest;
 
 
+import no.altinn.springsoap.client.gen.TransportType;
+import no.nav.doknotifikasjon.consumer.altinn.AltinnTestConfig;
+import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
+import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
+import no.nav.doknotifikasjon.kafka.KafkaTopics;
+import no.nav.doknotifikasjon.knot003.itest.utils.DoknotifikasjonStatusMatcher;
+import no.nav.doknotifikasjon.knot003.mapper.Knot003NotifikasjonEntityMapper;
+import no.nav.doknotifikasjon.kodeverk.Kanal;
+import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
+import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
+import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
+import java.util.concurrent.TimeUnit;
+
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
+import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjon;
+import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
+import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.KONTAKTINFO;
+import static no.nav.doknotifikasjon.consumer.altinn.AltinResponseFactory.generateAltinnResponse;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class Knot003ITest extends EmbededKafkaBroker {
-/*
-	//TODO TEST TEMPORARILY DISABLED
+
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;
 
@@ -21,7 +52,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@SpyBean
-	private Knoot003NotifikasjonEntityMapper NotifikasjonEntityMapper;
+	private Knot003NotifikasjonEntityMapper NotifikasjonEntityMapper;
 
 	@SpyBean
 	private KafkaEventProducer kafkaEventProducer;
@@ -30,12 +61,14 @@ class Knot003ITest extends EmbededKafkaBroker {
 	public void setup() {
 		notifikasjonDistribusjonRepository.deleteAll();
 		notifikasjonRepository.deleteAll();
+		reset(AltinnTestConfig.getWebServiceTemplateMock());
 		reset(kafkaEventProducer);
 	}
 
 	@Test
 	void shouldSetFerdigstilltStatusOnHappyPath() {
 
+		WebServiceTemplate webServiceTemplateMock = AltinnTestConfig.getWebServiceTemplateMock();
 
 		when(webServiceTemplateMock.marshalSendAndReceive(any())).thenReturn(generateAltinnResponse(TransportType.EMAIL, KONTAKTINFO));
 
@@ -119,6 +152,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 	@Test
 	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() {
 
+		WebServiceTemplate webServiceTemplateMock = AltinnTestConfig.getWebServiceTemplateMock();
 
 		when(webServiceTemplateMock.marshalSendAndReceive(any())).thenThrow(new AltinnFunctionalException("Altinn Functional Exception"));
 
@@ -155,6 +189,4 @@ class Knot003ITest extends EmbededKafkaBroker {
 			fail();
 		}
 	}
-
- */
 }

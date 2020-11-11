@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
@@ -19,17 +20,20 @@ public class Knot004Service {
 	private final NotifikasjonRepository notifikasjonRepository;
 	private final DoknotifikasjonStatusValidator doknotifikasjonStatusValidator;
 	private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
+	private final MetricService metricService;
 
 	public Knot004Service(NotifikasjonRepository notifikasjonRepository, DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
-						  KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer) {
+						  KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer, MetricService metricService) {
 		this.notifikasjonRepository = notifikasjonRepository;
 		this.doknotifikasjonStatusValidator = doknotifikasjonStatusValidator;
 		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
+		this.metricService = metricService;
 	}
 
 	public void shouldUpdateStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
 		log.info("Ny hendelse med bestillingsId={} på kafka-topic {} hentet av knot004.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
 				doknotifikasjonStatusTo.getBestillingsId());
+		metricService.metricKnot004Status(doknotifikasjonStatusTo.getStatus());
 
 		if (Status.INFO.equals(doknotifikasjonStatusTo.getStatus())) {
 			log.info("Input status er {}. Behandlingen av hendelse avsluttets.", Status.INFO);

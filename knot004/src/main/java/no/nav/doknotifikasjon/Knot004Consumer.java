@@ -14,31 +14,35 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER;
+
 @Slf4j
 @Component
-public class KafkaEventKnot004Consumer {
+public class Knot004Consumer {
 
 	private final ObjectMapper objectMapper;
 	private final Knot004Service knot004Service;
 	private final DoknotifikasjonStatusMapper doknotifikasjonStatusMapper;
 
 	@Inject
-	public KafkaEventKnot004Consumer(ObjectMapper objectMapper, Knot004Service knot004Service,
-									 DoknotifikasjonStatusMapper doknotifikasjonStatusMapper) {
+	public Knot004Consumer(ObjectMapper objectMapper, Knot004Service knot004Service,
+						   DoknotifikasjonStatusMapper doknotifikasjonStatusMapper) {
 		this.objectMapper = objectMapper;
 		this.knot004Service = knot004Service;
 		this.doknotifikasjonStatusMapper = doknotifikasjonStatusMapper;
 	}
 
 	@KafkaListener(
-			topics = "privat-dok-notifikasjon-status",
+			topics = KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot004"
 	)
-	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT004_CONSUMER, percentiles = {0.5, 0.95})
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
+			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value()
 					.toString(), DoknotifikasjonStatus.class);
 

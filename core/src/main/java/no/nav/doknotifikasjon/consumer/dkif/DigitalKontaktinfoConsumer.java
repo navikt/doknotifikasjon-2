@@ -27,14 +27,14 @@ import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.DomainConstants.APP_NAME;
 import static no.nav.doknotifikasjon.constants.DomainConstants.BEARER_PREFIX;
 import static no.nav.doknotifikasjon.constants.MDCConstants.*;
-import static no.nav.doknotifikasjon.metrics.MetricLabels.DOK_CONSUMER;
-import static no.nav.doknotifikasjon.metrics.MetricLabels.PROCESS_NAME;
+import static no.nav.doknotifikasjon.metrics.MetricTags.HENT_DIGITAL_KONTAKTINFORMASJON;
+import static no.nav.doknotifikasjon.metrics.MetricTags.PROCESS_NAME;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_DKIF_CONSUMER;
 
 @Slf4j
 @Component
 public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
 
-	private static final String HENT_DIGITAL_KONTAKTINFORMASJON = "hentDigitalKontaktinformasjon";
 	private final String dkifUrl;
 	private final RestTemplate restTemplate;
 	private final StsRestConsumer stsRestConsumer;
@@ -52,39 +52,39 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
 	}
 
 	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = 5, backoff = @Backoff(delay = 200))
-	@Metrics(value = DOK_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON}, percentiles = {0.5, 0.95}, histogram = true)
+	@Metrics(value = DOK_DKIF_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON}, percentiles = {0.5, 0.95}, histogram = true)
 	public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
 		HttpHeaders headers = createHeaders();
 		String fnrTrimmed = personidentifikator.trim();
 		headers.add(NAV_PERSONIDENTER, fnrTrimmed);
 
 
-        try {
-            DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
-                    HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
-            return response;
-        } catch (HttpClientErrorException e) {
-            throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
-                    .getMessage()), e);
-        } catch (HttpServerErrorException e) {
-            throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
-                    .getMessage()), e);
-        }
-    }
+		try {
+			DigitalKontaktinformasjonTo response = restTemplate.exchange(dkifUrl + "/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false",
+					HttpMethod.GET, new HttpEntity<>(headers), DigitalKontaktinformasjonTo.class).getBody();
+			return response;
+		} catch (HttpClientErrorException e) {
+			throw new DigitalKontaktinformasjonFunctionalException(format("Funksjonell feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
+					.getMessage()), e);
+		} catch (HttpServerErrorException e) {
+			throw new DigitalKontaktinformasjonTechnicalException(format("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=%s", e
+					.getMessage()), e);
+		}
+	}
 
-    private HttpHeaders createHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
-        headers.add(NAV_CONSUMER_ID, APP_NAME);
-        headers.add(NAV_CALL_ID, this.getDefaultUuidIfNoCallIdIsSett());
-        return headers;
-    }
+	private HttpHeaders createHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
+		headers.add(NAV_CONSUMER_ID, APP_NAME);
+		headers.add(NAV_CALL_ID, this.getDefaultUuidIfNoCallIdIsSett());
+		return headers;
+	}
 
-    private String getDefaultUuidIfNoCallIdIsSett() {
-        if (MDC.get(MDC_CALL_ID) != null && !MDC.get(MDC_CALL_ID).trim().isEmpty()) {
-            return MDC.get(MDC_CALL_ID);
-        }
-        return UUID.randomUUID().toString();
-    }
+	private String getDefaultUuidIfNoCallIdIsSett() {
+		if (MDC.get(MDC_CALL_ID) != null && !MDC.get(MDC_CALL_ID).trim().isEmpty()) {
+			return MDC.get(MDC_CALL_ID);
+		}
+		return UUID.randomUUID().toString();
+	}
 }
