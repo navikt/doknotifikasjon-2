@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.knot002;
+package no.nav.doknotifikasjon.knot003;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
@@ -9,6 +9,7 @@ import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
@@ -25,52 +26,56 @@ import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_KANAL;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_STATUS;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_EPOST_UGYLDIG_KANAL;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_EPOST_UGYLDIG_STATUS;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_NOTIFIKASJON_EPOST;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_NOTIFIKASJON_SMS;
 
 @Slf4j
 @Component
-public class Knot002Service {
+public class Knot003Service {
 
-    private final Knot002Mapper knot002Mapper;
+    private final Knot003Mapper knot003Mapper;
     private final KafkaEventProducer kafkaEventProducer;
     private final AltinnVarselConsumer altinnVarselConsumer;
+    private final MetricService metricService;
     private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-    public Knot002Service(Knot002Mapper knot002Mapper, KafkaEventProducer kafkaEventProducer,
-                          AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
-        this.knot002Mapper = knot002Mapper;
+    public Knot003Service(Knot003Mapper knot003Mapper, KafkaEventProducer kafkaEventProducer,
+                          AltinnVarselConsumer altinnVarselConsumer, MetricService metricService,
+                          NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
         this.kafkaEventProducer = kafkaEventProducer;
         this.altinnVarselConsumer = altinnVarselConsumer;
+        this.metricService = metricService;
+        this.knot003Mapper = knot003Mapper;
         this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
     }
 
-    public void shouldSendSms(int notifikasjonDistribusjonId) {
-        log.info("Ny hendelse med notifikasjonsDistribusjonId={} på kafka-topic {} hentet av knot002.", notifikasjonDistribusjonId, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS);
+    public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
+        log.info("Ny hendelse med notifikasjonsDistribusjonId={} på kafka-topic {} hentet av knot003.", notifikasjonDistribusjonId, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST);
 
         NotifikasjonDistribusjon notifikasjonDistribusjon = queryRepository(notifikasjonDistribusjonId);
         Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
 
-        DoknotifikasjonSmsTo doknotifikasjonSmsTo = knot002Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
+        DoknotifikasjonEpostTo doknotifikasjonEpostTo = knot003Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
-        if (!validateDistribusjonStatusOgKanal(doknotifikasjonSmsTo)) {
-            String melding = doknotifikasjonSmsTo.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_SMS_UGYLDIG_KANAL : FEILET_SMS_UGYLDIG_STATUS;
-            publishStatus(doknotifikasjonSmsTo, Status.FEILET, melding);
-            log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, melding);
+        if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostTo)) {
+            String melding = doknotifikasjonEpostTo.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
+            publishStatus(doknotifikasjonEpostTo, Status.FEILET, melding);
+            log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, melding);
             return;
         }
 
         try {
-            altinnVarselConsumer.sendVarsel(Kanal.SMS, doknotifikasjonSmsTo.getKontakt(), doknotifikasjonSmsTo.getFodselsnummer(), doknotifikasjonSmsTo.getTekst(), "");
+            altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostTo.getKontakt(), doknotifikasjonEpostTo.getFodselsnummer(), doknotifikasjonEpostTo.getTekst(), "");
             log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
         } catch (AltinnFunctionalException altinnFunctionalException) {
-            log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
-            publishStatus(doknotifikasjonSmsTo, Status.FEILET, altinnFunctionalException.getMessage());
+            log.error("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
+            publishStatus(doknotifikasjonEpostTo, Status.FEILET, altinnFunctionalException.getMessage());
             return;
         } catch (Exception unknownException) {
-            log.error("Knot002 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
-            publishStatus(doknotifikasjonSmsTo, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+            log.error("Knot003 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
+            publishStatus(doknotifikasjonEpostTo, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
             return;
         }
 
@@ -82,23 +87,24 @@ public class Knot002Service {
         // så har det ikke så mye for seg å gå videre (ingen grunn til å tro at det går bedre med neste melding)
         // - så at vi får en "propp" i behandlingen er kanskje ikke så feil"
 
-        publishStatus(doknotifikasjonSmsTo, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
+        publishStatus(doknotifikasjonEpostTo, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_EPOST);
+        metricService.metricKnot003EpostProcessed();
     }
 
-    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsTo doknotifikasjonSmsTo) {
-        return Status.OPPRETTET.equals(doknotifikasjonSmsTo.getDistribusjonStatus()) && Kanal.SMS.equals(doknotifikasjonSmsTo.getKanal());
+    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonEpostTo doknotifikasjonEpostTo) {
+        return Status.OPPRETTET.equals(doknotifikasjonEpostTo.getDistribusjonStatus()) && Kanal.EPOST.equals(doknotifikasjonEpostTo.getKanal());
     }
 
-    private void publishStatus(DoknotifikasjonSmsTo doknotifikasjonSmsTo, Status status, String melding) {
+    private void publishStatus(DoknotifikasjonEpostTo doknotifikasjonEpostTo, Status status, String melding) {
         kafkaEventProducer.publish(
                 KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-                doknotifikasjonSmsTo.getNotifikasjonDistribusjonId(),
+                doknotifikasjonEpostTo.getNotifikasjonDistribusjonId(),
                 DoknotifikasjonStatus.newBuilder()
-                        .setBestillerId(doknotifikasjonSmsTo.getBestillerId())
-                        .setBestillingsId(doknotifikasjonSmsTo.getBestillingsId())
+                        .setBestillerId(doknotifikasjonEpostTo.getBestillerId())
+                        .setBestillingsId(doknotifikasjonEpostTo.getBestillingsId())
                         .setStatus(status.name())
                         .setMelding(melding)
-                        .setDistribusjonId(Long.valueOf(doknotifikasjonSmsTo.getNotifikasjonDistribusjonId()))
+                        .setDistribusjonId(Long.valueOf(doknotifikasjonEpostTo.getNotifikasjonDistribusjonId()))
                         .build(),
                 System.currentTimeMillis()
         );

@@ -12,7 +12,6 @@ import no.altinn.services.serviceengine.notification._2010._10.INotificationAgen
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import org.springframework.retry.annotation.Backoff;
@@ -24,9 +23,7 @@ import javax.xml.namespace.QName;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_LONG;
 
 @Slf4j
 @Service
@@ -43,7 +40,8 @@ public class AltinnVarselConsumer {
         this.altinnProps = altinnProps;
     }
 
-    @Retryable(include = AltinnTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))        //Uendelig retry?
+    @Retryable(include = AltinnTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG, multiplier = MULTIPLIER_LONG))
+    //todo: Uendelig retry?
     public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
         StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
                 new StandaloneNotification()

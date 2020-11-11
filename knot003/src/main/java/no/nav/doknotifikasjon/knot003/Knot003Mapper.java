@@ -1,14 +1,15 @@
-package no.nav.doknotifikasjon.knot002;
+package no.nav.doknotifikasjon.knot003;
 
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Knot002Mapper {
+public class Knot003Mapper {
 
-    public DoknotifikasjonSmsTo mapNotifikasjonDistrubisjon(NotifikasjonDistribusjon notifikasjonDistribusjon, Notifikasjon notifikasjon) {
-        return DoknotifikasjonSmsTo.builder()
+    public DoknotifikasjonEpostTo mapNotifikasjonDistrubisjon(NotifikasjonDistribusjon notifikasjonDistribusjon, Notifikasjon notifikasjon) {
+        return DoknotifikasjonEpostTo
+                .builder()
                 .notifikasjonDistribusjonId(String.valueOf(notifikasjonDistribusjon.getId()))
                 .bestillerId(notifikasjon.getBestillerId())
                 .bestillingsId(notifikasjon.getBestillingsId())
@@ -16,6 +17,7 @@ public class Knot002Mapper {
                 .kanal(notifikasjonDistribusjon.getKanal())
                 .kontakt(notifikasjonDistribusjon.getKontaktInfo())
                 .tekst(notifikasjonDistribusjon.getTekst())
+                .tittel(notifikasjonDistribusjon.getTittel())
                 .fodselsnummer(notifikasjon.getMottakerId())
                 .build();
     }

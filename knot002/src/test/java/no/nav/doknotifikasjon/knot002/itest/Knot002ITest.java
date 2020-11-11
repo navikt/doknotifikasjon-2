@@ -1,7 +1,10 @@
 package no.nav.doknotifikasjon.knot002.itest;
 
 
+import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
+import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,10 +12,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 class Knot002ITest extends EmbededKafkaBroker {
-	//TODO FIX THIS TEST
- 	// TEMPORARILY DISABLED
-/*
-	@Autowired
+
+	/*@Autowired
 	private KafkaEventProducer KafkaEventProducer;
 
 	@Autowired

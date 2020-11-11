@@ -1,11 +1,10 @@
-package no.nav.doknotifikasjon.knot003.consumer;
+package no.nav.doknotifikasjon.knot003;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.knot003.service.Knot003Service;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -31,10 +30,7 @@ public class Knot003Consumer {
 	private final Knot003Service knot003Service;
 
 	@Inject
-	Knot003Consumer(
-			Knot003Service knot003Service,
-			ObjectMapper objectMapper
-	) {
+	Knot003Consumer(Knot003Service knot003Service, ObjectMapper objectMapper) {
 		this.knot003Service = knot003Service;
 		this.objectMapper = objectMapper;
 	}

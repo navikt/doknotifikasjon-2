@@ -5,8 +5,6 @@ import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.consumer.sts.STSConfig;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
@@ -22,26 +20,24 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(AltinnProps.class)
 public class AltinnVarselSamlConfiguration {
 
-	@Bean
-	public INotificationAgencyExternalBasic iNotificationAgencyExternalBasic(AltinnProps altinnProps, STSConfig stsConfig) {
-		JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-		factory.setServiceClass(INotificationAgencyExternalBasic.class);
-		factory.setAddress(Objects.requireNonNull(altinnProps.getUrl()));
-		factory.getFeatures().add(new WSAddressingFeature());
-		factory.getOutInterceptors().add(new LoggingOutInterceptor());
-		factory.getInInterceptors().add(new LoggingInInterceptor());
-		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = (INotificationAgencyExternalBasic) factory.create();
-		stsConfig.configureSTS(iNotificationAgencyExternalBasic);
-		Client client = ClientProxy.getClient(iNotificationAgencyExternalBasic);
-		setClientTimeout(client);
-		return iNotificationAgencyExternalBasic;
-	}
+    @Bean
+    public INotificationAgencyExternalBasic iNotificationAgencyExternalBasic(AltinnProps altinnProps, STSConfig stsConfig) {
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+        factory.setServiceClass(INotificationAgencyExternalBasic.class);
+        factory.setAddress(Objects.requireNonNull(altinnProps.getUrl()));
+        factory.getFeatures().add(new WSAddressingFeature());
+        INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = (INotificationAgencyExternalBasic) factory.create();
+        stsConfig.configureSTS(iNotificationAgencyExternalBasic);
+        Client client = ClientProxy.getClient(iNotificationAgencyExternalBasic);
+        setClientTimeout(client);
+        return iNotificationAgencyExternalBasic;
+    }
 
-	private void setClientTimeout(Client client) {
-		HTTPConduit conduit = (HTTPConduit) client.getConduit();
-		HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
-		httpClientPolicy.setConnectionTimeout(TimeUnit.SECONDS.toMillis(2));
-		httpClientPolicy.setReceiveTimeout(TimeUnit.SECONDS.toMillis(20));
-		conduit.setClient(httpClientPolicy);
-	}
+    private void setClientTimeout(Client client) {
+        HTTPConduit conduit = (HTTPConduit) client.getConduit();
+        HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+        httpClientPolicy.setConnectionTimeout(TimeUnit.SECONDS.toMillis(2));
+        httpClientPolicy.setReceiveTimeout(TimeUnit.SECONDS.toMillis(20));
+        conduit.setClient(httpClientPolicy);
+    }
 }

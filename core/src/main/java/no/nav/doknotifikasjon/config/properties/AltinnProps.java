@@ -15,11 +15,11 @@ import javax.validation.constraints.NotNull;
 public class AltinnProps {
 
 	@NotNull
-	private String username;
+	private final String username;
 	@NotNull
-	private String password;
+	private final String password;
 	@NotNull
-	private String url;
+	private final String url;
 
 	AltinnProps(String username, String password, String url) {
 		this.username = username;
