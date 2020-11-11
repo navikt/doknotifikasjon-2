@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
     <appender name="applikasjonslogg" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
@@ -17,10 +18,14 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="applikasjonslogg"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="no.nav.doknotifikasjon" level="INFO" additivity="false">
-        <appender-ref ref="applikasjonslogg"/>
+    <logger name="no.nav.doknotifikasjon" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="org.apache.cxf" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
     </logger>
 </included>

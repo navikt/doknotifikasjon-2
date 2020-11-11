@@ -27,6 +27,7 @@ public class STSConfig {
 
 	public void configureSTS(Object port) {
 		Client client = ClientProxy.getClient(port);
-		STSConfigUtil.configureStsRequestSamlToken(client, stsUrl, serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
+		//STSConfigUtil.configureStsRequestSamlToken(client, stsUrl, serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
+		STSConfigUtil.configureStsRequestSamlToken(client, stsUrl, "srvvarseltjeneste", "avw29GcnatKPAkC");
 	}
 }

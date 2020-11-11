@@ -36,7 +36,7 @@ public class ProducerController {
         Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
                 LocalDateTime.now().toString(),
                 LocalDateTime.now().toString(),
-                "08048422250", // FNR er fra en testbrukker hos dolly
+                "09097400285", // FNR er fra en testbrukker hos dolly
                 0,
                 0,
                 "tittel",

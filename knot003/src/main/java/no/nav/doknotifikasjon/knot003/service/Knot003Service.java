@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon.knot003.service;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselAdapter;
+import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot003.domain.DoknotifikasjonEpost;
@@ -26,16 +26,16 @@ public class Knot003Service {
 
 	private final Knoot003NotifikasjonEntityMapper notifikasjonEntityMapper;
 	private final KafkaEventProducer kafkaEventProducer;
-	private final AltinnVarselAdapter altinnVarselAdapter;
+	private final AltinnVarselConsumer altinnVarselConsumer;
 
 	public Knot003Service(
             Knoot003NotifikasjonEntityMapper notifikasjonEntityMapper,
             KafkaEventProducer kafkaEventProducer,
-			AltinnVarselAdapter altinnVarselAdapter
+            AltinnVarselConsumer altinnVarselConsumer
 	) {
 		this.notifikasjonEntityMapper = notifikasjonEntityMapper;
 		this.kafkaEventProducer = kafkaEventProducer;
-		this.altinnVarselAdapter = altinnVarselAdapter;
+		this.altinnVarselConsumer = altinnVarselConsumer;
 	}
 
 	public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
@@ -59,7 +59,7 @@ public class Knot003Service {
 		}
 
 		try {
-			altinnVarselAdapter.sendVarsel(Kanal.EPOST, doknotifikasjonEpost.kontakt, doknotifikasjonEpost.tekst, doknotifikasjonEpost.tittel);
+			altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpost.kontakt, doknotifikasjonEpost.tekst, doknotifikasjonEpost.tittel);
 
 			log.info(FERDIGSTILT_NOTIFIKASJON_EPOST + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
 		} catch (SoapFaultClientException soapFault) {

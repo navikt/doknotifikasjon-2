@@ -5,6 +5,8 @@ import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.consumer.sts.STSConfig;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
@@ -26,6 +28,8 @@ public class AltinnVarselSamlConfiguration {
 		factory.setServiceClass(INotificationAgencyExternalBasic.class);
 		factory.setAddress(Objects.requireNonNull(altinnProps.getUrl()));
 		factory.getFeatures().add(new WSAddressingFeature());
+		factory.getOutInterceptors().add(new LoggingOutInterceptor());
+		factory.getInInterceptors().add(new LoggingInInterceptor());
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = (INotificationAgencyExternalBasic) factory.create();
 		stsConfig.configureSTS(iNotificationAgencyExternalBasic);
 		Client client = ClientProxy.getClient(iNotificationAgencyExternalBasic);

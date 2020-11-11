@@ -12,32 +12,58 @@ import no.altinn.services.serviceengine.notification._2010._10.INotificationAgen
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import java.util.List;
 
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
+
 @Slf4j
 @Service
-public class AltinnVarselAdapter {
+public class AltinnVarselConsumer {
 
     private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
-
-
     private static final String NAMESPACE = "http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10";
 
     private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
     private final AltinnProps altinnProps;
 
-    public AltinnVarselAdapter(
-            INotificationAgencyExternalBasic iNotificationAgencyExternalBasic,
-            AltinnProps altinnProps
-    ) {
+    public AltinnVarselConsumer(INotificationAgencyExternalBasic iNotificationAgencyExternalBasic, AltinnProps altinnProps) {
         this.iNotificationAgencyExternalBasic = iNotificationAgencyExternalBasic;
         this.altinnProps = altinnProps;
+    }
+
+    @Retryable(include = AltinnTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))        //Uendelig retry?
+    public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+        StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
+                new StandaloneNotification()
+                        .withReporteeNumber(ns("ReporteeNumber", fnr))
+                        .withLanguageID(1044)
+                        .withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
+                        .withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
+                        .withTextTokens(generateTextTokens(kanal, tekst, tittel))
+                        .withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
+        try {
+            iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
+                    altinnProps.getUsername(),
+                    altinnProps.getPassword(),
+                    standaloneNotification
+            );
+        } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+            throw new AltinnFunctionalException("Funksjonell feil i kall mot Altinn. ", e);
+        } catch (RuntimeException e) {
+            throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
+        }
     }
 
     private static JAXBElement<String> ns(String localpart, String value) {
@@ -52,41 +78,20 @@ public class AltinnVarselAdapter {
         return new JAXBElement<>(new QName(NAMESPACE, localpart), Boolean.class, value);
     }
 
-    public void sendVarsel(Kanal kanal, String kontaktInfo, String tekst, String tittel) {
-        StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
-                new StandaloneNotification()
-                        .withLanguageID(1044)
-                        .withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
-                        .withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
-                        .withTextTokens(generateTextTokens(kanal, tekst, tittel))
-                        .withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
-        try {
-            iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
-                    altinnProps.getUsername(),
-                    altinnProps.getPassword(),
-                    standaloneNotification
-            );
-        } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
-            throw new AltinnTechnicalException("Funksjonell feil fra Altinn. ", e);
-        } catch(RuntimeException e) {
-            throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
-        }
-    }
-
     private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
         return ns(
                 "ReceiverEndPoints",
                 ReceiverEndPointBEList.class,
                 new ReceiverEndPointBEList()
-                    .withReceiverEndPoint(
-                            new ReceiverEndPoint()
-                                    .withReceiverAddress(ns("ReceiverAddress", kontaktInfo))
-                                    .withTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal))))
+                        .withReceiverEndPoint(
+                                new ReceiverEndPoint()
+                                        .withReceiverAddress(ns("ReceiverAddress", kontaktInfo))
+                                        .withTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal))))
         );
     }
 
     private JAXBElement<TextTokenSubstitutionBEList> generateTextTokens(Kanal kanal, String tekst, String tittel) {
-        if(kanal == Kanal.SMS) {
+        if (kanal == Kanal.SMS) {
             return ns("TextTokens",
                     TextTokenSubstitutionBEList.class,
                     new TextTokenSubstitutionBEList().withTextToken(List.of(
@@ -98,7 +103,7 @@ public class AltinnVarselAdapter {
                                     .withTokenValue(ns("TokenValue", ""))
                     )));
         }
-        if(kanal == Kanal.EPOST) {
+        if (kanal == Kanal.EPOST) {
             return ns("TextTokens",
                     TextTokenSubstitutionBEList.class,
                     new TextTokenSubstitutionBEList().withTextToken(List.of(
@@ -110,7 +115,7 @@ public class AltinnVarselAdapter {
                                     .withTokenValue(ns("TokenValue", tekst))
                     )));
         }
-        throw new AltinnFunctionalException("kanal er verken epost eller sms"); //TODO utfyllende
+        throw new AltinnFunctionalException("Funksjonell feil mot Altinn: Kanal er verken epost eller sms.");
     }
 
     private static TransportType kanalToTransportType(Kanal kanal) {
