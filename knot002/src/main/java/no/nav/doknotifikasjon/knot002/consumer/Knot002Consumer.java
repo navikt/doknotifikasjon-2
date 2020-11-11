@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.setDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_CONSUMER;
 
 
 @Slf4j
@@ -39,14 +41,15 @@ public class Knot002Consumer {
 	}
 
 	@KafkaListener(
-			topics = "privat-dok-notifikasjon-sms",
+			topics = KAFKA_TOPIC_DOK_NOTIFKASJON_SMS,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot002"
 	)
 	@Transactional
-	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT002_CONSUMER, percentiles = {0.5, 0.95})
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
+			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 			generateNewCallIdIfThereAreNone();
 
 			DoknotifikasjonSms doknotifikasjonSms = objectMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);

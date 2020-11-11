@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,32 +13,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_CONSUMER;
+
 @Slf4j
 @Component
-public class KafkaEventKnot005Consumer {
+public class Knot005Consumer {
 
 	private final ObjectMapper objectMapper;
 	private final Knot005Service knot005Service;
 	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 
 	@Inject
-	public KafkaEventKnot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
-									 DoknotifikasjonStoppMapper doknotifikasjonStoppMapper) {
+	public Knot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
+						   DoknotifikasjonStoppMapper doknotifikasjonStoppMapper) {
 		this.objectMapper = objectMapper;
 		this.knot005Service = knot005Service;
 		this.doknotifikasjonStoppMapper = doknotifikasjonStoppMapper;
 	}
 
 	@KafkaListener(
-			topics = "privat-dok-notifikasjon-stopp",
+			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot005"
 	)
-	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT005_CONSUMER, percentiles = {0.5, 0.95})
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
-		log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
+		log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
 		try {
+			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value()
 					.toString(), DoknotifikasjonStopp.class);
 			knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -16,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.metrics.MetricName.*;
+
 @Slf4j
 @Component
 public class Knot001Consumer {
@@ -24,25 +28,28 @@ public class Knot001Consumer {
 	private final Knot001Service knot001Service;
 	private final DoknotifikasjonMapper doknotifikasjonMapper;
 	private final DoknotifikasjonValidator doknotifikasjonValidator;
+	private final MetricService metricService;
 
 	@Inject
 	Knot001Consumer(ObjectMapper objectMapper, Knot001Service knot001Service, DoknotifikasjonMapper doknotifikasjonMapper,
-					DoknotifikasjonValidator doknotifikasjonValidator) {
+					DoknotifikasjonValidator doknotifikasjonValidator, MetricService metricService) {
 		this.objectMapper = objectMapper;
 		this.knot001Service = knot001Service;
 		this.doknotifikasjonMapper = doknotifikasjonMapper;
 		this.doknotifikasjonValidator = doknotifikasjonValidator;
+		this.metricService = metricService;
 	}
 
 	@KafkaListener(
-			topics = "privat-dok-notifikasjon",
+			topics = KAFKA_TOPIC_DOK_NOTIFKASJON,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot001"
 	)
-	@Metrics(value = "dok_request", percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT001_CONSUMER, percentiles = {0.5, 0.95})
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
+			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
 			doknotifikasjonValidator.validate(doknotifikasjon);
 			knot001Service.processDoknotifikasjon(doknotifikasjonMapper.map(doknotifikasjon));
@@ -54,6 +61,9 @@ public class Knot001Consumer {
 			log.error("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.error("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
+		} catch (Exception e) {
+			metricService.metricHandleException(e);
+			throw e;
 		}
 	}
 }

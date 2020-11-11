@@ -23,8 +23,8 @@ public class KafkaConfig {
 		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(kafkaConsumerFactory);
 
-		factory.setConcurrency(1);
-		factory.setErrorHandler(new SeekToCurrentErrorHandler(
+		factory.setConcurrency(3);
+		factory.setErrorHandler(new SeekToCurrentErrorHandler( // todo change maxAttempts
 				(rec, thr) -> log.error("exhausted on topic" + rec.topic() + " with key " + rec.key()),
 				new FixedBackOff(FixedBackOff.DEFAULT_INTERVAL, 2)));
 		return factory;

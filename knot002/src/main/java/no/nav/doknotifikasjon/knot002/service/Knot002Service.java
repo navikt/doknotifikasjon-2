@@ -8,6 +8,7 @@ import no.nav.doknotifikasjon.knot002.domain.DoknotifikasjonSms;
 import no.nav.doknotifikasjon.knot002.mapper.Knot002NotifikasjonEntityMapper;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import org.springframework.stereotype.Component;
@@ -27,15 +28,18 @@ public class Knot002Service {
 	private final Knot002NotifikasjonEntityMapper notifikasjonEntityMapper;
 	private final KafkaEventProducer kafkaEventProducer;
 	private final AltinnConsumer altinnConsumer;
+	private final MetricService metricService;
 
 	public Knot002Service(
 			Knot002NotifikasjonEntityMapper notifikasjonEntityMapper,
 			KafkaEventProducer kafkaEventProducer,
-			AltinnConsumer altinnConsumer
+			AltinnConsumer altinnConsumer,
+			MetricService metricService
 	) {
 		this.notifikasjonEntityMapper = notifikasjonEntityMapper;
 		this.kafkaEventProducer = kafkaEventProducer;
 		this.altinnConsumer = altinnConsumer;
+		this.metricService = metricService;
 	}
 
 	public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
@@ -103,7 +107,7 @@ public class Knot002Service {
 		}
 
 		publishStatus(doknotifikasjonSms, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
-
+		metricService.metricKnot002SmsProcessed();
 	}
 
 	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSms doknotifikasjonSms) {

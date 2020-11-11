@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,16 @@ public class Knot005Service {
 	private final NotifikasjonRepository notifikasjonRepository;
 	private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
 	private final DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator;
+	private final MetricService metricService;
 
 	public Knot005Service(NotifikasjonRepository notifikasjonRepository,
 						  KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer,
-						  DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator) {
+						  DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator,
+						  MetricService metricService) {
 		this.notifikasjonRepository = notifikasjonRepository;
 		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
 		this.doknotifikasjonStoppValidadator = doknotifikasjonStoppValidadator;
+		this.metricService = metricService;
 	}
 
 	public void shouldStopResending(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
@@ -41,6 +45,7 @@ public class Knot005Service {
 		} else {
 			updateNotifikasjon(notifikasjon, doknotifikasjonStoppTo);
 			publishNewDoknotifikasjonStatus(doknotifikasjonStoppTo);
+			metricService.metricKnot005ReNotifikasjonStopped();
 		}
 	}
 
