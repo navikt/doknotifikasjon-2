@@ -60,7 +60,6 @@
         <spring-retry-version>1.2.5.RELEASE</spring-retry-version>
         <tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
         <appache-cxf.version>3.4.0</appache-cxf.version>
-        <bouncycastle.version>1.64</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
@@ -141,6 +140,12 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${appache-cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -209,11 +214,6 @@
                 <groupId>org.springframework.retry</groupId>
                 <artifactId>spring-retry</artifactId>
                 <version>${spring-retry-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
