@@ -51,7 +51,7 @@ public class Knot003Consumer {
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
 
 			log.info("knot003 starter behandling av NotifikasjonDistribusjonId={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
-			knot003Service.konsumerDistribusjonId(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
+			knot003Service.shouldSendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
