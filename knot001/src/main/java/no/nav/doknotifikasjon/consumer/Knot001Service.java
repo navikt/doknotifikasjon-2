@@ -208,10 +208,10 @@ public class Knot001Service {
 
 	public void publishDoknotifikasjonEpost(Integer bestillingsId) {
 		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, bestillingsId);
-		DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(bestillingsId);
+		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);
 		producer.publish(
 				KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
-				doknotifikasjonEpost
+				doknotifikasjonEpostTo
 		);
 	}
 }
