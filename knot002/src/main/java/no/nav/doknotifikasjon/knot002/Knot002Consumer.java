@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -29,11 +30,13 @@ public class Knot002Consumer {
 
     private final ObjectMapper objectMapper;
     private final Knot002Service knot002Service;
+    private final MetricService metricService;
 
     @Inject
-    Knot002Consumer(Knot002Service knot002Service, ObjectMapper objectMapper) {
+    Knot002Consumer(Knot002Service knot002Service, ObjectMapper objectMapper, MetricService metricService) {
         this.knot002Service = knot002Service;
         this.objectMapper = objectMapper;
+        this.metricService = metricService;
     }
 
     @KafkaListener(
@@ -42,7 +45,7 @@ public class Knot002Consumer {
             groupId = "doknotifikasjon-knot002"
     )
     @Transactional
-    @Metrics(value = DOK_KNOT002_CONSUMER, percentiles = {0.5, 0.95})
+    @Metrics(value = DOK_KNOT002_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
     public void onMessage(final ConsumerRecord<String, Object> record) {
         try {
             log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
@@ -53,15 +56,18 @@ public class Knot002Consumer {
 
             log.info("knot002 starter behandling av NotifikasjonDistribusjonId={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
             knot002Service.shouldSendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
-
         } catch (JsonProcessingException e) {
             log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
+            metricService.metricHandleException(e);
         } catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
             log.error("Ingen notifikasjonDistribusjon ble funnet i databasen. Avslutter behandlingen. ", e);
+            metricService.metricHandleException(e);
         } catch (DoknotifikasjonValidationException e) {
             log.error("Valideringsfeil i knot002. Avslutter behandlingen. ", e);
+            metricService.metricHandleException(e);
         } catch (Exception e) {
             log.error("Knot002 feilet pga ukjent feil. Behandlingen avsluttes.", e);
+            metricService.metricHandleException(e);
         } finally {
             clearDistribusjonId();
             clearCallId();

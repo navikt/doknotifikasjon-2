@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -22,15 +23,18 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER;
 public class Knot004Consumer {
 
 	private final ObjectMapper objectMapper;
+	private final MetricService metricService;
 	private final Knot004Service knot004Service;
 	private final DoknotifikasjonStatusMapper doknotifikasjonStatusMapper;
 
 	@Inject
 	public Knot004Consumer(ObjectMapper objectMapper, Knot004Service knot004Service,
-						   DoknotifikasjonStatusMapper doknotifikasjonStatusMapper) {
+						   DoknotifikasjonStatusMapper doknotifikasjonStatusMapper,
+						   MetricService metricService) {
 		this.objectMapper = objectMapper;
 		this.knot004Service = knot004Service;
 		this.doknotifikasjonStatusMapper = doknotifikasjonStatusMapper;
+		this.metricService = metricService;
 	}
 
 	@KafkaListener(
@@ -38,7 +42,7 @@ public class Knot004Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot004"
 	)
-	@Metrics(value = DOK_KNOT004_CONSUMER, percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT004_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
@@ -49,10 +53,13 @@ public class Knot004Consumer {
 			knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
+			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot004. Avslutter behandlingen. ", e);
+			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
 			log.error("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+			metricService.metricHandleException(e);
 		}
 	}
 }

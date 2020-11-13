@@ -8,8 +8,8 @@ import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBExce
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.exception.technical.StsTechnicalException;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -19,6 +19,8 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -26,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DP_NOT_HAVE_VALID_CONTACT_INFORMATION;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
@@ -41,7 +45,7 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 @Component
 public class Knot001Service {
 
-	private final KafkaDoknotifikasjonStatusProducer statusProducer;
+	private final KafkaStatusEventProducer statusProducer;
 	private final NotifikasjonRepository notifikasjonRepository;
 	private final KafkaEventProducer producer;
 	private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
@@ -51,7 +55,7 @@ public class Knot001Service {
 			DigitalKontaktinfoConsumer kontaktinfoConsumer,
 			KafkaEventProducer producer,
 			NotifikasjonRepository notifikasjonRepository,
-			KafkaDoknotifikasjonStatusProducer statusProducer,
+			KafkaStatusEventProducer statusProducer,
 			NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository
 	) {
 		this.statusProducer = statusProducer;
@@ -76,6 +80,11 @@ public class Knot001Service {
 		log.info("Sender en DoknotifikasjonStatus med status {} til topic {} for bestillingsId {}", Status.OVERSENDT, KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, doknotifikasjon.getBestillingsId());
 	}
 
+	@Retryable(
+			include = {DigitalKontaktinformasjonTechnicalException.class, DigitalKontaktinformasjonFunctionalException.class, StsTechnicalException.class},
+			maxAttempts = MAX_INT,
+			backoff = @Backoff(delay = DELAY_LONG)
+	)
 	public DigitalKontaktinformasjonTo.DigitalKontaktinfo getKontaktInfoByFnr(DoknotifikasjonTO doknotifikasjon) {
 		String fnrTrimmed = doknotifikasjon.getFodselsnummer().trim();
 		DigitalKontaktinformasjonTo digitalKontaktinformasjon;
@@ -123,6 +132,11 @@ public class Knot001Service {
 		throw new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra DKIF med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
 	}
 
+	@Retryable(
+			exclude = DuplicateNotifikasjonInDBException.class,
+			maxAttempts = MAX_INT,
+			backoff = @Backoff(delay = DELAY_LONG)
+	)
 	public void createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
 		log.info("Lagrer bestillingen til databasen med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);

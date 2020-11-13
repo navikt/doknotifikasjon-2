@@ -9,11 +9,11 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 
 @Slf4j
 @Component
-public class KafkaDoknotifikasjonStatusProducer {
+public class KafkaStatusEventProducer {
 
 	private final KafkaEventProducer producer;
 
-	KafkaDoknotifikasjonStatusProducer(KafkaEventProducer producer) {
+	KafkaStatusEventProducer(KafkaEventProducer producer) {
 		this.producer = producer;
 	}
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,14 +24,18 @@ public class Knot005Consumer {
 
 	private final ObjectMapper objectMapper;
 	private final Knot005Service knot005Service;
+
+	private final MetricService metricService;
 	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 
 	@Inject
 	public Knot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
-						   DoknotifikasjonStoppMapper doknotifikasjonStoppMapper) {
+						   DoknotifikasjonStoppMapper doknotifikasjonStoppMapper,
+						   MetricService metricService) {
 		this.objectMapper = objectMapper;
 		this.knot005Service = knot005Service;
 		this.doknotifikasjonStoppMapper = doknotifikasjonStoppMapper;
+		this.metricService = metricService;
 	}
 
 	@KafkaListener(
@@ -38,7 +43,7 @@ public class Knot005Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot005"
 	)
-	@Metrics(value = DOK_KNOT005_CONSUMER, percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT005_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
@@ -49,8 +54,10 @@ public class Knot005Consumer {
 			knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil oppstod i knot005. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
 		}
 	}
 }

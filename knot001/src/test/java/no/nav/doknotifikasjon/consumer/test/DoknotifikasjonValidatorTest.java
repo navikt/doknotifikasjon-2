@@ -2,7 +2,7 @@ package no.nav.doknotifikasjon.consumer.test;
 
 import no.nav.doknotifikasjon.consumer.DoknotifikasjonValidator;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class DoknotifikasjonValidatorTest {
 	DoknotifikasjonValidator doknotifikasjonValidator;
 
 	@MockBean
-	KafkaDoknotifikasjonStatusProducer statusProducer;
+	KafkaStatusEventProducer statusProducer;
 
 	@Test
 	void shouldValidateAvroSchemaWhenSendingValidAvroSchema() {

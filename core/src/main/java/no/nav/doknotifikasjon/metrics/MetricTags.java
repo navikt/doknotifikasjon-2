@@ -6,6 +6,7 @@ public class MetricTags {
 	public static final String TYPE = "type";
 	public static final String STATUS = "status";
 	public static final String TECHNICAL = "technical";
+	public static final String FUNCTIONAL = "functional";
 	public static final String PROCESSED = "processed";
 	public static final String STOPPED = "stopped";
 	public static final String EXCEPTION_NAME = "exception_name";

@@ -9,6 +9,7 @@ import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
@@ -34,16 +35,18 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGST
 public class Knot002Service {
 
     private final Knot002Mapper knot002Mapper;
+    private final MetricService metricService;
     private final KafkaEventProducer kafkaEventProducer;
     private final AltinnVarselConsumer altinnVarselConsumer;
     private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
     public Knot002Service(Knot002Mapper knot002Mapper, KafkaEventProducer kafkaEventProducer,
-                          AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
+                          AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository, MetricService metricService) {
         this.knot002Mapper = knot002Mapper;
         this.kafkaEventProducer = kafkaEventProducer;
         this.altinnVarselConsumer = altinnVarselConsumer;
         this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
+        this.metricService = metricService;
     }
 
     public void shouldSendSms(int notifikasjonDistribusjonId) {
@@ -67,10 +70,12 @@ public class Knot002Service {
         } catch (AltinnFunctionalException altinnFunctionalException) {
             log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
             publishStatus(doknotifikasjonSmsObject, Status.FEILET, altinnFunctionalException.getMessage());
+            metricService.metricHandleException(altinnFunctionalException);
             return;
         } catch (Exception unknownException) {
             log.error("Knot002 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
             publishStatus(doknotifikasjonSmsObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+            metricService.metricHandleException(unknownException);
             return;
         }
 
@@ -83,6 +88,7 @@ public class Knot002Service {
         // - så at vi får en "propp" i behandlingen er kanskje ikke så feil"
 
         publishStatus(doknotifikasjonSmsObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
+        metricService.metricKnot002SmsSent();
     }
 
     private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject) {

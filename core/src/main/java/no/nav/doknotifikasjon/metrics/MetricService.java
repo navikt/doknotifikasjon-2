@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
-import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_SMS_PROCESSED;
-import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT003_EPOST_PROCESSED;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_SMS_SENT;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT003_EPOST_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER_STATUS;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_RENOTIFKASJON_STOPPED;
 import static no.nav.doknotifikasjon.metrics.MetricTags.*;
@@ -26,17 +26,17 @@ public class MetricService {
 		this.meterRegistry = meterRegistry;
 	}
 
-	public void metricKnot002SmsProcessed() {
+	public void metricKnot002SmsSent() {
 		this.counter(
-				DOK_KNOT002_SMS_PROCESSED,
+				DOK_KNOT002_SMS_SENT,
 				TYPE,
 				PROCESSED
 		);
 	}
 
-	public void metricKnot003EpostProcessed() {
+	public void metricKnot003EpostSent() {
 		this.counter(
-				DOK_KNOT003_EPOST_PROCESSED,
+				DOK_KNOT003_EPOST_SENT,
 				TYPE,
 				PROCESSED
 		);

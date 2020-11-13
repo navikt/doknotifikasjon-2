@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
@@ -43,7 +43,7 @@ class Knot001ServiceTest {
 	Knot001Service knot001Service;
 
 	@MockBean
-	KafkaDoknotifikasjonStatusProducer statusProducer;
+	KafkaStatusEventProducer statusProducer;
 
 	@MockBean
 	DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;

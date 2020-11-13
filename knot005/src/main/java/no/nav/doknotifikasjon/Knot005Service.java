@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -17,12 +17,12 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGST
 public class Knot005Service {
 
 	private final NotifikasjonRepository notifikasjonRepository;
-	private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
+	private final KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer;
 	private final DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator;
 	private final MetricService metricService;
 
 	public Knot005Service(NotifikasjonRepository notifikasjonRepository,
-						  KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer,
+						  KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer,
 						  DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator,
 						  MetricService metricService) {
 		this.notifikasjonRepository = notifikasjonRepository;

@@ -14,6 +14,7 @@ public final class RetryConstants {
 	public static final int MAX_ATTEMPTS_SHORT = 3;
 	public static final int DELAY_SHORT = 500;
 	public static final int MULTIPLIER_SHORT = 2;
+	public static final int MAX_INT = Integer.MAX_VALUE;
 
 	private RetryConstants() {
 	}

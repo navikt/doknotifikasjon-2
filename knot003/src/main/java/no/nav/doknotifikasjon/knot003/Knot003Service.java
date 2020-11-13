@@ -72,10 +72,12 @@ public class Knot003Service {
         } catch (AltinnFunctionalException altinnFunctionalException) {
             log.error("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, altinnFunctionalException.getMessage());
+            metricService.metricHandleException(altinnFunctionalException);
             return;
         } catch (Exception unknownException) {
             log.error("Knot003 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+            metricService.metricHandleException(unknownException);
             return;
         }
 
@@ -88,7 +90,7 @@ public class Knot003Service {
         // - så at vi får en "propp" i behandlingen er kanskje ikke så feil"
 
         publishStatus(doknotifikasjonEpostObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_EPOST);
-        metricService.metricKnot003EpostProcessed();
+        metricService.metricKnot003EpostSent();
     }
 
     private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonEpostObject doknotifikasjonEpostObject) {

@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -19,11 +19,11 @@ public class Knot004Service {
 
 	private final NotifikasjonRepository notifikasjonRepository;
 	private final DoknotifikasjonStatusValidator doknotifikasjonStatusValidator;
-	private final KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer;
+	private final KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer;
 	private final MetricService metricService;
 
 	public Knot004Service(NotifikasjonRepository notifikasjonRepository, DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
-						  KafkaDoknotifikasjonStatusProducer kafkaDoknotifikasjonStatusProducer, MetricService metricService) {
+						  KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer, MetricService metricService) {
 		this.notifikasjonRepository = notifikasjonRepository;
 		this.doknotifikasjonStatusValidator = doknotifikasjonStatusValidator;
 		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;

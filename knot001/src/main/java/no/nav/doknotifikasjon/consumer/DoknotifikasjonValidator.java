@@ -2,7 +2,7 @@ package no.nav.doknotifikasjon.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +12,9 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_F
 @Component
 public class DoknotifikasjonValidator {
 
-	private final KafkaDoknotifikasjonStatusProducer statusProducer;
+	private final KafkaStatusEventProducer statusProducer;
 
-	DoknotifikasjonValidator(KafkaDoknotifikasjonStatusProducer statusProducer) {
+	DoknotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
 		this.statusProducer = statusProducer;
 	}
 
