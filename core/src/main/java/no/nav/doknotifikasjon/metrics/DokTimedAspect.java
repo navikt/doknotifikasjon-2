@@ -52,7 +52,12 @@ public class DokTimedAspect {
 			return pjp.proceed();
 		}
 
-		Timer.Sample sample = Timer.start(registry);
+		Counter.builder(metrics.value())
+				.description(metrics.description().isEmpty() ? null : metrics.description())
+				.tags(metrics.extraTags())
+				.tags(tagsBasedOnJoinpoint.apply(pjp))
+				.register(registry);
+
 		try {
 			return pjp.proceed();
 		} catch (Exception e) {
@@ -72,14 +77,6 @@ public class DokTimedAspect {
 			}
 
 			throw e;
-		} finally {
-			sample.stop(Timer.builder(metrics.value())
-					.description(metrics.description().isEmpty() ? null : metrics.description())
-					.tags(metrics.extraTags())
-					.tags(tagsBasedOnJoinpoint.apply(pjp))
-					.publishPercentileHistogram(metrics.histogram())
-					.publishPercentiles(metrics.percentiles().length == 0 ? null : metrics.percentiles())
-					.register(registry));
 		}
 	}
 

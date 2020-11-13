@@ -50,7 +50,7 @@ public class Knot001Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot001"
 	)
-	@Metrics(value = DOK_KNOT001_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
+	@Metrics(value = DOK_KNOT001_CONSUMER, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
@@ -58,7 +58,7 @@ public class Knot001Consumer {
 			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
 			doknotifikasjonValidator.validate(doknotifikasjon);
 			knot001Service.processDoknotifikasjon(doknotifikasjonMapper.map(doknotifikasjon));
-			//todo legge til metric for behandlet
+			metricService.metricKnot001RecordBehandlet();
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);

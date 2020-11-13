@@ -45,7 +45,7 @@ public class Knot002Consumer {
             groupId = "doknotifikasjon-knot002"
     )
     @Transactional
-    @Metrics(value = DOK_KNOT002_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
+    @Metrics(value = DOK_KNOT002_CONSUMER, createErrorMetric = true)
     public void onMessage(final ConsumerRecord<String, Object> record) {
         try {
             log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());

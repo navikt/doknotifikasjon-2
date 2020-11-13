@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_BEHANDLET;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_SMS_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT003_EPOST_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER_STATUS;
@@ -24,6 +25,12 @@ public class MetricService {
 	@Inject
 	MetricService(MeterRegistry meterRegistry) {
 		this.meterRegistry = meterRegistry;
+	}
+
+	public void metricKnot001RecordBehandlet() {
+		this.counter(
+				DOK_KNOT001_BEHANDLET
+		);
 	}
 
 	public void metricKnot002SmsSent() {

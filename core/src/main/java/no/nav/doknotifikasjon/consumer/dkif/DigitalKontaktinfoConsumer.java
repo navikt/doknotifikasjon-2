@@ -55,7 +55,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
     }
 
     @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = 5, backoff = @Backoff(delay = 200))
-    @Metrics(value = DOK_DKIF_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON}, percentiles = {0.5, 0.95}, histogram = true)
+    @Metrics(value = DOK_DKIF_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON})
     public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
         HttpHeaders headers = createHeaders();
         String fnrTrimmed = personidentifikator.trim();

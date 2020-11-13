@@ -42,7 +42,7 @@ public class Knot004Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot004"
 	)
-	@Metrics(value = DOK_KNOT004_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
+	@Metrics(value = DOK_KNOT004_CONSUMER, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {

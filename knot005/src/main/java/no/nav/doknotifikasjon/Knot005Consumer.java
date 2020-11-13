@@ -43,7 +43,7 @@ public class Knot005Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot005"
 	)
-	@Metrics(value = DOK_KNOT005_CONSUMER, percentiles = {0.5, 0.95}, createErrorMetric = true)
+	@Metrics(value = DOK_KNOT005_CONSUMER, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
