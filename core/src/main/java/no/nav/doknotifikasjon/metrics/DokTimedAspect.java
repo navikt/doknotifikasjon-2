@@ -16,6 +16,11 @@ import java.lang.reflect.Method;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
+import static no.nav.doknotifikasjon.metrics.MetricTags.EXCEPTION_NAME;
+import static no.nav.doknotifikasjon.metrics.MetricTags.FUNCTIONAL;
+import static no.nav.doknotifikasjon.metrics.MetricTags.TECHNICAL;
+import static no.nav.doknotifikasjon.metrics.MetricTags.TYPE;
 
 @Aspect
 @NonNullApi
@@ -47,7 +52,12 @@ public class DokTimedAspect {
 			return pjp.proceed();
 		}
 
-		Timer.Sample sample = Timer.start(registry);
+		Counter.builder(metrics.value())
+				.description(metrics.description().isEmpty() ? null : metrics.description())
+				.tags(metrics.extraTags())
+				.tags(tagsBasedOnJoinpoint.apply(pjp))
+				.register(registry);
+
 		try {
 			return pjp.proceed();
 		} catch (Exception e) {
@@ -57,9 +67,9 @@ public class DokTimedAspect {
 			}
 
 			if (metrics.createErrorMetric()) {
-				Counter.builder(metrics.value() + ".exception")
-						.tags("error.type", isFunctionalException(method, e) ? "functional" : "technical")
-						.tags("exception.name", e.getClass().getSimpleName())
+				Counter.builder(DOK_EXCEPTION)
+						.tags(TYPE, isFunctionalException(method, e) ? FUNCTIONAL : TECHNICAL)
+						.tags(EXCEPTION_NAME, e.getClass().getSimpleName())
 						.tags(metrics.extraTags())
 						.tags(tagsBasedOnJoinpoint.apply(pjp))
 						.register(registry)
@@ -67,15 +77,6 @@ public class DokTimedAspect {
 			}
 
 			throw e;
-
-		} finally {
-			sample.stop(Timer.builder(metrics.value())
-					.description(metrics.description().isEmpty() ? null : metrics.description())
-					.tags(metrics.extraTags())
-					.tags(tagsBasedOnJoinpoint.apply(pjp))
-					.publishPercentileHistogram(metrics.histogram())
-					.publishPercentiles(metrics.percentiles().length == 0 ? null : metrics.percentiles())
-					.register(registry));
 		}
 	}
 

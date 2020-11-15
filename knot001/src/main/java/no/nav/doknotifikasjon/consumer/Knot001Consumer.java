@@ -25,14 +25,19 @@ import static no.nav.doknotifikasjon.metrics.MetricName.*;
 public class Knot001Consumer {
 
 	private final ObjectMapper objectMapper;
+	private final MetricService metricService;
 	private final Knot001Service knot001Service;
 	private final DoknotifikasjonMapper doknotifikasjonMapper;
 	private final DoknotifikasjonValidator doknotifikasjonValidator;
-	private final MetricService metricService;
 
 	@Inject
-	Knot001Consumer(ObjectMapper objectMapper, Knot001Service knot001Service, DoknotifikasjonMapper doknotifikasjonMapper,
-					DoknotifikasjonValidator doknotifikasjonValidator, MetricService metricService) {
+	Knot001Consumer(
+			ObjectMapper objectMapper,
+			Knot001Service knot001Service,
+			DoknotifikasjonMapper doknotifikasjonMapper,
+			MetricService metricService,
+			DoknotifikasjonValidator doknotifikasjonValidator
+	) {
 		this.objectMapper = objectMapper;
 		this.knot001Service = knot001Service;
 		this.doknotifikasjonMapper = doknotifikasjonMapper;
@@ -45,7 +50,7 @@ public class Knot001Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot001"
 	)
-	@Metrics(value = DOK_KNOT001_CONSUMER, percentiles = {0.5, 0.95})
+	@Metrics(value = DOK_KNOT001_CONSUMER, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
@@ -53,17 +58,19 @@ public class Knot001Consumer {
 			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
 			doknotifikasjonValidator.validate(doknotifikasjon);
 			knot001Service.processDoknotifikasjon(doknotifikasjonMapper.map(doknotifikasjon));
+			metricService.metricKnot001RecordBehandlet();
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
 			log.error("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
 			log.error("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.error("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
-		} catch (Exception e) {
 			metricService.metricHandleException(e);
-			throw e;
 		}
 	}
 }

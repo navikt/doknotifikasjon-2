@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class Knot003Mapper {
 
-    public DoknotifikasjonEpostTo mapNotifikasjonDistrubisjon(NotifikasjonDistribusjon notifikasjonDistribusjon, Notifikasjon notifikasjon) {
-        return DoknotifikasjonEpostTo
+    public DoknotifikasjonEpostObject mapNotifikasjonDistrubisjon(NotifikasjonDistribusjon notifikasjonDistribusjon, Notifikasjon notifikasjon) {
+        return DoknotifikasjonEpostObject
                 .builder()
-                .notifikasjonDistribusjonId(String.valueOf(notifikasjonDistribusjon.getId()))
+                .notifikasjonDistribusjonId(notifikasjonDistribusjon.getId())
                 .bestillerId(notifikasjon.getBestillerId())
                 .bestillingsId(notifikasjon.getBestillingsId())
                 .distribusjonStatus(notifikasjonDistribusjon.getStatus())
                 .kanal(notifikasjonDistribusjon.getKanal())
-                .kontakt(notifikasjonDistribusjon.getKontaktInfo())
+                .kontaktInfo(notifikasjonDistribusjon.getKontaktInfo())
                 .tekst(notifikasjonDistribusjon.getTekst())
                 .tittel(notifikasjonDistribusjon.getTittel())
                 .fodselsnummer(notifikasjon.getMottakerId())

@@ -51,31 +51,33 @@ public class Knot003Service {
         this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
     }
 
-    public void konsumerDistribusjonId(int notifikasjonDistribusjonId) {
+    public void shouldSendEpost(int notifikasjonDistribusjonId) {
         log.info("Ny hendelse med notifikasjonsDistribusjonId={} på kafka-topic {} hentet av knot003.", notifikasjonDistribusjonId, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST);
 
         NotifikasjonDistribusjon notifikasjonDistribusjon = queryRepository(notifikasjonDistribusjonId);
         Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
 
-        DoknotifikasjonEpostTo doknotifikasjonEpostTo = knot003Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
+        DoknotifikasjonEpostObject doknotifikasjonEpostObject = knot003Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
-        if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostTo)) {
-            String melding = doknotifikasjonEpostTo.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
-            publishStatus(doknotifikasjonEpostTo, Status.FEILET, melding);
+        if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostObject)) {
+            String melding = doknotifikasjonEpostObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
+            publishStatus(doknotifikasjonEpostObject, Status.FEILET, melding);
             log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, melding);
             return;
         }
 
         try {
-            altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostTo.getKontakt(), doknotifikasjonEpostTo.getFodselsnummer(), doknotifikasjonEpostTo.getTekst(), "");
+            altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostObject.getKontaktInfo(), doknotifikasjonEpostObject.getFodselsnummer(), doknotifikasjonEpostObject.getTekst(), "");
             log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
         } catch (AltinnFunctionalException altinnFunctionalException) {
             log.error("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
-            publishStatus(doknotifikasjonEpostTo, Status.FEILET, altinnFunctionalException.getMessage());
+            publishStatus(doknotifikasjonEpostObject, Status.FEILET, altinnFunctionalException.getMessage());
+            metricService.metricHandleException(altinnFunctionalException);
             return;
         } catch (Exception unknownException) {
             log.error("Knot003 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
-            publishStatus(doknotifikasjonEpostTo, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+            publishStatus(doknotifikasjonEpostObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+            metricService.metricHandleException(unknownException);
             return;
         }
 
@@ -87,24 +89,24 @@ public class Knot003Service {
         // så har det ikke så mye for seg å gå videre (ingen grunn til å tro at det går bedre med neste melding)
         // - så at vi får en "propp" i behandlingen er kanskje ikke så feil"
 
-        publishStatus(doknotifikasjonEpostTo, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_EPOST);
-        metricService.metricKnot003EpostProcessed();
+        publishStatus(doknotifikasjonEpostObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_EPOST);
+        metricService.metricKnot003EpostSent();
     }
 
-    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonEpostTo doknotifikasjonEpostTo) {
-        return Status.OPPRETTET.equals(doknotifikasjonEpostTo.getDistribusjonStatus()) && Kanal.EPOST.equals(doknotifikasjonEpostTo.getKanal());
+    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonEpostObject doknotifikasjonEpostObject) {
+        return Status.OPPRETTET.equals(doknotifikasjonEpostObject.getDistribusjonStatus()) && Kanal.EPOST.equals(doknotifikasjonEpostObject.getKanal());
     }
 
-    private void publishStatus(DoknotifikasjonEpostTo doknotifikasjonEpostTo, Status status, String melding) {
+    private void publishStatus(DoknotifikasjonEpostObject doknotifikasjonEpostObject, Status status, String melding) {
         kafkaEventProducer.publish(
                 KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-                doknotifikasjonEpostTo.getNotifikasjonDistribusjonId(),
+                String.valueOf(doknotifikasjonEpostObject.getNotifikasjonDistribusjonId()),
                 DoknotifikasjonStatus.newBuilder()
-                        .setBestillerId(doknotifikasjonEpostTo.getBestillerId())
-                        .setBestillingsId(doknotifikasjonEpostTo.getBestillingsId())
+                        .setBestillerId(doknotifikasjonEpostObject.getBestillerId())
+                        .setBestillingsId(doknotifikasjonEpostObject.getBestillingsId())
                         .setStatus(status.name())
                         .setMelding(melding)
-                        .setDistribusjonId(Long.valueOf(doknotifikasjonEpostTo.getNotifikasjonDistribusjonId()))
+                        .setDistribusjonId(Long.valueOf(doknotifikasjonEpostObject.getNotifikasjonDistribusjonId()))
                         .build(),
                 System.currentTimeMillis()
         );

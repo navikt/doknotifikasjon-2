@@ -2,7 +2,7 @@ package no.nav.doknotifikasjon.consumer.itest;
 
 import no.nav.doknotifikasjon.consumer.TestUtils;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
-import no.nav.doknotifikasjon.kafka.KafkaDoknotifikasjonStatusProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
@@ -45,7 +45,7 @@ public class Knot001ITest extends EmbededKafkaBroker {
 	private KafkaEventProducer KafkaEventProducer;
 
 	@MockBean
-	private KafkaDoknotifikasjonStatusProducer statusProducer;
+	private KafkaStatusEventProducer statusProducer;
 
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;
