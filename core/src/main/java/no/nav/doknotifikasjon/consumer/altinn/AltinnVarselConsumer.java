@@ -19,11 +19,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_LONG;
+import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
 
 @Slf4j
 @Service
@@ -62,18 +62,6 @@ public class AltinnVarselConsumer {
         } catch (RuntimeException e) {
             throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
         }
-    }
-
-    private static JAXBElement<String> ns(String localpart, String value) {
-        return new JAXBElement<>(new QName(NAMESPACE, localpart), String.class, value);
-    }
-
-    private static <T> JAXBElement<T> ns(String localpart, Class<T> clazz, T value) {
-        return new JAXBElement<>(new QName(NAMESPACE, localpart), clazz, value);
-    }
-
-    private static JAXBElement<Boolean> ns(String localpart, Boolean value) {
-        return new JAXBElement<>(new QName(NAMESPACE, localpart), Boolean.class, value);
     }
 
     private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {

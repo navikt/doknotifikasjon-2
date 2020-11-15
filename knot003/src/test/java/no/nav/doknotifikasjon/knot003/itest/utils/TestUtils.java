@@ -1,5 +1,10 @@
 package no.nav.doknotifikasjon.knot003.itest.utils;
 
+import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
+import no.altinn.schemas.services.serviceengine.notification._2015._06.EndPointResult;
+import no.altinn.schemas.services.serviceengine.notification._2015._06.EndPointResultList;
+import no.altinn.schemas.services.serviceengine.notification._2015._06.NotificationResult;
+import no.altinn.schemas.services.serviceengine.notification._2015._06.SendNotificationResultList;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -7,6 +12,8 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+
+import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
 
 public final class TestUtils {
 
@@ -49,5 +56,26 @@ public final class TestUtils {
 				.opprettetAv(OPPRETTET_AV)
 				.opprettetDato(OPPRETTET_DATO)
 				.build();
+	}
+
+	public static SendNotificationResultList generateAltinnResponse(TransportType transportType, String kontaktinfo) {
+		return new SendNotificationResultList()
+				.withNotificationResult(
+						new NotificationResult()
+								.withEndPoints(
+										ns(
+												"EndPointResultList",
+												EndPointResultList.class,
+												new EndPointResultList()
+														.withEndPointResult(
+																new EndPointResult()
+																		.withName(ns("Name", "Knot To"))
+																		.withReceiverAddress(ns("ReceiverAddress", kontaktinfo))
+																		.withTransportType(transportType)
+														)
+										)
+								)
+								.withNotificationType(ns("NotificationType", "TokenTextOnly"))
+				);
 	}
 }
