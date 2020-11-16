@@ -13,6 +13,7 @@ public final class TestUtils {
 	public static String BESTILLINGS_ID = "bestillingsId";
 	public static String BESTILLER_ID = "bestillerId";
 	public static String FODSELSNUMMER = "123456789012341";
+	public static int SIKKERHETSNIVAA = 0;
 	public static String FODSELSNUMMER_FOR_KONTAKT_INFO_WITH_ONLY_EPOST = "123456789012341";
 	public static int ANTALL_RENOTIFIKASJONER = 20;
 	public static int RENOTIFIKASJON_INTERVALL = 100;
@@ -29,6 +30,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
+				SIKKERHETSNIVAA,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -43,6 +45,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
+				SIKKERHETSNIVAA,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -57,6 +60,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
+				SIKKERHETSNIVAA,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				0,

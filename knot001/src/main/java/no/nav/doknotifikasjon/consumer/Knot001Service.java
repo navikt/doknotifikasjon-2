@@ -18,7 +18,6 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -156,15 +155,16 @@ public class Knot001Service {
 		}
 
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon);
-
 		if (kontaktinformasjon.getEpostadresse() != null && (shouldStoreEpost || kontaktinformasjon.getMobiltelefonnummer() == null)) {
-			NotifikasjonDistribusjon email = this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
-			this.publishDoknotifikasjonEpost(email.getId());
+			this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
 		}
 		if (kontaktinformasjon.getMobiltelefonnummer() != null && (shouldStoreSms || kontaktinformasjon.getEpostadresse() == null)) {
-			NotifikasjonDistribusjon sms = this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
-			this.publishDoknotifikasjonSms(sms.getId());
+			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
 		}
+
+		notifikasjonRepository.save(notifikasjon);
+
+		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonEpost(n.getId(), n.getKanal()));
 	}
 
 	public Notifikasjon createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon) {
@@ -174,7 +174,7 @@ public class Knot001Service {
 			nesteRenotifikasjonDato = LocalDate.now().plusDays(doknotifikasjon.getAntallRenotifikasjoner());
 		}
 
-		Notifikasjon notifikasjon = Notifikasjon.builder()
+		return Notifikasjon.builder()
 				.bestillingsId(doknotifikasjon.getBestillingsId())
 				.bestillerId(doknotifikasjon.getBestillerId())
 				.mottakerId(doknotifikasjon.getFodselsnummer())
@@ -188,8 +188,6 @@ public class Knot001Service {
 				.opprettetDato(LocalDateTime.now())
 				.notifikasjonDistribusjon(new HashSet<>())
 				.build();
-
-		return notifikasjonRepository.save(notifikasjon);
 	}
 
 	private String buildPrefererteKanaler(List<Kanal> prefererteKanaler) {
@@ -198,7 +196,7 @@ public class Knot001Service {
 		return stringBuilder.toString();
 	}
 
-	public NotifikasjonDistribusjon createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
+	public void createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
 		NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
 				.notifikasjon(notifikasjon)
 				.status(Status.OPPRETTET)
@@ -210,23 +208,16 @@ public class Knot001Service {
 				.opprettetAv(notifikasjon.getBestillingsId())
 				.build();
 
-		return notifikasjonDistribusjonRepository.save(notifikasjonDistribusjon);
+		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
-	public void publishDoknotifikasjonSms(Integer bestillingsId) {
-		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, bestillingsId);
-		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(bestillingsId);
-		producer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON_SMS,
-				doknotifikasjonSms
-		);
-	}
+	public void publishDoknotifikasjonEpost(Integer bestillingsId, Kanal kanal) {
+		String topic = Kanal.EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
 
-	public void publishDoknotifikasjonEpost(Integer bestillingsId) {
-		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, bestillingsId);
+		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", topic, bestillingsId);
 		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);
 		producer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+				topic,
 				doknotifikasjonEpostTo
 		);
 	}

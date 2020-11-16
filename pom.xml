@@ -39,7 +39,7 @@
     </repositories>
 
     <properties>
-        <notifikasjon-schema.version>1.2020.10.28-11.16-ef7371b0ca84</notifikasjon-schema.version>
+        <notifikasjon-schema.version>1.2020.11.16-09.27-d037b30bb0ea</notifikasjon-schema.version>
         <java.version>11</java.version>
         <lombok.version>1.18.12</lombok.version>
         <javax.activation.version>1.1.1</javax.activation.version>
