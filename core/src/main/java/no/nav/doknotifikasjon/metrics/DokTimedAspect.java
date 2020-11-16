@@ -56,7 +56,8 @@ public class DokTimedAspect {
 				.description(metrics.description().isEmpty() ? null : metrics.description())
 				.tags(metrics.extraTags())
 				.tags(tagsBasedOnJoinpoint.apply(pjp))
-				.register(registry);
+				.register(registry)
+				.increment();
 
 		try {
 			return pjp.proceed();

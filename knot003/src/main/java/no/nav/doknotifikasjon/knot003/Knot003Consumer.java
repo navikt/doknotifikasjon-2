@@ -48,7 +48,7 @@ public class Knot003Consumer {
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		try {
 			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
-			generateNewCallIdIfThereAreNone();
+			generateNewCallIdIfThereAreNone(record.key());
 
 			DoknotifikasjonEpost doknotifikasjonEpost = objectMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
