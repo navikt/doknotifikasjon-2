@@ -125,12 +125,9 @@ class Knot004ITest extends EmbededKafkaBroker {
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonStatus doknotifikasjonStatus) {
 		try {
-			Long keyGenerator = System.currentTimeMillis();
-
 			KafkaEventProducer.publish(
 					KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-					doknotifikasjonStatus,
-					keyGenerator
+					doknotifikasjonStatus
 			);
 
 			TimeUnit.SECONDS.sleep(10);

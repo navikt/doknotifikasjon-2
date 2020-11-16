@@ -100,15 +100,13 @@ public class Knot002Service {
     private void publishStatus(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Status status, String melding) {
         kafkaEventProducer.publish(
                 KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-                String.valueOf(doknotifikasjonSmsObject.getNotifikasjonDistribusjonId()),
                 DoknotifikasjonStatus.newBuilder()
                         .setBestillerId(doknotifikasjonSmsObject.getBestillerId())
                         .setBestillingsId(doknotifikasjonSmsObject.getBestillingsId())
                         .setStatus(status.name())
                         .setMelding(melding)
                         .setDistribusjonId(doknotifikasjonSmsObject.getNotifikasjonDistribusjonId())
-                        .build(),
-                System.currentTimeMillis()
+                        .build()
         );
     }
 

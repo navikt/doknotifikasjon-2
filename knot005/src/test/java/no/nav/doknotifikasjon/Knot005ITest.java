@@ -73,8 +73,7 @@ class Knot005ITest extends EmbededKafkaBroker {
 
 			KafkaEventProducer.publish(
 					KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
-					doknotifikasjonStopp,
-					keyGenerator
+					doknotifikasjonStopp
 			);
 
 			TimeUnit.SECONDS.sleep(10);

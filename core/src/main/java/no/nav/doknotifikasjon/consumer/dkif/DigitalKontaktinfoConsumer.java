@@ -72,12 +72,10 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
         }
     }
 
-    private String tmp = "eyJraWQiOiIzODVkOWYwZS1hNzRjLTQ0NGYtYjNmZi03NDRjYWVlNWEzZmYiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzcnZwZW5zam9uIiwiYXVkIjpbInNydnBlbnNqb24iLCJwcmVwcm9kLmxvY2FsIl0sInZlciI6IjEuMCIsIm5iZiI6MTYwNTUxNzY0NiwiYXpwIjoic3J2cGVuc2pvbiIsImlkZW50VHlwZSI6IlN5c3RlbXJlc3N1cnMiLCJhdXRoX3RpbWUiOjE2MDU1MTc2NDYsImlzcyI6Imh0dHBzOlwvXC9zZWN1cml0eS10b2tlbi1zZXJ2aWNlLm5haXMucHJlcHJvZC5sb2NhbCIsImV4cCI6MTYwNTUyMTI0NiwiaWF0IjoxNjA1NTE3NjQ2LCJqdGkiOiI2OTgzODk0ZC0yNTU4LTQ2ZjYtOTI5MS1lNTZkMWM1NTFmNmQifQ.B5hhv73q3LDaVe8iXnxEpfD-xpOrcqTTviqnqmtTENI8mRMOnMSNOa06bvF_OtCqZfSYSp5ClsI9ZWKimqG3IqiOMul0NT8dKEGXhITv0i0X7KrllZQyLQxgnBR8M1UJYz7KbcL6MrAMYiASogi9jr_4DXIWOSFi-SWK2wrlirXsPxghTKYDChfufEJMqAaJ6L-i1JBtGu4suMxOTP-IJ_zb_lCKs4jwGJGbQhDX0daL8BQx_uZk55Fwr3xX0cor1Q7uY4LQllpE7M2NQSv9x2iOhthk8MmJBnIWXQ-VX1B7I-o9OShsy7GbQc8Y0mpsfZBr4HgxVpSbAarb65_caw";
-
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + tmp);
+        headers.set(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + stsRestConsumer.getOidcToken());
         headers.add(NAV_CONSUMER_ID, APP_NAME);
         headers.add(NAV_CALL_ID, this.getDefaultUuidIfNoCallIdIsSett());
         return headers;

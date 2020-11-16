@@ -57,8 +57,7 @@ public class KafkaStatusEventProducer {
 	public void publishDoknotifikasjonStatus(DoknotifikasjonStatus doknotifikasjonStatus) {
 		producer.publish(
 				KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-				doknotifikasjonStatus,
-				System.currentTimeMillis()
+				doknotifikasjonStatus
 		);
 	}
 }

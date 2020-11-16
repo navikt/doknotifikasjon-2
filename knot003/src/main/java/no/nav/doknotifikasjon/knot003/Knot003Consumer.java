@@ -46,10 +46,10 @@ public class Knot003Consumer {
 	@Transactional
 	@Metrics(value = DOK_KNOT003_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
-		try {
-			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
-			generateNewCallIdIfThereAreNone(record.key());
+		generateNewCallIdIfThereAreNone(record.key());
+		log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 
+		try {
 			DoknotifikasjonEpost doknotifikasjonEpost = objectMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
 

@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
+import org.slf4j.MDC;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
+import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 
 @Slf4j
 @Component
@@ -33,26 +36,14 @@ public class KafkaEventProducer {
 	public void publish(String topic, Object event) {
 		this.publish(
 				topic,
-				UUID.randomUUID().toString(),
 				event,
 				System.currentTimeMillis()
-		);
-	}
-
-
-	public void publish(String topic, Object event, Long timestamp) {
-		this.publish(
-				topic,
-				UUID.randomUUID().toString(),
-				event,
-				timestamp
 		);
 	}
 
 	@Transactional
 	public void publish(
 			String topic,
-			String key,
 			Object event,
 			Long timestamp
 	) {
@@ -60,7 +51,7 @@ public class KafkaEventProducer {
 				topic,
 				null,
 				timestamp,
-				key,
+				this.getDefaultUuidIfNoCallIdIsSett(),
 				event
 		);
 
@@ -83,5 +74,12 @@ public class KafkaEventProducer {
 		} catch (InterruptedException e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
 		}
+	}
+
+	private String getDefaultUuidIfNoCallIdIsSett() {
+		if (MDC.get(MDC_CALL_ID) != null && !MDC.get(MDC_CALL_ID).trim().isEmpty()) {
+			return MDC.get(MDC_CALL_ID);
+		}
+		return UUID.randomUUID().toString();
 	}
 }

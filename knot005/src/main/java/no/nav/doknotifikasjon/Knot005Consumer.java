@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_CONSUMER;
 
 @Slf4j
@@ -46,9 +47,10 @@ public class Knot005Consumer {
 	@Metrics(value = DOK_KNOT005_CONSUMER, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
-		log.info(String.format("Ny hendelse hentet fra kafka topic %s. Starter behandling.", KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
+		generateNewCallIdIfThereAreNone(record.key());
+		log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
+
 		try {
-			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value()
 					.toString(), DoknotifikasjonStopp.class);
 			knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));

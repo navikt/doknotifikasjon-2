@@ -191,8 +191,7 @@ public class Knot001ITest extends EmbededKafkaBroker {
 
 			KafkaEventProducer.publish(
 					KAFKA_TOPIC_DOK_NOTIFKASJON,
-					doknotifikasjon,
-					keyGenerator
+					doknotifikasjon
 			);
 
 			TimeUnit.SECONDS.sleep(10);

@@ -86,9 +86,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 
 		verify(kafkaEventProducer).publish(
 				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				eq(String.valueOf(id)),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id)),
-				anyLong()
+				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id))
 		);
 	}
 
@@ -105,9 +103,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 		try {
 			verify(kafkaEventProducer, times(0)).publish(
 					eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-					anyString(),
-					any(),
-					anyLong()
+					any()
 			);
 		} catch (Exception e) {
 			fail();
@@ -126,9 +122,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(
 				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				eq(String.valueOf(id)),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id)),
-				anyLong()
+				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
 		);
 	}
 
@@ -144,9 +138,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(
 				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				eq(String.valueOf(id)),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id)),
-				anyLong()
+				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
 		);
 	}
 
@@ -167,20 +159,15 @@ class Knot003ITest extends EmbededKafkaBroker {
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(
 				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				eq(String.valueOf(id)),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Funksjonell feil i kall mot Altinn. ", id)),
-				anyLong()
+				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Funksjonell feil i kall mot Altinn. ", id))
 		);
 	}
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonEpost doknotifikasjonEpost) {
 		try {
-			Long keyGenerator = System.currentTimeMillis();
-
 			kafkaEventProducer.publish(
 					KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
-					doknotifikasjonEpost,
-					keyGenerator
+					doknotifikasjonEpost
 			);
 
 			TimeUnit.SECONDS.sleep(5);

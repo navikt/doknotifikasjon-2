@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER;
 
 @Slf4j
@@ -45,8 +46,10 @@ public class Knot004Consumer {
 	@Metrics(value = DOK_KNOT004_CONSUMER, createErrorMetric = true)
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
+		generateNewCallIdIfThereAreNone(record.key());
+		log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
+
 		try {
-			log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value()
 					.toString(), DoknotifikasjonStatus.class);
 
