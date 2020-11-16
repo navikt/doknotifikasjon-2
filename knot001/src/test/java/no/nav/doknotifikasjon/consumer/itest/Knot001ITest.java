@@ -185,38 +185,6 @@ public class Knot001ITest extends EmbededKafkaBroker {
 		assertEquals(doknotifikasjon.getTittel(), sms.getTittel());
 	}
 
-	@Test
-	public void shouldNotPersistInDatabaseWhenExceptionIsThrown() {
-		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
-		this.stubGetKontaktInfo();
-
-		statusProducer.publishDoknotikfikasjonStatusOversendt(
-				doknotifikasjon.getBestillingsId(),
-				doknotifikasjon.getBestillerId(),
-				OVERSENDT_NOTIFIKASJON_PROCESSED,
-				null
-		);
-
-		doThrow(KafkaTechnicalException.class)
-				.when(statusProducer)
-				.publishDoknotikfikasjonStatusOversendt(doknotifikasjon.getBestillingsId(),
-						doknotifikasjon.getBestillerId(),
-						OVERSENDT_NOTIFIKASJON_PROCESSED,
-						null);
-
-		this.putMessageOnKafkaTopic(doknotifikasjon);
-
-		Boolean isNotifikasjonPersistint = notifikasjonRepository.existsByBestillingsId(doknotifikasjon.getBestillerId());
-
-		assertEquals(false, isNotifikasjonPersistint);
-		assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
-
-		verify(statusProducer, atLeast(1)).publishDoknotikfikasjonStatusOversendt(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
-		);
-	}
-
-
 	private void putMessageOnKafkaTopic(Doknotifikasjon doknotifikasjon) {
 		try {
 			Long keyGenerator = System.currentTimeMillis();

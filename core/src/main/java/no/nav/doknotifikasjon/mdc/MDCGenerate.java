@@ -6,9 +6,13 @@ import org.slf4j.MDC;
 import java.util.UUID;
 
 public class MDCGenerate {
-	public static void generateNewCallIdIfThereAreNone() {
-		if (MDC.get(MDCConstants.MDC_CALL_ID) == null) {
+	public static void generateNewCallIdIfThereAreNone(String uuid) {
+		if (MDC.get(MDCConstants.MDC_CALL_ID) != null) {
+			return;
+		} else  if (uuid == null) {
 			MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString());
+		} else {
+			MDC.put(MDCConstants.MDC_CALL_ID, uuid);
 		}
 	}
 

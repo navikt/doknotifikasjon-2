@@ -70,7 +70,9 @@ public class Knot001Service {
 		log.info("Begynner med prossesering av kafka event med bestillingsId={}", doknotifikasjon.getBestillingsId());
 
 		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = this.getKontaktInfoByFnr(doknotifikasjon);
-		this.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, kontaktinfo);
+		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, kontaktinfo);
+		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonDistrubisjon(n.getId(), n.getKanal()));
+
 
 		statusProducer.publishDoknotikfikasjonStatusOversendt(
 				doknotifikasjon.getBestillingsId(),
@@ -138,7 +140,7 @@ public class Knot001Service {
 			maxAttempts = MAX_INT,
 			backoff = @Backoff(delay = DELAY_LONG)
 	)
-	public void createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
+	public Notifikasjon createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
 		log.info("Lagrer bestillingen til databasen med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
@@ -164,8 +166,9 @@ public class Knot001Service {
 
 		notifikasjonRepository.save(notifikasjon);
 
-		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonEpost(n.getId(), n.getKanal()));
+		return notifikasjon;
 	}
+
 
 	public Notifikasjon createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon) {
 		LocalDate nesteRenotifikasjonDato = null;
@@ -211,7 +214,8 @@ public class Knot001Service {
 		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
-	public void publishDoknotifikasjonEpost(Integer bestillingsId, Kanal kanal) {
+	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	public void publishDoknotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
 		String topic = Kanal.EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
 
 		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", topic, bestillingsId);
