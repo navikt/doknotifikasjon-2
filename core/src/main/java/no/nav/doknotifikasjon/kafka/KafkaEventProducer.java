@@ -12,6 +12,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -24,6 +25,7 @@ public class KafkaEventProducer {
 
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
+	@Inject
 	KafkaEventProducer(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") KafkaTemplate<String, Object> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
 	}

@@ -12,6 +12,7 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ public class Snot001Service {
     private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
     private final KafkaEventProducer kafkaEventProducer;
 
+    @Inject
     public Snot001Service(NotifikasjonRepository notifikasjonRepository, KafkaEventProducer kafkaEventProducer,
                           NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
         this.notifikasjonRepository = notifikasjonRepository;

@@ -22,8 +22,8 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -52,6 +52,7 @@ public class Knot001Service {
 	private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
 	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
+	@Inject
 	Knot001Service(
 			DigitalKontaktinfoConsumer kontaktinfoConsumer,
 			KafkaEventProducer producer,
@@ -138,7 +139,6 @@ public class Knot001Service {
 			maxAttempts = MAX_INT,
 			backoff = @Backoff(delay = DELAY_LONG)
 	)
-	@Transactional
 	public void createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
 		log.info("Lagrer bestillingen til databasen med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);

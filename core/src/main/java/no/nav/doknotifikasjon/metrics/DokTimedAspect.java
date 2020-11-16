@@ -52,12 +52,7 @@ public class DokTimedAspect {
 			return pjp.proceed();
 		}
 
-		Counter.builder(metrics.value())
-				.description(metrics.description().isEmpty() ? null : metrics.description())
-				.tags(metrics.extraTags())
-				.tags(tagsBasedOnJoinpoint.apply(pjp))
-				.register(registry)
-				.increment();
+		registry.counter(metrics.value(), metrics.extraTags()).increment();
 
 		try {
 			return pjp.proceed();
@@ -68,13 +63,13 @@ public class DokTimedAspect {
 			}
 
 			if (metrics.createErrorMetric()) {
-				Counter.builder(DOK_EXCEPTION)
-						.tags(TYPE, isFunctionalException(method, e) ? FUNCTIONAL : TECHNICAL)
-						.tags(EXCEPTION_NAME, e.getClass().getSimpleName())
-						.tags(metrics.extraTags())
-						.tags(tagsBasedOnJoinpoint.apply(pjp))
-						.register(registry)
-						.increment();
+				registry.counter(DOK_EXCEPTION,
+						TYPE,
+						isFunctionalException(method, e) ? FUNCTIONAL : TECHNICAL,
+						EXCEPTION_NAME,
+						e.getClass().getSimpleName()
+				).increment();
+
 			}
 
 			throw e;

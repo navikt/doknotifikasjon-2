@@ -3,11 +3,15 @@ package no.nav.doknotifikasjon.metrics;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
+import java.lang.reflect.Method;
+
+import static java.util.Arrays.asList;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_BEHANDLET;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_SMS_SENT;
@@ -69,7 +73,11 @@ public class MetricService {
 		Throwable throwable = e.getCause() == null ? e : e.getCause();
 		String exceptionName = throwable.getClass().getSimpleName();
 
-		this.counter(DOK_EXCEPTION, TYPE, TECHNICAL, EXCEPTION_NAME, exceptionName);
+		this.counter(DOK_EXCEPTION, TYPE, isFunctionalException(e) ? FUNCTIONAL : TECHNICAL, EXCEPTION_NAME, exceptionName);
+	}
+
+	private boolean isFunctionalException(Throwable e) {
+		return e instanceof AbstractDoknotifikasjonTechnicalException;
 	}
 
 	public void counter(String name, String... tags) {

@@ -6,6 +6,8 @@ import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 
 @Slf4j
@@ -14,6 +16,7 @@ public class DoknotifikasjonValidator {
 
 	private final KafkaStatusEventProducer statusProducer;
 
+	@Inject
 	DoknotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
 		this.statusProducer = statusProducer;
 	}

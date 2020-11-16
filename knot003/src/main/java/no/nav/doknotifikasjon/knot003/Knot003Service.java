@@ -18,6 +18,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ public class Knot003Service {
     private final MetricService metricService;
     private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
+    @Inject
     public Knot003Service(Knot003Mapper knot003Mapper, KafkaEventProducer kafkaEventProducer,
                           AltinnVarselConsumer altinnVarselConsumer, MetricService metricService,
                           NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {

@@ -10,6 +10,7 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public class Knot004Service {
 	private final KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer;
 	private final MetricService metricService;
 
+	@Inject
 	public Knot004Service(NotifikasjonRepository notifikasjonRepository, DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
 						  KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer, MetricService metricService) {
 		this.notifikasjonRepository = notifikasjonRepository;
