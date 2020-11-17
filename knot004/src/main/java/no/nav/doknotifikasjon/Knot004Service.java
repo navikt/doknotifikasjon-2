@@ -38,7 +38,7 @@ public class Knot004Service {
 		metricService.metricKnot004Status(doknotifikasjonStatusTo.getStatus());
 
 		if (Status.INFO.equals(doknotifikasjonStatusTo.getStatus())) {
-			log.info("Input status er {}. Behandlingen av hendelse avsluttets.", Status.INFO);
+			log.info("Input status er {}. Behandlingen av hendelse avsluttes.", Status.INFO);
 			return;
 		}
 

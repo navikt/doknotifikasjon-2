@@ -19,13 +19,12 @@ import java.time.Duration;
 
 
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.STS_CACHE;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Component
 public class StsRestConsumer {
 
@@ -44,7 +43,7 @@ public class StsRestConsumer {
 				.build();
 	}
 
-	@Retryable(include = AbstractDoknotifikasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
+	@Retryable(include = StsTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	@Cacheable(STS_CACHE)
 	public String getOidcToken() {
 		try {

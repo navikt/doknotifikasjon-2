@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-/**
- * @author Ugur Alpay Cenar, Visma Consulting.
- */
 @Component
 @Profile("nais")
 public class STSConfig {

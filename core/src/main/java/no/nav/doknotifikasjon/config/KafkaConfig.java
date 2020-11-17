@@ -29,7 +29,7 @@ public class KafkaConfig {
 
 		factory.setConcurrency(3);
 		factory.setErrorHandler(new SeekToCurrentErrorHandler(
-				(rec, thr) -> log.error("Fikk exception: {} kafka record til topic: {}, partition: {}, offset: {}, UUID: {} feilmelding={}",
+				(rec, thr) -> log.error("Exception oppstått i doknotifikasjon: {} kafka record til topic: {}, partition: {}, offset: {}, UUID: {} feilmelding={}",
 						thr.getClass().getSimpleName(),
 						rec.topic(),
 						rec.partition(),

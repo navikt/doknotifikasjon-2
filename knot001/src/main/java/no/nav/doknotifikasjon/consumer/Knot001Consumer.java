@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
@@ -72,6 +73,9 @@ public class Knot001Consumer {
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.error("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
+		} catch (SikkerhetsnivaaFunctionalException e) {
+			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		}
 	}

@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon.consumer.itest;
 
 import no.nav.doknotifikasjon.consumer.TestUtils;
-import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -28,18 +27,22 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ActiveProfiles("itestWeb")
-public class Knot001ITest extends EmbededKafkaBroker {
+class Knot001ITest extends EmbededKafkaBroker {
 
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;
@@ -65,11 +68,10 @@ public class Knot001ITest extends EmbededKafkaBroker {
 	}
 
 	@Test
-	public void knot001ConsumerOnlySaveEpostWhenSmsAsPreferedKanalAndOnlyEpostIsValidKontaktInfo() {
+	void shouldOnlySaveEpostWhenSmsIsPreferedKanalButOnlyEpostIsValidKontaktInfo() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
 
 		this.stubGetKontaktInfoWithoutSmsInKontaktInfo();
-
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
@@ -102,12 +104,11 @@ public class Knot001ITest extends EmbededKafkaBroker {
 		assertEquals(doknotifikasjon.getTittel(), epost.getTittel());
 	}
 
-
 	@Test
-	public void knot001ConsumerShouldRunSmoothlyWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
+	void shouldRunWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
-		this.stubGetKontaktInfo();
 
+		this.stubGetKontaktInfo();
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
@@ -141,10 +142,10 @@ public class Knot001ITest extends EmbededKafkaBroker {
 	}
 
 	@Test
-	public void knot001ConsumerShouldReceiveAndKafkaEventProcessWhenReceivingOneKafkaEvent() {
+	void shouldCreateNotifikasjonDistribusjonForBothSmsAndEpost() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
-		this.stubGetKontaktInfo();
 
+		this.stubGetKontaktInfo();
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
@@ -185,10 +186,37 @@ public class Knot001ITest extends EmbededKafkaBroker {
 		assertEquals(doknotifikasjon.getTittel(), sms.getTittel());
 	}
 
+	@Test
+	void shouldPutErrorMessageOnStatusTopicWhenSikkerhetnivaaIsNot4() {
+		this.stubSikkerhetsnivaa();
+
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithSikkerhetsnivaa(4);
+		this.putMessageOnKafkaTopic(doknotifikasjon);
+
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_SIKKERHETSNIVAA, null
+		);
+
+		assertEquals(0, notifikasjonRepository.findAll().size());
+	}
+
+	@Test
+	void shouldPutErrorMessageOnStatusTopicWhenDkifFails() {
+
+		this.stubGetKontaktInfoFail();
+
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
+		this.putMessageOnKafkaTopic(doknotifikasjon);
+
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "Ingen kontaktinformasjon er registrert på personen", null
+		);
+
+		assertEquals(0, notifikasjonRepository.findAll().size());
+	}
+
 	private void putMessageOnKafkaTopic(Doknotifikasjon doknotifikasjon) {
 		try {
-			Long keyGenerator = System.currentTimeMillis();
-
 			KafkaEventProducer.publish(
 					KAFKA_TOPIC_DOK_NOTIFKASJON,
 					doknotifikasjon
@@ -212,7 +240,7 @@ public class Knot001ITest extends EmbededKafkaBroker {
 		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("happy-responsebody.json")));
+						.withBodyFile("dkif_happy.json")));
 
 	}
 
@@ -220,7 +248,22 @@ public class Knot001ITest extends EmbededKafkaBroker {
 		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-						.withBodyFile("responsebodyWithoutSms.json")));
+						.withBodyFile("dkif_without_sms.json")));
+
+	}
+
+	private void stubGetKontaktInfoFail() {
+		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
+				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
+						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+						.withBodyFile("dkif_fail.json")));
+
+	}
+
+	private void stubSikkerhetsnivaa() {
+		stubFor(post("/sikkerhetsnivaa").willReturn(aResponse().withStatus(HttpStatus.OK.value())
+				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+				.withBodyFile("sikkerhetsnivaa.json")));
 
 	}
 }

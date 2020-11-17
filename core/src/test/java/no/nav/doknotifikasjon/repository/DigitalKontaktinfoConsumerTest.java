@@ -2,6 +2,7 @@ package no.nav.doknotifikasjon.repository;
 
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import no.nav.doknotifikasjon.repository.utils.STSTestConfig;
@@ -75,16 +76,6 @@ class DigitalKontaktinfoConsumerTest {
 
 		assertNull(digitalKontaktinformasjon.getKontaktinfo());
 		assertEquals("Ingen kontaktinformasjon er registrert på personen", digitalKontaktinformasjon.getFeil().get(FNR).getMelding());
-	}
-
-	@Test
-	void shouldThrowErrorWhenNoResponseFromDkif() {
-		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-				.willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
-
-		DigitalKontaktinformasjonTechnicalException exception = assertThrows(DigitalKontaktinformasjonTechnicalException.class, () ->
-				digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR));
-		assertEquals("Teknisk feil ved kall mot DigitalKontaktinformasjonV1.kontaktinformasjon. Feilmelding=500 Server Error: [no body]", exception.getMessage());
 	}
 
 	private void stubSecurityToken() {

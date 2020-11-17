@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBElement;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_LONG;
 import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
 
@@ -40,8 +41,7 @@ public class AltinnVarselConsumer {
         this.altinnProps = altinnProps;
     }
 
-    @Retryable(include = AltinnTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG, multiplier = MULTIPLIER_LONG))
-    //todo: Uendelig retry?
+    @Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
         StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
                 new StandaloneNotification()
