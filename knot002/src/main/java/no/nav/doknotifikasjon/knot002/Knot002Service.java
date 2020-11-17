@@ -26,7 +26,6 @@ import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_KANAL;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_STATUS;

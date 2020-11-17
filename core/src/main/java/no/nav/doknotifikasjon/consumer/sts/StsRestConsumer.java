@@ -43,8 +43,8 @@ public class StsRestConsumer {
 	@Cacheable(STS_CACHE)
 	public String getOidcToken() {
 		try {
-			return restTemplate.getForObject(stsUrl + "?grant_type=client_credentials&scope=openid", StsResponseTo.class)
-					.getAccessToken();
+			StsResponseTo stsResponseTo = restTemplate.getForObject(stsUrl + "?grant_type=client_credentials&scope=openid", StsResponseTo.class);
+			return stsResponseTo != null ? stsResponseTo.getAccessToken() : null;
 		} catch (HttpStatusCodeException e) {
 			throw new StsTechnicalException(String.format("Kall mot STS feilet med status=%s feilmelding=%s.", e.getStatusCode(), e
 					.getMessage()), e);

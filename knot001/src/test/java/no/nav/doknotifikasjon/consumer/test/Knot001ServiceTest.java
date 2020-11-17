@@ -151,11 +151,13 @@ class Knot001ServiceTest {
 	@Test
 	void shouldGetExceptionWhenNotifikasjonWithTheSameBestillingsIdAlreadyExist() {
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
+		DigitalKontaktinformasjonTo.DigitalKontaktinfo digitalKontaktinfo = createValidKontaktInfo();
+
 		when(notifikasjonRepository.existsByBestillingsId(anyString()))
 				.thenReturn(true);
 
 		assertThrows(DuplicateNotifikasjonInDBException.class, () ->
-				knot001Service.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, createValidKontaktInfo())
+				knot001Service.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, digitalKontaktinfo)
 		);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusInfo(

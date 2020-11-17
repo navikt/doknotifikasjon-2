@@ -61,7 +61,6 @@ public class Knot001Service {
 			NotifikasjonRepository notifikasjonRepository,
 			KafkaStatusEventProducer statusProducer,
 			SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer
-			KafkaStatusEventProducer statusProducer
 	) {
 		this.statusProducer = statusProducer;
 		this.notifikasjonRepository = notifikasjonRepository;

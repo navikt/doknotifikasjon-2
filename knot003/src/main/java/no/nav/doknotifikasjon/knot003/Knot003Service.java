@@ -23,8 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
@@ -124,8 +122,7 @@ public class Knot003Service {
         );
     }
 
-    //todo: Uendelig retry
-    @Retryable(include = DoknotifikasjonDBTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG, multiplier = MULTIPLIER_SHORT))
+    @Retryable(include = DoknotifikasjonDBTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId) {
         try {
             LocalDateTime now = LocalDateTime.now();

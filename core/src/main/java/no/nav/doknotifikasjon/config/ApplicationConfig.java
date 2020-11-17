@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.config;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.doknotifikasjon.metrics.DokTimedAspect;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
