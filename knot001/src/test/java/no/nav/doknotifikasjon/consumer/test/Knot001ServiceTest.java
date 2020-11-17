@@ -7,8 +7,8 @@ import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
-import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,6 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_U
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_CANT_CONNECT_TO_DKIF;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -77,10 +76,6 @@ class Knot001ServiceTest {
 				.thenThrow(new DigitalKontaktinformasjonTechnicalException(""));
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
 		assertThrows(DigitalKontaktinformasjonTechnicalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
-
-		verify(statusProducer).publishDoknotikfikasjonStatusInfo(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), INFO_CANT_CONNECT_TO_DKIF, null
-		);
 	}
 
 	@Test

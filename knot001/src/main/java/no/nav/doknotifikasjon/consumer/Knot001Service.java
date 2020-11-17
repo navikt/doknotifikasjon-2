@@ -15,7 +15,6 @@ import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import org.springframework.retry.annotation.Backoff;
@@ -49,21 +48,18 @@ public class Knot001Service {
 	private final NotifikasjonRepository notifikasjonRepository;
 	private final KafkaEventProducer producer;
 	private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
-	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@Inject
 	Knot001Service(
 			DigitalKontaktinfoConsumer kontaktinfoConsumer,
 			KafkaEventProducer producer,
 			NotifikasjonRepository notifikasjonRepository,
-			KafkaStatusEventProducer statusProducer,
-			NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository
+			KafkaStatusEventProducer statusProducer
 	) {
 		this.statusProducer = statusProducer;
 		this.notifikasjonRepository = notifikasjonRepository;
 		this.producer = producer;
 		this.kontaktinfoConsumer = kontaktinfoConsumer;
-		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
 	}
 
 	public void processDoknotifikasjon(DoknotifikasjonTO doknotifikasjon) {
@@ -95,8 +91,8 @@ public class Knot001Service {
 		try {
 			log.info("Henter kontaktinfo fra DKIF for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 			digitalKontaktinformasjon = kontaktinfoConsumer.hentDigitalKontaktinfo(fnrTrimmed);
-		} catch (DigitalKontaktinformasjonTechnicalException | DigitalKontaktinformasjonFunctionalException | StsTechnicalException e) {
-			statusProducer.publishDoknotikfikasjonStatusInfo(
+		} catch (DigitalKontaktinformasjonFunctionalException e) {
+			statusProducer.publishDoknotikfikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					INFO_CANT_CONNECT_TO_DKIF,
@@ -164,9 +160,7 @@ public class Knot001Service {
 			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
 		}
 
-		notifikasjonRepository.save(notifikasjon);
-
-		return notifikasjon;
+		return notifikasjonRepository.save(notifikasjon);
 	}
 
 

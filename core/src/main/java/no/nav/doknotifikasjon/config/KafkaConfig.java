@@ -27,7 +27,7 @@ public class KafkaConfig {
 		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(kafkaConsumerFactory);
 
-		factory.setConcurrency(3);
+		factory.setConcurrency(1);
 		factory.setErrorHandler(new SeekToCurrentErrorHandler(
 				(rec, thr) -> log.error("Fikk exception: {} kafka record til topic: {}, partition: {}, offset: {}, UUID: {} feilmelding={}",
 						thr.getClass().getSimpleName(),

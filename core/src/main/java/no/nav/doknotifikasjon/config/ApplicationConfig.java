@@ -2,6 +2,7 @@ package no.nav.doknotifikasjon.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.doknotifikasjon.metrics.DokTimedAspect;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ApplicationConfig {
 
 	@Bean
-	public DokTimedAspect timedAspect(MeterRegistry registry) {
+	public DokTimedAspect timedAspect(MetricService registry) {
 		return new DokTimedAspect(registry);
 	}
 
