@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.consumer.sts;
 
 
 import no.nav.doknotifikasjon.config.ServiceuserAlias;
-import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
 import no.nav.doknotifikasjon.exception.technical.StsTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,12 +16,9 @@ import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 import java.time.Duration;
 
-
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.STS_CACHE;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 
 
 @Component

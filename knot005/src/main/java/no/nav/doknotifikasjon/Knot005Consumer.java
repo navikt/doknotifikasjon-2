@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_CONSUMER;
 
@@ -25,7 +24,6 @@ public class Knot005Consumer {
 
 	private final ObjectMapper objectMapper;
 	private final Knot005Service knot005Service;
-
 	private final MetricService metricService;
 	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 

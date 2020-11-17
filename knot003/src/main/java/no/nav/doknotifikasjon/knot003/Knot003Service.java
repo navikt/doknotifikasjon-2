@@ -25,6 +25,7 @@ import java.util.Optional;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_EPOST_UGYLDIG_KANAL;
@@ -83,7 +84,7 @@ public class Knot003Service {
             return;
         }
 
-        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());  //todo
+        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());
         // Uendelig retry ved databasefeil
         // Alexander-Haugli:
         // "og så har vi tenkt "uendelig" retry med overvåkning på grafana dashboard.
@@ -107,12 +108,12 @@ public class Knot003Service {
                         .setBestillingsId(doknotifikasjonEpostObject.getBestillingsId())
                         .setStatus(status.name())
                         .setMelding(melding)
-                        .setDistribusjonId(Long.valueOf(doknotifikasjonEpostObject.getNotifikasjonDistribusjonId()))
+                        .setDistribusjonId(doknotifikasjonEpostObject.getNotifikasjonDistribusjonId())
                         .build()
         );
     }
 
-    @Retryable(include = DoknotifikasjonDistribusjonIkkeFunnetException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MAX_ATTEMPTS_SHORT))
+    @Retryable(include = DoknotifikasjonDistribusjonIkkeFunnetException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     private NotifikasjonDistribusjon queryRepository(int notifikasjonDistribusjonId) {
         return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(
                 () -> {

@@ -23,7 +23,7 @@ public class DokCounter {
 	private static MeterRegistry meterRegistry;
 
 	@Inject
-	public DokCounter(MeterRegistry meterRegistry) {
+	DokCounter(MeterRegistry meterRegistry) {
 		DokCounter.meterRegistry = meterRegistry;
 	}
 

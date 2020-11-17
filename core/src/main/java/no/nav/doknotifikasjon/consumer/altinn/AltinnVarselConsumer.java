@@ -23,7 +23,6 @@ import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_LONG;
 import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
 
 @Slf4j
@@ -31,7 +30,7 @@ import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
 public class AltinnVarselConsumer {
 
     private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
-    private static final String NAMESPACE = "http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10";
+    private static final String TOKEN_VALUE = "TokenValue";
 
     private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
     private final AltinnProps altinnProps;
@@ -83,10 +82,10 @@ public class AltinnVarselConsumer {
                     new TextTokenSubstitutionBEList().withTextToken(List.of(
                             new TextToken()
                                     .withTokenNum(0)
-                                    .withTokenValue(ns("TokenValue", tekst)),
+                                    .withTokenValue(ns(TOKEN_VALUE, tekst)),
                             new TextToken()
                                     .withTokenNum(1)
-                                    .withTokenValue(ns("TokenValue", ""))
+                                    .withTokenValue(ns(TOKEN_VALUE, ""))
                     )));
         }
         if (kanal == Kanal.EPOST) {
@@ -95,10 +94,10 @@ public class AltinnVarselConsumer {
                     new TextTokenSubstitutionBEList().withTextToken(List.of(
                             new TextToken()
                                     .withTokenNum(0)
-                                    .withTokenValue(ns("TokenValue", tittel)),
+                                    .withTokenValue(ns(TOKEN_VALUE, tittel)),
                             new TextToken()
                                     .withTokenNum(1)
-                                    .withTokenValue(ns("TokenValue", tekst))
+                                    .withTokenValue(ns(TOKEN_VALUE, tekst))
                     )));
         }
         throw new AltinnFunctionalException("Funksjonell feil mot Altinn: Kanal er verken epost eller sms.");

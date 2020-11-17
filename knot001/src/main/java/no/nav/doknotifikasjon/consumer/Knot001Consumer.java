@@ -14,13 +14,12 @@ import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
-import static no.nav.doknotifikasjon.metrics.MetricName.*;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_CONSUMER;
 
 @Slf4j
 @Component

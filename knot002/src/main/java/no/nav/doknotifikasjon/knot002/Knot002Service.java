@@ -25,6 +25,7 @@ import java.util.Optional;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_KANAL;
@@ -81,7 +82,7 @@ public class Knot002Service {
             return;
         }
 
-        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());  //todo
+        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());
         // Uendelig retry ved databasefeil
         // Alexander-Haugli:
         // "og så har vi tenkt "uendelig" retry med overvåkning på grafana dashboard.
@@ -121,8 +122,7 @@ public class Knot002Service {
         );
     }
 
-    //todo: Uendelig retry
-    @Retryable(include = DoknotifikasjonDBTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG, multiplier = MULTIPLIER_SHORT))
+    @Retryable(include = DoknotifikasjonDBTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId) {
         try {
             LocalDateTime now = LocalDateTime.now();

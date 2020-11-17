@@ -4,7 +4,6 @@ package no.nav.doknotifikasjon.consumer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 
 

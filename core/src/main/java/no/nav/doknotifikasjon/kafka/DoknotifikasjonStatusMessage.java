@@ -23,6 +23,8 @@ public class DoknotifikasjonStatusMessage {
 	public static final String FERDIGSTILT_NOTIFIKASJON_EPOST = "notifikasjon sendt via epost";
 	public static final String FEILET_EPOST_UGYLDIG_STATUS = "distribusjon til epost feilet: ugyldig status";
 	public static final String FEILET_EPOST_UGYLDIG_KANAL = "distribusjon til epost feilet: ugyldig kanal";
+
+	private DoknotifikasjonStatusMessage(){}
 }
 
 
