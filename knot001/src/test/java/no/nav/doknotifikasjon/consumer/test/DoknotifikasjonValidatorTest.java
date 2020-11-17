@@ -55,7 +55,7 @@ class DoknotifikasjonValidatorTest {
 	void shouldFailValidateStringWhenFieldIsNull() {
 		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
 		assertThrows(InvalidAvroSchemaFieldException.class, () ->
-				doknotifikasjonValidator.validateString(doknotifikasjon, null, "string")
+				doknotifikasjonValidator.validateString(doknotifikasjon, null, 4000, "string")
 		);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
@@ -67,11 +67,30 @@ class DoknotifikasjonValidatorTest {
 	void shouldFailValidateStringWhenFieldIsEmpty() {
 		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
 		assertThrows(InvalidAvroSchemaFieldException.class, () ->
-				doknotifikasjonValidator.validateString(doknotifikasjon, "         ", "string")
+				doknotifikasjonValidator.validateString(doknotifikasjon, "         ", 4000, "string")
 		);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
 		);
 	}
+
+	@Test
+	void shouldFailValidateStringWhenFieldIsToShort() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		assertThrows(InvalidAvroSchemaFieldException.class, () ->
+				doknotifikasjonValidator.validateString(doknotifikasjon, "Test", 2, "string")
+		);
+
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string har for lang string lengde", null
+		);
+	}
+
+	@Test
+	void shouldValidateStringWhenParametersIsCorrect() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		doknotifikasjonValidator.validateString(doknotifikasjon, "Test", 10, "string");
+	}
+
 }
