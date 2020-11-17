@@ -61,6 +61,7 @@ public class Knot001Service {
 			NotifikasjonRepository notifikasjonRepository,
 			KafkaStatusEventProducer statusProducer,
 			SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer
+			KafkaStatusEventProducer statusProducer
 	) {
 		this.statusProducer = statusProducer;
 		this.notifikasjonRepository = notifikasjonRepository;
@@ -191,9 +192,7 @@ public class Knot001Service {
 			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
 		}
 
-		notifikasjonRepository.save(notifikasjon);
-
-		return notifikasjon;
+		return notifikasjonRepository.save(notifikasjon);
 	}
 
 

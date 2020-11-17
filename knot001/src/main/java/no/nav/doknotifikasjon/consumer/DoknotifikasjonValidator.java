@@ -16,6 +16,10 @@ public class DoknotifikasjonValidator {
 
 	private final KafkaStatusEventProducer statusProducer;
 
+	private static final int MAX_STRING_SIZE_LARGE = 4000;
+	private static final int MAX_STRING_SIZE_MEDIUM = 100;
+	private static final int MAX_STRING_SIZE_SMALL = 40;
+
 	@Inject
 	DoknotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
 		this.statusProducer = statusProducer;
@@ -24,12 +28,12 @@ public class DoknotifikasjonValidator {
 	public void validate(Doknotifikasjon doknotifikasjon) {
 		log.info("Begynner med validering av AVRO skjema med bestillingsId={}", doknotifikasjon.getBestillingsId());
 
-		this.validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), "BestillingsId");
-		this.validateString(doknotifikasjon, doknotifikasjon.getBestillerId(), "BestillerId");
-		this.validateString(doknotifikasjon, doknotifikasjon.getFodselsnummer(), "Fodselsnummer");
-		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), "Tittel");
-		this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), "EpostTekst");
-		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), "SmsTekst");
+		this.validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
+		this.validateString(doknotifikasjon, doknotifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
+		this.validateString(doknotifikasjon, doknotifikasjon.getFodselsnummer(), MAX_STRING_SIZE_SMALL, "Fodselsnummer");
+		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_SMALL, "Tittel");
+		this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
+		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
 		this.validateNumber(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "AntallRenotifikasjoner");
 		this.validateNumber(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "RenotifikasjonIntervall");
 		this.validateNumber(doknotifikasjon, doknotifikasjon.getSikkerhetsnivaa(), "Sikkerhetsnivaa");
@@ -48,12 +52,14 @@ public class DoknotifikasjonValidator {
 		}
 	}
 
-	public void validateString(Doknotifikasjon doknotifikasjon, String string, String fieldName) {
-		if (string == null || string.trim().isEmpty()) {
+	public void validateString(Doknotifikasjon doknotifikasjon, String string, int maxLength, String fieldName) {
+		if (string == null || string.trim().isEmpty() || string.length() > maxLength) {
+			String addedString = string == null || string.trim().isEmpty() ? " ikke satt" : " har for lang string lengde";
+
 			statusProducer.publishDoknotikfikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
-					"påkrevd felt " + fieldName + " ikke satt",
+					"påkrevd felt " + fieldName + addedString,
 					null
 			);
 			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId: " + doknotifikasjon.getBestillingsId());

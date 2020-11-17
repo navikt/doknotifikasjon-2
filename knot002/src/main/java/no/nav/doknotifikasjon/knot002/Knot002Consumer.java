@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
-import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.setDistribusjonId;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_CONSUMER;
@@ -68,9 +66,6 @@ public class Knot002Consumer {
         } catch (Exception e) {
             log.error("Knot002 feilet pga ukjent feil. Behandlingen avsluttes.", e);
             metricService.metricHandleException(e);
-        } finally {
-            clearDistribusjonId();
-            clearCallId();
         }
     }
 }

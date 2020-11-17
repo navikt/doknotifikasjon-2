@@ -16,11 +16,8 @@ import java.lang.reflect.Method;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
-import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
-import static no.nav.doknotifikasjon.metrics.MetricTags.EXCEPTION_NAME;
-import static no.nav.doknotifikasjon.metrics.MetricTags.FUNCTIONAL;
-import static no.nav.doknotifikasjon.metrics.MetricTags.TECHNICAL;
-import static no.nav.doknotifikasjon.metrics.MetricTags.TYPE;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 
 @Aspect
 @NonNullApi
@@ -28,19 +25,10 @@ import static no.nav.doknotifikasjon.metrics.MetricTags.TYPE;
 @Slf4j
 public class DokTimedAspect {
 
-	private final MeterRegistry registry;
-	private final Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint;
+	private final MetricService registry;
 
-	public DokTimedAspect(MeterRegistry registry) {
-		this(registry, pjp ->
-				Tags.of("class", pjp.getStaticPart().getSignature().getDeclaringTypeName(),
-						"method", pjp.getStaticPart().getSignature().getName())
-		);
-	}
-
-	public DokTimedAspect(MeterRegistry registry, Function<ProceedingJoinPoint, Iterable<Tag>> tagsBasedOnJoinpoint) {
+	public DokTimedAspect(MetricService registry) {
 		this.registry = registry;
-		this.tagsBasedOnJoinpoint = tagsBasedOnJoinpoint;
 	}
 
 	@Around("execution (@no.nav.doknotifikasjon.metrics.Metrics * *.*(..))")
@@ -52,7 +40,7 @@ public class DokTimedAspect {
 			return pjp.proceed();
 		}
 
-		registry.counter(metrics.value(), metrics.extraTags()).increment();
+		registry.counter(metrics.value(), metrics.extraTags());
 
 		try {
 			return pjp.proceed();
@@ -63,16 +51,13 @@ public class DokTimedAspect {
 			}
 
 			if (metrics.createErrorMetric()) {
-				registry.counter(DOK_EXCEPTION,
-						TYPE,
-						isFunctionalException(method, e) ? FUNCTIONAL : TECHNICAL,
-						EXCEPTION_NAME,
-						e.getClass().getSimpleName()
-				).increment();
-
+				registry.metricHandleException(e);
 			}
 
 			throw e;
+		} finally {
+			clearDistribusjonId();
+			clearCallId();
 		}
 	}
 
