@@ -58,7 +58,8 @@ public class AltinnVarselConsumer {
                     standaloneNotification
             );
         } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
-            throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", e.getFaultInfo().getAltinnErrorMessage()), e);
+            String errorMessage = e.getFaultInfo() != null ? e.getFaultInfo().getAltinnErrorMessage().toString() : e.getMessage();
+            throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", errorMessage), e);
         } catch (SoapFaultException e) {
             throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
         } catch (RuntimeException e) {
