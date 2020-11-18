@@ -23,7 +23,9 @@ public class DokCounter {
 	private static MeterRegistry meterRegistry;
 
 	@Inject
-	DokCounter() { }
+	DokCounter(MeterRegistry meterRegistry) {
+		DokCounter.meterRegistry = meterRegistry;
+	}
 
 	public static void incrementCounter(Map<String, String> metadata) {
 		metadata.forEach(DokCounter::incrementCounter);

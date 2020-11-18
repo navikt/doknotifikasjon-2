@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AuthLevelResponse {
-	private boolean harbruktnivaa4;
+	private boolean harBruktNivaa4;
 	private String personidentifikator;
 }

@@ -4,8 +4,4 @@ public class AltinnTechnicalException extends AbstractDoknotifikasjonTechnicalEx
 	public AltinnTechnicalException(String s, Throwable t) {
 		super(s, t);
 	}
-
-	public AltinnTechnicalException(String s) {
-		super(s);
-	}
 }

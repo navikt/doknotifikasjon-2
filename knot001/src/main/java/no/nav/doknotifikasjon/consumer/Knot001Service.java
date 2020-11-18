@@ -9,7 +9,6 @@ import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunc
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
-import no.nav.doknotifikasjon.exception.technical.SikkerhetsnivaaTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -70,12 +69,12 @@ public class Knot001Service {
 	}
 
 	public void processDoknotifikasjon(DoknotifikasjonTO doknotifikasjon) {
-		log.info("Begynner med prossesering av kafka event med bestillingsId={}", doknotifikasjon.getBestillingsId());
+		log.info("Knot001 begynner med prossesering av kafka event med bestillingsId={}", doknotifikasjon.getBestillingsId());
 
 		this.checkSikkerhetsnivaa(doknotifikasjon);
 
 		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = this.getKontaktInfoByFnr(doknotifikasjon);
-		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, kontaktinfo);
+		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon, kontaktinfo);
 		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonDistrubisjon(n.getId(), n.getKanal()));
 
 		statusProducer.publishDoknotikfikasjonStatusOversendt(
@@ -120,36 +119,7 @@ public class Knot001Service {
 				(kontaktinfo.getMobiltelefonnummer() == null || kontaktinfo.getMobiltelefonnummer().trim().isEmpty())) {
 			publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		}
-
 		return kontaktinfo;
-	}
-
-	@Retryable(include = SikkerhetsnivaaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
-	public void checkSikkerhetsnivaa(DoknotifikasjonTO doknotifikasjonTO) {
-		if (doknotifikasjonTO.getSikkerhetsnivaa() == 4) {
-			try {
-				AuthLevelResponse authLevelResponse = sikkerhetsnivaaConsumer.lookupAuthLevel(doknotifikasjonTO.getFodselsnummer());
-
-				if (!authLevelResponse.isHarbruktnivaa4()) {
-					statusProducer.publishDoknotikfikasjonStatusFeilet(
-							doknotifikasjonTO.getBestillingsId(),
-							doknotifikasjonTO.getBestillerId(),
-							FEILET_SIKKERHETSNIVAA,
-							null);
-					throw new SikkerhetsnivaaFunctionalException(FEILET_SIKKERHETSNIVAA);
-				}
-
-			} catch (SikkerhetsnivaaFunctionalException exception) {
-				statusProducer.publishDoknotikfikasjonStatusFeilet(
-						doknotifikasjonTO.getBestillingsId(),
-						doknotifikasjonTO.getBestillerId(),
-						FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
-						null
-				);
-				log.warn("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
-				throw exception;
-			}
-		}
 	}
 
 	public void publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(DoknotifikasjonTO doknotifikasjon, String message) {
@@ -162,13 +132,37 @@ public class Knot001Service {
 		throw new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra DKIF med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
 	}
 
-	@Retryable(
-			exclude = DuplicateNotifikasjonInDBException.class,
-			maxAttempts = MAX_INT,
-			backoff = @Backoff(delay = DELAY_LONG)
-	)
-	public Notifikasjon createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
-		log.info("Lagrer bestillingen til databasen med bestillingsId={}", doknotifikasjon.getBestillingsId());
+	public void checkSikkerhetsnivaa(DoknotifikasjonTO doknotifikasjonTO) {
+		if (doknotifikasjonTO.getSikkerhetsnivaa() == 4) {
+			AuthLevelResponse authLevelResponse;
+			try {
+				log.info("Knot001 gjør oppslag mot sikkerhetsnivaa for hendelse med bestillingsId={}", doknotifikasjonTO.getBestillingsId());
+				authLevelResponse = sikkerhetsnivaaConsumer.lookupAuthLevel(doknotifikasjonTO.getFodselsnummer());
+			} catch (SikkerhetsnivaaFunctionalException exception) {
+				statusProducer.publishDoknotikfikasjonStatusFeilet(
+						doknotifikasjonTO.getBestillingsId(),
+						doknotifikasjonTO.getBestillerId(),
+						FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
+						null
+				);
+				log.warn("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
+				throw exception;
+			}
+			if (!authLevelResponse.isHarBruktNivaa4()) {
+				statusProducer.publishDoknotikfikasjonStatusFeilet(
+						doknotifikasjonTO.getBestillingsId(),
+						doknotifikasjonTO.getBestillerId(),
+						FEILET_SIKKERHETSNIVAA,
+						null);
+				throw new SikkerhetsnivaaFunctionalException(FEILET_SIKKERHETSNIVAA);
+			}
+		}
+	}
+
+	@Retryable(exclude = DuplicateNotifikasjonInDBException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
+		log.info("Knot001 starter med opprettelse av notifikasjon til databasen for bestillingsId={}.", doknotifikasjon.getBestillingsId());
+
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
 
@@ -183,36 +177,38 @@ public class Knot001Service {
 					doknotifikasjon.getBestillingsId()));
 		}
 
-		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon);
+		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon);
+
 		if (kontaktinformasjon.getEpostadresse() != null && (shouldStoreEpost || kontaktinformasjon.getMobiltelefonnummer() == null)) {
 			this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
+			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal EPOST for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 		if (kontaktinformasjon.getMobiltelefonnummer() != null && (shouldStoreSms || kontaktinformasjon.getEpostadresse() == null)) {
 			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
+			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
-
 		return notifikasjonRepository.save(notifikasjon);
 	}
 
 
-	public Notifikasjon createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(DoknotifikasjonTO doknotifikasjon) {
+	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjonTO) {
 		LocalDate nesteRenotifikasjonDato = null;
 
-		if (doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 1) {
-			nesteRenotifikasjonDato = LocalDate.now().plusDays(doknotifikasjon.getAntallRenotifikasjoner());
+		if (doknotifikasjonTO.getAntallRenotifikasjoner() != null && doknotifikasjonTO.getAntallRenotifikasjoner() > 1 && doknotifikasjonTO.getRenotifikasjonIntervall() != null) {
+			nesteRenotifikasjonDato = LocalDate.now().plusDays(doknotifikasjonTO.getRenotifikasjonIntervall());
 		}
 
 		return Notifikasjon.builder()
-				.bestillingsId(doknotifikasjon.getBestillingsId())
-				.bestillerId(doknotifikasjon.getBestillerId())
-				.mottakerId(doknotifikasjon.getFodselsnummer())
+				.bestillingsId(doknotifikasjonTO.getBestillingsId())
+				.bestillerId(doknotifikasjonTO.getBestillerId())
+				.mottakerId(doknotifikasjonTO.getFodselsnummer())
 				.mottakerIdType(MottakerIdType.FNR)
 				.status(Status.OPPRETTET)
-				.antallRenotifikasjoner(doknotifikasjon.getAntallRenotifikasjoner())
-				.renotifikasjonIntervall(doknotifikasjon.getRenotifikasjonIntervall())
+				.antallRenotifikasjoner(doknotifikasjonTO.getAntallRenotifikasjoner())
+				.renotifikasjonIntervall(doknotifikasjonTO.getRenotifikasjonIntervall())
 				.nesteRenotifikasjonDato(nesteRenotifikasjonDato)
-				.prefererteKanaler(this.buildPrefererteKanaler(doknotifikasjon.getPrefererteKanaler()))
-				.opprettetAv(doknotifikasjon.getBestillerId())
+				.prefererteKanaler(this.buildPrefererteKanaler(doknotifikasjonTO.getPrefererteKanaler()))
+				.opprettetAv(doknotifikasjonTO.getBestillerId())
 				.opprettetDato(LocalDateTime.now())
 				.notifikasjonDistribusjon(new HashSet<>())
 				.build();
@@ -235,7 +231,6 @@ public class Knot001Service {
 				.opprettetDato(LocalDateTime.now())
 				.opprettetAv(notifikasjon.getBestillingsId())
 				.build();
-
 		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 

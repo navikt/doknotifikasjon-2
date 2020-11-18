@@ -28,8 +28,7 @@ public class StsRestConsumer {
 	private final String stsUrl;
 
 	@Inject
-	public StsRestConsumer(@Value("${security-token-service-token.url}") String stsUrl,
-						   RestTemplateBuilder restTemplateBuilder,
+	public StsRestConsumer(@Value("${security-token-service-token.url}") String stsUrl, RestTemplateBuilder restTemplateBuilder,
 						   final ServiceuserAlias serviceuserAlias) {
 		this.stsUrl = stsUrl;
 		this.restTemplate = restTemplateBuilder
@@ -39,8 +38,8 @@ public class StsRestConsumer {
 				.build();
 	}
 
-	@Retryable(include = StsTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	@Cacheable(STS_CACHE)
+	@Retryable(include = StsTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public String getOidcToken() {
 		try {
 			StsResponseTo stsResponseTo = restTemplate.getForObject(stsUrl + "?grant_type=client_credentials&scope=openid", StsResponseTo.class);

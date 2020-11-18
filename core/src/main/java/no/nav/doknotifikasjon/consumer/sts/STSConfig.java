@@ -17,8 +17,7 @@ public class STSConfig {
     private final ServiceuserAlias serviceuserAlias;
 
     @Inject
-    public STSConfig(@Value("${security-token-service-saml-token.url}") String stsUrl,
-                     final ServiceuserAlias serviceuserAlias) {
+    public STSConfig(@Value("${security-token-service-saml-token.url}") String stsUrl, final ServiceuserAlias serviceuserAlias) {
         this.stsUrl = stsUrl;
         this.serviceuserAlias = serviceuserAlias;
     }

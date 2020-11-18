@@ -38,8 +38,7 @@ public class STSConfigUtil {
 		setClientEndpointPolicy(client, resolvePolicyReference(client));
 	}
 
-	protected static STSClient configureSTSClient(STSClient stsClient, String location, String username, String password) {
-
+	protected static void configureSTSClient(STSClient stsClient, String location, String username, String password) {
 		stsClient.setEnableAppliesTo(false);
 		stsClient.setAllowRenewing(false);
 		stsClient.setLocation(location);
@@ -52,8 +51,6 @@ public class STSConfigUtil {
 
 		//used for the STS client to authenticate itself to the STS provider.
 		stsClient.setPolicy(STS_CLIENT_AUTHENTICATION_POLICY);
-
-		return stsClient;
 	}
 
 	private static Policy resolvePolicyReference(Client client) {

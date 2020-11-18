@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.FODSELSNUMMER;
-import static no.nav.doknotifikasjon.consumer.TestUtils.createAuthLevelResponse;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfo;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfoWithErrorMessage;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
@@ -157,7 +156,7 @@ class Knot001ServiceTest {
 				.thenReturn(true);
 
 		assertThrows(DuplicateNotifikasjonInDBException.class, () ->
-				knot001Service.createNotifikasjonByDoknotifikasjonAndNotifikasjonDistrubisjon(doknotifikasjon, digitalKontaktinfo)
+				knot001Service.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon, digitalKontaktinfo)
 		);
 
 		verify(statusProducer).publishDoknotikfikasjonStatusInfo(

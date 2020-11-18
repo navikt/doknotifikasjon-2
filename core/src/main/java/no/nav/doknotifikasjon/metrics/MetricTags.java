@@ -12,8 +12,6 @@ public class MetricTags {
 	public static final String STOPPED = "stopped";
 	public static final String EXCEPTION_NAME = "exception_name";
 
-
-
 	private MetricTags() {
 		//no-op
 	}

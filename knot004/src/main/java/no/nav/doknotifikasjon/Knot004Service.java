@@ -33,12 +33,10 @@ public class Knot004Service {
 	}
 
 	public void shouldUpdateStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
-		log.info("Ny hendelse med bestillingsId={} på kafka-topic {} hentet av knot004.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-				doknotifikasjonStatusTo.getBestillingsId());
 		metricService.metricKnot004Status(doknotifikasjonStatusTo.getStatus());
 
 		if (Status.INFO.equals(doknotifikasjonStatusTo.getStatus())) {
-			log.info("Input status er {}. Behandlingen av hendelse avsluttes.", Status.INFO);
+			log.info("Input status er {}. Behandling av hendelse avsluttes.", Status.INFO);
 			return;
 		}
 
@@ -46,7 +44,7 @@ public class Knot004Service {
 		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
 
 		if (notifikasjon == null) {
-			log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
+			log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjonsdatabasen. Avslutter behandlingen.",
 					doknotifikasjonStatusTo.getBestillingsId());
 			return;
 		}
@@ -81,10 +79,9 @@ public class Knot004Service {
 	}
 
 	private void publishNewDoknotifikasjonStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
-		kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatus(doknotifikasjonStatusTo
-						.getBestillingsId(), doknotifikasjonStatusTo.getBestillerId(),
-				doknotifikasjonStatusTo.getStatus(), "notifikasjon er " + doknotifikasjonStatusTo
-						.getStatus(), null);
+		kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatus(doknotifikasjonStatusTo.getBestillingsId(),
+				doknotifikasjonStatusTo.getBestillerId(), doknotifikasjonStatusTo.getStatus(), "notifikasjon er "
+						+ doknotifikasjonStatusTo.getStatus(), null);
 	}
 
 	private boolean isAllDistribusjonStatusEqualInputStatus(Set<NotifikasjonDistribusjon> notifikasjonDistribusjonsSet, Status inputStatus) {

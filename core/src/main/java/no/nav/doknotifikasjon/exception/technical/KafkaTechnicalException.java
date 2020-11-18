@@ -4,8 +4,4 @@ public class KafkaTechnicalException extends AbstractDoknotifikasjonTechnicalExc
 	public KafkaTechnicalException(String s, Throwable t) {
 		super(s, t);
 	}
-
-	public KafkaTechnicalException(String s) {
-		super(s);
-	}
 }

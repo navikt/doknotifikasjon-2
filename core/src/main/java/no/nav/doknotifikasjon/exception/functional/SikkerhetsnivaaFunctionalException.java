@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon.exception.functional;
 
-public class SikkerhetsnivaaFunctionalException extends AbstractDoknotifikasjonFunctionalException
-{
+public class SikkerhetsnivaaFunctionalException extends AbstractDoknotifikasjonFunctionalException {
 	public SikkerhetsnivaaFunctionalException(String message) {
 		super(message);
 	}

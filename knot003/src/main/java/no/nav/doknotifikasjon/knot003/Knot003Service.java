@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.exception.technical.DoknotifikasjonDBTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
@@ -53,8 +54,6 @@ public class Knot003Service {
     }
 
     public void shouldSendEpost(int notifikasjonDistribusjonId) {
-        log.info("Ny hendelse med notifikasjonsDistribusjonId={} på kafka-topic {} hentet av knot003.", notifikasjonDistribusjonId, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST);
-
         NotifikasjonDistribusjon notifikasjonDistribusjon = queryRepository(notifikasjonDistribusjonId);
         Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
 
@@ -63,23 +62,21 @@ public class Knot003Service {
         if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostObject)) {
             String melding = doknotifikasjonEpostObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, melding);
+
             log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, melding);
-            return;
+            throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot003. Feilmelding: %s", melding));
         }
 
         try {
+            log.info("Knot002 kontakter Altinn for distribusjon av notifikasjonDistribusjon med id={}", notifikasjonDistribusjonId);
             altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostObject.getKontaktInfo(), doknotifikasjonEpostObject.getFodselsnummer(), doknotifikasjonEpostObject.getTekst(), "");
             log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
         } catch (AltinnFunctionalException altinnFunctionalException) {
-            log.error("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, altinnFunctionalException.getMessage());
-            metricService.metricHandleException(altinnFunctionalException);
-            return;
+            throw altinnFunctionalException;
         } catch (Exception unknownException) {
-            log.error("Knot003 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
-            metricService.metricHandleException(unknownException);
-            return;
+            throw unknownException;
         }
 
         updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());

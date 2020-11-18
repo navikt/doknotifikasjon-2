@@ -45,6 +45,7 @@ public class Knot005Service {
 			log.warn("Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
 					doknotifikasjonStoppTo.getBestillingsId(), Status.FERDIGSTILT);
 		} else {
+			log.info("Knot005 oppdaterer notifikasjon med bestillingsId={}", doknotifikasjonStoppTo.getBestillingsId());
 			updateNotifikasjon(notifikasjon, doknotifikasjonStoppTo);
 			publishNewDoknotifikasjonStatus(doknotifikasjonStoppTo);
 			metricService.metricKnot005ReNotifikasjonStopped();
