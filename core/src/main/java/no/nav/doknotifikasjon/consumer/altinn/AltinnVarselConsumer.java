@@ -17,6 +17,7 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.soap.SoapFaultException;
 
 import javax.xml.bind.JAXBElement;
 import java.util.List;
@@ -57,9 +58,13 @@ public class AltinnVarselConsumer {
                     standaloneNotification
             );
         } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
-            throw new AltinnFunctionalException("Funksjonell feil i kall mot Altinn. ", e);
+            throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", e.getFaultInfo().getAltinnErrorMessage()), e);
+        } catch (SoapFaultException e) {
+            throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
         } catch (RuntimeException e) {
             throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
+        } catch (Exception e) {
+            throw new AltinnFunctionalException(String.format("Ukjent feil ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
         }
     }
 
