@@ -159,7 +159,7 @@ class Knot003ITest extends EmbededKafkaBroker {
 
 		verify(kafkaEventProducer, atLeastOnce()).publish(
 				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Funksjonell feil i kall mot Altinn. ", id))
+				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: Altinn Functional Exception", id))
 		);
 	}
 
