@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Data
 public class StsResponseTo {
 
@@ -19,6 +16,5 @@ public class StsResponseTo {
 		this.accessToken = accessToken;
 		this.tokenType = tokenType;
 		this.expiresIn = expiresIn;
-
 	}
 }

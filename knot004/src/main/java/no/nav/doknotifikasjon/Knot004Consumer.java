@@ -50,9 +50,7 @@ public class Knot004Consumer {
 		log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
 
 		try {
-			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value()
-					.toString(), DoknotifikasjonStatus.class);
-
+			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value().toString(), DoknotifikasjonStatus.class);
 			knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);

@@ -20,9 +20,9 @@ public class MDCGenerate {
 		}
 	}
 
-	public static void setDistribusjonId(String DistribusjonId) {
-		if (MDC.get(MDCConstants.DISTRIBUSJON_ID) != null) {
-			MDC.put(MDCConstants.DISTRIBUSJON_ID, DistribusjonId);
+	public static void setDistribusjonId(String distribusjonId) {
+		if (distribusjonId != null) {
+			MDC.put(MDCConstants.DISTRIBUSJON_ID, distribusjonId);
 		}
 	}
 
@@ -32,7 +32,5 @@ public class MDCGenerate {
 		}
 	}
 
-	public static void clearMdc() {
-		MDC.clear();
-	}
+	private MDCGenerate(){}
 }

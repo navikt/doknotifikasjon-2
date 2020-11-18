@@ -1,6 +1,7 @@
 package no.nav.doknotifikasjon.consumer;
 
 import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
@@ -10,19 +11,19 @@ import java.util.List;
 
 public final class TestUtils {
 
-	public static String BESTILLINGS_ID = "bestillingsId";
-	public static String BESTILLER_ID = "bestillerId";
-	public static String FODSELSNUMMER = "123456789012341";
-	public static int SIKKERHETSNIVAA = 0;
-	public static String FODSELSNUMMER_FOR_KONTAKT_INFO_WITH_ONLY_EPOST = "123456789012341";
-	public static int ANTALL_RENOTIFIKASJONER = 20;
-	public static int RENOTIFIKASJON_INTERVALL = 100;
-	public static String TITTEL = "tittel";
-	public static String EPOST_TEKST = "epostTekst";
-	public static String EPOST_SMS = "smsTekst";
-	public static List<PrefererteKanal> PREFERTE_KANALER = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
-	public static List<PrefererteKanal> PREFERTE_KANALER_WITH_ONLY_SMS = List.of(PrefererteKanal.SMS);
-	public static List<Kanal> PREFERTE_KANALER_TO = List.of(Kanal.EPOST, Kanal.SMS);
+	public static final String BESTILLINGS_ID = "bestillingsId";
+	public static final String BESTILLER_ID = "bestillerId";
+	public static final String FODSELSNUMMER = "123456789012341";
+	public static final int SIKKERHETSNIVAA = 0;
+	public static final int ANTALL_RENOTIFIKASJONER = 20;
+	public static final int RENOTIFIKASJON_INTERVALL = 100;
+	public static final String TITTEL = "tittel";
+	public static final String EPOST_TEKST = "epostTekst";
+	public static final String EPOST_SMS = "smsTekst";
+	public static final List<PrefererteKanal> PREFERTE_KANALER = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
+	public static final List<PrefererteKanal> PREFERTE_KANALER_WITH_ONLY_SMS = List.of(PrefererteKanal.SMS);
+	public static final List<Kanal> PREFERTE_KANALER_TO = List.of(Kanal.EPOST, Kanal.SMS);
+
 	public TestUtils() {
 	}
 
@@ -82,7 +83,23 @@ public final class TestUtils {
 				TITTEL,
 				EPOST_TEKST,
 				EPOST_SMS,
-				PREFERTE_KANALER_TO
+				PREFERTE_KANALER_TO,
+				SIKKERHETSNIVAA
+		);
+	}
+
+	public static Doknotifikasjon createDoknotifikasjonWithSikkerhetsnivaa(int sikkerhetsnivaa) {
+		return new Doknotifikasjon(
+				BESTILLINGS_ID,
+				BESTILLER_ID,
+				sikkerhetsnivaa,
+				FODSELSNUMMER,
+				ANTALL_RENOTIFIKASJONER,
+				RENOTIFIKASJON_INTERVALL,
+				TITTEL,
+				EPOST_TEKST,
+				EPOST_SMS,
+				PREFERTE_KANALER
 		);
 	}
 
@@ -147,6 +164,10 @@ public final class TestUtils {
 				.kanVarsles(varsel)
 				.reservert(reservert)
 				.build();
+	}
+
+	public static AuthLevelResponse createAuthLevelResponse() {
+		return new AuthLevelResponse(true, FODSELSNUMMER);
 	}
 
 }

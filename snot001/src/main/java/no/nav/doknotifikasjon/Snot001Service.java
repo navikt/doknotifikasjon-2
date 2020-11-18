@@ -75,6 +75,8 @@ public class Snot001Service {
     }
 
     private void updateNotifikasjon(Notifikasjon notifikasjon) {
+        log.info("Snot001 oppdaterer notifikasjon med bestillingsId={}", notifikasjon.getBestillingsId());
+
         notifikasjon.setAntallRenotifikasjoner(notifikasjon.getAntallRenotifikasjoner() - 1);
         notifikasjon.setNesteRenotifikasjonDato(notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null);
         notifikasjon.setEndretAv(SNOT001);
@@ -82,9 +84,10 @@ public class Snot001Service {
     }
 
     private NotifikasjonDistribusjon persistToDBWithKanal(NotifikasjonDistribusjon notifikasjonDistribusjon, Kanal kanal) {
+        log.info("Snot001 oppretter ny notifikasjonDistribusjon med kanal={} for notifikasjon med bestillingdId={}", kanal.toString(), notifikasjonDistribusjon.getNotifikasjon().getBestillingsId());
+
         String text = notifikasjonDistribusjon.getTekst().startsWith("Påminnelse: ") ?
                 notifikasjonDistribusjon.getTekst() : "Påminnelse: " + notifikasjonDistribusjon.getTekst();
-
 
         NotifikasjonDistribusjon newNotifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
                 .notifikasjon(notifikasjonDistribusjon.getNotifikasjon())

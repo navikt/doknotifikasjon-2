@@ -9,16 +9,19 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import java.lang.reflect.Method;
-
-import static java.util.Arrays.asList;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_BEHANDLET;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_SMS_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT003_EPOST_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER_STATUS;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_RENOTIFKASJON_STOPPED;
-import static no.nav.doknotifikasjon.metrics.MetricTags.*;
+import static no.nav.doknotifikasjon.metrics.MetricTags.EXCEPTION_NAME;
+import static no.nav.doknotifikasjon.metrics.MetricTags.FUNCTIONAL;
+import static no.nav.doknotifikasjon.metrics.MetricTags.PROCESSED;
+import static no.nav.doknotifikasjon.metrics.MetricTags.STATUS;
+import static no.nav.doknotifikasjon.metrics.MetricTags.STOPPED;
+import static no.nav.doknotifikasjon.metrics.MetricTags.TECHNICAL;
+import static no.nav.doknotifikasjon.metrics.MetricTags.TYPE;
 
 @Slf4j
 @Component

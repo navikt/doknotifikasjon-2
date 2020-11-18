@@ -4,22 +4,23 @@ package no.nav.doknotifikasjon.consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
-import static no.nav.doknotifikasjon.metrics.MetricName.*;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_CONSUMER;
 
 @Slf4j
 @Component
@@ -72,6 +73,12 @@ public class Knot001Consumer {
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.error("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
+		} catch(DigitalKontaktinformasjonFunctionalException e){
+			log.error("Funksjonell feil mot DKIF. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
+		} catch (SikkerhetsnivaaFunctionalException e) {
+			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		}
 	}

@@ -13,7 +13,8 @@ import java.time.Duration;
 @Component
 public class LeaderElectionConsumer implements LeaderElection {
 
-	private final static String ELECTOR_PATH = "ELECTOR_PATH";
+	private static final String ELECTOR_PATH = "ELECTOR_PATH";
+
 	private final RestTemplate restTemplate;
 	private final ObjectMapper mapper;
 

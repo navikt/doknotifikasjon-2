@@ -4,8 +4,4 @@ public class AuthenticationFailedException extends AbstractDoknotifikasjonTechni
 	public AuthenticationFailedException(String s, Throwable t) {
 		super(s, t);
 	}
-
-	public AuthenticationFailedException(String s) {
-		super(s);
-	}
 }

@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.consumer.sts;
 
 
 import no.nav.doknotifikasjon.config.ServiceuserAlias;
-import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
 import no.nav.doknotifikasjon.exception.technical.StsTechnicalException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,15 +16,11 @@ import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 import java.time.Duration;
 
-
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.STS_CACHE;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 
 
-/**
- * @author Sigurd Midttun, Visma Consulting.
- */
 @Component
 public class StsRestConsumer {
 
@@ -33,8 +28,7 @@ public class StsRestConsumer {
 	private final String stsUrl;
 
 	@Inject
-	public StsRestConsumer(@Value("${security-token-service-token.url}") String stsUrl,
-						   RestTemplateBuilder restTemplateBuilder,
+	public StsRestConsumer(@Value("${security-token-service-token.url}") String stsUrl, RestTemplateBuilder restTemplateBuilder,
 						   final ServiceuserAlias serviceuserAlias) {
 		this.stsUrl = stsUrl;
 		this.restTemplate = restTemplateBuilder
@@ -44,12 +38,12 @@ public class StsRestConsumer {
 				.build();
 	}
 
-	@Retryable(include = AbstractDoknotifikasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MULTIPLIER_SHORT))
 	@Cacheable(STS_CACHE)
+	@Retryable(include = StsTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public String getOidcToken() {
 		try {
-			return restTemplate.getForObject(stsUrl + "?grant_type=client_credentials&scope=openid", StsResponseTo.class)
-					.getAccessToken();
+			StsResponseTo stsResponseTo = restTemplate.getForObject(stsUrl + "?grant_type=client_credentials&scope=openid", StsResponseTo.class);
+			return stsResponseTo != null ? stsResponseTo.getAccessToken() : null;
 		} catch (HttpStatusCodeException e) {
 			throw new StsTechnicalException(String.format("Kall mot STS feilet med status=%s feilmelding=%s.", e.getStatusCode(), e
 					.getMessage()), e);

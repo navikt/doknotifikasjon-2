@@ -4,8 +4,4 @@ public class DoknotifikasjonDBTechnicalException extends AbstractDoknotifikasjon
 	public DoknotifikasjonDBTechnicalException(String message, Throwable t) {
 		super(message, t);
 	}
-
-	public DoknotifikasjonDBTechnicalException(String message) {
-		super(message);
-	}
 }

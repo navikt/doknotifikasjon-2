@@ -24,7 +24,6 @@ public class Knot005Consumer {
 
 	private final ObjectMapper objectMapper;
 	private final Knot005Service knot005Service;
-
 	private final MetricService metricService;
 	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 

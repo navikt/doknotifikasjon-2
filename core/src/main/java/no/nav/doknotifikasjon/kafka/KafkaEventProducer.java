@@ -23,8 +23,8 @@ import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 @Component
 public class KafkaEventProducer {
 
-	private static String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
-	private static String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
+	private static final String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
+	private static final String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
 
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -64,9 +64,9 @@ public class KafkaEventProducer {
 					sendResult.getRecordMetadata().topic()
 			);
 		} catch (ExecutionException executionException) {
-			if (executionException.getCause() != null && executionException.getCause() instanceof KafkaProducerException) {
+			if (executionException.getCause() instanceof KafkaProducerException) {
 				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
-				if (kafkaProducerException.getCause() != null && kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
+				if (kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
 					throw new AuthenticationFailedException(KAFKA_NOT_AUTHENTICATED + topic, kafkaProducerException.getCause());
 				}
 			}

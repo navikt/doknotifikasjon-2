@@ -30,6 +30,8 @@ import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CALL_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CONSUMER_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_PERSONIDENTER;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_DKIF_CONSUMER;
 import static no.nav.doknotifikasjon.metrics.MetricTags.HENT_DIGITAL_KONTAKTINFORMASJON;
 import static no.nav.doknotifikasjon.metrics.MetricTags.PROCESS_NAME;
@@ -54,7 +56,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
                 .build();
     }
 
-    @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = 5, backoff = @Backoff(delay = 200))
+    @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     @Metrics(value = DOK_DKIF_CONSUMER, extraTags = {PROCESS_NAME, HENT_DIGITAL_KONTAKTINFORMASJON})
     public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
         HttpHeaders headers = createHeaders();

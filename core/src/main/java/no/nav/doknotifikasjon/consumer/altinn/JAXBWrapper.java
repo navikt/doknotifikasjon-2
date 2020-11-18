@@ -17,4 +17,6 @@ public class JAXBWrapper {
 	public static JAXBElement<Boolean> ns(String localpart, Boolean value) {
 		return new JAXBElement<>(new QName(NAMESPACE, localpart), Boolean.class, value);
 	}
+
+	private JAXBWrapper(){}
 }

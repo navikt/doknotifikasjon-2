@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-/**
- * @author Ugur Alpay Cenar, Visma Consulting.
- */
 @Component
 @Profile("itest")
 public class STSTestConfig extends STSConfig {

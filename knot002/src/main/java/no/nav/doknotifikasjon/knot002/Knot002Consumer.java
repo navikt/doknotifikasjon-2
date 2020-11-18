@@ -4,6 +4,7 @@ package no.nav.doknotifikasjon.knot002;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -52,7 +53,7 @@ public class Knot002Consumer {
             DoknotifikasjonSms doknotifikasjonSms = objectMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);
             setDistribusjonId(String.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()));
 
-            log.info("knot002 starter behandling av NotifikasjonDistribusjonId={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
+            log.info("Knot002 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
             knot002Service.shouldSendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
         } catch (JsonProcessingException e) {
             log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
@@ -62,6 +63,9 @@ public class Knot002Consumer {
             metricService.metricHandleException(e);
         } catch (DoknotifikasjonValidationException e) {
             log.error("Valideringsfeil i knot002. Avslutter behandlingen. ", e);
+            metricService.metricHandleException(e);
+        } catch (AltinnFunctionalException e){
+            log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
             metricService.metricHandleException(e);
         } catch (Exception e) {
             log.error("Knot002 feilet pga ukjent feil. Behandlingen avsluttes.", e);

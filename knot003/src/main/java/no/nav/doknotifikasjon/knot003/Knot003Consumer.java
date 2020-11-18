@@ -4,6 +4,8 @@ package no.nav.doknotifikasjon.knot003;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
@@ -51,14 +53,19 @@ public class Knot003Consumer {
 			DoknotifikasjonEpost doknotifikasjonEpost = objectMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
 
-			log.info("knot003 starter behandling av NotifikasjonDistribusjonId={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
+			log.info("Knot003 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 			knot003Service.shouldSendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
-
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
+		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
+			log.error("Ingen notifikasjonDistribusjon ble funnet i databasen. Avslutter behandlingen. ", e);
+			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot003. Avslutter behandlingen. ", e);
+			metricService.metricHandleException(e);
+		} catch (AltinnFunctionalException e){
+			log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
 			log.error("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);

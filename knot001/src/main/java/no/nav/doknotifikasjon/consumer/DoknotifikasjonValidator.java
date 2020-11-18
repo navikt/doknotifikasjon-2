@@ -36,6 +36,7 @@ public class DoknotifikasjonValidator {
 		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
 		this.validateNumber(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "AntallRenotifikasjoner");
 		this.validateNumber(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "RenotifikasjonIntervall");
+		this.validateNumber(doknotifikasjon, doknotifikasjon.getSikkerhetsnivaa(), "Sikkerhetsnivaa");
 
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {

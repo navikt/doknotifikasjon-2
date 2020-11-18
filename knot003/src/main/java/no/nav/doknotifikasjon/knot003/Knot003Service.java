@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.exception.technical.DoknotifikasjonDBTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
@@ -23,8 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_SHORT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_ATTEMPTS_SHORT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MULTIPLIER_SHORT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_EPOST_UGYLDIG_KANAL;
@@ -54,8 +54,6 @@ public class Knot003Service {
     }
 
     public void shouldSendEpost(int notifikasjonDistribusjonId) {
-        log.info("Ny hendelse med notifikasjonsDistribusjonId={} på kafka-topic {} hentet av knot003.", notifikasjonDistribusjonId, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST);
-
         NotifikasjonDistribusjon notifikasjonDistribusjon = queryRepository(notifikasjonDistribusjonId);
         Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
 
@@ -64,26 +62,24 @@ public class Knot003Service {
         if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostObject)) {
             String melding = doknotifikasjonEpostObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, melding);
+
             log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, melding);
-            return;
+            throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot003. Feilmelding: %s", melding));
         }
 
         try {
+            log.info("Knot002 kontakter Altinn for distribusjon av notifikasjonDistribusjon med id={}", notifikasjonDistribusjonId);
             altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostObject.getKontaktInfo(), doknotifikasjonEpostObject.getFodselsnummer(), doknotifikasjonEpostObject.getTekst(), "");
             log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
         } catch (AltinnFunctionalException altinnFunctionalException) {
-            log.error("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot altinn: feilmelding={}", altinnFunctionalException.getMessage(), altinnFunctionalException);
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, altinnFunctionalException.getMessage());
-            metricService.metricHandleException(altinnFunctionalException);
-            return;
+            throw altinnFunctionalException;
         } catch (Exception unknownException) {
-            log.error("Knot003 NotifikasjonDistribusjonConsumer ukjent exception", unknownException);
             publishStatus(doknotifikasjonEpostObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
-            metricService.metricHandleException(unknownException);
-            return;
+            throw unknownException;
         }
 
-        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());  //todo
+        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());
         // Uendelig retry ved databasefeil
         // Alexander-Haugli:
         // "og så har vi tenkt "uendelig" retry med overvåkning på grafana dashboard.
@@ -107,12 +103,12 @@ public class Knot003Service {
                         .setBestillingsId(doknotifikasjonEpostObject.getBestillingsId())
                         .setStatus(status.name())
                         .setMelding(melding)
-                        .setDistribusjonId(Long.valueOf(doknotifikasjonEpostObject.getNotifikasjonDistribusjonId()))
+                        .setDistribusjonId(doknotifikasjonEpostObject.getNotifikasjonDistribusjonId())
                         .build()
         );
     }
 
-    @Retryable(include = DoknotifikasjonDistribusjonIkkeFunnetException.class, backoff = @Backoff(delay = DELAY_SHORT, multiplier = MAX_ATTEMPTS_SHORT))
+    @Retryable(include = DoknotifikasjonDistribusjonIkkeFunnetException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     private NotifikasjonDistribusjon queryRepository(int notifikasjonDistribusjonId) {
         return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(
                 () -> {
@@ -123,8 +119,7 @@ public class Knot003Service {
         );
     }
 
-    //todo: Uendelig retry
-    @Retryable(include = DoknotifikasjonDBTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG, multiplier = MULTIPLIER_SHORT))
+    @Retryable(include = DoknotifikasjonDBTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId) {
         try {
             LocalDateTime now = LocalDateTime.now();
