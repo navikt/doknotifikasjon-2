@@ -28,15 +28,13 @@ public class DoknotifikasjonValidator {
 	public void validate(Doknotifikasjon doknotifikasjon) {
 		log.info("Begynner med validering av AVRO skjema med bestillingsId={}", doknotifikasjon.getBestillingsId());
 
+
 		this.validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
 		this.validateString(doknotifikasjon, doknotifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
 		this.validateString(doknotifikasjon, doknotifikasjon.getFodselsnummer(), MAX_STRING_SIZE_SMALL, "Fodselsnummer");
 		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_SMALL, "Tittel");
 		this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
 		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
-		this.validateNumber(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "AntallRenotifikasjoner");
-		this.validateNumber(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "RenotifikasjonIntervall");
-		this.validateNumber(doknotifikasjon, doknotifikasjon.getSikkerhetsnivaa(), "Sikkerhetsnivaa");
 
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
