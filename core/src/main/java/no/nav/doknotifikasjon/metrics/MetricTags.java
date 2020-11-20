@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.metrics;
 
 public class MetricTags {
 	public static final String PROCESS_NAME = "process_name";
-	public static final String HENT_DIGITAL_KONTAKTINFORMASJON = "hentDigitalKontaktinformasjon";
 	public static final String HENT_AUTH_LEVEL = "hentAuthLevel";
 	public static final String TYPE = "type";
 	public static final String STATUS = "status";

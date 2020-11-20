@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon.consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_CONSUMER;
 
@@ -47,6 +50,7 @@ public class Knot001Consumer {
 		this.metricService = metricService;
 	}
 
+	@SneakyThrows
 	@KafkaListener(
 			topics = KAFKA_TOPIC_DOK_NOTIFKASJON,
 			containerFactory = "kafkaListenerContainerFactory",
@@ -80,6 +84,8 @@ public class Knot001Consumer {
 		} catch (SikkerhetsnivaaFunctionalException e) {
 			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
+		} finally {
+			clearCallId();
 		}
 	}
 }

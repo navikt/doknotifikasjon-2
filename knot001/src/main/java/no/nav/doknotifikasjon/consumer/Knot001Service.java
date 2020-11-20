@@ -16,10 +16,8 @@ import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
+import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -28,8 +26,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DKIF;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
@@ -48,7 +44,7 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 public class Knot001Service {
 
 	private final KafkaStatusEventProducer statusProducer;
-	private final NotifikasjonRepository notifikasjonRepository;
+	private final NotifikasjonService notifkasjonService;
 	private final KafkaEventProducer producer;
 	private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
 	private final SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
@@ -57,12 +53,12 @@ public class Knot001Service {
 	Knot001Service(
 			DigitalKontaktinfoConsumer kontaktinfoConsumer,
 			KafkaEventProducer producer,
-			NotifikasjonRepository notifikasjonRepository,
+			NotifikasjonService notifkasjonService,
 			KafkaStatusEventProducer statusProducer,
 			SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer
 	) {
 		this.statusProducer = statusProducer;
-		this.notifikasjonRepository = notifikasjonRepository;
+		this.notifkasjonService = notifkasjonService;
 		this.producer = producer;
 		this.kontaktinfoConsumer = kontaktinfoConsumer;
 		this.sikkerhetsnivaaConsumer = sikkerhetsnivaaConsumer;
@@ -159,14 +155,13 @@ public class Knot001Service {
 		}
 	}
 
-	@Retryable(exclude = DuplicateNotifikasjonInDBException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
 		log.info("Knot001 starter med opprettelse av notifikasjon til databasen for bestillingsId={}.", doknotifikasjon.getBestillingsId());
 
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
 
-		if (notifikasjonRepository.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
+		if (notifkasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
 			statusProducer.publishDoknotikfikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
@@ -187,7 +182,8 @@ public class Knot001Service {
 			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
 			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
-		return notifikasjonRepository.save(notifikasjon);
+
+		return notifkasjonService.save(notifikasjon);
 	}
 
 
@@ -234,7 +230,6 @@ public class Knot001Service {
 		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public void publishDoknotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
 		String topic = Kanal.EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
 

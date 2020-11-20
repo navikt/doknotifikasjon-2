@@ -11,7 +11,7 @@ import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechn
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
-import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
+import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,10 +49,7 @@ class Knot001ServiceTest {
 	DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;
 
 	@MockBean
-	NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
-
-	@MockBean
-	NotifikasjonRepository notifikasjonRepository;
+	NotifikasjonService notifikasjonService;
 
 	@MockBean
 	KafkaEventProducer producer;
@@ -152,7 +149,7 @@ class Knot001ServiceTest {
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
 		DigitalKontaktinformasjonTo.DigitalKontaktinfo digitalKontaktinfo = createValidKontaktInfo();
 
-		when(notifikasjonRepository.existsByBestillingsId(anyString()))
+		when(notifikasjonService.existsByBestillingsId(anyString()))
 				.thenReturn(true);
 
 		assertThrows(DuplicateNotifikasjonInDBException.class, () ->

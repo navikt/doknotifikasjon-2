@@ -69,8 +69,6 @@ class Knot005ITest extends EmbededKafkaBroker {
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonStopp doknotifikasjonStopp) {
 		try {
-			Long keyGenerator = System.currentTimeMillis();
-
 			KafkaEventProducer.publish(
 					KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
 					doknotifikasjonStopp

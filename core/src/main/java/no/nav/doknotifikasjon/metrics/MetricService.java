@@ -72,6 +72,40 @@ public class MetricService {
 		);
 	}
 
+	public void metricHandleException(
+			Class<? extends Throwable>[] include,
+			Class<? extends Throwable>[] exclude,
+			Exception e
+	) {
+		if (include.length > 0 && !this.existInList(include, e)) {
+			return;
+		}
+
+		if (exclude.length > 0 && this.existInList(exclude, e)) {
+			return;
+		}
+
+		metricHandleException(e);
+	}
+
+	public boolean existInList(
+			Class<? extends Throwable>[] list,
+			Exception e
+	) {
+		boolean existInList = false;
+
+		if (list.length > 0) {
+			for (Class<? extends Throwable> i : list) {
+				if (e.getClass().equals(i)) {
+					existInList = true;
+					break;
+				}
+			}
+		}
+
+		return existInList;
+	}
+
 	public void metricHandleException(Exception e) {
 		Throwable throwable = e.getCause() == null ? e : e.getCause();
 		String exceptionName = throwable.getClass().getSimpleName();

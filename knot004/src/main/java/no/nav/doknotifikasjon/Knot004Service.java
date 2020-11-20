@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
+import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -18,15 +18,15 @@ import java.util.Set;
 @Component
 public class Knot004Service {
 
-	private final NotifikasjonRepository notifikasjonRepository;
+	private final NotifikasjonService notifikasjonService;
 	private final DoknotifikasjonStatusValidator doknotifikasjonStatusValidator;
 	private final KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer;
 	private final MetricService metricService;
 
 	@Inject
-	public Knot004Service(NotifikasjonRepository notifikasjonRepository, DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
+	public Knot004Service(NotifikasjonService notifikasjonService, DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
 						  KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer, MetricService metricService) {
-		this.notifikasjonRepository = notifikasjonRepository;
+		this.notifikasjonService = notifikasjonService;
 		this.doknotifikasjonStatusValidator = doknotifikasjonStatusValidator;
 		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
 		this.metricService = metricService;
@@ -41,7 +41,7 @@ public class Knot004Service {
 		}
 
 		doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo);
-		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
+		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
 
 		if (notifikasjon == null) {
 			log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjonsdatabasen. Avslutter behandlingen.",
@@ -75,6 +75,8 @@ public class Knot004Service {
 			notifikasjon.setStatus(doknotifikasjonStatusTo.getStatus());
 			notifikasjon.setEndretAv(doknotifikasjonStatusTo.getBestillerId());
 			notifikasjon.setEndretDato(LocalDateTime.now());
+
+			notifikasjonService.save(notifikasjon);
 		}
 	}
 

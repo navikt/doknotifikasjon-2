@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER;
 
@@ -61,6 +63,8 @@ public class Knot004Consumer {
 		} catch (IllegalArgumentException e) {
 			log.error("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
+		} finally {
+			clearCallId();
 		}
 	}
 }

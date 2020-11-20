@@ -13,6 +13,8 @@ public class MetricName {
 	public static final String DOK_KNOT005_RENOTIFKASJON_STOPPED = "dok_knot005_renotifiasjon_stopped";
 	public static final String DOK_DKIF_CONSUMER = "dok_dkif_consumer";
 	public static final String DOK_SIKKERHETSNIVAA_CONSUMER = "dok_sikkerhetsnivaa_consumer";
+	public static final String DOK_STS_CONSUMER = "dok_sts_consumer";
+	public static final String DOK_ALTIN_CONSUMER = "dok_altin_consumer";
 	public static final String DOK_EXCEPTION = "dok_exception";
 
 	private MetricName() {

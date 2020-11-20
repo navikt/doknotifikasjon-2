@@ -14,6 +14,7 @@ import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
+import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.List;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
 @Slf4j
 @Service
@@ -41,6 +43,7 @@ public class AltinnVarselConsumer {
         this.altinnProps = altinnProps;
     }
 
+    @Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
     @Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
     public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
         StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(

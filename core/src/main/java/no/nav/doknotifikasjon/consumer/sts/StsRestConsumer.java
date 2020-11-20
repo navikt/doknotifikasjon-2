@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon.consumer.sts;
 
 import no.nav.doknotifikasjon.config.ServiceuserAlias;
 import no.nav.doknotifikasjon.exception.technical.StsTechnicalException;
+import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,6 +20,7 @@ import java.time.Duration;
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.STS_CACHE;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_STS_CONSUMER;
 
 
 @Component
@@ -39,6 +41,7 @@ public class StsRestConsumer {
 	}
 
 	@Cacheable(STS_CACHE)
+	@Metrics(value = DOK_STS_CONSUMER, createErrorMetric = true, errorMetricInclude = StsTechnicalException.class)
 	@Retryable(include = StsTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public String getOidcToken() {
 		try {

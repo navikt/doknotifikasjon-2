@@ -6,8 +6,8 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
-import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
+import no.nav.doknotifikasjon.repository.NotifikasjonDistrubisjonService;
+import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.springframework.stereotype.Component;
@@ -27,22 +27,22 @@ public class Snot001Service {
 
     private static final String SNOT001 = "SNOT001";
 
-    private final NotifikasjonRepository notifikasjonRepository;
-    private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
+    private final NotifikasjonService notifikasjonService;
+    private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
     private final KafkaEventProducer kafkaEventProducer;
 
     @Inject
-    public Snot001Service(NotifikasjonRepository notifikasjonRepository, KafkaEventProducer kafkaEventProducer,
-                          NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
-        this.notifikasjonRepository = notifikasjonRepository;
+    public Snot001Service(NotifikasjonService notifikasjonService, KafkaEventProducer kafkaEventProducer,
+                          NotifikasjonDistrubisjonService notifikasjonDistrubisjonService) {
+        this.notifikasjonService = notifikasjonService;
         this.kafkaEventProducer = kafkaEventProducer;
-        this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
+        this.notifikasjonDistrubisjonService = notifikasjonDistrubisjonService;
     }
 
     public void resendNotifikasjoner() {
         log.info("Starter Snot001 for å finne notifikasjoner som skal resendes.");
 
-        List<Notifikasjon> notifikasjonList = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status.OVERSENDT, 0, LocalDate.now());
+        List<Notifikasjon> notifikasjonList = notifikasjonService.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status.OVERSENDT, 0, LocalDate.now());
 
         if (notifikasjonList.isEmpty()) {
             log.info("Ingen notifikasjoner ble funnet for resending. Avslutter snot001.");
@@ -81,6 +81,8 @@ public class Snot001Service {
         notifikasjon.setNesteRenotifikasjonDato(notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null);
         notifikasjon.setEndretAv(SNOT001);
         notifikasjon.setEndretDato(LocalDateTime.now());
+
+        notifikasjonService.save(notifikasjon);
     }
 
     private NotifikasjonDistribusjon persistToDBWithKanal(NotifikasjonDistribusjon notifikasjonDistribusjon, Kanal kanal) {
@@ -99,7 +101,8 @@ public class Snot001Service {
                 .opprettetAv(SNOT001)
                 .opprettetDato(LocalDateTime.now())
                 .build();
-        return notifikasjonDistribusjonRepository.save(newNotifikasjonDistribusjon);
+
+        return notifikasjonDistrubisjonService.save(newNotifikasjonDistribusjon);
     }
 
     private void publishHendelseOnTopic(String topic, int notifikasjonDistribusjonId, Kanal kanal) {

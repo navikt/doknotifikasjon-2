@@ -2,6 +2,7 @@ package no.nav.doknotifikasjon.consumer.sikkerhetsnivaa;
 
 import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.SikkerhetsnivaaTechnicalException;
+import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -39,7 +40,7 @@ public class SikkerhetsnivaaConsumer {
 				.build();
 	}
 
-	@Metrics(value = DOK_SIKKERHETSNIVAA_CONSUMER, extraTags = {PROCESS_NAME, HENT_AUTH_LEVEL})
+	@Metrics(value = DOK_SIKKERHETSNIVAA_CONSUMER, createErrorMetric = true)
 	@Retryable(include = SikkerhetsnivaaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public AuthLevelResponse lookupAuthLevel(final String personIdent) {
 		try {

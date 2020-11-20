@@ -4,12 +4,15 @@ package no.nav.doknotifikasjon.kafka;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
+import no.nav.doknotifikasjon.metrics.Metrics;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.slf4j.MDC;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
+import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 
 @Slf4j
 @Component
@@ -33,6 +38,8 @@ public class KafkaEventProducer {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
+	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
+	@Retryable(include = KafkaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public void publish(String topic, Object event) {
 		this.publish(
 				topic,
@@ -42,7 +49,7 @@ public class KafkaEventProducer {
 	}
 
 	@Transactional
-	public void publish(
+	void publish(
 			String topic,
 			Object event,
 			Long timestamp

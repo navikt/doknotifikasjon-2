@@ -14,8 +14,6 @@ import org.slf4j.MDC;
 import java.lang.reflect.Method;
 
 import static java.util.Arrays.asList;
-import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
-import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 
 @Aspect
 @NonNullApi
@@ -34,11 +32,13 @@ public class DokTimedAspect {
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 
 		Metrics metrics = method.getAnnotation(Metrics.class);
-		if (metrics.value().isEmpty()) {
+		if (metrics.value().isEmpty() && !metrics.createErrorMetric()) {
 			return pjp.proceed();
 		}
 
-		registry.counter(metrics.value(), metrics.extraTags());
+		if (!metrics.value().isEmpty()) {
+			registry.counter(metrics.value(), metrics.extraTags());
+		}
 
 		try {
 			return pjp.proceed();
@@ -49,13 +49,10 @@ public class DokTimedAspect {
 			}
 
 			if (metrics.createErrorMetric()) {
-				registry.metricHandleException(e);
+				registry.metricHandleException(metrics.errorMetricInclude(), metrics.errorMetricExclude(), e);
 			}
 
 			throw e;
-		} finally {
-			clearDistribusjonId();
-			clearCallId();
 		}
 	}
 
