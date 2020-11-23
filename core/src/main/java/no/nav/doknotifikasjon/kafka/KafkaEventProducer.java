@@ -1,6 +1,7 @@
 package no.nav.doknotifikasjon.kafka;
 
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
@@ -44,7 +45,17 @@ public class KafkaEventProducer {
 		this.publish(
 				topic,
 				event,
-				System.currentTimeMillis()
+				this.getDefaultUuidIfNoCallIdIsSett()
+		);
+	}
+
+	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
+	@Retryable(include = KafkaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	public void publishWithKey(String topic, Object event, String keyValue) {
+		this.publish(
+				topic,
+				event,
+				keyValue
 		);
 	}
 
@@ -52,20 +63,20 @@ public class KafkaEventProducer {
 	void publish(
 			String topic,
 			Object event,
-			Long timestamp
+			String keyValue
 	) {
 		ProducerRecord<String, Object> producerRecord = new ProducerRecord(
 				topic,
 				null,
-				timestamp,
-				this.getDefaultUuidIfNoCallIdIsSett(),
+				System.currentTimeMillis(),
+				keyValue,
 				event
 		);
 
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
 			log.info("Message stored on topic. Timestamp: {}, partition: {}, offset: {}, topic: {}",
-					timestamp,
+					sendResult.getRecordMetadata().timestamp(),
 					sendResult.getRecordMetadata().partition(),
 					sendResult.getRecordMetadata().offset(),
 					sendResult.getRecordMetadata().topic()

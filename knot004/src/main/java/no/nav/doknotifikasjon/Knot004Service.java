@@ -67,7 +67,7 @@ public class Knot004Service {
 	}
 
 	private void handleEventWithoutDistribusjonId(Notifikasjon notifikasjon, DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
-		if (Status.FERDIGSTILT.equals(doknotifikasjonStatusTo.getStatus()) && notifikasjon.getAntallRenotifikasjoner() > 0) {
+		if (Status.FERDIGSTILT.equals(doknotifikasjonStatusTo.getStatus()) && notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) {
 			log.info("En hendelse på kafka-topic {} har status={} og notifikasjonen knyttet til " +
 					"hendelsen har mer enn null antall renotifikasjoner. Behandlingen av hendelsen avsluttes. ", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, Status.FERDIGSTILT
 					.toString());

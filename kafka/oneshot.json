@@ -10,6 +10,18 @@
         {
           "member": "srvdittnav-varsel-b",
           "role": "PRODUCER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "A157857",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S156348",
+          "role": "MANAGER"
         }
       ],
       "numPartitions": 3
@@ -24,6 +36,14 @@
         {
           "member": "srvdoknotifikasjon",
           "role": "PRODUCER"
+        },
+        {
+          "member": "A157857",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S156348",
+          "role": "MANAGER"
         }
       ],
       "numPartitions": 3
@@ -38,6 +58,14 @@
         {
           "member": "srvdoknotifikasjon",
           "role": "PRODUCER"
+        },
+        {
+          "member": "A157857",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S156348",
+          "role": "MANAGER"
         }
       ],
       "numPartitions": 3
@@ -56,6 +84,14 @@
         {
           "member": "srvdittnav-varsel-b",
           "role": "CONSUMER"
+        },
+        {
+          "member": "A157857",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S156348",
+          "role": "MANAGER"
         }
       ],
       "numPartitions": 3
@@ -70,6 +106,14 @@
         {
           "member": "srvdittnav-varsel-b",
           "role": "PRODUCER"
+        },
+        {
+          "member": "A157857",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S156348",
+          "role": "MANAGER"
         }
       ],
       "numPartitions": 3

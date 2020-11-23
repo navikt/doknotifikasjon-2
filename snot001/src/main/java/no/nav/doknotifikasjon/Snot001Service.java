@@ -62,12 +62,22 @@ public class Snot001Service {
 
             if (sms.isPresent()) {
                 NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(sms.get(), Kanal.SMS);
-                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, newNotifikasjonDistribusjon.getId(), Kanal.SMS);
+                publishHendelseOnTopic(
+                        KAFKA_TOPIC_DOK_NOTIFKASJON_SMS,
+                        newNotifikasjonDistribusjon.getId(),
+                        Kanal.SMS,
+                        n.getBestillingsId()
+                );
             }
 
             if (epost.isPresent()) {
                 NotifikasjonDistribusjon newNotifikasjonDistribusjon = persistToDBWithKanal(epost.get(), Kanal.EPOST);
-                publishHendelseOnTopic(KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, newNotifikasjonDistribusjon.getId(), Kanal.EPOST);
+                publishHendelseOnTopic(
+                        KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+                        newNotifikasjonDistribusjon.getId(),
+                        Kanal.EPOST,
+                        n.getBestillingsId()
+                );
             }
 
             updateNotifikasjon(n);
@@ -105,7 +115,7 @@ public class Snot001Service {
         return notifikasjonDistrubisjonService.save(newNotifikasjonDistribusjon);
     }
 
-    private void publishHendelseOnTopic(String topic, int notifikasjonDistribusjonId, Kanal kanal) {
+    private void publishHendelseOnTopic(String topic, int notifikasjonDistribusjonId, Kanal kanal, String bestillingsId) {
         Object doknotifikasjon;
 
         if (kanal.equals(Kanal.SMS)) {
@@ -114,9 +124,10 @@ public class Snot001Service {
             doknotifikasjon = new DoknotifikasjonEpost(notifikasjonDistribusjonId);
         }
 
-        kafkaEventProducer.publish(
+        kafkaEventProducer.publishWithKey(
                 topic,
-                doknotifikasjon
+                doknotifikasjon,
+                bestillingsId
         );
     }
 }
