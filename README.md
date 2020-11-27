@@ -33,7 +33,8 @@ Push/merge til master branch vil teste, bygge og deploye til produksjonsmiljø o
 
 ## Kjøre Prosjekt
 Lokal utvikling er satt opp slik at applikasjonen kjøres lokalt og kobles til kafka miljø via et oppsett på docker. 
-For å kjøre opp applikasjonen lokal, bruk profile 'local' og systemvariabler hentet fra vault: [System variabler](https://vault.adeo.no/ui/vault/secrets/secret/show/dokument/doknotifikasjon) 
+For å kjøre opp applikasjonen lokal, bruk profile `local` og systemvariabler hentet fra vault: [System variabler](https://vault.adeo.no/ui/vault/secrets/secret/show/dokument/doknotifikasjon) 
+For å sette `VAULT_TOKEN` lokalt må du logge deg inn på [vault](https://vault.adeo.no/ui/vault/secrets) og gå til nedtrekslisten til brukerprofilen. Velg `copy token` og legg til token i systemvariablene.
 
 For å sette opp Kafka docker compose, skriv inn disse kommandoene under folder ~./docker:
 ```shell script
@@ -61,7 +62,7 @@ Loggene til tjenesten kan leses på to måter:
 ### Kibana
 For [dev-fss](https://logs.adeo.no/goto/3d51098ce277cc4ddf74d8a099f9444b)
 
-For [prod-fss](https://logs.adeo.no/goto/3d51098ce277cc4ddf74d8a099f9444b)
+For [prod-fss](https://logs.adeo.no/goto/d3fec3fd86d445c76ec5f5bc33c77cf7)
 
 ### Kubectl
 For dev-fss:
@@ -75,7 +76,7 @@ For prod-fss:
 ```shell script
 kubectl config use-context prod-fss
 kubectl get pods -n p | grep doknotifikasjon
-kubectl logs -f doknotifikasjon-<POD-ID> -n p -c doknotifikasjon
+kubectl logs -f doknotifikasjon-<POD-ID> -n teamdokumenthandtering -c doknotifikasjon
 ```
 
 ## Metrics

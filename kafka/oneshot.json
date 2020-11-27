@@ -24,7 +24,7 @@
           "role": "MANAGER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 4
     },
     {
       "topicName": "privat-dok-notifikasjon-epost",
@@ -46,7 +46,7 @@
           "role": "MANAGER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 4
     },
     {
       "topicName": "privat-dok-notifikasjon-sms",
@@ -68,7 +68,7 @@
           "role": "MANAGER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 4
     },
     {
       "topicName": "privat-dok-notifikasjon-status",
@@ -94,7 +94,7 @@
           "role": "MANAGER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 4
     },
     {
       "topicName": "privat-dok-notifikasjon-stopp",
@@ -116,7 +116,7 @@
           "role": "MANAGER"
         }
       ],
-      "numPartitions": 3
+      "numPartitions": 4
     }
   ]
 }
