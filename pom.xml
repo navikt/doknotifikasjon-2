@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.4.RELEASE</version>
+        <version>2.3.5.RELEASE</version>
     </parent>
 
     <repositories>
@@ -59,7 +59,7 @@
         <jaxb2-maven.version>0.14.0</jaxb2-maven.version>
         <spring-retry-version>1.2.5.RELEASE</spring-retry-version>
         <tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
-        <appache-cxf.version>3.4.0</appache-cxf.version>
+        <appache-cxf.version>3.4.1</appache-cxf.version>
     </properties>
 
     <dependencyManagement>
