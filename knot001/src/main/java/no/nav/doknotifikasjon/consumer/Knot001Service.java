@@ -190,7 +190,7 @@ public class Knot001Service {
 	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjonTO) {
 		LocalDate nesteRenotifikasjonDato = null;
 
-		if (doknotifikasjonTO.getAntallRenotifikasjoner() != null && doknotifikasjonTO.getAntallRenotifikasjoner() > 1 && doknotifikasjonTO.getRenotifikasjonIntervall() != null) {
+		if (doknotifikasjonTO.getAntallRenotifikasjoner() != null && doknotifikasjonTO.getAntallRenotifikasjoner() > 0 && doknotifikasjonTO.getRenotifikasjonIntervall() != null) {
 			nesteRenotifikasjonDato = LocalDate.now().plusDays(doknotifikasjonTO.getRenotifikasjonIntervall());
 		}
 
