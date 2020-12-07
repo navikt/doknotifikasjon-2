@@ -21,7 +21,6 @@ public class Snot001Scheduler {
 		this.leaderElection = leaderElection;
 	}
 
-	@Transactional
 	@Scheduled(cron = "0 30 8 * * *")
 	public void scheduledJob() {
 		try {

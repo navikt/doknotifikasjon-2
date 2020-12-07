@@ -3,8 +3,9 @@ package no.nav.doknotifikasjon.repository;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.technical.DoknotifikasjonDBTechnicalException;
-import no.nav.doknotifikasjon.kodeverk.Status;
+import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
+import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
@@ -51,4 +53,8 @@ public class NotifikasjonDistrubisjonService {
 				});
 	}
 
+	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	public Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonInAndKanal(Notifikasjon notifikasjon, Kanal kanal) {
+		return notifikasjonDistribusjonRepository.findFirstByNotifikasjonAndKanal(notifikasjon, kanal);
+	}
 }
