@@ -54,7 +54,7 @@ public class Snot001Service {
 					publishList.forEach(nd ->
 							this.publishHendelseOnTopic(
 									nd.getId(),
-									Kanal.EPOST,
+									nd.getKanal(),
 									n.getBestillingsId()
 							)
 					);
