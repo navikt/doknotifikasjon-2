@@ -34,6 +34,7 @@ public class AltinnVarselConsumer {
 
     private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
     private static final String TOKEN_VALUE = "TokenValue";
+    private static final String IKKE_BESVAR_DENNE_NAV = "ikke-besvar-denne@nav.no";
 
     private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
     private final AltinnProps altinnProps;
@@ -53,6 +54,7 @@ public class AltinnVarselConsumer {
                         .withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
                         .withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
                         .withTextTokens(generateTextTokens(kanal, tekst, tittel))
+                        .withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
                         .withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
         try {
             iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
