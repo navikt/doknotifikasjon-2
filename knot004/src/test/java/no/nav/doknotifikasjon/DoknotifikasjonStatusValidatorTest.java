@@ -31,7 +31,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for bestillingsId.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for bestillingsId.", exception.getMessage());
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for bestillerId.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for bestillerId.", exception.getMessage());
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for melding.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for melding.", exception.getMessage());
 	}
 
 	@Test
@@ -58,6 +58,6 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic privat-dok-notifikasjon-status har tom verdi for status.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for status.", exception.getMessage());
 	}
 }

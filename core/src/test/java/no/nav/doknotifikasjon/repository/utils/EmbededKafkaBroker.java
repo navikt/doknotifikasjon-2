@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 @EmbeddedKafka(
 		topics = {
 				"privat-dok-notifikasjon",
-				"privat-dok-notifikasjon-status",
+				"aapen-dok-notifikasjon-status",
 				"privat-dok-notifikasjon-sms",
 				"privat-dok-notifikasjon-epost"
 		},

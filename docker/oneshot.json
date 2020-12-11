@@ -43,7 +43,7 @@
       "numPartitions": 3
     },
     {
-      "topicName": "privat-dok-notifikasjon-status",
+      "topicName": "aapen-dok-notifikasjon-status",
       "members": [
         {
           "member": "igroup",

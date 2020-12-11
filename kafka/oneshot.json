@@ -71,7 +71,7 @@
       "numPartitions": 4
     },
     {
-      "topicName": "privat-dok-notifikasjon-status",
+      "topicName": "aapen-dok-notifikasjon-status",
       "members": [
         {
           "member": "srvdoknotifikasjon",
