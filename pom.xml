@@ -19,12 +19,13 @@
         <module>knot004</module>
         <module>knot005</module>
         <module>snot001</module>
+        <module>snot002</module>
     </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.7.RELEASE</version>
+        <version>2.3.9.RELEASE</version>
     </parent>
 
     <repositories>
@@ -60,10 +61,16 @@
         <spring-retry-version>1.2.5.RELEASE</spring-retry-version>
         <tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
         <appache-cxf.version>3.4.1</appache-cxf.version>
+        <wiremock-jre8-standalone.version>2.26.2</wiremock-jre8-standalone.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8-standalone</artifactId>
+                <version>${wiremock-jre8-standalone.version}</version>
+            </dependency>
             <dependency>
                 <groupId>no.nav.doknotifikasjon</groupId>
                 <artifactId>core</artifactId>
@@ -95,15 +102,19 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>no.nav.tjenestespesifikasjoner</groupId>
-                <artifactId>altinn-notification-agency-external-basic</artifactId>
-                <version>${tjenestespesifikasjon.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>no.nav.doknotifikasjon</groupId>
                 <artifactId>snot001</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.doknotifikasjon</groupId>
+                <artifactId>snot002</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
+                <artifactId>altinn-notification-agency-external-basic</artifactId>
+                <version>${tjenestespesifikasjon.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

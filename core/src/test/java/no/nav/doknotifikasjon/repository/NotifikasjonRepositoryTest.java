@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -81,7 +83,7 @@ public class NotifikasjonRepositoryTest {
 		assertEquals(NESTE_RENOTIFIKASJON_DATO, notifikasjon.getNesteRenotifikasjonDato());
 		assertEquals(OPPRETTET_DATO, notifikasjon.getOpprettetDato());
 		assertEquals(ENDRET_DATO, notifikasjon.getEndretDato());
-		assertEquals(Status.OPPRETTET, notifikasjon.getStatus());
+		assertEquals(OPPRETTET, notifikasjon.getStatus());
 		assertEquals(MottakerIdType.FNR, notifikasjon.getMottakerIdType());
 	}
 
@@ -98,8 +100,8 @@ public class NotifikasjonRepositoryTest {
 		assertEquals(1L, notifikasjonDistribusjonRepository.count());
 
 		NotifikasjonDistribusjon notfikasjonDistribusjon = notifikasjonDistribusjonRepository.findAllByNotifikasjonIn(Collections.singletonList(notifikasjon)).get(0);
-		assertEquals(Status.FERDIGSTILT, notfikasjonDistribusjon.getStatus());
-		assertEquals(Kanal.SMS, notfikasjonDistribusjon.getKanal());
+		assertEquals(FERDIGSTILT, notfikasjonDistribusjon.getStatus());
+		assertEquals(SMS, notfikasjonDistribusjon.getKanal());
 		assertEquals(KONTAKTINFO, notfikasjonDistribusjon.getKontaktInfo());
 		assertEquals(TITTEL, notfikasjonDistribusjon.getTittel());
 		assertEquals(TEKST, notfikasjonDistribusjon.getTekst());
@@ -113,18 +115,18 @@ public class NotifikasjonRepositoryTest {
 	@Test
 	public void shouldGetNotifikasjonerForSnot001() {
 		List<Notifikasjon> notifikasjonList = new ArrayList<>();
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.FEILET, 2, LocalDate.now().minusDays(1)));
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 2, LocalDate.now().minusDays(1)));
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 2, LocalDate.now().plusDays(1)));
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 0, LocalDate.now().minusDays(1)));
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 3, LocalDate.now().minusDays(1)));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(FEILET, 2, LocalDate.now().minusDays(1)));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 2, LocalDate.now().minusDays(1)));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 2, LocalDate.now().plusDays(1)));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 0, LocalDate.now().minusDays(1)));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 3, LocalDate.now().minusDays(1)));
 		notifikasjonRepository.saveAll(notifikasjonList);
 
-		List<Notifikasjon> notifikasjonsForSnot001 = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status.OVERSENDT, 0, LocalDate.now());
+		List<Notifikasjon> notifikasjonsForSnot001 = notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(OVERSENDT, 0, LocalDate.now());
 
 		assertEquals(2, notifikasjonsForSnot001.size());
 		notifikasjonsForSnot001.forEach(notifikasjon -> {
-			assertEquals(Status.OVERSENDT, notifikasjon.getStatus());
+			assertEquals(OVERSENDT, notifikasjon.getStatus());
 			assertTrue(notifikasjon.getAntallRenotifikasjoner() > 0);
 			assertTrue(LocalDate.now().isAfter(notifikasjon.getNesteRenotifikasjonDato()));
 		});
@@ -132,8 +134,8 @@ public class NotifikasjonRepositoryTest {
 
 	@Test
 	public void shouldGetNotifikasjonDistribusjonForSnot001() {
-		Notifikasjon notifikasjon_1 = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 3, LocalDate.now().minusDays(1));
-		Notifikasjon notifikasjon_2 = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(Status.OVERSENDT, 3, LocalDate.now().minusDays(1));
+		Notifikasjon notifikasjon_1 = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 3, LocalDate.now().minusDays(1));
+		Notifikasjon notifikasjon_2 = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 3, LocalDate.now().minusDays(1));
 		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon_1));
 		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon_2));
 
@@ -144,11 +146,46 @@ public class NotifikasjonRepositoryTest {
 		assertEquals(2, notifikasjonDistribusjonRepository.findAllByNotifikasjonIn(notifikasjonList).size());
 	}
 
+
+	@Test
+	public void shouldGetNotifikasjonerForSnot002() {
+		List<Notifikasjon> notifikasjonList = new ArrayList<>();
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(FEILET, 2, LocalDate.now()));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 2, LocalDate.now()));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 2, LocalDate.now()));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 0, LocalDate.now()));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, null, LocalDate.now()));
+		notifikasjonRepository.saveAll(notifikasjonList);
+
+		List<Notifikasjon> notifikasjonsForSnot001 = notifikasjonRepository.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(OVERSENDT.toString(),  ENDRET_DATO.minusDays(30));
+
+		assertEquals(2, notifikasjonsForSnot001.size());
+		notifikasjonsForSnot001.forEach(notifikasjon -> {
+			assertEquals(OVERSENDT, notifikasjon.getStatus());
+			assertTrue(notifikasjon.getAntallRenotifikasjoner() == null || notifikasjon.getAntallRenotifikasjoner() == 0);
+		});
+	}
+
+	@Test
+	public void shouldGetNotifikasjonDistribusjonForSnot002() {
+		Notifikasjon notifikasjon = createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 3, LocalDate.now().minusDays(1));
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon, ENDRET_DATO_2.minusDays(10)));
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon, ENDRET_DATO_2.minusDays(2)));
+
+		notifikasjonRepository.save(notifikasjon);
+
+		assertEquals(ENDRET_DATO_2.minusDays(2), notifikasjonDistribusjonRepository.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, SMS).get().getEndretDato());
+	}
+
 	private NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjon(Notifikasjon notifikasjon) {
+		return this.createNotifikasjonDistribusjonWithNotifikasjon(notifikasjon, ENDRET_DATO_2);
+	}
+
+	private NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjon(Notifikasjon notifikasjon, LocalDateTime sistEndret) {
 		return NotifikasjonDistribusjon.builder()
 				.notifikasjon(notifikasjon)
-				.status(Status.FERDIGSTILT)
-				.kanal(Kanal.SMS)
+				.status(FERDIGSTILT)
+				.kanal(SMS)
 				.kontaktInfo(KONTAKTINFO)
 				.tittel(TITTEL)
 				.tekst(TEKST)
@@ -156,7 +193,7 @@ public class NotifikasjonRepositoryTest {
 				.opprettetAv(OPPRETTET_AV_2)
 				.opprettetDato(OPPRETTET_DATO_2)
 				.endretAv(ENDRET_AV_2)
-				.endretDato(ENDRET_DATO_2)
+				.endretDato(sistEndret)
 				.build();
 	}
 
@@ -166,7 +203,7 @@ public class NotifikasjonRepositoryTest {
 				.bestillingsId(BESTILLINGS_ID)
 				.mottakerId(MOTTAKER_ID)
 				.mottakerIdType(MottakerIdType.FNR)
-				.status(Status.OPPRETTET)
+				.status(OPPRETTET)
 				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
 				.renotifikasjonIntervall(RENOTIFIKASJON_INTERVALL)
 				.nesteRenotifikasjonDato(NESTE_RENOTIFIKASJON_DATO)

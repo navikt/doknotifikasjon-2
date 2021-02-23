@@ -76,6 +76,7 @@ public class Knot004Service {
 			notifikasjon.setEndretAv(doknotifikasjonStatusTo.getBestillerId());
 			notifikasjon.setEndretDato(LocalDateTime.now());
 
+			log.info("Status på notifikasjon med bestillingsId={} har blitt oppdatert til {}", notifikasjon.getBestillingsId(), notifikasjon.getStatus());
 			notifikasjonService.save(notifikasjon);
 		}
 	}

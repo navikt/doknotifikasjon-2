@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon.kafka;
 
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;

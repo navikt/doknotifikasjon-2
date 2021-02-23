@@ -38,6 +38,10 @@
             <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>snot001</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.doknotifikasjon</groupId>
+            <artifactId>snot002</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import java.util.List;
 import java.util.Optional;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.RETRY_LONG;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 
 @Slf4j
@@ -56,5 +56,10 @@ public class NotifikasjonDistrubisjonService {
 	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonInAndKanal(Notifikasjon notifikasjon, Kanal kanal) {
 		return notifikasjonDistribusjonRepository.findFirstByNotifikasjonAndKanal(notifikasjon, kanal);
+	}
+
+	@Retryable(maxAttempts = RETRY_LONG, backoff = @Backoff(delay = DELAY_LONG))
+	public Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(Notifikasjon notifikasjon, Kanal kanal) {
+		return notifikasjonDistribusjonRepository.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, kanal);
 	}
 }

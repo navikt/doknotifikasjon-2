@@ -232,8 +232,6 @@ class Knot001ITest extends EmbededKafkaBroker {
 		stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 				.withBodyFile("stsResponse_happy.json")));
-
-
 	}
 
 	private void stubGetKontaktInfo() {
@@ -241,7 +239,6 @@ class Knot001ITest extends EmbededKafkaBroker {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("dkif_happy.json")));
-
 	}
 
 	private void stubGetKontaktInfoWithoutSmsInKontaktInfo() {
@@ -249,7 +246,6 @@ class Knot001ITest extends EmbededKafkaBroker {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("dkif_without_sms.json")));
-
 	}
 
 	private void stubGetKontaktInfoFail() {
@@ -257,13 +253,11 @@ class Knot001ITest extends EmbededKafkaBroker {
 				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
 						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 						.withBodyFile("dkif_fail.json")));
-
 	}
 
 	private void stubSikkerhetsnivaa() {
 		stubFor(post("/sikkerhetsnivaa").willReturn(aResponse().withStatus(HttpStatus.OK.value())
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
 				.withBodyFile("sikkerhetsnivaa.json")));
-
 	}
 }

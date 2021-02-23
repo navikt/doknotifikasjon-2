@@ -11,10 +11,12 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.RETRY_LONG;
 
 @Slf4j
 @Component
@@ -46,6 +48,15 @@ public class NotifikasjonService {
 				status,
 				antallRenotifikasjoner,
 				nesteRenotifikasjonDato
+		);
+	}
+
+	@Metrics(createErrorMetric = true)
+	@Retryable(maxAttempts = RETRY_LONG, backoff = @Backoff(delay = DELAY_LONG))
+	public List<Notifikasjon> findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(Status status, LocalDateTime sistEndretDato) {
+		return notifikasjonRepository.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(
+				status.toString(),
+				sistEndretDato
 		);
 	}
 
