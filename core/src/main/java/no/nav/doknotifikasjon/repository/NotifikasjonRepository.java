@@ -22,7 +22,7 @@ public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Inte
 	@Query(
 			value = "Select * from t_notifikasjon\n" +
 					"where k_status = :status\n" +
-					"  and (antall_renotifikasjoner == 0 or antall_renotifikasjoner is null)\n" +
+					"  and (antall_renotifikasjoner = 0 or antall_renotifikasjoner is null)\n" +
 					"  and endret_dato is not null\n" +
 					"  and endret_dato >= :endretDato",
 			nativeQuery=true
