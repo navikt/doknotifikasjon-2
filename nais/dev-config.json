@@ -10,5 +10,6 @@
   "MOUNT_PATH": "postgresql/preprod-fss",
   "INGRESSES": [
     "https://doknitifikasjon.dev.adeo.no"
-  ]
+  ],
+  "FILTER_ALTINN": "false"
 }

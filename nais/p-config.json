@@ -10,5 +10,6 @@
   "MOUNT_PATH": "postgresql/prod-fss",
   "INGRESSES": [
     "https://doknotifikasjon.nais.adeo.no"
-  ]
+  ],
+  "FILTER_ALTINN": "true"
 }

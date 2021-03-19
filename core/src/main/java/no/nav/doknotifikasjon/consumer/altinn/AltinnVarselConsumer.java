@@ -15,6 +15,7 @@ import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -32,91 +33,104 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 @Service
 public class AltinnVarselConsumer {
 
-    private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
-    private static final String TOKEN_VALUE = "TokenValue";
-    private static final String IKKE_BESVAR_DENNE_NAV = "ikke-besvar-denne@nav.no";
+    @Value("#{doknotification.sendtilAltinn}")
+    private Boolean sendTilAltinnFilter;
 
-    private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
-    private final AltinnProps altinnProps;
+	private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
+	private static final String TOKEN_VALUE = "TokenValue";
+	private static final String IKKE_BESVAR_DENNE_NAV = "ikke-besvar-denne@nav.no";
 
-    public AltinnVarselConsumer(INotificationAgencyExternalBasic iNotificationAgencyExternalBasic, AltinnProps altinnProps) {
-        this.iNotificationAgencyExternalBasic = iNotificationAgencyExternalBasic;
-        this.altinnProps = altinnProps;
-    }
+	private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
+	private final AltinnProps altinnProps;
 
-    @Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
-    @Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
-    public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
-        StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
-                new StandaloneNotification()
-                        .withReporteeNumber(ns("ReporteeNumber", fnr))
-                        .withLanguageID(1044)
-                        .withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
-                        .withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
-                        .withTextTokens(generateTextTokens(kanal, tekst, tittel))
-                        .withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
-                        .withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
-        try {
-            iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
-                    altinnProps.getUsername(),
-                    altinnProps.getPassword(),
-                    standaloneNotification
-            );
-        } catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
-            String errorMessage = e.getFaultInfo() != null ? e.getFaultInfo().getAltinnErrorMessage().toString() : e.getMessage();
-            throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", errorMessage), e);
-        } catch (SoapFaultException e) {
-            throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
-        } catch (RuntimeException e) {
-            throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
-        } catch (Exception e) {
-            throw new AltinnFunctionalException(String.format("Ukjent feil ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
+	public AltinnVarselConsumer(INotificationAgencyExternalBasic iNotificationAgencyExternalBasic, AltinnProps altinnProps) {
+		this.iNotificationAgencyExternalBasic = iNotificationAgencyExternalBasic;
+		this.altinnProps = altinnProps;
+	}
+
+	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
+	@Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+		if (!alltinFilter()) {
+			StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
+					new StandaloneNotification()
+							.withReporteeNumber(ns("ReporteeNumber", fnr))
+							.withLanguageID(1044)
+							.withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
+							.withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
+							.withTextTokens(generateTextTokens(kanal, tekst, tittel))
+							.withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
+							.withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
+			try {
+				iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
+						altinnProps.getUsername(),
+						altinnProps.getPassword(),
+						standaloneNotification
+				);
+			} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+				String errorMessage = e.getFaultInfo() != null ? e.getFaultInfo().getAltinnErrorMessage().toString() : e.getMessage();
+				throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", errorMessage), e);
+			} catch (SoapFaultException e) {
+				throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
+			} catch (RuntimeException e) {
+				throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
+			} catch (Exception e) {
+				throw new AltinnFunctionalException(String.format("Ukjent feil ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
+			}
+		}
+	}
+
+    private boolean alltinFilter() {
+        if(sendTilAltinnFilter!=null && sendTilAltinnFilter){
+            log.info("Sender ikke melding til Altinn fordi filter er satt");
+            return true;
         }
-    }
+        return false;
+	}
 
     private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
-        return ns(
-                "ReceiverEndPoints",
-                ReceiverEndPointBEList.class,
-                new ReceiverEndPointBEList()
-                        .withReceiverEndPoint(
-                                new ReceiverEndPoint()
-                                        .withReceiverAddress(ns("ReceiverAddress", kontaktInfo))
-                                        .withTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal))))
-        );
-    }
+		return ns(
+				"ReceiverEndPoints",
+				ReceiverEndPointBEList.class,
+				new ReceiverEndPointBEList()
+						.withReceiverEndPoint(
+								new ReceiverEndPoint()
+										.withReceiverAddress(ns("ReceiverAddress", kontaktInfo))
+										.withTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal))))
+		);
+	}
 
-    private JAXBElement<TextTokenSubstitutionBEList> generateTextTokens(Kanal kanal, String tekst, String tittel) {
-        if (kanal == Kanal.SMS) {
-            return ns("TextTokens",
-                    TextTokenSubstitutionBEList.class,
-                    new TextTokenSubstitutionBEList().withTextToken(List.of(
-                            new TextToken()
-                                    .withTokenNum(0)
-                                    .withTokenValue(ns(TOKEN_VALUE, tekst)),
-                            new TextToken()
-                                    .withTokenNum(1)
-                                    .withTokenValue(ns(TOKEN_VALUE, ""))
-                    )));
-        }
-        if (kanal == Kanal.EPOST) {
-            return ns("TextTokens",
-                    TextTokenSubstitutionBEList.class,
-                    new TextTokenSubstitutionBEList().withTextToken(List.of(
-                            new TextToken()
-                                    .withTokenNum(0)
-                                    .withTokenValue(ns(TOKEN_VALUE, tittel)),
-                            new TextToken()
-                                    .withTokenNum(1)
-                                    .withTokenValue(ns(TOKEN_VALUE, tekst))
-                    )));
-        }
-        throw new AltinnFunctionalException("Funksjonell feil mot Altinn: Kanal er verken epost eller sms.");
-    }
+	private JAXBElement<TextTokenSubstitutionBEList> generateTextTokens(Kanal kanal, String tekst, String tittel) {
+		if (kanal == Kanal.SMS) {
+			return ns("TextTokens",
+					TextTokenSubstitutionBEList.class,
+					new TextTokenSubstitutionBEList().withTextToken(List.of(
+							new TextToken()
+									.withTokenNum(0)
+									.withTokenValue(ns(TOKEN_VALUE, tekst)),
+							new TextToken()
+									.withTokenNum(1)
+									.withTokenValue(ns(TOKEN_VALUE, ""))
+					)));
+		}
+		if (kanal == Kanal.EPOST) {
+			return ns("TextTokens",
+					TextTokenSubstitutionBEList.class,
+					new TextTokenSubstitutionBEList().withTextToken(List.of(
+							new TextToken()
+									.withTokenNum(0)
+									.withTokenValue(ns(TOKEN_VALUE, tittel)),
+							new TextToken()
+									.withTokenNum(1)
+									.withTokenValue(ns(TOKEN_VALUE, tekst))
+					)));
+		}
+		throw new AltinnFunctionalException("Funksjonell feil mot Altinn: Kanal er verken epost eller sms.");
+	}
 
-    private static TransportType kanalToTransportType(Kanal kanal) {
-        if (Kanal.SMS == kanal) return TransportType.SMS;
-        if (Kanal.EPOST == kanal) return TransportType.EMAIL;
-        throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
-    }
+	private static TransportType kanalToTransportType(Kanal kanal) {
+		if (Kanal.SMS == kanal) return TransportType.SMS;
+		if (Kanal.EPOST == kanal) return TransportType.EMAIL;
+		throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
+	}
 }
