@@ -11,5 +11,5 @@
   "INGRESSES": [
     "https://doknitifikasjon.dev.adeo.no"
   ],
-  "FILTER_ALTINN": "false"
+  "SEND_TIL_ALTINN": "false"
 }

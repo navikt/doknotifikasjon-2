@@ -11,5 +11,5 @@
   "INGRESSES": [
     "https://doknotifikasjon.nais.adeo.no"
   ],
-  "FILTER_ALTINN": "true"
+  "SEND_TIL_ALTINN": "true"
 }

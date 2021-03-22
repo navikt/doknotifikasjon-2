@@ -33,8 +33,8 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 @Service
 public class AltinnVarselConsumer {
 
-    @Value("#{systemProperties['sendTilAltinn'] ?: true }")
-    private Boolean sendTilAltinnFilter;
+	@Value("#{systemProperties['SEND_TIL_ALTINN'] ?: true }")
+	private Boolean sendTilAltinn;
 
 	private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
 	private static final String TOKEN_VALUE = "TokenValue";
@@ -51,7 +51,7 @@ public class AltinnVarselConsumer {
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
 	@Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
-		if (!alltinFilter()) {
+		if (sendTilAltinn()) {
 			StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
 					new StandaloneNotification()
 							.withReporteeNumber(ns("ReporteeNumber", fnr))
@@ -80,15 +80,15 @@ public class AltinnVarselConsumer {
 		}
 	}
 
-    private boolean alltinFilter() {
-        if(sendTilAltinnFilter!=null && sendTilAltinnFilter){
-            log.info("Sender ikke melding til Altinn fordi filter er satt");
-            return true;
-        }
-        return false;
+	private boolean sendTilAltinn() {
+		if (sendTilAltinn != null && !sendTilAltinn) {
+			log.info("Sender ikke melding til Altinn fordi flagg er satt");
+			return false;
+		}
+		return true;
 	}
 
-    private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
+	private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
 		return ns(
 				"ReceiverEndPoints",
 				ReceiverEndPointBEList.class,

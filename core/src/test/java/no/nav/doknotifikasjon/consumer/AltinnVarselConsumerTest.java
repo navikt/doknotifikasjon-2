@@ -28,7 +28,7 @@ public class AltinnVarselConsumerTest {
 		doReturn("testname").when(altinnProps).getUsername();
 		doReturn("testpassword").when(altinnProps).getPassword();
 		consumer.sendVarsel(Kanal.EPOST, null, null, null, null);
-		verify(iNotificationAgencyExternalBasic, times(1));
+		verify(iNotificationAgencyExternalBasic, times(1)).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class AltinnVarselConsumerTest {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
 		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
-		FieldSetter.setField(consumer, consumer.getClass().getDeclaredField("sendTilAltinnFilter"), false);
+		FieldSetter.setField(consumer, consumer.getClass().getDeclaredField("sendTilAltinn"), false);
 		consumer.sendVarsel(Kanal.EPOST, null, null, null, null);
 		verify(iNotificationAgencyExternalBasic, never()).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}
