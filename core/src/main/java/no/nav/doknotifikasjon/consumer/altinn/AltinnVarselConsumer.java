@@ -33,7 +33,7 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 @Service
 public class AltinnVarselConsumer {
 
-    @Value("#{doknotification.sendtilAltinn}")
+    @Value("#{systemProperties['sendTilAltinn'] ?: true }")
     private Boolean sendTilAltinnFilter;
 
 	private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
