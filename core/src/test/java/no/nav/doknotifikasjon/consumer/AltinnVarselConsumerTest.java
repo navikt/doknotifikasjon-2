@@ -20,10 +20,11 @@ import static org.mockito.Mockito.verify;
 public class AltinnVarselConsumerTest {
 
 	@Test
-	void serviceShouldSendToAltinn() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+	void serviceShouldSendToAltinn() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage, NoSuchFieldException {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
 		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
+		FieldSetter.setField(consumer, consumer.getClass().getDeclaredField("sendTilAltinn"), true);
 		doReturn(new SendNotificationResultList()).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 		doReturn("testname").when(altinnProps).getUsername();
 		doReturn("testpassword").when(altinnProps).getPassword();
