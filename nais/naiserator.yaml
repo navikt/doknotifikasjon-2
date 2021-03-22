@@ -21,8 +21,6 @@ spec:
       value: {{ SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL }}
     - name: MOUNT_PATH
       value: {{ MOUNT_PATH }}
-    - name: SEND_TIL_ALTINN
-      value: { { SEND_TIL_ALTINN }}
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
