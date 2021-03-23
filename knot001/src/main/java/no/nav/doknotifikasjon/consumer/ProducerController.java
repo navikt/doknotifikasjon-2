@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.consumer;
+/*package no.nav.doknotifikasjon.consumer;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class ProducerController {
 				LocalDateTime.now().toString(),
 				LocalDateTime.now().toString(),
 				0,
-				"09097400366", // FNR er fra en testbruker hos dolly
+				"09097400366", // FNR er fra en testbrukker hos dolly
 				0,
 				0,
 				"TITTEL",
@@ -43,10 +43,10 @@ public class ProducerController {
 				"smsTekst",
 				preferteKanaler
 		);
-		log.info("Sender test beskjed til Kafka");
+
 		publisher.publish(
 				KAFKA_TOPIC_DOK_NOTIFKASJON,
 				dokEksternNotifikasjon
 		);
 	}
-}
+}*/
