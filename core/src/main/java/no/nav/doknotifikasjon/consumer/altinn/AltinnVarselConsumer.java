@@ -52,34 +52,34 @@ public class AltinnVarselConsumer {
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
 	@Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
-		if (sendTilAltinn) {
-			StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
-					new StandaloneNotification()
-							.withReporteeNumber(ns("ReporteeNumber", fnr))
-							.withLanguageID(1044)
-							.withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
-							.withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
-							.withTextTokens(generateTextTokens(kanal, tekst, tittel))
-							.withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
-							.withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
-			try {
-				iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
-						altinnProps.getUsername(),
-						altinnProps.getPassword(),
-						standaloneNotification
-				);
-			} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
-				String errorMessage = e.getFaultInfo() != null ? e.getFaultInfo().getAltinnErrorMessage().toString() : e.getMessage();
-				throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", errorMessage), e);
-			} catch (SoapFaultException e) {
-				throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
-			} catch (RuntimeException e) {
-				throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
-			} catch (Exception e) {
-				throw new AltinnFunctionalException(String.format("Ukjent feil ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
-			}
-		}else{
+		if (!sendTilAltinn) {
 			log.info("Sender ikke melding til Altinn fordi flagg er satt");
+			return;
+		}
+		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
+				new StandaloneNotification()
+						.withReporteeNumber(ns("ReporteeNumber", fnr))
+						.withLanguageID(1044)
+						.withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
+						.withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
+						.withTextTokens(generateTextTokens(kanal, tekst, tittel))
+						.withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
+						.withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
+		try {
+			iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
+					altinnProps.getUsername(),
+					altinnProps.getPassword(),
+					standaloneNotification
+			);
+		} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+			String errorMessage = e.getFaultInfo() != null ? e.getFaultInfo().getAltinnErrorMessage().toString() : e.getMessage();
+			throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", errorMessage), e);
+		} catch (SoapFaultException e) {
+			throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
+		} catch (RuntimeException e) {
+			throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
+		} catch (Exception e) {
+			throw new AltinnFunctionalException(String.format("Ukjent feil ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
 		}
 	}
 
