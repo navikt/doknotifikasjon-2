@@ -16,6 +16,7 @@ import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
 @Slf4j
 @Service
+@Configuration
 public class AltinnVarselConsumer {
 
 	private static final String SEND_TIL_ALTINN = "${SEND_TIL_ALTINN?: true }";
