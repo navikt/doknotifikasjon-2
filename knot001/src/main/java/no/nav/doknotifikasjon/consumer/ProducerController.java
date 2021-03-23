@@ -1,4 +1,4 @@
-/*package no.nav.doknotifikasjon.consumer;
+package no.nav.doknotifikasjon.consumer;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,4 +49,4 @@ public class ProducerController {
 				dokEksternNotifikasjon
 		);
 	}
-}*/
+}
