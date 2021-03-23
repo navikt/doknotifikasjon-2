@@ -35,9 +35,7 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 @Configuration
 public class AltinnVarselConsumer {
 
-	private static final String SEND_TIL_ALTINN = "${SEND_TIL_ALTINN?: true }";
-
-	@Value(SEND_TIL_ALTINN)
+	private static final String SEND_TIL_ALTINN = "${SEND_TIL_ALTINN?: true}";
 	private Boolean sendTilAltinn;
 
 	private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
@@ -47,9 +45,10 @@ public class AltinnVarselConsumer {
 	private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 	private final AltinnProps altinnProps;
 
-	public AltinnVarselConsumer(INotificationAgencyExternalBasic iNotificationAgencyExternalBasic, AltinnProps altinnProps) {
+	public AltinnVarselConsumer(@Value(SEND_TIL_ALTINN) Boolean sendTilAltinn, INotificationAgencyExternalBasic iNotificationAgencyExternalBasic, AltinnProps altinnProps) {
 		this.iNotificationAgencyExternalBasic = iNotificationAgencyExternalBasic;
 		this.altinnProps = altinnProps;
+		this.sendTilAltinn = sendTilAltinn;
 	}
 
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
