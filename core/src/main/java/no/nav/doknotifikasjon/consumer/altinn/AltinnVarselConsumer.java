@@ -52,9 +52,7 @@ public class AltinnVarselConsumer {
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
 	@Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
-		//TODO: Fjern log
-		log.error("Sendt til altinn er satt: "+sendTilAltinn);
-		if (sendTilAltinn!=null&&sendTilAltinn==true) {
+		if (sendTilAltinn) {
 			StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
 					new StandaloneNotification()
 							.withReporteeNumber(ns("ReporteeNumber", fnr))
