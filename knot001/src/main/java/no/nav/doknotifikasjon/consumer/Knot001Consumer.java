@@ -73,13 +73,13 @@ public class Knot001Consumer {
 			log.error("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
-			log.error("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
+			log.warn("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
-			log.error("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
+			log.warn("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch(DigitalKontaktinformasjonFunctionalException e){
-			log.error("Funksjonell feil mot DKIF. Feilmelding: {}", e.getMessage());
+			log.warn("Funksjonell feil mot DKIF. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (SikkerhetsnivaaFunctionalException e) {
 			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
