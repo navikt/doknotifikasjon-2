@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 
 @Component
-@Profile("nais")
+@Profile({"nais", "local"})
 public class STSConfig {
 
     private final String stsUrl;
