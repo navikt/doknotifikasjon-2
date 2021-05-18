@@ -3,7 +3,7 @@ package no.nav.doknotifikasjon.metrics;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
+import no.nav.doknotifikasjon.exception.functional.AbstractDoknotifikasjonFunctionalException;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import org.springframework.stereotype.Component;
 
@@ -110,11 +110,17 @@ public class MetricService {
 		Throwable throwable = e.getCause() == null ? e : e.getCause();
 		String exceptionName = throwable.getClass().getSimpleName();
 
-		this.counter(DOK_EXCEPTION, TYPE, isFunctionalException(e) ? FUNCTIONAL : TECHNICAL, EXCEPTION_NAME, exceptionName);
+		this.counter(
+				DOK_EXCEPTION,
+				TYPE,
+				isFunctionalException(e) ? FUNCTIONAL : TECHNICAL,
+				EXCEPTION_NAME,
+				exceptionName
+		);
 	}
 
 	private boolean isFunctionalException(Throwable e) {
-		return e instanceof AbstractDoknotifikasjonTechnicalException;
+		return e instanceof AbstractDoknotifikasjonFunctionalException;
 	}
 
 	public void counter(String name, String... tags) {

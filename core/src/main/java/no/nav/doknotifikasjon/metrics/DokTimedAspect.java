@@ -4,7 +4,7 @@ import io.micrometer.core.annotation.Incubating;
 import io.micrometer.core.lang.NonNullApi;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.constants.MDCConstants;
-import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
+import no.nav.doknotifikasjon.exception.functional.AbstractDoknotifikasjonFunctionalException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -56,10 +56,6 @@ public class DokTimedAspect {
 		}
 	}
 
-	private boolean isFunctionalException(Method method, Exception e) {
-		return asList(method.getExceptionTypes()).contains(e.getClass()) || isFunctionalException(e);
-	}
-
 	private void logException(Method method, Exception e) {
 		String mdcRequestId = (MDC.get(MDCConstants.MDC_REQUEST_ID) == null) ? "" : (MDC.get(MDCConstants.MDC_REQUEST_ID) + " ");
 
@@ -70,7 +66,11 @@ public class DokTimedAspect {
 		}
 	}
 
+	private boolean isFunctionalException(Method method, Exception e) {
+		return asList(method.getExceptionTypes()).contains(e.getClass()) || isFunctionalException(e);
+	}
+
 	private boolean isFunctionalException(Throwable e) {
-		return e instanceof AbstractDoknotifikasjonTechnicalException;
+		return e instanceof AbstractDoknotifikasjonFunctionalException;
 	}
 }
