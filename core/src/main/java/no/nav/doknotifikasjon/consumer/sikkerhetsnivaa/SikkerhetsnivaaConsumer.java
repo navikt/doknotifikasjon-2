@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.consumer.sikkerhetsnivaa;
 
 import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.SikkerhetsnivaaTechnicalException;
-import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -21,8 +20,6 @@ import java.time.Duration;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_SIKKERHETSNIVAA_CONSUMER;
-import static no.nav.doknotifikasjon.metrics.MetricTags.HENT_AUTH_LEVEL;
-import static no.nav.doknotifikasjon.metrics.MetricTags.PROCESS_NAME;
 
 @Component
 public class SikkerhetsnivaaConsumer {
