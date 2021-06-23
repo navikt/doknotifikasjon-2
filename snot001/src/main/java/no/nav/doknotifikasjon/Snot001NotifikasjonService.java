@@ -42,7 +42,7 @@ public class Snot001NotifikasjonService {
 		Optional<NotifikasjonDistribusjon> epost = notifikasjonDistrubisjonService.findFirstByNotifikasjonInAndKanal(notifikasjon, Kanal.EPOST);
 
 		if (!sms.isPresent() && !epost.isPresent()) {
-			log.error("Notifikasjon med id {} hadde ingen notifikasjonDistrubisjon", notifikasjon.getId());
+			log.error("Notifikasjon med id={} hadde ingen notifikasjonDistrubisjon", notifikasjon.getId());
 			return publishList;
 		}
 

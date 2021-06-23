@@ -5,8 +5,10 @@ import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonList;
 
 @Component
 public class DoknotifikasjonMapper {
@@ -27,20 +29,12 @@ public class DoknotifikasjonMapper {
 	}
 
 	private List<Kanal> setDefaultPrefererteKanaler(List<PrefererteKanal> preferteKanaler) {
-		List<Kanal> preferteKanalerTO = new ArrayList<>();
-
-		if (preferteKanaler != null && !preferteKanaler.isEmpty()) {
-			preferteKanaler.forEach(s -> {
-				if (s.equals(PrefererteKanal.EPOST)) {
-					preferteKanalerTO.add(Kanal.EPOST);
-				} else {
-					preferteKanalerTO.add(Kanal.SMS);
-				}
-			});
-		} else {
-			preferteKanalerTO.add(Kanal.EPOST);
+		if (preferteKanaler == null || preferteKanaler.isEmpty()) {
+			return singletonList(Kanal.EPOST);
 		}
 
-		return preferteKanalerTO;
+		return preferteKanaler.stream()
+				.map(kanal -> kanal.equals(PrefererteKanal.EPOST) ? Kanal.EPOST : Kanal.SMS)
+				.collect(Collectors.toList());
 	}
 }

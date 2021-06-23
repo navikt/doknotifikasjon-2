@@ -9,6 +9,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
+import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
+import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 
 import java.time.Duration;
 
@@ -29,7 +31,7 @@ public class KafkaConfig {
 
 		factory.setConcurrency(3);
 		factory.setErrorHandler(new SeekToCurrentErrorHandler(
-				(rec, thr) -> log.error("Exception oppstått i doknotifikasjon: {} kafka record til topic: {}, partition: {}, offset: {}, UUID: {} feilmelding={}",
+				(rec, thr) -> log.error("Exception oppstått i doknotifikasjon={} kafka record til topic={}, partition={}, offset={}, UUID={} feilmelding={}",
 						thr.getClass().getSimpleName(),
 						rec.topic(),
 						rec.partition(),
@@ -37,7 +39,7 @@ public class KafkaConfig {
 						rec.key(),
 						thr.getCause()
 				),
-				new FixedBackOff(FixedBackOff.DEFAULT_INTERVAL, 0)));
+				new FixedBackOff(DEFAULT_INTERVAL, UNLIMITED_ATTEMPTS)));
 		return factory;
 	}
 }

@@ -16,7 +16,7 @@ public final class TestUtils {
 	public static final String FODSELSNUMMER = "123456789012341";
 	public static final int SIKKERHETSNIVAA = 0;
 	public static final int ANTALL_RENOTIFIKASJONER = 20;
-	public static final int RENOTIFIKASJON_INTERVALL = 100;
+	public static final int RENOTIFIKASJON_INTERVALL = 20;
 	public static final String TITTEL = "tittel";
 	public static final String EPOST_TEKST = "epostTekst";
 	public static final String EPOST_SMS = "smsTekst";

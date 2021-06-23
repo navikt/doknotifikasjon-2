@@ -21,14 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import java.util.concurrent.TimeUnit;
-
-import static junit.framework.TestCase.fail;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.*;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.generateAltinnResponse;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.*;
+import static no.nav.doknotifikasjon.kodeverk.Status.*;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -65,113 +67,97 @@ class Knot003ITest extends EmbededKafkaBroker {
 
 	@Test
 	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenReturn(generateAltinnResponse(TransportType.EMAIL, KONTAKTINFO));
-
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), Status.OPPRETTET, Kanal.EPOST));
-
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
 
 		DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(id);
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
-		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
+			assertEquals(FERDIGSTILT, updatedNotifikasjonDistribusjon.getStatus());
+			assertEquals(EPOST, updatedNotifikasjonDistribusjon.getKanal());
+			assertEquals("teamdokumenthandtering", updatedNotifikasjonDistribusjon.getEndretAv());
+			assertNotNull(updatedNotifikasjonDistribusjon.getEndretDato());
 
-
-		assertEquals(Status.FERDIGSTILT, updatedNotifikasjonDistribusjon.getStatus());
-		assertEquals(Kanal.EPOST, updatedNotifikasjonDistribusjon.getKanal());
-		assertEquals("teamdokumenthandtering", updatedNotifikasjonDistribusjon.getEndretAv());
-		assertNotNull(updatedNotifikasjonDistribusjon.getEndretDato());
-
-		verify(kafkaEventProducer).publish(
-				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id))
-		);
+			verify(kafkaEventProducer).publish(
+					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id))
+			);
+		});
 	}
 
 	@Test
-	void shouldAbortIfDistribusjonNotFound() throws InterruptedException {
-
+	void shouldAbortIfDistribusjonNotFound() {
 		DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(1234);
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
-		NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(1234).orElse(null);
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(1234).orElse(null);
 
-		assertNull(updatedNotifikasjonDistribusjon);
-		TimeUnit.SECONDS.sleep(2);
-		try {
+			assertNull(updatedNotifikasjonDistribusjon);
 			verify(kafkaEventProducer, times(0)).publish(
-					eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
 					any()
 			);
-		} catch (Exception e) {
-			fail();
-		}
+		});
 	}
 
 	@Test
 	void shouldWriteToStatusQueueIfStatusIsInvalid() {
-
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), Status.OVERSENDT, Kanal.EPOST));
-
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OVERSENDT, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
-
 		DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(id);
-		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
-		verify(kafkaEventProducer, atLeastOnce()).publish(
-				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
+		putMessageOnKafkaTopic(doknotifikasjonEpost);
+		await().atMost(10, SECONDS).untilAsserted(() ->
+			verify(kafkaEventProducer, atLeastOnce()).publish(
+					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
+			)
 		);
 	}
 
 	@Test
 	void shouldWriteToStatusQueueIfKanalIsInvalid() {
-
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), Status.OPPRETTET, Kanal.SMS));
-
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 
 		DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(id);
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
-		verify(kafkaEventProducer, atLeastOnce()).publish(
-				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
+		await().atMost(10, SECONDS).untilAsserted(() ->
+			verify(kafkaEventProducer, atLeastOnce()).publish(
+					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
+			)
 		);
 	}
 
 	@Test
 	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage("Altinn Functional Exception"));
-
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), Status.OPPRETTET, Kanal.EPOST));
-
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
 
 		DoknotifikasjonEpost doknotifikasjonEpost = new DoknotifikasjonEpost(id);
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
-		notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
 
-
-		verify(kafkaEventProducer, atLeastOnce()).publish(
-				eq(KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-				argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: Altinn Functional Exception", id))
-		);
+			verify(kafkaEventProducer, atLeastOnce()).publish(
+					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: Altinn Functional Exception", id))
+			);
+		});
 	}
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonEpost doknotifikasjonEpost) {
-		try {
-			kafkaEventProducer.publish(
-					KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
-					doknotifikasjonEpost
-			);
-
-			TimeUnit.SECONDS.sleep(5);
-		} catch (InterruptedException exception) {
-			fail();
-		}
+		kafkaEventProducer.publish(
+				KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+				doknotifikasjonEpost
+		);
 	}
 }

@@ -79,7 +79,7 @@ public class Knot001Service {
 				OVERSENDT_NOTIFIKASJON_PROCESSED,
 				null
 		);
-		log.info("Sender en DoknotifikasjonStatus med status {} til topic {} for bestillingsId {}", Status.OVERSENDT, KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, doknotifikasjon.getBestillingsId());
+		log.info("Sender en DoknotifikasjonStatus med status={} til topic={} for bestillingsId={}", Status.OVERSENDT, KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, doknotifikasjon.getBestillingsId());
 	}
 
 	public DigitalKontaktinformasjonTo.DigitalKontaktinfo getKontaktInfoByFnr(DoknotifikasjonTO doknotifikasjon) {
@@ -212,7 +212,7 @@ public class Knot001Service {
 
 	private String buildPrefererteKanaler(List<Kanal> prefererteKanaler) {
 		StringBuilder stringBuilder = new StringBuilder();
-		prefererteKanaler.forEach(s -> stringBuilder.append(prefererteKanaler.indexOf(s) == prefererteKanaler.size() - 1 ? s.toString() : s.toString() + ", "));
+		prefererteKanaler.forEach(kanal -> stringBuilder.append(prefererteKanaler.indexOf(kanal) == prefererteKanaler.size() - 1 ? kanal.toString() : kanal.toString() + ", "));
 		return stringBuilder.toString();
 	}
 

@@ -15,6 +15,7 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_SMS_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT003_EPOST_SENT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT004_CONSUMER_STATUS;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_RENOTIFKASJON_STOPPED;
+import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT006_BEHANDLET;
 import static no.nav.doknotifikasjon.metrics.MetricTags.EXCEPTION_NAME;
 import static no.nav.doknotifikasjon.metrics.MetricTags.FUNCTIONAL;
 import static no.nav.doknotifikasjon.metrics.MetricTags.PROCESSED;
@@ -69,6 +70,12 @@ public class MetricService {
 				DOK_KNOT005_RENOTIFKASJON_STOPPED,
 				TYPE,
 				STOPPED
+		);
+	}
+
+	public void metricKnot006RecordBehandlet() {
+		this.counter(
+				DOK_KNOT006_BEHANDLET
 		);
 	}
 

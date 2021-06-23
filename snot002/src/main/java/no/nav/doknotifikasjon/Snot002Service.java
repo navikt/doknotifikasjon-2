@@ -40,7 +40,7 @@ public class Snot002Service {
 	}
 
 	public void resendNotifikasjoner() {
-		log.info("Starter Snot002 for å finne notifikasjoner som  har status {} og skal oppdateres med status {}.", OVERSENDT, FERDIGSTILT);
+		log.info("Starter Snot002 for å finne notifikasjoner som  har status={} og skal oppdateres med status={}.", OVERSENDT, FERDIGSTILT);
 		LocalDateTime endretDato = LocalDateTime.now().minusDays(AMOUNT_OF_DAYS_IN_SCOPE);
 
 		List<Notifikasjon> notifikasjonList = notifikasjonService.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(OVERSENDT, endretDato)

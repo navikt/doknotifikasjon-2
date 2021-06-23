@@ -17,10 +17,11 @@ import org.springframework.test.context.ActiveProfiles;
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext()
-@ActiveProfiles("itestKafka")
+@ActiveProfiles({"itest", "itestKafka"})
 @EmbeddedKafka(
 		topics = {
 				"privat-dok-notifikasjon",
+				"privat-dok-notifikasjon-med-kontakt-info",
 				"aapen-dok-notifikasjon-status",
 				"privat-dok-notifikasjon-sms",
 				"privat-dok-notifikasjon-epost"

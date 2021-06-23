@@ -93,4 +93,23 @@ class DoknotifikasjonValidatorTest {
 		doknotifikasjonValidator.validateString(doknotifikasjon, "Test", 10, "string");
 	}
 
+
+	@Test
+	void shouldValidateNumberForSnot001WhenParametersIsCorrect() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		doknotifikasjonValidator.validateNumberForSnot001(doknotifikasjon, 30, "String");
+	}
+
+
+	@Test
+	void shouldFailValidateNumberSnot001WhenFieldIsToGreaterThen30() {
+		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
+		assertThrows(InvalidAvroSchemaFieldException.class, () ->
+				doknotifikasjonValidator.validateNumberForSnot001(doknotifikasjon, 100, "string")
+		);
+
+		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "Felt string kan ikke være støre enn 30", null
+		);
+	}
 }

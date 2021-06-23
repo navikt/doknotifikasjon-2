@@ -39,8 +39,8 @@ public class DatabaseConfig {
 		config.setJdbcUrl(doknotifikasjonDbUrl);
 		config.setMaximumPoolSize(4);
 		config.setMinimumIdle(1);
-		log.info("Running on cluster {}", cluster);
-		log.info("Vault mounted on {}", mountPath);
+		log.info("Running on cluster={}", cluster);
+		log.info("Vault mountPath={}", mountPath);
 		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, dbRole(user));
 	}
 

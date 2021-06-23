@@ -58,7 +58,7 @@ public class Knot001Consumer {
 	@Metrics(value = DOK_KNOT001_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());
-		log.info("Innkommende kafka record til topic: {}, partition: {}, offset: {}", record.topic(), record.partition(), record.offset());
+		log.info("Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
 			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
@@ -66,19 +66,19 @@ public class Knot001Consumer {
 			knot001Service.processDoknotifikasjon(doknotifikasjonMapper.map(doknotifikasjon));
 			metricService.metricKnot001RecordBehandlet();
 		} catch (JsonProcessingException e) {
-			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.error("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
+			log.error("Validering av avroskjema feilet. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
-			log.warn("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
+			log.warn("BestlingsId ligger allerede i database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
-			log.warn("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding: {}", e.getMessage());
+			log.warn("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch(DigitalKontaktinformasjonFunctionalException e){
-			log.warn("Funksjonell feil mot DKIF. Feilmelding: {}", e.getMessage());
+			log.warn("Funksjonell feil mot DKIF. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (SikkerhetsnivaaFunctionalException e) {
 			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());

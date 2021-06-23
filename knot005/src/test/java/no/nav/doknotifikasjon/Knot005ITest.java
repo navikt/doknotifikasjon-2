@@ -10,11 +10,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.concurrent.TimeUnit;
-
-import static no.nav.doknotifikasjon.TestUtils.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static no.nav.doknotifikasjon.TestUtils.ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.TestUtils.BESTILLER_ID;
+import static no.nav.doknotifikasjon.TestUtils.BESTILLER_ID_2;
+import static no.nav.doknotifikasjon.TestUtils.BESTILLINGS_ID;
+import static no.nav.doknotifikasjon.TestUtils.NESTE_RENOTIFIKASJONSDATO;
+import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatus;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
-import static org.junit.Assert.*;
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Knot005ITest extends EmbededKafkaBroker {
@@ -37,11 +43,13 @@ class Knot005ITest extends EmbededKafkaBroker {
 		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
-		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-		assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
-		assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
-		assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
-		assertNotNull(updatedNotifikasjon.getEndretDato());
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
+			assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
+			assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
+			assertNotNull(updatedNotifikasjon.getEndretDato());
+		});
 	}
 
 	@Test
@@ -49,7 +57,9 @@ class Knot005ITest extends EmbededKafkaBroker {
 		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
-		assertNull(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID));
+		await().pollDelay(2, SECONDS).atMost(10, SECONDS).untilAsserted(() ->
+			assertNull(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID))
+		);
 	}
 
 	@Test
@@ -59,24 +69,20 @@ class Knot005ITest extends EmbededKafkaBroker {
 		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
-		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-		assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
-		assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
-		assertEquals(BESTILLER_ID, updatedNotifikasjon.getBestillerId());
-		assertNull(updatedNotifikasjon.getEndretAv());
-		assertNull(updatedNotifikasjon.getEndretDato());
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
+			assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
+			assertEquals(BESTILLER_ID, updatedNotifikasjon.getBestillerId());
+			assertNull(updatedNotifikasjon.getEndretAv());
+			assertNull(updatedNotifikasjon.getEndretDato());
+		});
 	}
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonStopp doknotifikasjonStopp) {
-		try {
-			KafkaEventProducer.publish(
-					KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
-					doknotifikasjonStopp
-			);
-
-			TimeUnit.SECONDS.sleep(10);
-		} catch (InterruptedException exception) {
-			fail();
-		}
+		KafkaEventProducer.publish(
+				KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP,
+				doknotifikasjonStopp
+		);
 	}
 }

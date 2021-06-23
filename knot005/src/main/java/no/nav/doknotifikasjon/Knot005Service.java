@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
-import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
@@ -12,6 +11,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_RENOTIFIKASJON_STANSET;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 
 @Slf4j
 @Component
@@ -40,9 +40,9 @@ public class Knot005Service {
 		if (notifikasjon == null) {
 			log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
 					doknotifikasjonStoppTo.getBestillingsId());
-		} else if (Status.FERDIGSTILT.equals(notifikasjon.getStatus())) {
+		} else if (FERDIGSTILT.equals(notifikasjon.getStatus())) {
 			log.warn("Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
-					doknotifikasjonStoppTo.getBestillingsId(), Status.FERDIGSTILT);
+					doknotifikasjonStoppTo.getBestillingsId(), FERDIGSTILT);
 		} else {
 			log.info("Knot005 oppdaterer notifikasjon med bestillingsId={}", doknotifikasjonStoppTo.getBestillingsId());
 			updateNotifikasjon(notifikasjon, doknotifikasjonStoppTo);
@@ -54,7 +54,10 @@ public class Knot005Service {
 	private void publishNewDoknotifikasjonStatus(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
 		kafkaDoknotifikasjonStatusProducer.publishDoknotikfikasjonStatusFerdigstilt(
 				doknotifikasjonStoppTo.getBestillingsId(),
-				doknotifikasjonStoppTo.getBestillerId(), FERDIGSTILT_RENOTIFIKASJON_STANSET, null);
+				doknotifikasjonStoppTo.getBestillerId(),
+				FERDIGSTILT_RENOTIFIKASJON_STANSET,
+				null
+		);
 	}
 
 	private void updateNotifikasjon(Notifikasjon notifikasjon, DoknotifikasjonStoppTo doknotifikasjonStoppTo) {

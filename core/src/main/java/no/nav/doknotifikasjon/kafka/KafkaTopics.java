@@ -2,6 +2,7 @@ package no.nav.doknotifikasjon.kafka;
 
 public class KafkaTopics {
 	public static final String KAFKA_TOPIC_DOK_NOTIFKASJON = "privat-dok-notifikasjon";
+	public static final String PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO = "privat-dok-notifikasjon-med-kontakt-info";
 	public static final String KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS = "aapen-dok-notifikasjon-status";
 	public static final String KAFKA_TOPIC_DOK_NOTIFKASJON_SMS = "privat-dok-notifikasjon-sms";
 	public static final String KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST = "privat-dok-notifikasjon-epost";

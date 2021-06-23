@@ -11,6 +11,8 @@ public class MetricName {
 	public static final String DOK_KNOT004_CONSUMER_STATUS = "dok_knot004_consumer_status";
 	public static final String DOK_KNOT005_CONSUMER = "dok_knot005_consumer";
 	public static final String DOK_KNOT005_RENOTIFKASJON_STOPPED = "dok_knot005_renotifiasjon_stopped";
+	public static final String DOK_KNOT006_CONSUMER = "dok_knot006_consumer";
+	public static final String DOK_KNOT006_BEHANDLET = "dok_knot006_behandlet";
 	public static final String DOK_DKIF_CONSUMER = "dok_dkif_consumer";
 	public static final String DOK_SIKKERHETSNIVAA_CONSUMER = "dok_sikkerhetsnivaa_consumer";
 	public static final String DOK_STS_CONSUMER = "dok_sts_consumer";

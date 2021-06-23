@@ -20,7 +20,49 @@
           "role": "MANAGER"
         },
         {
-          "member": "S156348",
+          "member": "B157935",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S161464",
+          "role": "MANAGER"
+        },
+        {
+          "member": "A155956",
+          "role": "MANAGER"
+        }
+      ],
+      "numPartitions": 4
+    },
+    {
+      "topicName": "privat-dok-notifikasjon-med-kontakt-info",
+      "members": [
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "srvdittnav-varsel-b",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "srvdoknotifikasjon",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "A157857",
+          "role": "MANAGER"
+        },
+        {
+          "member": "B157935",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S161464",
+          "role": "MANAGER"
+        },
+        {
+          "member": "A155956",
           "role": "MANAGER"
         }
       ],
@@ -42,7 +84,15 @@
           "role": "MANAGER"
         },
         {
-          "member": "S156348",
+          "member": "B157935",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S161464",
+          "role": "MANAGER"
+        },
+        {
+          "member": "A155956",
           "role": "MANAGER"
         }
       ],
@@ -64,7 +114,15 @@
           "role": "MANAGER"
         },
         {
-          "member": "S156348",
+          "member": "B157935",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S161464",
+          "role": "MANAGER"
+        },
+        {
+          "member": "A155956",
           "role": "MANAGER"
         }
       ],
@@ -86,11 +144,23 @@
           "role": "CONSUMER"
         },
         {
+          "member": "srvfarskapsportal",
+          "role": "CONSUMER"
+        },
+        {
           "member": "A157857",
           "role": "MANAGER"
         },
         {
-          "member": "S156348",
+          "member": "B157935",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S161464",
+          "role": "MANAGER"
+        },
+        {
+          "member": "A155956",
           "role": "MANAGER"
         }
       ],
@@ -112,7 +182,15 @@
           "role": "MANAGER"
         },
         {
-          "member": "S156348",
+          "member": "B157935",
+          "role": "MANAGER"
+        },
+        {
+          "member": "S161464",
+          "role": "MANAGER"
+        },
+        {
+          "member": "A155956",
           "role": "MANAGER"
         }
       ],

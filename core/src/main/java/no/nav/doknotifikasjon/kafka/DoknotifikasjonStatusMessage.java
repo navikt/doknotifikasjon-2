@@ -7,6 +7,7 @@ public class DoknotifikasjonStatusMessage {
 	public static final String FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT = "mottaker har reservert seg mot digital kommunikasjon";
 	public static final String FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION = "mottaker mangler gyldig kontaktinformasjon i kontakt- og reservasjonsregisteret";
 	public static final String FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER = "RenotifikasjonIntervall krever at antallRenotifikasjoner er satt";
+	public static final String FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT = "Krever at enten at epostadresse eller mobiltelefonnummer må være satt";
 	public static final String FERDIGSTILT_RENOTIFIKASJON_STANSET = "renotifikasjon er stanset";
 	public static final String FEILET_FUNCTIONAL_EXCEPTION_DKIF = "Funskjonell feil mot DigitalKontakinformasjon";
 	public static final String FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA = "Funksjonell feil mot sikkerhetsnivaa";

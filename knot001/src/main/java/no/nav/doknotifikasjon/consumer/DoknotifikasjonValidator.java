@@ -35,6 +35,8 @@ public class DoknotifikasjonValidator {
 		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_SMALL, "Tittel");
 		this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
 		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
+		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
+		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
 
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
@@ -60,7 +62,24 @@ public class DoknotifikasjonValidator {
 					"påkrevd felt " + fieldName + addedString,
 					null
 			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId: " + doknotifikasjon.getBestillingsId());
+			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+		}
+	}
+
+	/* Denne funksjonen vil forhindre at feltet antallRenotifikasjoner og renotifikasjonIntervall vil aldri bli støre enn 30*/
+	public void validateNumberForSnot001(
+			Doknotifikasjon doknotifikasjon,
+			Integer NumberToValidate,
+			String fieldName
+	){
+		if (NumberToValidate != null && NumberToValidate > 30) {
+			statusProducer.publishDoknotikfikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(),
+					doknotifikasjon.getBestillerId(),
+					"Felt " + fieldName + " kan ikke være støre enn 30",
+					null
+			);
+			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
 		}
 	}
 
@@ -72,7 +91,8 @@ public class DoknotifikasjonValidator {
 					"påkrevd felt " + fieldName + " kan ikke være negativ",
 					null
 			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId: " + doknotifikasjon.getBestillingsId());
+			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
 		}
 	}
+
 }

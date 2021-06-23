@@ -27,7 +27,7 @@ public class Snot001Scheduler {
 				snot001Service.resendNotifikasjoner();
 			}
 		} catch (Exception exception) {
-			log.error("Feil i SNOT001: ", exception);
+			log.error("Feil i SNOT001. Feil={}", exception);
 		}
 	}
 }
