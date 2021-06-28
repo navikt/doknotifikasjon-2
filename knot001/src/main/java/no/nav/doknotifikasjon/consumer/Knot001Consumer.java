@@ -69,7 +69,7 @@ public class Knot001Consumer {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.error("Validering av avroskjema feilet. Feilmelding={}", e.getMessage());
+			log.warn("Validering av avroskjema feilet. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
 			log.warn("BestlingsId ligger allerede i database. Feilmelding={}", e.getMessage());
@@ -77,7 +77,7 @@ public class Knot001Consumer {
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.warn("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
-		} catch(DigitalKontaktinformasjonFunctionalException e){
+		} catch(DigitalKontaktinformasjonFunctionalException e) {
 			log.warn("Funksjonell feil mot DKIF. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (SikkerhetsnivaaFunctionalException e) {

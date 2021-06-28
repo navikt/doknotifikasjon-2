@@ -57,7 +57,7 @@ public class Knot005Consumer {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
-			log.error("Valideringsfeil oppstod i knot005. Feilmelding: {}", e.getMessage());
+			log.warn("Valideringsfeil oppstod i knot005. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} finally {
 			clearCallId();

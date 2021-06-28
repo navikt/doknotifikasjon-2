@@ -61,16 +61,16 @@ public class Knot003Consumer {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
-			log.error("Ingen notifikasjonDistribusjon ble funnet i databasen. Avslutter behandlingen. ", e);
+			log.warn("Ingen notifikasjonDistribusjon ble funnet i databasen. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot003. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} catch (AltinnFunctionalException e){
-			log.error("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
+			log.warn("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
-			log.error("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+			log.warn("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} finally {
 			clearDistribusjonId();

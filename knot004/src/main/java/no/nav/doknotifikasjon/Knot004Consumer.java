@@ -60,7 +60,7 @@ public class Knot004Consumer {
 			log.error("Valideringsfeil i knot004. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
-			log.error("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+			log.warn("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} finally {
 			clearCallId();

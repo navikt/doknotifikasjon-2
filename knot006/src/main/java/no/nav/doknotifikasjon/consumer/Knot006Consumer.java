@@ -67,10 +67,10 @@ public class Knot006Consumer {
 			knot006Service.processNotifikasjonMedkontaktInfo(doknotifikasjonMedKontaktInfoMapper.map(notifikasjonMedkontaktInfo));
 			metricService.metricKnot006RecordBehandlet();
 		} catch (JsonProcessingException e) {
-			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+			log.warn("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.error("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
+			log.warn("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
 			log.warn("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
