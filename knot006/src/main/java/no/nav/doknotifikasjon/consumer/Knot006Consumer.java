@@ -49,14 +49,13 @@ public class Knot006Consumer {
 		this.metricService = metricService;
 	}
 
-// TODO add when doknotifikasjon migrated to Aiven, husk å legge til alarm for grafana
-//	@SneakyThrows
-//	@KafkaListener(
-//			topics = PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO,
-//			containerFactory = "kafkaListenerContainerFactory",
-//			groupId = "doknotifikasjon-knot006"
-//	)
-//	@Metrics(value = DOK_KNOT006_CONSUMER, createErrorMetric = true)
+	@SneakyThrows
+	@KafkaListener(
+			topics = PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO,
+			containerFactory = "kafkaListenerContainerFactory",
+			groupId = "doknotifikasjon-knot006"
+	)
+	@Metrics(value = DOK_KNOT006_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());
 		log.info("Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
