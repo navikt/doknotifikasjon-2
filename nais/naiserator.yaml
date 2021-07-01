@@ -1,11 +1,13 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: doknotifikasjon
+  name: doknotifikasjon-2
   namespace: teamdokumenthandtering
   labels:
     team: teamdokumenthandtering
 spec:
+  kafka:
+    pool: {{ KAFKA_POOL }}
   env:
     - name: DKIF_URL
       value: {{ DKIF_URL }}
@@ -15,10 +17,6 @@ spec:
       value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
     - name: SIKKERHETSNIVAA_V1_URL
       value: {{ SIKKERHETSNIVAA_V1_URL }}
-    - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-      value: {{ SPRING_KAFKA_BOOTSTRAP_SERVERS }}
-    - name: SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
-      value: {{ SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL }}
     - name: MOUNT_PATH
       value: {{ MOUNT_PATH }}
     - name: SEND_TIL_ALTINN
@@ -55,7 +53,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: {{ SRVDOKNOTIFIKASJON }}
-        mountPath: /var/run/secrets/nais.io/srvdoknotifikasjon
+      - kvPath: {{ SRVDOKNOTIFIKASJON-2 }}
+        mountPath: /var/run/secrets/nais.io/srvdoknotifikasjon-2
       - kvPath: {{ VAULT }}
         mountPath: /var/run/secrets/nais.io/vault

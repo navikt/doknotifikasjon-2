@@ -16,7 +16,7 @@ import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
@@ -60,6 +60,15 @@ public class Knot001Consumer {
 		generateNewCallIdIfThereAreNone(record.key());
 		log.info("Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
+		//schema.registry.url
+		//basic.auth.user.info
+		//basic.auth.credentials.source
+	//	KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
+//
+//
+//		put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, Environment.get("KAFKA_SCHEMA_REGISTRY"))
+//		put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, "${Environment.get("KAFKA_SCHEMA_REGISTRY_USER")}:${Environment.get("KAFKA_SCHEMA_REGISTRY_PASSWORD")}")
+//		put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO")
 		try {
 			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
 			doknotifikasjonValidator.validate(doknotifikasjon);

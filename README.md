@@ -65,7 +65,7 @@ For [dev-fss](https://logs.adeo.no/goto/3d51098ce277cc4ddf74d8a099f9444b)
 For [prod-fss](https://logs.adeo.no/goto/d3fec3fd86d445c76ec5f5bc33c77cf7)
 
 ### Kubectl
-For dev-fss:
+For dev-fss: Må endre her
 ```shell script
 kubectl config use-context dev-fss
 kubectl get pods -n q1 | grep doknotifikasjon
