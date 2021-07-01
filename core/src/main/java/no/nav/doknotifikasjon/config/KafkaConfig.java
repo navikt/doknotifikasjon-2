@@ -1,23 +1,34 @@
 package no.nav.doknotifikasjon.config;
 
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
-import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
-import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
+import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 
 @Slf4j
 @EnableKafka
 @Configuration
 public class KafkaConfig {
+
+	@Autowired
+	private KafkaProperties kafkaProperties;
 
 	@Bean("kafkaListenerContainerFactory")
 	@Primary
@@ -41,5 +52,15 @@ public class KafkaConfig {
 				),
 				new FixedBackOff(DEFAULT_INTERVAL, UNLIMITED_ATTEMPTS)));
 		return factory;
+	}
+
+	@Bean
+	public Map<String, Object> producerConfigs() {
+		Map<String, Object> configProps =
+				new HashMap<>(kafkaProperties.buildProducerProperties());
+		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "KAFKA_SCHEMA_REGISTRY");
+		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, "KAFKA_SCHEMA_REGISTRY_USER:KAFKA_SCHEMA_REGISTRY_PASSWORD");
+		configProps.put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO:KAFKA_SCHEMA_REGISTRY_PASSWORD");
+		return configProps;
 	}
 }
