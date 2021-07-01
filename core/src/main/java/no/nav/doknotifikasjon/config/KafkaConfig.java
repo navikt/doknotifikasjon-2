@@ -2,8 +2,8 @@ package no.nav.doknotifikasjon.config;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
+import javax.inject.Inject;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +27,23 @@ import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 @Configuration
 public class KafkaConfig {
 
-	@Autowired
 	private KafkaProperties kafkaProperties;
+
+	final String KAFKA_SCHEMA_REGISTRY;
+	final String b;
+
+	@Inject
+	public KafkaConfig(
+			@Value("KAFKA_SCHEMA_REGISTRY") String kafka_schema_registry,
+			@Value("KAFKA_SCHEMA_REGISTRY_USER") String KAFKA_SCHEMA_REGISTRY_USER,
+			@Value("KAFKA_SCHEMA_REGISTRY_PASSWORD") String KAFKA_SCHEMA_REGISTRY_PASSWORD,
+			KafkaProperties kafkaProperties
+	) {
+		this.KAFKA_SCHEMA_REGISTRY = kafka_schema_registry;
+		b = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
+
+		this.kafkaProperties = kafkaProperties;
+	}
 
 	@Bean("kafkaListenerContainerFactory")
 	@Primary
@@ -58,9 +73,9 @@ public class KafkaConfig {
 	public Map<String, Object> producerConfigs() {
 		Map<String, Object> configProps =
 				new HashMap<>(kafkaProperties.buildProducerProperties());
-		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "KAFKA_SCHEMA_REGISTRY");
-		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, "KAFKA_SCHEMA_REGISTRY_USER:KAFKA_SCHEMA_REGISTRY_PASSWORD");
-		configProps.put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO:KAFKA_SCHEMA_REGISTRY_PASSWORD");
+		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KAFKA_SCHEMA_REGISTRY);
+		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, b);
+		configProps.put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
 		return configProps;
 	}
 }
