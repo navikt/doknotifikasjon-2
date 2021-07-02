@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.config;
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -15,8 +14,6 @@ import org.springframework.util.backoff.FixedBackOff;
 
 import javax.inject.Inject;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
 import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
@@ -40,10 +37,10 @@ public class KafkaConfig {
 		basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
 
 		if (KAFKA_SCHEMA_REGISTRY_USER.isEmpty() || KAFKA_SCHEMA_REGISTRY_PASSWORD.isEmpty()) {
-			log.warn("WARN til Joakim/tim");
+			log.warn("WARN IF til Joakim/tim");
+		} else {
+			log.warn("WARN ELSE til Joakim/tim");
 		}
-
-		this.kafkaProperties = kafkaProperties;
 	}
 
 	@Bean("kafkaListenerContainerFactory")
