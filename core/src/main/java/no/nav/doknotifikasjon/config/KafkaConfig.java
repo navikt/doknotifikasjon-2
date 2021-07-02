@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.config;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +28,8 @@ public class KafkaConfig {
 
 	private KafkaProperties kafkaProperties;
 
-	final String KAFKA_SCHEMA_REGISTRY;
-	final String b;
+	final String schemaUrl;
+	final String basicAuth;
 
 	@Inject
 	public KafkaConfig(
@@ -39,8 +38,8 @@ public class KafkaConfig {
 			@Value("KAFKA_SCHEMA_REGISTRY_PASSWORD") String KAFKA_SCHEMA_REGISTRY_PASSWORD,
 			KafkaProperties kafkaProperties
 	) {
-		this.KAFKA_SCHEMA_REGISTRY = kafka_schema_registry;
-		b = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
+		this.schemaUrl = kafka_schema_registry;
+		basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
 
 		this.kafkaProperties = kafkaProperties;
 	}
@@ -73,8 +72,8 @@ public class KafkaConfig {
 	public Map<String, Object> kafkaProperties() {
 		Map<String, Object> configProps =
 				new HashMap<>(kafkaProperties.buildProducerProperties());
-		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KAFKA_SCHEMA_REGISTRY);
-		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, b);
+		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaUrl);
+		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, basicAuth);
 		configProps.put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
 		return configProps;
 	}
