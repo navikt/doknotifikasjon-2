@@ -42,7 +42,7 @@ public class KafkaConfig {
 		basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
 
 		if (KAFKA_SCHEMA_REGISTRY_USER.isEmpty() || KAFKA_SCHEMA_REGISTRY_PASSWORD.isEmpty()) {
-			log.warn("WARN til Joakim");
+			log.warn("WARN til Joakim/tim");
 		}
 
 		this.kafkaProperties = kafkaProperties;
