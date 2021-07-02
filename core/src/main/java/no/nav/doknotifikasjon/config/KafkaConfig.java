@@ -26,8 +26,6 @@ import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 @Configuration
 public class KafkaConfig {
 
-	private KafkaProperties kafkaProperties;
-
 	final String schemaUrl;
 	final String basicAuth;
 
@@ -70,15 +68,5 @@ public class KafkaConfig {
 				),
 				new FixedBackOff(DEFAULT_INTERVAL, UNLIMITED_ATTEMPTS)));
 		return factory;
-	}
-
-	@Bean
-	public Map<String, Object> kafkaProperties() {
-		Map<String, Object> configProps =
-				new HashMap<>(kafkaProperties.buildProducerProperties());
-		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaUrl);
-		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, basicAuth);
-		configProps.put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
-		return configProps;
 	}
 }
