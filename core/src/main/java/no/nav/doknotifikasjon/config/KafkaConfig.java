@@ -70,10 +70,10 @@ public class KafkaConfig {
 	}
 
 	@Bean
-	public Map<String, Object> producerConfigs() {
+	public Map<String, Object> kafkaProperties() {
 		Map<String, Object> configProps =
 				new HashMap<>(kafkaProperties.buildProducerProperties());
-		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KAFKA_SCHEMA_REGISTRY+"asdasdasdasd");
+		configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, KAFKA_SCHEMA_REGISTRY);
 		configProps.put(KafkaAvroDeserializerConfig.USER_INFO_CONFIG, b);
 		configProps.put(KafkaAvroDeserializerConfig.BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
 		return configProps;
