@@ -4,6 +4,7 @@ package no.nav.doknotifikasjon.consumer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
+import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO;
 
 
 @Slf4j
@@ -34,12 +36,32 @@ public class ProducerController {
 	@GetMapping("/test")
 	public void kafkaProduceMessage() {
 		List<PrefererteKanal> preferteKanaler = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
+//
+//		Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
+//				LocalDateTime.now().toString(),
+//				LocalDateTime.now().toString(),
+//				0,
+//				"09097400366", // FNR er fra en testbrukker hos dolly
+//				0,
+//				0,
+//				"TITTEL",
+//				"epostTekst",
+//				"smsTekst",
+//				preferteKanaler
+//		);
+//
+//		publisher.publish(
+//				KAFKA_TOPIC_DOK_NOTIFKASJON,
+//				dokEksternNotifikasjon
+//		);
 
-		Doknotifikasjon dokEksternNotifikasjon = new Doknotifikasjon(
+
+		NotifikasjonMedkontaktInfo dokEksternNotifikasjon = new NotifikasjonMedkontaktInfo(
 				LocalDateTime.now().toString(),
 				LocalDateTime.now().toString(),
-				0,
-				"09097400366", // FNR er fra en testbrukker hos dolly
+				"09097400366", // FNR er fra en testbrukker hos dolly,
+				"telef",
+				"epostadd",
 				0,
 				0,
 				"TITTEL",
@@ -49,9 +71,8 @@ public class ProducerController {
 		);
 
 		publisher.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON,
+				PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO,
 				dokEksternNotifikasjon
 		);
-
 	}
 }
