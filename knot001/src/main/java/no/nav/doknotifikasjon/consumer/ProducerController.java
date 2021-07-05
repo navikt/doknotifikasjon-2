@@ -76,7 +76,7 @@ public class ProducerController {
 
 		publisher.publish(
 				KAFKA_TOPIC_DOK_NOTIFKASJON,
-				dokEksternNotifikasjon
+				"dokEksternNotifikasjon"
 		);
 
 
