@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +16,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import java.util.Properties;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 
 
@@ -45,9 +43,6 @@ public class ProducerController {
 			@Value("${KAFKA_CREDSTORE_PASSWORD}") String KAFKA_CREDSTORE_PASSWORD
 	) {
 		this.publisher = publisher;
-
-		log.warn("test {}, {} ", KAFKA_BROKERS, KAFKA_SCHEMA_REGISTRY_USER);
-
 		this.schemaUrl = kafka_schema_registry;
 		this.basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
 		this.kafkaBrokers = KAFKA_BROKERS;
@@ -98,6 +93,7 @@ public class ProducerController {
 
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
+
 		props.put("schema.registry.url", schemaUrl);
 		props.put("basic.auth.credentials.source", "USER_INFO");
 		props.put("basic.auth.user.info", basicAuth);

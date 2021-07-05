@@ -23,25 +23,19 @@ import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 @Configuration
 public class KafkaConfig {
 
-	final String schemaUrl;
-	final String basicAuth;
-
-	@Inject
-	public KafkaConfig(
-			@Value("KAFKA_SCHEMA_REGISTRY") String kafka_schema_registry,
-			@Value("KAFKA_SCHEMA_REGISTRY_USER") String KAFKA_SCHEMA_REGISTRY_USER,
-			@Value("KAFKA_SCHEMA_REGISTRY_PASSWORD") String KAFKA_SCHEMA_REGISTRY_PASSWORD,
-			KafkaProperties kafkaProperties
-	) {
-		this.schemaUrl = kafka_schema_registry;
-		basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
-
-		if (KAFKA_SCHEMA_REGISTRY_USER.isEmpty() || KAFKA_SCHEMA_REGISTRY_PASSWORD.isEmpty()) {
-			log.warn("WARN IF til Joakim/tim");
-		} else {
-			log.warn("WARN ELSE til Joakim/tim");
-		}
-	}
+//	final String schemaUrl;
+//	final String basicAuth;
+//
+//	@Inject
+//	public KafkaConfig(
+//			@Value("KAFKA_SCHEMA_REGISTRY") String kafka_schema_registry,
+//			@Value("KAFKA_SCHEMA_REGISTRY_USER") String KAFKA_SCHEMA_REGISTRY_USER,
+//			@Value("KAFKA_SCHEMA_REGISTRY_PASSWORD") String KAFKA_SCHEMA_REGISTRY_PASSWORD,
+//			KafkaProperties kafkaProperties
+//	) {
+//		this.schemaUrl = kafka_schema_registry;
+//		basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
+//	}
 
 	@Bean("kafkaListenerContainerFactory")
 	@Primary
