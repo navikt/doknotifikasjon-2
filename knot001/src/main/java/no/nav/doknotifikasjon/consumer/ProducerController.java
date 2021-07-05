@@ -46,6 +46,8 @@ public class ProducerController {
 	) {
 		this.publisher = publisher;
 
+		log.warn(KAFKA_BROKERS);
+
 		this.schemaUrl = kafka_schema_registry;
 		this.basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
 		this.kafkaBrokers = KAFKA_BROKERS;
@@ -82,7 +84,7 @@ public class ProducerController {
 
 
 		final Properties props = new Properties();
-		props.put("bootstrap.servers", kafkaBrokers + ":localhost:9092");
+		props.put("bootstrap.servers", kafkaBrokers);
 
 		props.put("security.protocol", "SSL");
 		props.put("ssl.keystore.type", "PKCS12");
