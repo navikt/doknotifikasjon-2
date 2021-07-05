@@ -94,7 +94,7 @@ public class ProducerController {
 		props.put("ssl.keystore.password", kafkaCredstorePassword);
 		props.put("ssl.key.password", kafkaCredstorePassword);
 
-		props.put("key.serializer", "org.apache.kafka.common.serialization.StringDeserializer");
+		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
 		props.put("schema.registry.url", schemaUrl);
 		props.put("basic.auth.credentials.source", "USER_INFO");
