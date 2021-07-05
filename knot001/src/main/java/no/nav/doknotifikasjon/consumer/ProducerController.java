@@ -46,7 +46,7 @@ public class ProducerController {
 	) {
 		this.publisher = publisher;
 
-		log.warn(KAFKA_BROKERS);
+		log.warn("test {}, {} ", KAFKA_BROKERS, KAFKA_SCHEMA_REGISTRY_USER);
 
 		this.schemaUrl = kafka_schema_registry;
 		this.basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
