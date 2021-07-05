@@ -30,7 +30,7 @@
 //		this.publisher = publisher;
 //	}
 //
-//	//This code should not be in prod!
+//	This code should not be in prod!
 //	@GetMapping("/notifikasjon")
 //	public void kafkaProduceMessage() {
 //		List<PrefererteKanal> preferteKanaler = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
