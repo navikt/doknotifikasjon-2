@@ -1,8 +1,6 @@
 package no.nav.doknotifikasjon.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -12,7 +10,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
-import javax.inject.Inject;
 import java.time.Duration;
 
 import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
@@ -22,20 +19,6 @@ import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 @EnableKafka
 @Configuration
 public class KafkaConfig {
-
-//	final String schemaUrl;
-//	final String basicAuth;
-//
-//	@Inject
-//	public KafkaConfig(
-//			@Value("KAFKA_SCHEMA_REGISTRY") String kafka_schema_registry,
-//			@Value("KAFKA_SCHEMA_REGISTRY_USER") String KAFKA_SCHEMA_REGISTRY_USER,
-//			@Value("KAFKA_SCHEMA_REGISTRY_PASSWORD") String KAFKA_SCHEMA_REGISTRY_PASSWORD,
-//			KafkaProperties kafkaProperties
-//	) {
-//		this.schemaUrl = kafka_schema_registry;
-//		basicAuth = KAFKA_SCHEMA_REGISTRY_USER + ":" + KAFKA_SCHEMA_REGISTRY_PASSWORD;
-//	}
 
 	@Bean("kafkaListenerContainerFactory")
 	@Primary
