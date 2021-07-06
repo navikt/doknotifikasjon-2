@@ -53,7 +53,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: {{ SRVDOKNOTIFIKASJON-2 }}
+      - kvPath: {{ SRVDOKNOTIFIKASJON_2 }}
         mountPath: /var/run/secrets/nais.io/srvdoknotifikasjon-2
       - kvPath: {{ VAULT }}
         mountPath: /var/run/secrets/nais.io/vault

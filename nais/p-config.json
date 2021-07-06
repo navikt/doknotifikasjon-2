@@ -1,6 +1,6 @@
 {
   "KAFKA_POOL": "nav-prod",
-  "SRVDOKNOTIFIKASJON-2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
+  "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "DKIF_URL": "https://dkif.nais.adeo.no",
   "SIKKERHETSNIVAA_V1_URL": "https://sikkerhetsnivaa.nais.adeo.no",
