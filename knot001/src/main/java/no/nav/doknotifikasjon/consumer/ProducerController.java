@@ -17,7 +17,10 @@
 //import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
 //import static no.nav.doknotifikasjon.kafka.KafkaTopics.PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO;
 //
-//
+/*
+	RestController Brukes for å teste doknotifikasjon med å produsere records til knot001 og knot006. NB Denne koden skal kun brukes
+	til å teste mot dev og lokalt milø, må ikke være prod!
+* */
 //@Slf4j
 //@RestController
 //@RequestMapping("/kafka")
@@ -30,7 +33,9 @@
 //		this.publisher = publisher;
 //	}
 //
-//	//This code should not be in prod!
+/*
+	kafkaProduceMessage Brukes for å teste Knot001 med å produces a record to topic privat-dok-notifikasjon.
+* */
 //	@GetMapping("/notifikasjon")
 //	public void kafkaProduceMessage() {
 //		List<PrefererteKanal> preferteKanaler = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
@@ -55,6 +60,9 @@
 //		);
 //	}
 //
+/*
+	kafkaProduceMessage Brukes for å teste Knot006 med å produces a record to topic privat-dok-notifikasjon-med-kontakt-info.
+* */
 //	@GetMapping("/notifikasjonMedKontaktInfo")
 //	public void publishDoknotifikasjon() {
 //		List<PrefererteKanal> preferteKanaler = List.of(PrefererteKanal.EPOST, PrefererteKanal.SMS);
