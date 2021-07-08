@@ -9,10 +9,11 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
-import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
-import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 
 import java.time.Duration;
+
+import static org.springframework.util.backoff.FixedBackOff.DEFAULT_INTERVAL;
+import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 
 @Slf4j
 @EnableKafka

@@ -16,7 +16,6 @@ import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-
 import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
@@ -77,7 +76,7 @@ public class Knot001Consumer {
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.warn("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
-		} catch(DigitalKontaktinformasjonFunctionalException e) {
+		} catch (DigitalKontaktinformasjonFunctionalException e) {
 			log.warn("Funksjonell feil mot DKIF. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (SikkerhetsnivaaFunctionalException e) {

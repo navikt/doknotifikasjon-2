@@ -1,6 +1,7 @@
 {
-  "SRVDOKNOTIFIKASJON": "/serviceuser/data/dev/srvdoknotifikasjon",
-  "VAULT": "kv/preprod/fss/doknotifikasjon/default",
+  "KAFKA_POOL": "nav-dev",
+  "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/dev/srvdoknotifikasjon-2",
+  "VAULT": "kv/preprod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "DKIF_URL": "https://dkif.dev.adeo.no",
   "SIKKERHETSNIVAA_V1_URL": "https://sikkerhetsnivaa-q1.nais.preprod.local",
   "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",

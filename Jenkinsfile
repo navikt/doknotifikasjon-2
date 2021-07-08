@@ -1,5 +1,5 @@
 naiseratorPipeline {
-    applicationName = "doknotifikasjon"
+    applicationName = "doknotifikasjon-2"
     dockerfileDir = "."
     deployEnvironmentQ = "dev"
 }
