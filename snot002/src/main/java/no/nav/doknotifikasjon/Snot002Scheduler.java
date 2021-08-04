@@ -20,7 +20,8 @@ public class Snot002Scheduler {
 		this.leaderElection = leaderElection;
 	}
 
-	@Scheduled(cron = "0 0 1 * * *")
+	//TODO Legge Scheduled til når doknotifikasjon blir sannert
+	//@Scheduled(cron = "0 0 1 * * *")
 	public void scheduledJob() {
 		try {
 			if (leaderElection.isLeader()) {
