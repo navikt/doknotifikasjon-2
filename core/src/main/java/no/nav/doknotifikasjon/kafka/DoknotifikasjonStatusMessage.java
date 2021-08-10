@@ -11,8 +11,8 @@ public class DoknotifikasjonStatusMessage {
 	public static final String FERDIGSTILT_RENOTIFIKASJON_STANSET = "renotifikasjon er stanset";
 	public static final String FEILET_FUNCTIONAL_EXCEPTION_DKIF = "Funskjonell feil mot DigitalKontakinformasjon";
 	public static final String FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA = "Funksjonell feil mot sikkerhetsnivaa";
-	public static final String FEILET_TECHNICAL_EXCEPTION_DATABASE = "Funskjonell feil mot DigitalKontakinformasjon";
-	public static final String FEILET_SIKKERHETSNIVAA = "Feilet med DataIntegrityViolationException i databasen";
+	public static final String FEILET_TECHNICAL_EXCEPTION_DATABASE = "Feilet med DataIntegrityViolationException i databasen";
+	public static final String FEILET_SIKKERHETSNIVAA = "Mottaker har ikke tilgang til login med nivå 4";
 
 	public static final String OVERSENDT_NOTIFIKASJON_PROCESSED = "Notifikasjon er behandlet og distribusjon er bestilt";
 	public static final String FEILET_DATABASE_IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
