@@ -229,17 +229,17 @@ public class Knot001Service {
 	}
 
 	public void createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
-			NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
-					.notifikasjon(notifikasjon)
-					.status(Status.OPPRETTET)
-					.kanal(kanal)
-					.kontaktInfo(kontaktinformasjon)
-					.tittel(tittel)
-					.tekst(tekst)
-					.opprettetDato(LocalDateTime.now())
-					.opprettetAv(notifikasjon.getBestillingsId())
-					.build();
-			notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
+		NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
+				.notifikasjon(notifikasjon)
+				.status(Status.OPPRETTET)
+				.kanal(kanal)
+				.kontaktInfo(kontaktinformasjon)
+				.tittel(tittel)
+				.tekst(tekst)
+				.opprettetDato(LocalDateTime.now())
+				.opprettetAv(notifikasjon.getBestillingsId())
+				.build();
+		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
 	public void publishDoknotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
