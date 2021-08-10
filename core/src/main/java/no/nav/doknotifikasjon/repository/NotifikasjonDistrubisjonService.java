@@ -7,12 +7,12 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-
 import java.util.Optional;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
@@ -32,7 +32,7 @@ public class NotifikasjonDistrubisjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
 	public NotifikasjonDistribusjon save(NotifikasjonDistribusjon notifikasjonDistribusjon) {
 		try {
 			return notifikasjonDistribusjonRepository.save(notifikasjonDistribusjon);

@@ -9,6 +9,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
@@ -91,7 +93,17 @@ public class Knot006Service {
 			log.info("Knot006 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 
-		return notifkasjonService.save(notifikasjon);
+		try {
+			return notifkasjonService.save(notifikasjon);
+		} catch (DataIntegrityViolationException e) {
+			statusProducer.publishDoknotikfikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(),
+					doknotifikasjon.getBestillerId(),
+					FEILET_TECHNICAL_EXCEPTION_DATABASE,
+					null
+			);
+			throw e;
+		}
 	}
 
 

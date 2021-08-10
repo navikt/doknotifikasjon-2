@@ -18,6 +18,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import java.util.List;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DKIF;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
@@ -161,7 +163,7 @@ public class Knot001Service {
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
 
-		if (notifkasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
+		if (notifkasjonService.existsByBestillingsId("doknotifikasjon.getBestillingsId()")) {
 			statusProducer.publishDoknotikfikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
@@ -183,7 +185,17 @@ public class Knot001Service {
 			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 
-		return notifkasjonService.save(notifikasjon);
+		try {
+			return notifkasjonService.save(notifikasjon);
+		} catch (DataIntegrityViolationException e) {
+			statusProducer.publishDoknotikfikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(),
+					doknotifikasjon.getBestillerId(),
+					FEILET_TECHNICAL_EXCEPTION_DATABASE,
+					null
+			);
+			throw e;
+		}
 	}
 
 
@@ -217,17 +229,17 @@ public class Knot001Service {
 	}
 
 	public void createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
-		NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
-				.notifikasjon(notifikasjon)
-				.status(Status.OPPRETTET)
-				.kanal(kanal)
-				.kontaktInfo(kontaktinformasjon)
-				.tittel(tittel)
-				.tekst(tekst)
-				.opprettetDato(LocalDateTime.now())
-				.opprettetAv(notifikasjon.getBestillingsId())
-				.build();
-		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
+			NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
+					.notifikasjon(notifikasjon)
+					.status(Status.OPPRETTET)
+					.kanal(kanal)
+					.kontaktInfo(kontaktinformasjon)
+					.tittel(tittel)
+					.tekst(tekst)
+					.opprettetDato(LocalDateTime.now())
+					.opprettetAv(notifikasjon.getBestillingsId())
+					.build();
+			notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
 	public void publishDoknotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
