@@ -163,7 +163,7 @@ public class Knot001Service {
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
 
-		if (notifkasjonService.existsByBestillingsId("doknotifikasjon.getBestillingsId()")) {
+		if (notifkasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
 			statusProducer.publishDoknotikfikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
