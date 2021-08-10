@@ -14,6 +14,7 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -73,6 +74,9 @@ public class Knot006Consumer {
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
 			log.warn("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
+			metricService.metricHandleException(e);
+		} catch (DataIntegrityViolationException e) {
+			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} finally {
 			clearCallId();

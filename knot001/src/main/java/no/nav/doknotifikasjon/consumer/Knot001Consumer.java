@@ -14,6 +14,7 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import javax.inject.Inject;
@@ -81,6 +82,9 @@ public class Knot001Consumer {
 			metricService.metricHandleException(e);
 		} catch (SikkerhetsnivaaFunctionalException e) {
 			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
+			metricService.metricHandleException(e);
+		} catch (DataIntegrityViolationException e) {
+			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} finally {
 			clearCallId();

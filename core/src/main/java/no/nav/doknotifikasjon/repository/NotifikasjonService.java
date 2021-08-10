@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +30,7 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
 	public Notifikasjon save(Notifikasjon notifikasjon) {
 		return notifikasjonRepository.save(notifikasjon);
 	}
