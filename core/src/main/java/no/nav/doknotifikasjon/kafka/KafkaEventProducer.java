@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.errors.RetriableException;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.slf4j.MDC;
 import org.springframework.kafka.core.KafkaProducerException;
@@ -89,6 +90,8 @@ public class KafkaEventProducer {
 			}
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, executionException);
 		} catch (InterruptedException e) {
+			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
+		} catch (RetriableException e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
 		}
 	}
