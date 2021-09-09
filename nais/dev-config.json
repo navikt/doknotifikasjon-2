@@ -9,6 +9,6 @@
   "MOUNT_PATH": "postgresql/preprod-fss",
   "SEND_TIL_ALTINN": "false",
   "INGRESSES": [
-    "https://doknitifikasjon-2.dev.adeo.no"
+    "https://doknotifikasjon-2.dev.adeo.no"
   ]
 }
