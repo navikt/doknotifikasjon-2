@@ -14,6 +14,10 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
+
 @Slf4j
 @Component
 public class Knot004Service {
@@ -51,8 +55,26 @@ public class Knot004Service {
 
 		if (doknotifikasjonStatusTo.getDistribusjonId() != null) {
 			handleEventWithDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
-		} else {
+		} else if(statusIsNewerThanPreviousStatus(doknotifikasjonStatusTo, notifikasjon)){
 			handleEventWithoutDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
+		}
+	}
+
+	boolean statusIsNewerThanPreviousStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo, Notifikasjon notifikasjon) {
+		Status newStatus = doknotifikasjonStatusTo.getStatus();
+
+		switch (notifikasjon.getStatus()) {
+			case OPPRETTET:
+				return (OVERSENDT.equals(newStatus)
+						|| FERDIGSTILT.equals(newStatus)
+						|| FEILET.equals(newStatus));
+			case OVERSENDT:
+				return (FERDIGSTILT.equals(newStatus)
+						|| FEILET.equals(newStatus));
+			case FERDIGSTILT:
+				return(FEILET.equals(newStatus));
+			default:
+				return false; //Default gjeller notifikasjonsStatus Feilet
 		}
 	}
 
