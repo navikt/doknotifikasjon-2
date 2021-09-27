@@ -115,14 +115,14 @@ class Knot004ITest extends EmbededKafkaBroker {
 
 	@Test
 	void shouldPublishNewHendelseWhenDistribusjonIdIsNotZeroAndInputStatusEqualsNotifikasjonStatus() {
-		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET));
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), FEILET));
 
-		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID_2, OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID);
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID_2, FEILET.toString(), MELDING, DISTRIBUSJON_ID);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-			assertEquals(OPPRETTET, updatedNotifikasjon.getStatus());
+			assertEquals(FEILET, updatedNotifikasjon.getStatus());
 			assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
 			assertNotNull(updatedNotifikasjon.getEndretDato());
 		});

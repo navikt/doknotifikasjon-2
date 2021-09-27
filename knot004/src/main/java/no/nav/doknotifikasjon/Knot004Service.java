@@ -116,7 +116,9 @@ public class Knot004Service {
 	}
 
 	private boolean isAllDistribusjonStatusEqualInputStatus(Set<NotifikasjonDistribusjon> notifikasjonDistribusjonsSet, Status inputStatus) {
-		if (notifikasjonDistribusjonsSet.isEmpty()) {
+		if (FERDIGSTILT.equals(inputStatus)) {
+			return true;
+		} else if (notifikasjonDistribusjonsSet.isEmpty()) {
 			return false;
 		} else {
 			for (NotifikasjonDistribusjon notifikasjonDistribusjon : notifikasjonDistribusjonsSet) {
