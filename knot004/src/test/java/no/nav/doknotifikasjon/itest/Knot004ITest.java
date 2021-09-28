@@ -73,7 +73,13 @@ class Knot004ITest extends EmbededKafkaBroker {
 
 	@Test
 	void shouldNotUpdateStatusWhenInputStatusIsInfo() {
-		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID_2, INFO.toString(), MELDING, null);
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(
+				BESTILLINGS_ID,
+				BESTILLER_ID_2,
+				INFO.toString(),
+				MELDING,
+				null
+		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
 		await().pollInterval(500, MILLISECONDS).atMost(10, SECONDS).untilAsserted(() ->
@@ -105,13 +111,14 @@ class Knot004ITest extends EmbededKafkaBroker {
 				BESTILLINGS_ID,
 				BESTILLER_ID_2,
 				FERDIGSTILT.toString(),
-				MELDING, null
+				MELDING,
+				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
 		await().pollInterval(500, MILLISECONDS).atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-			assertEquals(OPPRETTET.toString(), updatedNotifikasjon.getStatus().toString());
+			assertEquals(OPPRETTET, updatedNotifikasjon.getStatus());
 			assertNull(updatedNotifikasjon.getEndretAv());
 			assertNull(updatedNotifikasjon.getEndretDato());
 		});
@@ -132,7 +139,7 @@ class Knot004ITest extends EmbededKafkaBroker {
 
 		await().pollInterval(500, MILLISECONDS).atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-			assertEquals(OPPRETTET.toString(), updatedNotifikasjon.getStatus().toString());
+			assertEquals(OPPRETTET, updatedNotifikasjon.getStatus());
 			assertNull(updatedNotifikasjon.getEndretAv());
 			assertNull(updatedNotifikasjon.getEndretDato());
 		});
@@ -163,7 +170,7 @@ class Knot004ITest extends EmbededKafkaBroker {
 	void shouldNotPublishNewHendelseWhenDistribusjonIdIsNotZeroAndInputStatusNotEqualsOneNotifikasjonStatus() {
 		Notifikasjon notifikasjon = createNotifikasjon();
 		NotifikasjonDistribusjon notifikasjonDistribusjon_1 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, OVERSENDT);
-		NotifikasjonDistribusjon notifikasjonDistribusjon_2 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, FEILET);
+		NotifikasjonDistribusjon notifikasjonDistribusjon_2 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, FERDIGSTILT);
 		notifikasjon.setNotifikasjonDistribusjon(Set.of(notifikasjonDistribusjon_1, notifikasjonDistribusjon_2));
 
 		notifikasjonRepository.saveAndFlush(notifikasjon);
@@ -179,9 +186,35 @@ class Knot004ITest extends EmbededKafkaBroker {
 
 		await().pollInterval(500, MILLISECONDS).atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
-			assertEquals(OPPRETTET.toString(), updatedNotifikasjon.getStatus().toString());
+			assertEquals(OPPRETTET, updatedNotifikasjon.getStatus());
 			assertNull(updatedNotifikasjon.getEndretAv());
 			assertNull(updatedNotifikasjon.getEndretDato());
+		});
+	}
+
+	@Test
+	void shouldUpdateNotifikasjonWhenOneNotifikasjonDistrubisjonHaveStatusFeilet() {
+		Notifikasjon notifikasjon = createNotifikasjon();
+		NotifikasjonDistribusjon notifikasjonDistribusjon_1 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, OVERSENDT);
+		NotifikasjonDistribusjon notifikasjonDistribusjon_2 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, FEILET);
+		notifikasjon.setNotifikasjonDistribusjon(Set.of(notifikasjonDistribusjon_1, notifikasjonDistribusjon_2));
+
+		notifikasjonRepository.saveAndFlush(notifikasjon);
+
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(
+				BESTILLINGS_ID,
+				BESTILLER_ID_2,
+				FEILET.toString(),
+				MELDING,
+				DISTRIBUSJON_ID
+		);
+		putMessageOnKafkaTopic(doknotifikasjonStatus);
+
+		await().pollInterval(500, MILLISECONDS).atMost(10, SECONDS).untilAsserted(() -> {
+			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			assertEquals(FEILET, updatedNotifikasjon.getStatus());
+			assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
+			assertNotNull(updatedNotifikasjon.getEndretDato());
 		});
 	}
 
