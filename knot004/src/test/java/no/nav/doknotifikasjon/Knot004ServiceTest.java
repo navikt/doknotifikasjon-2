@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Knot004ServiceTest {
 
-	Knot004Service knot004Service = new Knot004Service(null, null , null, null);
+	Knot004Service knot004Service = new Knot004Service(null, null, null, null);
 
 	@Test
-	public void ShouldUpdateStatusOpprettetoOversendt() {
+	public void shouldUpdateStatusOpprettetoOversendt() {
 		Notifikasjon notifikasjon = new Notifikasjon();
 		notifikasjon.setStatus(OPPRETTET);
 		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
@@ -27,7 +27,7 @@ public class Knot004ServiceTest {
 	}
 
 	@Test
-	public void ShouldUpdateStatusOversendtToFerdigstilt() {
+	public void shouldUpdateStatusOversendtToFerdigstilt() {
 		Notifikasjon notifikasjon = new Notifikasjon();
 		notifikasjon.setStatus(OVERSENDT);
 		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(FERDIGSTILT);
@@ -38,7 +38,7 @@ public class Knot004ServiceTest {
 	}
 
 	@Test
-	public void ShouldUpdateStatusFerdigstiltToFeilet() {
+	public void shouldUpdateStatusFerdigstiltToFeilet() {
 		Notifikasjon notifikasjon = new Notifikasjon();
 		notifikasjon.setStatus(FERDIGSTILT);
 		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(FEILET);
@@ -49,7 +49,7 @@ public class Knot004ServiceTest {
 	}
 
 	@Test
-	public void ShouldNotUpdateStatusFerdigstiltToOversendt() {
+	public void shouldNotUpdateStatusFerdigstiltToOversendt() {
 		Notifikasjon notifikasjon = new Notifikasjon();
 		notifikasjon.setStatus(FERDIGSTILT);
 		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
@@ -60,7 +60,7 @@ public class Knot004ServiceTest {
 	}
 
 	@Test
-	public void ShouldNotUpdateStatusFeiletToOversendt() {
+	public void shouldNotUpdateStatusFeiletToOversendt() {
 		Notifikasjon notifikasjon = new Notifikasjon();
 		notifikasjon.setStatus(FEILET);
 		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
@@ -71,7 +71,6 @@ public class Knot004ServiceTest {
 	}
 
 	private DoknotifikasjonStatusTo doknotifikasjonStatusBuilder(Status status) {
-		return new DoknotifikasjonStatusTo(null,null, status,null,null);
+		return new DoknotifikasjonStatusTo(null, null, status, null, null);
 	}
-
 }

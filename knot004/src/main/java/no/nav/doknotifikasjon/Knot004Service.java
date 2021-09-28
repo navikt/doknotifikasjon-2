@@ -45,7 +45,7 @@ public class Knot004Service {
 		metricService.metricKnot004Status(doknotifikasjonStatusTo.getStatus());
 
 		if (INFO.equals(doknotifikasjonStatusTo.getStatus())) {
-			log.info("Input status={}. Behandling av hendelse avsluttes.", INFO);
+			log.info("Melding med status {} skal ikke oppdatere status. Avslutter behandlingen.", INFO);
 			return;
 		}
 
@@ -67,20 +67,9 @@ public class Knot004Service {
 
 	boolean statusIsNewerThanPreviousStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo, Notifikasjon notifikasjon) {
 		Status newStatus = doknotifikasjonStatusTo.getStatus();
+		Status oldStatus = notifikasjon.getStatus();
 
-		switch (notifikasjon.getStatus()) {
-			case OPPRETTET:
-				return (OVERSENDT.equals(newStatus)
-						|| FERDIGSTILT.equals(newStatus)
-						|| FEILET.equals(newStatus));
-			case OVERSENDT:
-				return (FERDIGSTILT.equals(newStatus)
-						|| FEILET.equals(newStatus));
-			case FERDIGSTILT:
-				return (FEILET.equals(newStatus));
-			default:
-				return false; //Default gjeller notifikasjonsStatus Feilet
-		}
+		return newStatus.getPriority() > oldStatus.getPriority();
 	}
 
 	private void handleEventWithDistribusjonId(Notifikasjon notifikasjon, DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
