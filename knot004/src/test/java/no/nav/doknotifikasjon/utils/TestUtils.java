@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.utils;
 
-import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
@@ -8,15 +7,17 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
+
 public final class TestUtils {
 
 	public static final String BESTILLINGS_ID = "1234-5678-9101";
 	public static final String BESTILLER_ID = "teamdokumenthandtering";
 	public static final String BESTILLER_ID_2 = "teamsaf";
 	public static final String MELDING = "Heiheihei";
-	public static final int ANTALL_RENOTIFIKASJONER = 3;
+	public static final int ANTALL_RENOTIFIKASJONER = 0;
 	public static final Long DISTRIBUSJON_ID = 987654321L;
-	public static final Status STATUS_OPPRETTET = Status.OPPRETTET;
 	private static final String KONTAKTINFO = "Hallohallo";
 	private static final String TITTEL = "Melding";
 	private static final String TEKST = "Lang tekst";
@@ -30,10 +31,21 @@ public final class TestUtils {
 		return Notifikasjon.builder()
 				.bestillingsId(BESTILLINGS_ID)
 				.bestillerId(BESTILLER_ID)
-				.status(Status.FEILET)
+				.status(OPPRETTET)
 				.notifikasjonDistribusjon(Collections.emptySet())
 				.opprettetDato(OPPRETTET_DATO)
 				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
+				.build();
+	}
+
+	public static Notifikasjon createNotifikasjonWithRenotifikasjoner() {
+		return Notifikasjon.builder()
+				.bestillingsId(BESTILLINGS_ID)
+				.bestillerId(BESTILLER_ID)
+				.status(OPPRETTET)
+				.notifikasjonDistribusjon(Collections.emptySet())
+				.opprettetDato(OPPRETTET_DATO)
+				.antallRenotifikasjoner(3)
 				.build();
 	}
 
@@ -41,7 +53,7 @@ public final class TestUtils {
 		return NotifikasjonDistribusjon.builder()
 				.notifikasjon(notifikasjon)
 				.status(status)
-				.kanal(Kanal.SMS)
+				.kanal(SMS)
 				.kontaktInfo(KONTAKTINFO)
 				.tittel(TITTEL)
 				.tekst(TEKST)

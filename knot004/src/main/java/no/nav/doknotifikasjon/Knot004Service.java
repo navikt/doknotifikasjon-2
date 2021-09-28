@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
-import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -14,6 +13,11 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.INFO;
+
 @Slf4j
 @Component
 public class Knot004Service {
@@ -24,8 +28,12 @@ public class Knot004Service {
 	private final MetricService metricService;
 
 	@Inject
-	public Knot004Service(NotifikasjonService notifikasjonService, DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
-						  KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer, MetricService metricService) {
+	public Knot004Service(
+			NotifikasjonService notifikasjonService,
+			DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
+			KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer,
+			MetricService metricService
+	) {
 		this.notifikasjonService = notifikasjonService;
 		this.doknotifikasjonStatusValidator = doknotifikasjonStatusValidator;
 		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
@@ -35,8 +43,8 @@ public class Knot004Service {
 	public void shouldUpdateStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
 		metricService.metricKnot004Status(doknotifikasjonStatusTo.getStatus());
 
-		if (Status.INFO.equals(doknotifikasjonStatusTo.getStatus())) {
-			log.info("Input status={}. Behandling av hendelse avsluttes.", Status.INFO);
+		if (INFO.equals(doknotifikasjonStatusTo.getStatus())) {
+			log.info("Melding med status {} skal ikke oppdatere status. Avslutter behandlingen.", INFO);
 			return;
 		}
 
@@ -51,15 +59,25 @@ public class Knot004Service {
 
 		if (doknotifikasjonStatusTo.getDistribusjonId() != null) {
 			handleEventWithDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
-		} else {
+		} else if (statusIsNewerThanPreviousStatus(doknotifikasjonStatusTo, notifikasjon)) {
 			handleEventWithoutDistribusjonId(notifikasjon, doknotifikasjonStatusTo);
 		}
 	}
 
+	boolean statusIsNewerThanPreviousStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo, Notifikasjon notifikasjon) {
+		Status newStatus = doknotifikasjonStatusTo.getStatus();
+		Status oldStatus = notifikasjon.getStatus();
+
+		return newStatus.getPriority() > oldStatus.getPriority();
+	}
+
 	private void handleEventWithDistribusjonId(Notifikasjon notifikasjon, DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
 		if (isAllDistribusjonStatusEqualInputStatus(notifikasjon.getNotifikasjonDistribusjon(), doknotifikasjonStatusTo.getStatus())) {
-			log.info("Alle distribusjoner knyttet til notifikasjon med bestillingsId={} har status={}. Ny hendelse skrives til kafka-topic={}.", doknotifikasjonStatusTo
-					.getBestillingsId(), doknotifikasjonStatusTo.getStatus(), KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS);
+			log.info("Alle distribusjoner knyttet til notifikasjon med bestillingsId={} har status={}. Ny hendelse skrives til kafka-topic={}.",
+					doknotifikasjonStatusTo.getBestillingsId(),
+					doknotifikasjonStatusTo.getStatus(),
+					KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS
+			);
 			publishNewDoknotifikasjonStatus(doknotifikasjonStatusTo);
 		} else {
 			log.info("Hendelsen på kafka-topic dok-eksternnotifikasjon-status har distribusjonsId. Avslutter behandlingen av hendelsen. ");
@@ -67,10 +85,11 @@ public class Knot004Service {
 	}
 
 	private void handleEventWithoutDistribusjonId(Notifikasjon notifikasjon, DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
-		if (Status.FERDIGSTILT.equals(doknotifikasjonStatusTo.getStatus()) && notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) {
-			log.info("En hendelse på kafka-topic {} har status={} og notifikasjonen knyttet til " +
-					"hendelsen har mer enn null antall renotifikasjoner. Behandlingen av hendelsen avsluttes. ", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, Status.FERDIGSTILT
-					.toString());
+		if (FERDIGSTILT.equals(doknotifikasjonStatusTo.getStatus()) && notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) {
+			log.info("En hendelse på kafka-topic {} har status={} og notifikasjonen knyttet til hendelsen har mer enn null antall renotifikasjoner. Behandlingen av hendelsen avsluttes. ",
+					KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+					FERDIGSTILT.toString()
+			);
 		} else {
 			notifikasjon.setStatus(doknotifikasjonStatusTo.getStatus());
 			notifikasjon.setEndretAv(doknotifikasjonStatusTo.getBestillerId());
@@ -82,13 +101,19 @@ public class Knot004Service {
 	}
 
 	private void publishNewDoknotifikasjonStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
-		kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatus(doknotifikasjonStatusTo.getBestillingsId(),
-				doknotifikasjonStatusTo.getBestillerId(), doknotifikasjonStatusTo.getStatus(), "notifikasjon er "
-						+ doknotifikasjonStatusTo.getStatus(), null);
+		kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatus(
+				doknotifikasjonStatusTo.getBestillingsId(),
+				doknotifikasjonStatusTo.getBestillerId(),
+				doknotifikasjonStatusTo.getStatus(),
+				"notifikasjon er " + doknotifikasjonStatusTo.getStatus(),
+				null
+		);
 	}
 
 	private boolean isAllDistribusjonStatusEqualInputStatus(Set<NotifikasjonDistribusjon> notifikasjonDistribusjonsSet, Status inputStatus) {
-		if (notifikasjonDistribusjonsSet.isEmpty()) {
+		if (FEILET.equals(inputStatus)) {
+			return true;
+		} else if (notifikasjonDistribusjonsSet.isEmpty()) {
 			return false;
 		} else {
 			for (NotifikasjonDistribusjon notifikasjonDistribusjon : notifikasjonDistribusjonsSet) {

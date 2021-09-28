@@ -1,13 +1,14 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
+import no.nav.doknotifikasjon.kodeverk.Status;
 import org.junit.Test;
 
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLINGS_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.DISTRIBUSJON_ID;
 import static no.nav.doknotifikasjon.utils.TestUtils.MELDING;
-import static no.nav.doknotifikasjon.utils.TestUtils.STATUS_OPPRETTET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -17,17 +18,17 @@ public class DoknotifikasjonStatusValidatorTest {
 
 	@Test
 	public void shouldValidateInput() {
-		doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID));
+		doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, OPPRETTET, MELDING, DISTRIBUSJON_ID));
 	}
 
 	@Test
 	public void shouldValidateWithoutDistribusjonIdSet() {
-		doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, STATUS_OPPRETTET, MELDING, null));
+		doknotifikasjonStatusValidator.validateInput(new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, OPPRETTET, MELDING, null));
 	}
 
 	@Test
 	public void shouldNotValidateWithoutBestillingsId() {
-		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo(null, BESTILLINGS_ID, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
+		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo(null, BESTILLINGS_ID, OPPRETTET, MELDING, DISTRIBUSJON_ID);
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
@@ -36,7 +37,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 	@Test
 	public void shouldNotValidateWithoutBestillerId() {
-		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo(BESTILLER_ID, null, STATUS_OPPRETTET, MELDING, DISTRIBUSJON_ID);
+		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo(BESTILLER_ID, null, OPPRETTET, MELDING, DISTRIBUSJON_ID);
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
@@ -45,7 +46,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 	@Test
 	public void shouldNotValidateWithoutMelding() {
-		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, STATUS_OPPRETTET, null, DISTRIBUSJON_ID);
+		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo(BESTILLER_ID, BESTILLINGS_ID, OPPRETTET, null, DISTRIBUSJON_ID);
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));

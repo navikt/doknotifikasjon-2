@@ -4,6 +4,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.junit.jupiter.api.Test;
 
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -13,7 +14,7 @@ class DoknotifikasjonStatusMapperTest {
 
 	@Test
 	void shouldMap() {
-		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID, STATUS_OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID);
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(BESTILLINGS_ID, BESTILLER_ID, OPPRETTET.toString(), MELDING, DISTRIBUSJON_ID);
 
 		DoknotifikasjonStatusTo doknotifikasjonStatusTo = doknotifikasjonStatusMapper.map(doknotifikasjonStatus);
 
