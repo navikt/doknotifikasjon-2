@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
-import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -116,7 +115,7 @@ public class Knot004Service {
 	}
 
 	private boolean isAllDistribusjonStatusEqualInputStatus(Set<NotifikasjonDistribusjon> notifikasjonDistribusjonsSet, Status inputStatus) {
-		if (FERDIGSTILT.equals(inputStatus)) {
+		if (FEILET.equals(inputStatus)) {
 			return true;
 		} else if (notifikasjonDistribusjonsSet.isEmpty()) {
 			return false;

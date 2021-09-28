@@ -3,7 +3,6 @@ package no.nav.doknotifikasjon;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
-import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
@@ -17,6 +16,8 @@ import java.util.List;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 
 @Slf4j
 @Component
@@ -40,7 +41,11 @@ public class Snot001Service {
 	public void resendNotifikasjoner() {
 		log.info("Starter Snot001 for å finne notifikasjoner som skal resendes.");
 
-		List<Notifikasjon> notifikasjonList = notifikasjonService.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status.OVERSENDT, 0, LocalDate.now());
+		List<Notifikasjon> notifikasjonList = notifikasjonService.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(
+				OVERSENDT,
+				0,
+				LocalDate.now()
+		);
 
 		if (notifikasjonList.isEmpty()) {
 			log.info("Ingen notifikasjoner ble funnet for resending. Avslutter snot001.");
@@ -64,8 +69,8 @@ public class Snot001Service {
 
 	private void publishHendelseOnTopic(int notifikasjonDistribusjonId, Kanal kanal, String bestillingsId) {
 		kafkaEventProducer.publishWithKey(
-				kanal.equals(Kanal.SMS) ? KAFKA_TOPIC_DOK_NOTIFKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
-				kanal.equals(Kanal.SMS) ? new DoknotifikasjonSms(notifikasjonDistribusjonId) : new DoknotifikasjonEpost(notifikasjonDistribusjonId),
+				kanal.equals(SMS) ? KAFKA_TOPIC_DOK_NOTIFKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+				kanal.equals(SMS) ? new DoknotifikasjonSms(notifikasjonDistribusjonId) : new DoknotifikasjonEpost(notifikasjonDistribusjonId),
 				bestillingsId
 		);
 	}
