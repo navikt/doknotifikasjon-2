@@ -17,7 +17,6 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJ
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.INFO;
-import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 
 @Slf4j
 @Component
@@ -75,8 +74,7 @@ public class Knot004Service {
 	private void handleEventWithDistribusjonId(Notifikasjon notifikasjon, DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
 		if (isAllDistribusjonStatusEqualInputStatus(notifikasjon.getNotifikasjonDistribusjon(), doknotifikasjonStatusTo.getStatus())) {
 			log.info("Alle distribusjoner knyttet til notifikasjon med bestillingsId={} har status={}. Ny hendelse skrives til kafka-topic={}.",
-					doknotifikasjonStatusTo
-					.getBestillingsId(),
+					doknotifikasjonStatusTo.getBestillingsId(),
 					doknotifikasjonStatusTo.getStatus(),
 					KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS
 			);

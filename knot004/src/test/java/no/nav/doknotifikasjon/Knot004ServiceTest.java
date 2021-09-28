@@ -16,7 +16,7 @@ public class Knot004ServiceTest {
 	Knot004Service knot004Service = new Knot004Service(null, null, null, null);
 
 	@Test
-	public void shouldUpdateStatusOpprettetoOversendt() {
+	public void shouldUpdateStatusFromOpprettetToOversendt() {
 		Notifikasjon notifikasjon = new Notifikasjon();
 		notifikasjon.setStatus(OPPRETTET);
 		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
