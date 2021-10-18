@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjon;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidAntallRenotifikasjoner;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidFnr;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -36,6 +37,13 @@ class DoknotifikasjonValidatorTest {
 
 		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
+		);
+	}
+
+	@Test
+	void shouldFelAvroSchemaWhenSendingAvroSchemaWithInvalidFnr() {
+		assertThrows(InvalidAvroSchemaFieldException.class, () ->
+				doknotifikasjonValidator.validate(createDoknotifikasjonWithInvalidFnr())
 		);
 	}
 
