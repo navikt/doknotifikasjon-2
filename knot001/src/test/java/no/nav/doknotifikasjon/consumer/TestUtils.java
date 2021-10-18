@@ -13,7 +13,7 @@ public final class TestUtils {
 
 	public static final String BESTILLINGS_ID = "bestillingsId";
 	public static final String BESTILLER_ID = "bestillerId";
-	public static final String FODSELSNUMMER = "123456789012341";
+	public static final String FODSELSNUMMER = "12345678901";
 	public static final int SIKKERHETSNIVAA = 0;
 	public static final int ANTALL_RENOTIFIKASJONER = 20;
 	public static final int RENOTIFIKASJON_INTERVALL = 20;
@@ -33,6 +33,21 @@ public final class TestUtils {
 				BESTILLER_ID,
 				SIKKERHETSNIVAA,
 				FODSELSNUMMER,
+				ANTALL_RENOTIFIKASJONER,
+				RENOTIFIKASJON_INTERVALL,
+				TITTEL,
+				EPOST_TEKST,
+				EPOST_SMS,
+				PREFERTE_KANALER
+		);
+	}
+
+	public static Doknotifikasjon createDoknotifikasjonWithInvalidFnr() {
+		return new Doknotifikasjon(
+				BESTILLINGS_ID,
+				BESTILLER_ID,
+				SIKKERHETSNIVAA,
+				"123",
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
 				TITTEL,

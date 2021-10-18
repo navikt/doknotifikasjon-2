@@ -10,7 +10,7 @@ public final class TestUtils {
 
 	public static final String BESTILLINGS_ID = "bestillingsId";
 	public static final String BESTILLER_ID = "bestillerId";
-	public static final String FODSELSNUMMER = "123456789012341";
+	public static final String FODSELSNUMMER = "12345678901";
 	public static final int ANTALL_RENOTIFIKASJONER = 20;
 	public static final int RENOTIFIKASJON_INTERVALL = 20;
 	public static final String TITTEL = "tittel";

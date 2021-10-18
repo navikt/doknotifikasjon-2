@@ -5,6 +5,7 @@ import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldExcepti
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.springframework.stereotype.Component;
+import io.micrometer.core.instrument.util.StringUtils;
 
 import javax.inject.Inject;
 
@@ -38,6 +39,16 @@ public class DoknotifikasjonValidator {
 		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
 		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
 
+		if (doknotifikasjon.getFodselsnummer().trim().length() != 11) {
+			statusProducer.publishDoknotikfikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(),
+					doknotifikasjon.getBestillerId(),
+					"påkrevd felt fodselsnummer er påkrevd til å være 11 siffer",
+					null
+			);
+			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+		}
+
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
 			statusProducer.publishDoknotikfikasjonStatusFeilet(
@@ -53,8 +64,8 @@ public class DoknotifikasjonValidator {
 	}
 
 	public void validateString(Doknotifikasjon doknotifikasjon, String string, int maxLength, String fieldName) {
-		if (string == null || string.trim().isEmpty() || string.length() > maxLength) {
-			String addedString = string == null || string.trim().isEmpty() ? " ikke satt" : " har for lang string lengde";
+		if (StringUtils.isBlank(string) || string.length() > maxLength) {
+			String addedString = StringUtils.isBlank(string) ? " ikke satt" : " har for lang string lengde";
 
 			statusProducer.publishDoknotikfikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
@@ -71,7 +82,7 @@ public class DoknotifikasjonValidator {
 			Doknotifikasjon doknotifikasjon,
 			Integer NumberToValidate,
 			String fieldName
-	){
+	) {
 		if (NumberToValidate != null && NumberToValidate > 30) {
 			statusProducer.publishDoknotikfikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),

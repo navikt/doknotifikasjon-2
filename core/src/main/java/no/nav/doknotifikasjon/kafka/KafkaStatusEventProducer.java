@@ -41,7 +41,7 @@ public class KafkaStatusEventProducer {
 													String melding, Long distribusjonId) {
 		this.publishDoknotifikasjonStatus(
 				bestillingsId == null ? "Ukjent" : bestillingsId,
-				bestillerId == null ? "Ukjent" : bestillingsId,
+				bestillerId == null ? "Ukjent" : bestillerId,
 				Status.FEILET,
 				melding,
 				distribusjonId
