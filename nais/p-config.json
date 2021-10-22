@@ -8,6 +8,8 @@
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "MOUNT_PATH": "postgresql/prod-fss",
   "SEND_TIL_ALTINN": "true",
+  "MIN_REPLICAS": "2",
+  "MAX_REPLICAS": "10",
   "INGRESSES": [
     "https://doknotifikasjon-2.nais.adeo.no"
   ]
