@@ -8,6 +8,8 @@
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "MOUNT_PATH": "postgresql/preprod-fss",
   "SEND_TIL_ALTINN": "false",
+  "MIN_REPLICAS": "1",
+  "MAX_REPLICAS": "2",
   "INGRESSES": [
     "https://doknotifikasjon-2.dev.adeo.no"
   ]
