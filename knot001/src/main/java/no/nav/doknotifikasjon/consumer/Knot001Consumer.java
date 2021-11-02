@@ -17,6 +17,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
@@ -50,12 +51,12 @@ public class Knot001Consumer {
 		this.metricService = metricService;
 	}
 
-	@SneakyThrows
 	@KafkaListener(
 			topics = KAFKA_TOPIC_DOK_NOTIFKASJON,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot001"
 	)
+	@Transactional
 	@Metrics(value = DOK_KNOT001_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());

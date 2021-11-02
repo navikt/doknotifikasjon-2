@@ -5,11 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
-import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
@@ -17,6 +14,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
@@ -56,6 +54,7 @@ public class Knot006Consumer {
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot006"
 	)
+	@Transactional
 	@Metrics(value = DOK_KNOT006_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());
