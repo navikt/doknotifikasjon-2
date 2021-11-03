@@ -2,20 +2,18 @@ package no.nav.doknotifikasjon.kafka;
 
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.technical.AuthenticationFailedException;
 import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.errors.RetriableException;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.slf4j.MDC;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -59,7 +57,6 @@ public class KafkaEventProducer {
 		);
 	}
 
-	@Transactional
 	void publish(
 			String topic,
 			Object event,
@@ -85,13 +82,11 @@ public class KafkaEventProducer {
 			if (executionException.getCause() instanceof KafkaProducerException) {
 				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
 				if (kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
-					throw new AuthenticationFailedException(KAFKA_NOT_AUTHENTICATED + topic, kafkaProducerException.getCause());
+					throw new KafkaTechnicalException(KAFKA_NOT_AUTHENTICATED + topic, kafkaProducerException.getCause());
 				}
 			}
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, executionException);
-		} catch (InterruptedException e) {
-			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
-		} catch (RetriableException e) {
+		} catch (InterruptedException | KafkaException e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
 		}
 	}
