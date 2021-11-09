@@ -33,7 +33,7 @@ public final class TestUtils {
 		return Notifikasjon.builder()
 				.bestillingsId(BESTILLINGS_ID)
 				.bestillerId(BESTILLER_ID)
-				.status(Status.FEILET)
+				.status(Status.OVERSENDT)
 				.notifikasjonDistribusjon(Collections.emptySet())
 				.opprettetDato(OPPRETTET_DATO)
 				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)

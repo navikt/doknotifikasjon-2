@@ -23,6 +23,7 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_S
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_STATUS;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 
 @Slf4j
 @Component
@@ -79,7 +80,7 @@ public class Knot002Service {
 	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Notifikasjon notifikasjon) {
 		return Status.OPPRETTET.equals(doknotifikasjonSmsObject.getDistribusjonStatus())
 				&& Kanal.SMS.equals(doknotifikasjonSmsObject.getKanal())
-				&& notifikasjon.getStatus() != FEILET;
+				&& notifikasjon.getStatus() != FERDIGSTILT;
 	}
 
 	private void publishStatus(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Status status, String melding) {
