@@ -22,6 +22,7 @@ import java.util.Optional;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_EPOST_UGYLDIG_KANAL;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_EPOST_UGYLDIG_STATUS;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 
 @Slf4j
 @Component
@@ -50,9 +51,9 @@ public class Knot003Service {
 
 		DoknotifikasjonEpostObject doknotifikasjonEpostObject = knot003Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
-		if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostObject)) {
+		if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostObject, notifikasjon)) {
 			String melding = doknotifikasjonEpostObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
-			publishStatus(doknotifikasjonEpostObject, Status.FEILET, melding);
+			publishStatus(doknotifikasjonEpostObject, FEILET, melding);
 
 			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, melding);
 			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot003. Feilmelding: %s", melding));
@@ -63,10 +64,10 @@ public class Knot003Service {
 			altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostObject.getKontaktInfo(), doknotifikasjonEpostObject.getFodselsnummer(), doknotifikasjonEpostObject.getTekst(), doknotifikasjonEpostObject.getTittel());
 			log.info(FERDIGSTILT_NOTIFIKASJON_EPOST + " notifikasjonDistribusjonId={}", notifikasjonDistribusjonId);
 		} catch (AltinnFunctionalException altinnFunctionalException) {
-			publishStatus(doknotifikasjonEpostObject, Status.FEILET, altinnFunctionalException.getMessage());
+			publishStatus(doknotifikasjonEpostObject, FEILET, altinnFunctionalException.getMessage());
 			throw altinnFunctionalException;
 		} catch (Exception unknownException) {
-			publishStatus(doknotifikasjonEpostObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+			publishStatus(doknotifikasjonEpostObject, FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
 			throw unknownException;
 		}
 
@@ -76,8 +77,10 @@ public class Knot003Service {
 		metricService.metricKnot003EpostSent();
 	}
 
-	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonEpostObject doknotifikasjonEpostObject) {
-		return Status.OPPRETTET.equals(doknotifikasjonEpostObject.getDistribusjonStatus()) && Kanal.EPOST.equals(doknotifikasjonEpostObject.getKanal());
+	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonEpostObject doknotifikasjonEpostObject, Notifikasjon notifikasjon) {
+		return Status.OPPRETTET.equals(doknotifikasjonEpostObject.getDistribusjonStatus())
+				&& Kanal.EPOST.equals(doknotifikasjonEpostObject.getKanal())
+				&& notifikasjon.getStatus() != FEILET;
 	}
 
 	private void publishStatus(DoknotifikasjonEpostObject doknotifikasjonEpostObject, Status status, String melding) {

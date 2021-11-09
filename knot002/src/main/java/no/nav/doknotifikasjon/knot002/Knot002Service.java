@@ -22,77 +22,80 @@ import java.util.Optional;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_KANAL;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_STATUS;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 
 @Slf4j
 @Component
 public class Knot002Service {
 
-    private final Knot002Mapper knot002Mapper;
-    private final MetricService metricService;
-    private final KafkaEventProducer kafkaEventProducer;
-    private final AltinnVarselConsumer altinnVarselConsumer;
-    private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
+	private final Knot002Mapper knot002Mapper;
+	private final MetricService metricService;
+	private final KafkaEventProducer kafkaEventProducer;
+	private final AltinnVarselConsumer altinnVarselConsumer;
+	private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
 
-    @Inject
-    public Knot002Service(Knot002Mapper knot002Mapper, KafkaEventProducer kafkaEventProducer,
-                          AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistrubisjonService notifikasjonDistrubisjonService,
+	@Inject
+	public Knot002Service(Knot002Mapper knot002Mapper, KafkaEventProducer kafkaEventProducer,
+						  AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistrubisjonService notifikasjonDistrubisjonService,
 						  MetricService metricService) {
-        this.knot002Mapper = knot002Mapper;
-        this.kafkaEventProducer = kafkaEventProducer;
-        this.altinnVarselConsumer = altinnVarselConsumer;
-        this.notifikasjonDistrubisjonService = notifikasjonDistrubisjonService;
-        this.metricService = metricService;
-    }
+		this.knot002Mapper = knot002Mapper;
+		this.kafkaEventProducer = kafkaEventProducer;
+		this.altinnVarselConsumer = altinnVarselConsumer;
+		this.notifikasjonDistrubisjonService = notifikasjonDistrubisjonService;
+		this.metricService = metricService;
+	}
 
-    public void shouldSendSms(int notifikasjonDistribusjonId) {
-        NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistrubisjonService.findById(notifikasjonDistribusjonId);
-        Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
+	public void shouldSendSms(int notifikasjonDistribusjonId) {
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistrubisjonService.findById(notifikasjonDistribusjonId);
+		Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
 
-        DoknotifikasjonSmsObject doknotifikasjonSmsObject = knot002Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
+		DoknotifikasjonSmsObject doknotifikasjonSmsObject = knot002Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
-        if (!validateDistribusjonStatusOgKanal(doknotifikasjonSmsObject)) {
-            String melding = doknotifikasjonSmsObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_SMS_UGYLDIG_KANAL : FEILET_SMS_UGYLDIG_STATUS;
-            publishStatus(doknotifikasjonSmsObject, Status.FEILET, melding);
+		if (!validateDistribusjonStatusOgKanal(doknotifikasjonSmsObject, notifikasjon)) {
+			String melding = doknotifikasjonSmsObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_SMS_UGYLDIG_KANAL : FEILET_SMS_UGYLDIG_STATUS;
+			publishStatus(doknotifikasjonSmsObject, FEILET, melding);
 
-            log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, melding);
-            throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot002. Feilmelding: %s", melding));
-        }
+			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, melding);
+			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot002. Feilmelding: %s", melding));
+		}
 
-        try {
-            log.info("Knot002 kontakter Altinn for distribusjon av notifikasjonDistribusjon med id={}", notifikasjonDistribusjonId);
-            altinnVarselConsumer.sendVarsel(Kanal.SMS, doknotifikasjonSmsObject.getKontaktInfo(), doknotifikasjonSmsObject.getFodselsnummer(), doknotifikasjonSmsObject.getTekst(), "");
-            log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " for notifikasjonDistribusjon med Id={}", notifikasjonDistribusjonId);
-        } catch (AltinnFunctionalException altinnFunctionalException) {
-            publishStatus(doknotifikasjonSmsObject, Status.FEILET, altinnFunctionalException.getMessage());
-            throw altinnFunctionalException;
-        } catch (Exception unknownException) {
-            publishStatus(doknotifikasjonSmsObject, Status.FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
-            throw unknownException;
-        }
+		try {
+			log.info("Knot002 kontakter Altinn for distribusjon av notifikasjonDistribusjon med id={}", notifikasjonDistribusjonId);
+			altinnVarselConsumer.sendVarsel(Kanal.SMS, doknotifikasjonSmsObject.getKontaktInfo(), doknotifikasjonSmsObject.getFodselsnummer(), doknotifikasjonSmsObject.getTekst(), "");
+			log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " for notifikasjonDistribusjon med Id={}", notifikasjonDistribusjonId);
+		} catch (AltinnFunctionalException altinnFunctionalException) {
+			publishStatus(doknotifikasjonSmsObject, FEILET, altinnFunctionalException.getMessage());
+			throw altinnFunctionalException;
+		} catch (Exception unknownException) {
+			publishStatus(doknotifikasjonSmsObject, FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
+			throw unknownException;
+		}
 
-        updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());
-        publishStatus(doknotifikasjonSmsObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
-        metricService.metricKnot002SmsSent();
-    }
+		updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());
+		publishStatus(doknotifikasjonSmsObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
+		metricService.metricKnot002SmsSent();
+	}
 
-    private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject) {
-        return Status.OPPRETTET.equals(doknotifikasjonSmsObject.getDistribusjonStatus()) && Kanal.SMS.equals(doknotifikasjonSmsObject.getKanal());
-    }
+	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Notifikasjon notifikasjon) {
+		return Status.OPPRETTET.equals(doknotifikasjonSmsObject.getDistribusjonStatus())
+				&& Kanal.SMS.equals(doknotifikasjonSmsObject.getKanal())
+				&& notifikasjon.getStatus() != FEILET;
+	}
 
-    private void publishStatus(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Status status, String melding) {
-        kafkaEventProducer.publish(
-                KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
-                DoknotifikasjonStatus.newBuilder()
-                        .setBestillerId(doknotifikasjonSmsObject.getBestillerId())
-                        .setBestillingsId(doknotifikasjonSmsObject.getBestillingsId())
-                        .setStatus(status.name())
-                        .setMelding(melding)
-                        .setDistribusjonId(doknotifikasjonSmsObject.getNotifikasjonDistribusjonId())
-                        .build()
-        );
-    }
+	private void publishStatus(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Status status, String melding) {
+		kafkaEventProducer.publish(
+				KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				DoknotifikasjonStatus.newBuilder()
+						.setBestillerId(doknotifikasjonSmsObject.getBestillerId())
+						.setBestillingsId(doknotifikasjonSmsObject.getBestillingsId())
+						.setStatus(status.name())
+						.setMelding(melding)
+						.setDistribusjonId(doknotifikasjonSmsObject.getNotifikasjonDistribusjonId())
+						.build()
+		);
+	}
 
-    public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId) {
+	public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId) {
 		LocalDateTime now = LocalDateTime.now();
 		notifikasjonDistribusjon.setEndretAv(bestillerId);
 		notifikasjonDistribusjon.setStatus(Status.FERDIGSTILT);
@@ -100,5 +103,5 @@ public class Knot002Service {
 		notifikasjonDistribusjon.setEndretDato(now);
 
 		notifikasjonDistrubisjonService.save(notifikasjonDistribusjon);
-    }
+	}
 }
