@@ -61,8 +61,10 @@ public class Knot003Consumer {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
-			log.warn("Ingen notifikasjonDistribusjon ble funnet i databasen. Avslutter behandlingen. ", e);
+			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot003 (Epost). Konsumerer hendelse på nytt. " +
+					"Dette må følges opp.", e);
 			metricService.metricHandleException(e);
+			throw e;
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot003. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
@@ -72,6 +74,10 @@ public class Knot003Consumer {
 		} catch (IllegalArgumentException e) {
 			log.warn("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
+		} catch (Exception e) {
+			log.error("Ukjent teknisk feil for knot003 (epost). Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			metricService.metricHandleException(e);
+			throw e;
 		} finally {
 			clearDistribusjonId();
 			clearCallId();

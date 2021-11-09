@@ -88,6 +88,10 @@ public class Knot001Consumer {
 		} catch (DataIntegrityViolationException e) {
 			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
+		} catch (Exception e) {
+			log.error("Ukjent teknisk feil for knot001. Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			metricService.metricHandleException(e);
+			throw e;
 		} finally {
 			clearCallId();
 		}

@@ -59,6 +59,10 @@ public class Knot005Consumer {
 		} catch (DoknotifikasjonValidationException e) {
 			log.warn("Valideringsfeil oppstod i knot005. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
+		} catch (Exception e) {
+			log.error("Ukjent teknisk feil for knot005 (stopp). Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			metricService.metricHandleException(e);
+			throw e;
 		} finally {
 			clearCallId();
 		}

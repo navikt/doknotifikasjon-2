@@ -18,6 +18,7 @@ import static no.nav.doknotifikasjon.TestUtils.BESTILLINGS_ID;
 import static no.nav.doknotifikasjon.TestUtils.NESTE_RENOTIFIKASJONSDATO;
 import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatus;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -48,6 +49,7 @@ class Knot005ITest extends EmbededKafkaBroker {
 			assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
 			assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
 			assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
+			assertEquals(FERDIGSTILT, updatedNotifikasjon.getStatus());
 			assertNotNull(updatedNotifikasjon.getEndretDato());
 		});
 	}
@@ -64,7 +66,7 @@ class Knot005ITest extends EmbededKafkaBroker {
 
 	@Test
 	void shouldNotUpdateStatusWhenNotifikasjonHasStatusFerdigstilt() {
-		notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(Status.FERDIGSTILT));
+		notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(FERDIGSTILT));
 
 		DoknotifikasjonStopp doknotifikasjonStopp = new DoknotifikasjonStopp(BESTILLINGS_ID, BESTILLER_ID_2);
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
@@ -74,6 +76,7 @@ class Knot005ITest extends EmbededKafkaBroker {
 			assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
 			assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
 			assertEquals(BESTILLER_ID, updatedNotifikasjon.getBestillerId());
+			assertEquals(FERDIGSTILT, updatedNotifikasjon.getStatus());
 			assertNull(updatedNotifikasjon.getEndretAv());
 			assertNull(updatedNotifikasjon.getEndretDato());
 		});
