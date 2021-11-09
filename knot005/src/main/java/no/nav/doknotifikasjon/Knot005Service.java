@@ -65,7 +65,8 @@ public class Knot005Service {
 		notifikasjon.setNesteRenotifikasjonDato(null);
 		notifikasjon.setEndretAv(doknotifikasjonStoppTo.getBestillerId());
 		notifikasjon.setEndretDato(LocalDateTime.now());
-
+		notifikasjon.setStatus(FERDIGSTILT);
+		
 		notifikasjonService.save(notifikasjon);
 	}
 }

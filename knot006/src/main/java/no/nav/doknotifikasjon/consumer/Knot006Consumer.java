@@ -48,7 +48,6 @@ public class Knot006Consumer {
 		this.metricService = metricService;
 	}
 
-	@SneakyThrows
 	@KafkaListener(
 			topics = PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO,
 			containerFactory = "kafkaListenerContainerFactory",
@@ -77,6 +76,10 @@ public class Knot006Consumer {
 		} catch (DataIntegrityViolationException e) {
 			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
+		} catch (Exception e) {
+			log.error("Ukjent teknisk feil for knot006. Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			metricService.metricHandleException(e);
+			throw e;
 		} finally {
 			clearCallId();
 		}

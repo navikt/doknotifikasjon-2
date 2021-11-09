@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.Optional;
 
+import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_DELAY;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.constants.RetryConstants.RETRY_LONG;
@@ -43,7 +45,7 @@ public class NotifikasjonDistrubisjonService {
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricExclude = DoknotifikasjonDistribusjonIkkeFunnetException.class)
-	@Retryable(exclude = DoknotifikasjonDistribusjonIkkeFunnetException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DATABASE_DELAY))
 	public NotifikasjonDistribusjon findById(int notifikasjonDistribusjonId) {
 		return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(
 				() -> {
