@@ -79,7 +79,7 @@ public class Knot002Service {
 	}
 
 	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Notifikasjon notifikasjon) {
-		if (notifikasjon.getStatus() != FERDIGSTILT) {
+		if (notifikasjon.getStatus() == FERDIGSTILT) {
 			throw new NotifikasjonFerdigstilltFunctionalException("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av epost for knot003.");
 		}
 
