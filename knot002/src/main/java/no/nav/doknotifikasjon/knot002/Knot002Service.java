@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstilltFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstiltFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -80,7 +80,7 @@ public class Knot002Service {
 
 	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Notifikasjon notifikasjon) {
 		if (notifikasjon.getStatus() == FERDIGSTILT) {
-			throw new NotifikasjonFerdigstilltFunctionalException("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av epost for knot003.");
+			throw new NotifikasjonFerdigstiltFunctionalException("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av epost for knot003.");
 		}
 
 		return Status.OPPRETTET.equals(doknotifikasjonSmsObject.getDistribusjonStatus())

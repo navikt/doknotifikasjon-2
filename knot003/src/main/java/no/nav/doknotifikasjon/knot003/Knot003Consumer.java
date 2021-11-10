@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstilltFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstiltFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
@@ -75,7 +75,7 @@ public class Knot003Consumer {
 		} catch (IllegalArgumentException e) {
 			log.warn("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
-		} catch (NotifikasjonFerdigstilltFunctionalException e) {
+		} catch (NotifikasjonFerdigstiltFunctionalException e) {
 			log.warn("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av epost for knot003.", e);
 			metricService.metricHandleException(e);
 		} catch (Exception e) {

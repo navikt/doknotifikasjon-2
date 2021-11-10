@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstilltFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstiltFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
@@ -72,7 +72,7 @@ public class Knot002Consumer {
 		} catch (AltinnFunctionalException e) {
 			log.warn("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
 			metricService.metricHandleException(e);
-		} catch (NotifikasjonFerdigstilltFunctionalException e) {
+		} catch (NotifikasjonFerdigstiltFunctionalException e) {
 			log.warn("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av sms for knot002.", e);
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
