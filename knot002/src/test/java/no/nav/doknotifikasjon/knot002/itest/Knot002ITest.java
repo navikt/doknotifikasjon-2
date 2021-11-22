@@ -3,16 +3,16 @@ package no.nav.doknotifikasjon.knot002.itest;
 
 import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
+import no.altinn.services.common.fault._2009._10.AltinnFault;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
-import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
-import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Knot002ITest extends EmbededKafkaBroker {
+class Knot002ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;
@@ -139,7 +139,15 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 	@Test
 	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage("Altinn Functional Exception"));
+		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
+				"Feil i altinn",
+				new AltinnFault()
+						.withAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", "Ugyldig norsk mobiltelefonnummer."))
+						.withErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"))
+						.withErrorID(30303)
+						.withUserGuid(constructJaxbElement("UserGuid", "abcdef"))
+		);
+		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
@@ -151,7 +159,8 @@ class Knot002ITest extends EmbededKafkaBroker {
 
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: Altinn Functional Exception", id))
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
+							"Funksjonell feil fra Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=30303, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
 			);
 		});
 	}

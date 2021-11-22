@@ -4,7 +4,7 @@ import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
-import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class Knot005ITest extends EmbededKafkaBroker {
+class Knot005ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;

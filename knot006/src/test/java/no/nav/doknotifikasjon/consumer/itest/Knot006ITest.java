@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
-import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
 @ActiveProfiles("itestWeb")
-class Knot006ITest extends EmbededKafkaBroker {
+class Knot006ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;

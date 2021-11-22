@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
-import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
 
 @ActiveProfiles("itestWeb")
-class Knot001ITest extends EmbededKafkaBroker {
+class Knot001ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;
