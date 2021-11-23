@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
-import no.nav.doknotifikasjon.repository.utils.EmbededKafkaBroker;
+import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGST
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class Snot002ScheduledTest extends EmbededKafkaBroker {
+class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;

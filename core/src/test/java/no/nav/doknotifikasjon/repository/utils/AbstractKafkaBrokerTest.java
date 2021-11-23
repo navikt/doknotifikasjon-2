@@ -10,6 +10,9 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
+
 @SpringBootTest(
 		classes = {ApplicationTestConfig.class, RepositoryConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -29,9 +32,13 @@ import org.springframework.test.context.ActiveProfiles;
 		bootstrapServersProperty = "spring.kafka.bootstrap-servers"
 )
 @AutoConfigureWireMock(port = 0)
-public class EmbededKafkaBroker {
+public abstract class AbstractKafkaBrokerTest {
 
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	public EmbeddedKafkaBroker kafkaEmbedded;
+
+	protected JAXBElement<String> constructJaxbElement(String local, String value) {
+		return new JAXBElement<>(new QName("http://www.altinn.no/services/common/fault/2009/10", local), String.class, value);
+	}
 }

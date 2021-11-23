@@ -8,6 +8,7 @@ import no.altinn.schemas.services.serviceengine.notification._2009._10.Standalon
 import no.altinn.schemas.services.serviceengine.notification._2009._10.TextToken;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.TextTokenSubstitutionBEList;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
+import no.altinn.services.common.fault._2009._10.AltinnFault;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
@@ -24,6 +25,7 @@ import org.springframework.ws.soap.SoapFaultException;
 import javax.xml.bind.JAXBElement;
 import java.util.List;
 
+import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
@@ -72,14 +74,14 @@ public class AltinnVarselConsumer {
 					standaloneNotification
 			);
 		} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
-			String errorMessage = e.getFaultInfo() != null ? e.getFaultInfo().getAltinnErrorMessage().toString() : e.getMessage();
-			throw new AltinnFunctionalException(String.format("Feil av typen INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage ved kall mot Altinn. Feilmelding: %s", errorMessage), e);
+			final String altinnErrorMessage = constructAltinnErrorMessage(e);
+			throw new AltinnFunctionalException(format("Funksjonell feil fra Altinn. %s", altinnErrorMessage), e);
 		} catch (SoapFaultException e) {
-			throw new AltinnFunctionalException(String.format("Feil av typen SoapFaultException ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
+			throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
 		} catch (RuntimeException e) {
-			throw new AltinnTechnicalException("Teknisk feil i kall mot Altinn.", e);
+			throw new AltinnTechnicalException("Ukjent teknisk feil i kall mot Altinn.", e);
 		} catch (Exception e) {
-			throw new AltinnFunctionalException(String.format("Ukjent feil ved kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
+			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn.", e);
 		}
 	}
 
@@ -127,5 +129,24 @@ public class AltinnVarselConsumer {
 		if (Kanal.SMS == kanal) return TransportType.SMS;
 		if (Kanal.EPOST == kanal) return TransportType.EMAIL;
 		throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
+	}
+
+	// Liste over errorID: https://altinn.github.io/docs/api/tjenesteeiere/soap/grensesnitt/varseltjeneste/#feilsituasjoner
+	private String constructAltinnErrorMessage(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+		AltinnFault faultInfo = e.getFaultInfo();
+		if (faultInfo == null) {
+			return e.getMessage();
+		}
+		return "errorGuid=" + unwrap(faultInfo.getErrorGuid()) + ", " +
+				"userGuid=" + unwrap(faultInfo.getUserGuid()) + ", " +
+				"errorId=" + faultInfo.getErrorID() + ", " +
+				"errorMessage=" + unwrap(faultInfo.getAltinnErrorMessage());
+	}
+
+	private String unwrap(JAXBElement<String> jaxbElement) {
+		if (jaxbElement == null) {
+			return "null";
+		}
+		return jaxbElement.getValue();
 	}
 }
