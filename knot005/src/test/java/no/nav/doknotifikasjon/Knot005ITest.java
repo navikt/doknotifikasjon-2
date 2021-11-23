@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatus;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class Knot005ITest extends AbstractKafkaBrokerTest {
 
@@ -46,6 +47,7 @@ class Knot005ITest extends AbstractKafkaBrokerTest {
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			assertNotNull(updatedNotifikasjon);
 			assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
 			assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
 			assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
@@ -73,6 +75,7 @@ class Knot005ITest extends AbstractKafkaBrokerTest {
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			assertNotNull(updatedNotifikasjon);
 			assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
 			assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());
 			assertEquals(BESTILLER_ID, updatedNotifikasjon.getBestillerId());

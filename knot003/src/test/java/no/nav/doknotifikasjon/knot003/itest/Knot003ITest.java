@@ -13,6 +13,7 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
+			assertNotNull(updatedNotifikasjonDistribusjon);
 			assertEquals(FERDIGSTILT, updatedNotifikasjonDistribusjon.getStatus());
 			assertEquals(EPOST, updatedNotifikasjonDistribusjon.getKanal());
 			assertEquals("teamdokumenthandtering", updatedNotifikasjonDistribusjon.getEndretAv());

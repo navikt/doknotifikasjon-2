@@ -7,6 +7,7 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,9 @@ import static no.nav.doknotifikasjon.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
 import static no.nav.doknotifikasjon.utils.TestUtils.createNotifikasjonWithRenotifikasjoner;
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class Knot004ITest extends AbstractKafkaBrokerTest {
 
@@ -65,6 +66,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 
 		await().pollInterval(500, MILLISECONDS).atMost(10, SECONDS).untilAsserted(() -> {
 			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			assertNotNull(updatedNotifikasjon);
 			assertEquals(FERDIGSTILT, updatedNotifikasjon.getStatus());
 			assertEquals(BESTILLER_ID_2, updatedNotifikasjon.getEndretAv());
 			assertNotNull(updatedNotifikasjon.getEndretDato());

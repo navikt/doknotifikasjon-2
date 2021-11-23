@@ -35,6 +35,7 @@ import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -78,6 +79,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
@@ -117,6 +119,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
@@ -156,6 +159,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
