@@ -26,6 +26,7 @@ import static no.nav.doknotifikasjon.kodeverk.MottakerIdType.FNR;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 
 @ActiveProfiles("itestWeb")
@@ -62,6 +63,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
@@ -100,6 +102,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
@@ -139,6 +142,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
@@ -177,6 +181,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
 
+			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
@@ -215,8 +220,9 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 
 			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
 
-			List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
+			assertNotNull(notifikasjon);
 
+			List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAll();
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
