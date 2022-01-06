@@ -62,8 +62,7 @@ public class Knot002Consumer {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
-			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot002 (SMS). Konsumerer hendelse på nytt. " +
-					"Dette må følges opp.", e);
+			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot002 (SMS). Dette må følges opp.", e);
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot002. Avslutter behandlingen. ", e);
