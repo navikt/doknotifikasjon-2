@@ -65,7 +65,6 @@ public class Knot002Consumer {
 			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot002 (SMS). Konsumerer hendelse på nytt. " +
 					"Dette må følges opp.", e);
 			metricService.metricHandleException(e);
-			throw e;
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot002. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);

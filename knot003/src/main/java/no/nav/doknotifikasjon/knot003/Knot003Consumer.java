@@ -65,12 +65,11 @@ public class Knot003Consumer {
 			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot003 (Epost). Konsumerer hendelse på nytt. " +
 					"Dette må følges opp.", e);
 			metricService.metricHandleException(e);
-			throw e;
 		} catch (DoknotifikasjonValidationException e) {
 			log.error("Valideringsfeil i knot003. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} catch (AltinnFunctionalException e) {
-			log.warn("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
+			log.warn("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
 			log.warn("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
