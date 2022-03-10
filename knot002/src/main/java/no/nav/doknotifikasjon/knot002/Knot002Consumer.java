@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
@@ -42,7 +42,7 @@ public class Knot002Consumer {
 	}
 
 	@KafkaListener(
-			topics = KAFKA_TOPIC_DOK_NOTIFKASJON_SMS,
+			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot002"
 	)

@@ -105,12 +105,6 @@
 			<artifactId>kafka-avro-serializer</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.confluent</groupId>
-			<artifactId>kafka-json-serializer</artifactId>
-		</dependency>
-
-		<!-- Kafka: Avro-schema  -->
-		<dependency>
 			<groupId>no.nav.teamdokumenthandtering</groupId>
 			<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
 		</dependency>
@@ -141,11 +135,6 @@
 			<artifactId>spring-boot-test</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
@@ -159,11 +148,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8-standalone</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

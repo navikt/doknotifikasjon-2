@@ -14,8 +14,8 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 
@@ -69,7 +69,7 @@ public class Snot001Service {
 
 	private void publishHendelseOnTopic(int notifikasjonDistribusjonId, Kanal kanal, String bestillingsId) {
 		kafkaEventProducer.publishWithKey(
-				kanal.equals(SMS) ? KAFKA_TOPIC_DOK_NOTIFKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+				kanal.equals(SMS) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST,
 				kanal.equals(SMS) ? new DoknotifikasjonSms(notifikasjonDistribusjonId) : new DoknotifikasjonEpost(notifikasjonDistribusjonId),
 				bestillingsId
 		);

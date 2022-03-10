@@ -26,7 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.MottakerIdType.FNR;
@@ -34,8 +34,8 @@ import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -226,7 +226,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 
 	private void putMessageOnKafkaTopic(Doknotifikasjon doknotifikasjon) {
 		KafkaEventProducer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON,
 				doknotifikasjon
 		);
 	}

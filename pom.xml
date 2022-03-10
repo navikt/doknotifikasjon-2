@@ -39,7 +39,6 @@
 	<properties>
 		<java.version>11</java.version>
 		<teamdokumenthandtering-avro-schemas.version>f3479251</teamdokumenthandtering-avro-schemas.version>
-		<lombok.version>1.18.20</lombok.version>
 		<javax.inject.version>1</javax.inject.version>
 		<confluent.version>7.0.1</confluent.version>
 		<logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
@@ -48,10 +47,9 @@
 		<tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
 		<apache-cxf.version>3.4.4</apache-cxf.version>
 		<avro.version>1.11.0</avro.version>
+
 		<!-- test -->
-		<awaitility.version>4.0.3</awaitility.version>
-		<wiremock-jre8-standalone.version>2.31.0</wiremock-jre8-standalone.version>
-		<spring-cloud-contract-wiremock-version>3.0.3</spring-cloud-contract-wiremock-version>
+		<spring-cloud-contract-wiremock-version>3.1.1</spring-cloud-contract-wiremock-version>
 	</properties>
 
 	<dependencyManagement>
@@ -107,11 +105,6 @@
 				<version>${tjenestespesifikasjon.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>javax.inject</groupId>
 				<artifactId>javax.inject</artifactId>
 				<version>${javax.inject.version}</version>
@@ -149,11 +142,6 @@
 				<version>${confluent.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>io.confluent</groupId>
-				<artifactId>kafka-json-serializer</artifactId>
-				<version>${confluent.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.avro</groupId>
 				<artifactId>avro</artifactId>
 				<version>${avro.version}</version>
@@ -172,18 +160,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-contract-wiremock</artifactId>
 				<version>${spring-cloud-contract-wiremock-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.awaitility</groupId>
-				<artifactId>awaitility</artifactId>
-				<version>${awaitility.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock-jre8-standalone</artifactId>
-				<version>${wiremock-jre8-standalone.version}</version>
-				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

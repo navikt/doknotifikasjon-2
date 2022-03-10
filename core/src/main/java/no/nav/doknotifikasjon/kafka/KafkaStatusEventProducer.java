@@ -5,7 +5,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 
 @Slf4j
 @Component
@@ -56,7 +56,7 @@ public class KafkaStatusEventProducer {
 
 	public void publishDoknotifikasjonStatus(DoknotifikasjonStatus doknotifikasjonStatus) {
 		producer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
 				doknotifikasjonStatus
 		);
 	}

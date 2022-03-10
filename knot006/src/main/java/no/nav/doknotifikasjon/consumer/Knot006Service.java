@@ -21,9 +21,9 @@ import java.util.List;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.*;
 import static no.nav.doknotifikasjon.kodeverk.MottakerIdType.FNR;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
@@ -62,7 +62,7 @@ public class Knot006Service {
 				null
 		);
 
-		log.info("Sender notifikasjon med status={} til topic={} med bestillingsId={}", OVERSENDT, KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, notifikasjonMedKontaktInfoTO.getBestillingsId());
+		log.info("Sender notifikasjon med status={} til topic={} med bestillingsId={}", OVERSENDT, KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, notifikasjonMedKontaktInfoTO.getBestillingsId());
 	}
 
 	public Notifikasjon createNotifikasjonByNotifikasjonMedKontaktInfoTO(NotifikasjonMedKontaktInfoTO doknotifikasjon) {
@@ -151,7 +151,7 @@ public class Knot006Service {
 	}
 
 	public void publishNotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
-		String topic = EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+		String topic = EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 
 		log.info("Publiserer bestilling med kontaktinfo til kafka topic={} med bestillingsId={}", topic, bestillingsId);
 		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);

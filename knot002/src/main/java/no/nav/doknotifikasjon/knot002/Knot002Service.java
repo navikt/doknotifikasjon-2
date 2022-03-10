@@ -57,7 +57,7 @@ public class Knot002Service {
 			String melding = doknotifikasjonSmsObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_SMS_UGYLDIG_KANAL : FEILET_SMS_UGYLDIG_STATUS;
 			publishStatus(doknotifikasjonSmsObject, FEILET, melding);
 
-			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS, melding);
+			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, melding);
 			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot002. Feilmelding: %s", melding));
 		}
 
@@ -89,7 +89,7 @@ public class Knot002Service {
 
 	private void publishStatus(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Status status, String melding) {
 		kafkaEventProducer.publish(
-				KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
 				DoknotifikasjonStatus.newBuilder()
 						.setBestillerId(doknotifikasjonSmsObject.getBestillerId())
 						.setBestillingsId(doknotifikasjonSmsObject.getBestillingsId())

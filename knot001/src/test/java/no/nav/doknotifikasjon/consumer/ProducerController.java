@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO;
 
 /*
@@ -81,7 +81,7 @@ public class ProducerController {
 		);
 
 		publisher.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON,
 				dokEksternNotifikasjon
 		);
 	}

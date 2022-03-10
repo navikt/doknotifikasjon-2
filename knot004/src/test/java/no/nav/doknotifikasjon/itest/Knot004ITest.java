@@ -7,7 +7,6 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.INFO;
@@ -222,7 +221,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonStatus doknotifikasjonStatus) {
 		KafkaEventProducer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
 				doknotifikasjonStatus
 		);
 	}

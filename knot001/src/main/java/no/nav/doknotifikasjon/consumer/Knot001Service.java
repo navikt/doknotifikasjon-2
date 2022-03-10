@@ -36,9 +36,9 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_U
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 
 
 @Slf4j
@@ -81,7 +81,7 @@ public class Knot001Service {
 				OVERSENDT_NOTIFIKASJON_PROCESSED,
 				null
 		);
-		log.info("Sender en DoknotifikasjonStatus med status={} til topic={} for bestillingsId={}", Status.OVERSENDT, KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, doknotifikasjon.getBestillingsId());
+		log.info("Sender en DoknotifikasjonStatus med status={} til topic={} for bestillingsId={}", Status.OVERSENDT, KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, doknotifikasjon.getBestillingsId());
 	}
 
 	public DigitalKontaktinformasjonTo.DigitalKontaktinfo getKontaktInfoByFnr(DoknotifikasjonTO doknotifikasjon) {
@@ -243,7 +243,7 @@ public class Knot001Service {
 	}
 
 	public void publishDoknotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
-		String topic = Kanal.EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+		String topic = Kanal.EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 
 		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", topic, bestillingsId);
 		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);
