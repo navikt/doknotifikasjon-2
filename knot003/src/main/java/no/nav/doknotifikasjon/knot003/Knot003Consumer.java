@@ -12,13 +12,12 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
@@ -34,7 +33,7 @@ public class Knot003Consumer {
 	private final Knot003Service knot003Service;
 	private final MetricService metricService;
 
-	@Inject
+	@Autowired
 	Knot003Consumer(Knot003Service knot003Service, ObjectMapper objectMapper, MetricService metricService) {
 		this.knot003Service = knot003Service;
 		this.objectMapper = objectMapper;
@@ -42,7 +41,7 @@ public class Knot003Consumer {
 	}
 
 	@KafkaListener(
-			topics = KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot003"
 	)

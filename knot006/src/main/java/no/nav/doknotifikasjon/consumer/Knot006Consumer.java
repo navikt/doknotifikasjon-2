@@ -3,7 +3,6 @@ package no.nav.doknotifikasjon.consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
@@ -11,12 +10,11 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
@@ -33,7 +31,7 @@ public class Knot006Consumer {
 	private final DoknotifikasjonMedKontaktInfoMapper doknotifikasjonMedKontaktInfoMapper;
 	private final NotifikasjonValidator doknotifikasjonValidator;
 
-	@Inject
+	@Autowired
 	Knot006Consumer(
 			ObjectMapper objectMapper,
 			Knot006Service knot006Service,

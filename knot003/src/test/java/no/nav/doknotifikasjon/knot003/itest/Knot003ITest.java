@@ -13,7 +13,6 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.*;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
@@ -82,7 +81,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 			assertNotNull(updatedNotifikasjonDistribusjon.getEndretDato());
 
 			verify(kafkaEventProducer).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id))
 			);
 		});
@@ -98,7 +97,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 
 			assertNull(updatedNotifikasjonDistribusjon);
 			verify(kafkaEventProducer, times(0)).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					any()
 			);
 		});
@@ -113,7 +112,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 		await().atMost(10, SECONDS).untilAsserted(() ->
 			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
 			)
 		);
@@ -129,7 +128,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 
 		await().atMost(10, SECONDS).untilAsserted(() ->
 			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
 			)
 		);
@@ -156,7 +155,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 			notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
 
 			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
 							"Funksjonell feil fra Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=30010, errorMessage=Ugyldig epostadresse angitt på et ReceiverEndPoint.", id))
 			);
@@ -165,7 +164,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonEpost doknotifikasjonEpost) {
 		kafkaEventProducer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST,
 				doknotifikasjonEpost
 		);
 	}

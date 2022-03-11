@@ -14,7 +14,6 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
@@ -78,14 +77,14 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			NotifikasjonDistribusjon updatedNotifikasjonDistribusjon = notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
 
-			Assert.assertNotNull(updatedNotifikasjonDistribusjon);
+			assertNotNull(updatedNotifikasjonDistribusjon);
 			assertEquals(FERDIGSTILT, updatedNotifikasjonDistribusjon.getStatus());
 			assertEquals(SMS, updatedNotifikasjonDistribusjon.getKanal());
 			assertEquals("teamdokumenthandtering", updatedNotifikasjonDistribusjon.getEndretAv());
 			assertNotNull(updatedNotifikasjonDistribusjon.getEndretDato());
 
 			verify(kafkaEventProducer).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via sms", id))
 			);
 		});
@@ -100,7 +99,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() -> {
 			assertNull(updatedNotifikasjonDistribusjon);
 			verify(kafkaEventProducer, times(0)).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					any()
 			);
 		});
@@ -117,7 +116,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
-						eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig status", id))
 				)
 		);
@@ -133,7 +132,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
-						eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id))
 				)
 		);
@@ -160,7 +159,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 			notifikasjonDistribusjonRepository.findById(id).orElseThrow(() -> new RuntimeException("Failed test!"));
 
 			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS),
+					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
 							"Funksjonell feil fra Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=30303, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
 			);
@@ -169,7 +168,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 
 	private void putMessageOnKafkaTopic(DoknotifikasjonSms doknotifikasjonSms) {
 		kafkaEventProducer.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON_SMS,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS,
 				doknotifikasjonSms
 		);
 	}

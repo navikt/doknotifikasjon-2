@@ -6,15 +6,15 @@ import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO;
 
 /*
@@ -28,7 +28,7 @@ public class ProducerController {
 
 	private final KafkaEventProducer publisher;
 
-	@Inject
+	@Autowired
 	ProducerController(KafkaEventProducer publisher) {
 		this.publisher = publisher;
 	}
@@ -81,7 +81,7 @@ public class ProducerController {
 		);
 
 		publisher.publish(
-				KAFKA_TOPIC_DOK_NOTIFKASJON,
+				KAFKA_TOPIC_DOK_NOTIFIKASJON,
 				dokEksternNotifikasjon
 		);
 	}

@@ -3,16 +3,13 @@ package no.nav.doknotifikasjon.consumer;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
-import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
-import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT;
-import static org.apache.logging.log4j.util.Strings.*;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Slf4j
 @Component
@@ -24,7 +21,7 @@ public class NotifikasjonValidator {
 	private static final int MAX_STRING_SIZE_MEDIUM = 100;
 	private static final int MAX_STRING_SIZE_SMALL = 40;
 
-	@Inject
+	@Autowired
 	NotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
 		this.statusProducer = statusProducer;
 	}

@@ -25,14 +25,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+
+        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -60,6 +57,7 @@
             <artifactId>awaitility</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>core</artifactId>

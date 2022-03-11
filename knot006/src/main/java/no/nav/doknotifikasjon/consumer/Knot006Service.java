@@ -9,10 +9,10 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -21,10 +21,11 @@ import java.util.List;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS;
-import static no.nav.doknotifikasjon.kodeverk.Kanal.*;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.MottakerIdType.FNR;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
@@ -38,7 +39,7 @@ public class Knot006Service {
 	private final NotifikasjonService notifkasjonService;
 	private final KafkaEventProducer producer;
 
-	@Inject
+	@Autowired
 	Knot006Service(
 			KafkaEventProducer producer,
 			NotifikasjonService notifkasjonService,
@@ -62,7 +63,7 @@ public class Knot006Service {
 				null
 		);
 
-		log.info("Sender notifikasjon med status={} til topic={} med bestillingsId={}", OVERSENDT, KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, notifikasjonMedKontaktInfoTO.getBestillingsId());
+		log.info("Sender notifikasjon med status={} til topic={} med bestillingsId={}", OVERSENDT, KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, notifikasjonMedKontaktInfoTO.getBestillingsId());
 	}
 
 	public Notifikasjon createNotifikasjonByNotifikasjonMedKontaktInfoTO(NotifikasjonMedKontaktInfoTO doknotifikasjon) {
@@ -151,7 +152,7 @@ public class Knot006Service {
 	}
 
 	public void publishNotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
-		String topic = EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+		String topic = EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 
 		log.info("Publiserer bestilling med kontaktinfo til kafka topic={} med bestillingsId={}", topic, bestillingsId);
 		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);

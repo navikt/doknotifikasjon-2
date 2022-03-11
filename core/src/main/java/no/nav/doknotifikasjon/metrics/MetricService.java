@@ -5,9 +5,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.AbstractDoknotifikasjonFunctionalException;
 import no.nav.doknotifikasjon.kodeverk.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_EXCEPTION;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_BEHANDLET;
@@ -30,7 +29,7 @@ public class MetricService {
 
 	private final MeterRegistry meterRegistry;
 
-	@Inject
+	@Autowired
 	MetricService(MeterRegistry meterRegistry) {
 		this.meterRegistry = meterRegistry;
 	}

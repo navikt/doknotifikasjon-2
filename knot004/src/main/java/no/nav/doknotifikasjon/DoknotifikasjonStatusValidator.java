@@ -18,14 +18,14 @@ public class DoknotifikasjonStatusValidator {
 	private void validateField(String field, String fieldName) {
 		if (field == null || field.trim().isEmpty()) {
 			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil i knot004: Hendelse på kafka-topic " +
-					"%s har tom verdi for %s.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS, fieldName));
+					"%s har tom verdi for %s.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, fieldName));
 		}
 	}
 
 	private void validateStatus(Status status) {
 		if (status == null) {
 			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil i knot004: Hendelse på kafka-topic " +
-					"%s har tom verdi for status.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS));
+					"%s har tom verdi for status.", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS));
 		}
 	}
 }

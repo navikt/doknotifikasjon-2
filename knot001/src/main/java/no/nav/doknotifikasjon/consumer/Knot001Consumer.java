@@ -3,7 +3,6 @@ package no.nav.doknotifikasjon.consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
@@ -14,14 +13,13 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_CONSUMER;
@@ -36,7 +34,7 @@ public class Knot001Consumer {
 	private final DoknotifikasjonMapper doknotifikasjonMapper;
 	private final DoknotifikasjonValidator doknotifikasjonValidator;
 
-	@Inject
+	@Autowired
 	Knot001Consumer(
 			ObjectMapper objectMapper,
 			Knot001Service knot001Service,
@@ -52,7 +50,7 @@ public class Knot001Consumer {
 	}
 
 	@KafkaListener(
-			topics = KAFKA_TOPIC_DOK_NOTIFKASJON,
+			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON,
 			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot001"
 	)

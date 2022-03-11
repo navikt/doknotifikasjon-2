@@ -14,9 +14,9 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistrubisjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -37,7 +37,7 @@ public class Knot003Service {
 	private final MetricService metricService;
 	private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
 
-	@Inject
+	@Autowired
 	public Knot003Service(Knot003Mapper knot003Mapper, KafkaEventProducer kafkaEventProducer,
 						  AltinnVarselConsumer altinnVarselConsumer, MetricService metricService,
 						  NotifikasjonDistrubisjonService notifikasjonDistrubisjonService) {
@@ -58,7 +58,7 @@ public class Knot003Service {
 			String melding = doknotifikasjonEpostObject.getDistribusjonStatus() == OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
 			publishStatus(doknotifikasjonEpostObject, FEILET, melding);
 
-			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST, melding);
+			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST, melding);
 			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot003. Feilmelding: %s", melding));
 		}
 
@@ -91,7 +91,7 @@ public class Knot003Service {
 
 	private void publishStatus(DoknotifikasjonEpostObject doknotifikasjonEpostObject, Status status, String melding) {
 		kafkaEventProducer.publish(
-				KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_STATUS,
+				KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
 				DoknotifikasjonStatus.newBuilder()
 						.setBestillerId(doknotifikasjonEpostObject.getBestillerId())
 						.setBestillingsId(doknotifikasjonEpostObject.getBestillingsId())

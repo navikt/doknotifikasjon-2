@@ -5,14 +5,14 @@ import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,11 +21,15 @@ import java.util.Collections;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
-import static no.nav.doknotifikasjon.kodeverk.Status.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @ContextConfiguration(classes = {RepositoryConfig.class})
 @ActiveProfiles("itest")

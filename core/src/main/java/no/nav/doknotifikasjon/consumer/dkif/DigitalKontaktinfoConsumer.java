@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunc
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -19,7 +20,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
     private final RestTemplate restTemplate;
     private final StsRestConsumer stsRestConsumer;
 
-    @Inject
+    @Autowired
     public DigitalKontaktinfoConsumer(@Value("${dkif_url}") String dkifUrl,
                                       RestTemplateBuilder restTemplateBuilder,
                                       StsRestConsumer stsRestConsumer) {

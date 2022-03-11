@@ -5,9 +5,9 @@ import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_RENOTIFIKASJON_STANSET;
@@ -22,7 +22,7 @@ public class Knot005Service {
 	private final DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator;
 	private final MetricService metricService;
 
-	@Inject
+	@Autowired
 	public Knot005Service(NotifikasjonService notifikasjonService,
 						  KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer,
 						  DoknotifikasjonStoppValidadator doknotifikasjonStoppValidadator,

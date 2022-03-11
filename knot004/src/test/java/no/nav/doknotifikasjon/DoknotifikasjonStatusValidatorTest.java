@@ -1,8 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.kodeverk.Status;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;
@@ -32,7 +31,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for bestillingsId.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic teamdokumenthandtering.aapen-dok-notifikasjon-status har tom verdi for bestillingsId.", exception.getMessage());
 	}
 
 	@Test
@@ -41,7 +40,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for bestillerId.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic teamdokumenthandtering.aapen-dok-notifikasjon-status har tom verdi for bestillerId.", exception.getMessage());
 	}
 
 	@Test
@@ -50,7 +49,7 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for melding.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic teamdokumenthandtering.aapen-dok-notifikasjon-status har tom verdi for melding.", exception.getMessage());
 	}
 
 	@Test
@@ -59,6 +58,6 @@ public class DoknotifikasjonStatusValidatorTest {
 
 		DoknotifikasjonValidationException exception = assertThrows(DoknotifikasjonValidationException.class, () ->
 				doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo));
-		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic aapen-dok-notifikasjon-status har tom verdi for status.", exception.getMessage());
+		assertEquals("Valideringsfeil i knot004: Hendelse på kafka-topic teamdokumenthandtering.aapen-dok-notifikasjon-status har tom verdi for status.", exception.getMessage());
 	}
 }

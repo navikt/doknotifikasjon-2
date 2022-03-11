@@ -8,14 +8,14 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 
@@ -27,7 +27,7 @@ public class Snot001Service {
 	private final Snot001NotifikasjonService snot001NotifikasjonService;
 	private final KafkaEventProducer kafkaEventProducer;
 
-	@Inject
+	@Autowired
 	public Snot001Service(
 			NotifikasjonService notifikasjonService,
 			KafkaEventProducer kafkaEventProducer,
@@ -69,7 +69,7 @@ public class Snot001Service {
 
 	private void publishHendelseOnTopic(int notifikasjonDistribusjonId, Kanal kanal, String bestillingsId) {
 		kafkaEventProducer.publishWithKey(
-				kanal.equals(SMS) ? KAFKA_TOPIC_DOK_NOTIFKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST,
+				kanal.equals(SMS) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST,
 				kanal.equals(SMS) ? new DoknotifikasjonSms(notifikasjonDistribusjonId) : new DoknotifikasjonEpost(notifikasjonDistribusjonId),
 				bestillingsId
 		);
