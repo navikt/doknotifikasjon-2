@@ -9,10 +9,10 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -24,7 +24,8 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSEND
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
-import static no.nav.doknotifikasjon.kodeverk.Kanal.*;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.MottakerIdType.FNR;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
@@ -38,7 +39,7 @@ public class Knot006Service {
 	private final NotifikasjonService notifkasjonService;
 	private final KafkaEventProducer producer;
 
-	@Inject
+	@Autowired
 	Knot006Service(
 			KafkaEventProducer producer,
 			NotifikasjonService notifkasjonService,

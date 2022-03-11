@@ -39,7 +39,6 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<javax.inject.version>1</javax.inject.version>
 		<logstash-logback-encoder.version>7.0.1</logstash-logback-encoder.version>
 		<apache-cxf.version>3.5.1</apache-cxf.version>
 
@@ -102,15 +101,11 @@
 				<artifactId>snot002</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>no.nav.tjenestespesifikasjoner</groupId>
 				<artifactId>altinn-notification-agency-external-basic</artifactId>
 				<version>${tjenestespesifikasjon.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.inject</groupId>
-				<artifactId>javax.inject</artifactId>
-				<version>${javax.inject.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.cxf</groupId>

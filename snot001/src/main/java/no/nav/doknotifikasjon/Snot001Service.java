@@ -8,9 +8,9 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class Snot001Service {
 	private final Snot001NotifikasjonService snot001NotifikasjonService;
 	private final KafkaEventProducer kafkaEventProducer;
 
-	@Inject
+	@Autowired
 	public Snot001Service(
 			NotifikasjonService notifikasjonService,
 			KafkaEventProducer kafkaEventProducer,

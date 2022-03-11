@@ -7,6 +7,7 @@ import no.nav.doknotifikasjon.metrics.Metrics;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,7 +16,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -32,7 +32,7 @@ public class KafkaEventProducer {
 
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
-	@Inject
+	@Autowired
 	KafkaEventProducer(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") KafkaTemplate<String, Object> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
 	}

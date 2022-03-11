@@ -7,12 +7,12 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Optional;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_DELAY;
@@ -28,7 +28,7 @@ public class NotifikasjonDistrubisjonService {
 
 	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-	@Inject
+	@Autowired
 	NotifikasjonDistrubisjonService(NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
 		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
 	}

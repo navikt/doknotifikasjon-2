@@ -8,11 +8,10 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STOPP;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
@@ -28,7 +27,7 @@ public class Knot005Consumer {
 	private final MetricService metricService;
 	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 
-	@Inject
+	@Autowired
 	public Knot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
 						   DoknotifikasjonStoppMapper doknotifikasjonStoppMapper,
 						   MetricService metricService) {
