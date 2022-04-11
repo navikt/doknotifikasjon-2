@@ -7,16 +7,17 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistrubisjonService;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_RESENDES;
-import static no.nav.doknotifikasjon.kodeverk.Status.*;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 
 @Slf4j
 @Component
@@ -28,7 +29,7 @@ public class Snot002Service {
 
 	private final int AMOUNT_OF_DAYS_IN_SCOPE = 30;
 
-	@Inject
+	@Autowired
 	public Snot002Service(
 			NotifikasjonService notifikasjonService,
 			KafkaStatusEventProducer kafkaStatusEventProducer,

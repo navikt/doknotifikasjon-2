@@ -1,8 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.kodeverk.Status;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.utils.TestUtils.BESTILLER_ID;

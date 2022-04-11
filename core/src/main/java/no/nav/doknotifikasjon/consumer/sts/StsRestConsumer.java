@@ -4,6 +4,7 @@ package no.nav.doknotifikasjon.consumer.sts;
 import no.nav.doknotifikasjon.config.ServiceuserAlias;
 import no.nav.doknotifikasjon.exception.technical.StsTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +15,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
 import java.time.Duration;
 
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.STS_CACHE;
@@ -29,7 +29,7 @@ public class StsRestConsumer {
 	private final RestTemplate restTemplate;
 	private final String stsUrl;
 
-	@Inject
+	@Autowired
 	public StsRestConsumer(@Value("${security-token-service-token.url}") String stsUrl, RestTemplateBuilder restTemplateBuilder,
 						   final ServiceuserAlias serviceuserAlias) {
 		this.stsUrl = stsUrl;

@@ -3,9 +3,9 @@ package no.nav.doknotifikasjon.metrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public class DokCounter {
 	private static final String TECHNICAL_ERROR = "technical";
 	private static MeterRegistry meterRegistry;
 
-	@Inject
+	@Autowired
 	DokCounter(MeterRegistry meterRegistry) {
 		DokCounter.meterRegistry = meterRegistry;
 	}

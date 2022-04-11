@@ -18,10 +18,10 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -51,7 +51,7 @@ public class Knot001Service {
 	private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
 	private final SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
 
-	@Inject
+	@Autowired
 	Knot001Service(
 			DigitalKontaktinfoConsumer kontaktinfoConsumer,
 			KafkaEventProducer producer,

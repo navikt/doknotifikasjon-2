@@ -12,11 +12,10 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFKASJON_EPOST;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearCallId;
@@ -34,7 +33,7 @@ public class Knot003Consumer {
 	private final Knot003Service knot003Service;
 	private final MetricService metricService;
 
-	@Inject
+	@Autowired
 	Knot003Consumer(Knot003Service knot003Service, ObjectMapper objectMapper, MetricService metricService) {
 		this.knot003Service = knot003Service;
 		this.objectMapper = objectMapper;

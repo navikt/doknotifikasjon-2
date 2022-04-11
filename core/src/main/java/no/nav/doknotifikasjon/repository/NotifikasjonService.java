@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +24,7 @@ public class NotifikasjonService {
 
 	private final NotifikasjonRepository notifikasjonRepository;
 
-	@Inject
+	@Autowired
 	NotifikasjonService(NotifikasjonRepository notifikasjonRepository) {
 		this.notifikasjonRepository = notifikasjonRepository;
 	}
