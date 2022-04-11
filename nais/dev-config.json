@@ -7,7 +7,7 @@
   "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "MOUNT_PATH": "postgresql/preprod-fss",
-  "SEND_TIL_ALTINN": "false",
+  "SEND_TIL_ALTINN": "true",
   "MIN_REPLICAS": "1",
   "MAX_REPLICAS": "2",
   "INGRESSES": [
