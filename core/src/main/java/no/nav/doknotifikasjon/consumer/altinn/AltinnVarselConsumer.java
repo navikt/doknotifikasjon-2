@@ -58,6 +58,9 @@ public class AltinnVarselConsumer {
 			log.info("Sender ikke melding til Altinn fordi flagg er satt");
 			return;
 		}
+
+		log.info(format("Sender melding til Altinn med: Kanal=%s, fnr=%s, kontaktInfo=%s, tekst=%s, tittal=%s", kanal.toString(), kontaktInfo, fnr, tekst, tittel));
+
 		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
 				new StandaloneNotification()
 						.withReporteeNumber(ns("ReporteeNumber", fnr))
