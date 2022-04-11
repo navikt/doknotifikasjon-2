@@ -100,8 +100,8 @@
 
 		<!-- Kafka: Avro-schema  -->
 		<dependency>
-			<groupId>com.github.navikt</groupId>
-			<artifactId>doknotifikasjon-schemas</artifactId>
+			<groupId>no.nav.teamdokumenthandtering</groupId>
+			<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
 		</dependency>
 
 		<!-- Metrikker -->

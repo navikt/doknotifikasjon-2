@@ -18,13 +18,8 @@
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.navikt</groupId>
-            <artifactId>doknotifikasjon-schemas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>no.nav.teamdokumenthandtering</groupId>
+            <artifactId>teamdokumenthandtering-avro-schemas</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -33,6 +28,15 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -60,12 +64,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.doknotifikasjon</groupId>
