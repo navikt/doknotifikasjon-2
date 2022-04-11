@@ -59,7 +59,7 @@ public class AltinnVarselConsumer {
 			return;
 		}
 
-		log.info(format("Sender melding til Altinn med: Kanal=%s, fnr=%s, kontaktInfo=%s, tekst=%s, tittal=%s", kanal.toString(), kontaktInfo, fnr, tekst, tittel));
+		log.info(format("Sender melding til Altinn med: Kanal=%s, fnr=%s, kontaktInfo=%s, tekst=%s, tittel=%s", kanal.toString(), fnr, kontaktInfo, tekst, tittel));
 
 		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
 				new StandaloneNotification()
@@ -70,6 +70,14 @@ public class AltinnVarselConsumer {
 						.withTextTokens(generateTextTokens(kanal, tekst, tittel))
 						.withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
 						.withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
+
+		log.info(format("standaloneNotification: ReporteeNumber=%s, NotificationType=%s, ReceiverEndpoints=%s, TextTokens=%s, FromAddress=$s",
+				ns("ReporteeNumber", fnr).getValue(),
+				ns("NotificationType", DEFAULTNOTIFICATIONTYPE).getValue(),
+				generateEndpoint(kanal, kontaktInfo).getValue(),
+				generateTextTokens(kanal, tekst, tittel).getValue(),
+				ns("FromAddress", IKKE_BESVAR_DENNE_NAV).getValue()));
+
 		try {
 			iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
 					altinnProps.getUsername(),
