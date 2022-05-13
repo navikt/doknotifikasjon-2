@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.leaderelection.LeaderElection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,8 +19,7 @@ public class Snot001Scheduler {
 		this.leaderElection = leaderElection;
 	}
 
-	//TODO Legge Scheduled til når doknotifikasjon blir sannert
-	//@Scheduled(cron = "0 30 8 * * *")
+	@Scheduled(cron = "0 30 8 * * *")
 	public void scheduledJob() {
 		try {
 			if (leaderElection.isLeader()) {
