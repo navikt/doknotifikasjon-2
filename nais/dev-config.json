@@ -10,6 +10,7 @@
   "SEND_TIL_ALTINN": "false",
   "MIN_REPLICAS": "1",
   "MAX_REPLICAS": "2",
+  "APPD_NAME": "doknotifikasjon-2",
   "INGRESSES": [
     "https://doknotifikasjon-2.dev.adeo.no"
   ]

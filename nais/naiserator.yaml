@@ -21,6 +21,8 @@ spec:
       value: {{ MOUNT_PATH }}
     - name: SEND_TIL_ALTINN
       value: "{{ SEND_TIL_ALTINN }}"
+    - name: APPD_NAME
+      value: {{ APPD_NAME }}
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
