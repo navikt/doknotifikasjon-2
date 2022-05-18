@@ -29,7 +29,7 @@ public class Snot001Scheduler {
 				log.info("Snot001 pod is not leader");
 			}
 		} catch (Exception exception) {
-			log.error("Feil i Snot001. exception={}", exception.getMessage(), exception);
+			log.error("Feil i Snot001: exception={}", exception.getMessage(), exception);
 		}
 	}
 }
