@@ -11,7 +11,7 @@
   "MIN_REPLICAS": "2",
   "MAX_REPLICAS": "10",
   "APPD_NAME": "doknotifikasjon-2",
-  "APPDYNAMICS": "/apikey/appdynamics/dev",
+  "APPDYNAMICS": "/apikey/appdynamics/prod",
   "INGRESSES": [
     "https://doknotifikasjon-2.nais.adeo.no"
   ]
