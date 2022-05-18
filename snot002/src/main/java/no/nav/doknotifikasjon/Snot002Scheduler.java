@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class Snot002Scheduler {
 
-	private final Snot002Service service;
+	private final Snot002Service snot002Service;
 	private final LeaderElection leaderElection;
 
 	@Autowired
-	public Snot002Scheduler(Snot002Service service, LeaderElection leaderElection) {
-		this.service = service;
+	public Snot002Scheduler(Snot002Service snot002Service, LeaderElection leaderElection) {
+		this.snot002Service = snot002Service;
 		this.leaderElection = leaderElection;
 	}
 
@@ -23,10 +23,13 @@ public class Snot002Scheduler {
 	public void scheduledJob() {
 		try {
 			if (leaderElection.isLeader()) {
-				service.resendNotifikasjoner();
+				log.info("snot002 pod is leader");
+				snot002Service.resendNotifikasjoner();
+			} else {
+				log.info("Snot002 pod is not leader");
 			}
 		} catch (Exception exception) {
-			log.error("Feil i SNOT002: ", exception);
+			log.error("Feil i SNOT002: exception={}", exception.getMessage(), exception);
 		}
 	}
 }

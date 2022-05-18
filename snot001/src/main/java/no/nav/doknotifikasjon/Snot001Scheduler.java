@@ -23,10 +23,10 @@ public class Snot001Scheduler {
 	public void scheduledJob() {
 		try {
 			if (leaderElection.isLeader()) {
-				log.info("Pod is leader");
+				log.info("Snot001 pod is leader");
 				snot001Service.resendNotifikasjoner();
 			} else {
-				log.info("Pod is not leader");
+				log.info("Snot001 pod is not leader");
 			}
 		} catch (Exception exception) {
 			log.error("Feil i Snot001. exception={}", exception.getMessage(), exception);
