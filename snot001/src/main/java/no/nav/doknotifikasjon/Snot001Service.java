@@ -7,7 +7,6 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +15,7 @@ import java.util.List;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 
@@ -39,7 +39,7 @@ public class Snot001Service {
 	}
 
 	public void resendNotifikasjoner() {
-		log.info("Starter Snot001 for å finne notifikasjoner som skal resendes.");
+		log.info("Snot001 starter for å finne notifikasjoner som skal resendes.");
 
 		List<Notifikasjon> notifikasjonList = notifikasjonService.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(
 				OVERSENDT,
@@ -48,19 +48,19 @@ public class Snot001Service {
 		);
 
 		if (notifikasjonList.isEmpty()) {
-			log.info("Ingen notifikasjoner ble funnet for resending. Avslutter snot001.");
+			log.info("Snot001 fant ingen notifikasjoner for resending. Avslutter.");
 			return;
 		}
 
-		log.info("{} notifikasjoner ble funnet for resending i snot001. ", notifikasjonList.size());
+		log.info("Snot001 fant antall={} notifikasjoner for resending.", notifikasjonList.size());
 
-		notifikasjonList.forEach(n -> {
-					List<NotifikasjonDistribusjon> publishList = snot001NotifikasjonService.processNotifikasjon(n);
-					publishList.forEach(nd ->
+		notifikasjonList.forEach(notifikasjon -> {
+					List<NotifikasjonDistribusjon> publishList = snot001NotifikasjonService.processNotifikasjon(notifikasjon);
+					publishList.forEach(notifikasjonDistribusjon ->
 							this.publishHendelseOnTopic(
-									nd.getId(),
-									nd.getKanal(),
-									n.getBestillingsId()
+									notifikasjonDistribusjon.getId(),
+									notifikasjonDistribusjon.getKanal(),
+									notifikasjon.getBestillingsId()
 							)
 					);
 				}
@@ -68,10 +68,16 @@ public class Snot001Service {
 	}
 
 	private void publishHendelseOnTopic(int notifikasjonDistribusjonId, Kanal kanal, String bestillingsId) {
-		kafkaEventProducer.publishWithKey(
-				kanal.equals(SMS) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS : KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST,
-				kanal.equals(SMS) ? new DoknotifikasjonSms(notifikasjonDistribusjonId) : new DoknotifikasjonEpost(notifikasjonDistribusjonId),
-				bestillingsId
-		);
+		if (kanal == SMS) {
+			log.info("Snot001 oppretter hendelse til topic={}, kanal={} for bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, kanal, bestillingsId);
+			// Workaround: Feil type DoknotifikasjonEpost med vilje her pga topic var konfigurert i schema registry fra starten av.
+			kafkaEventProducer.publishWithKey(KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, new DoknotifikasjonEpost(notifikasjonDistribusjonId), bestillingsId);
+		} else if (kanal == EPOST) {
+			log.info("Snot001 oppretter hendelse til topic={}, kanal={} for bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST, kanal, bestillingsId);
+			kafkaEventProducer.publishWithKey(KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST, new DoknotifikasjonEpost(notifikasjonDistribusjonId), bestillingsId);
+		} else {
+			log.error("Snot001 fant ugyldig kanal={} for bestillingsId={}, notifikasjonDistribusjonId={}. Fortsetter behandling.",
+					kanal, bestillingsId, kanal);
+		}
 	}
 }
