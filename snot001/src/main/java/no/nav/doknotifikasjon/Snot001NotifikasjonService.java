@@ -23,26 +23,26 @@ public class Snot001NotifikasjonService {
 	private static final String SNOT001 = "SNOT001";
 
 	private final NotifikasjonService notifikasjonService;
-	private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
+	private final NotifikasjonDistrubisjonService notifikasjonDistribusjonService;
 
 	@Autowired
 	public Snot001NotifikasjonService(
 			NotifikasjonService notifikasjonService,
-			NotifikasjonDistrubisjonService notifikasjonDistrubisjonService
+			NotifikasjonDistrubisjonService notifikasjonDistribusjonService
 	) {
 		this.notifikasjonService = notifikasjonService;
-		this.notifikasjonDistrubisjonService = notifikasjonDistrubisjonService;
+		this.notifikasjonDistribusjonService = notifikasjonDistribusjonService;
 	}
 
 	@Transactional
 	public List<NotifikasjonDistribusjon> processNotifikasjon(Notifikasjon notifikasjon) {
 		List<NotifikasjonDistribusjon> publishList = new ArrayList<>();
 
-		Optional<NotifikasjonDistribusjon> sms = notifikasjonDistrubisjonService.findFirstByNotifikasjonInAndKanal(notifikasjon, Kanal.SMS);
-		Optional<NotifikasjonDistribusjon> epost = notifikasjonDistrubisjonService.findFirstByNotifikasjonInAndKanal(notifikasjon, Kanal.EPOST);
+		Optional<NotifikasjonDistribusjon> sms = notifikasjonDistribusjonService.findFirstByNotifikasjonInAndKanal(notifikasjon, Kanal.SMS);
+		Optional<NotifikasjonDistribusjon> epost = notifikasjonDistribusjonService.findFirstByNotifikasjonInAndKanal(notifikasjon, Kanal.EPOST);
 
-		if (!sms.isPresent() && !epost.isPresent()) {
-			log.error("Notifikasjon med id={} hadde ingen notifikasjonDistrubisjon", notifikasjon.getId());
+		if (sms.isEmpty() && epost.isEmpty()) {
+			log.error("Notifikasjon med id={} hadde ingen NotifikasjonDistribusjon", notifikasjon.getId());
 			return publishList;
 		}
 
@@ -59,18 +59,22 @@ public class Snot001NotifikasjonService {
 	}
 
 	private void updateNotifikasjon(Notifikasjon notifikasjon) {
-		log.info("Snot001 oppdaterer notifikasjon med bestillingsId={}", notifikasjon.getBestillingsId());
+		int antallRenotifikasjoner = notifikasjon.getAntallRenotifikasjoner() - 1;
+		LocalDate nesteRenotifikasjonDato = notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null;
 
-		notifikasjon.setAntallRenotifikasjoner(notifikasjon.getAntallRenotifikasjoner() - 1);
-		notifikasjon.setNesteRenotifikasjonDato(notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null);
+		notifikasjon.setAntallRenotifikasjoner(antallRenotifikasjoner);
+		notifikasjon.setNesteRenotifikasjonDato(nesteRenotifikasjonDato);
 		notifikasjon.setEndretAv(SNOT001);
 		notifikasjon.setEndretDato(LocalDateTime.now());
+
+		log.info("Snot001 oppdaterer Notifikasjon med bestillingsId={}, antallRenotifikasjoner={}, nesteRenotifikasjonDato={}",
+				notifikasjon.getBestillingsId(), antallRenotifikasjoner, nesteRenotifikasjonDato);
 
 		notifikasjonService.save(notifikasjon);
 	}
 
 	private NotifikasjonDistribusjon persistToDBWithKanal(NotifikasjonDistribusjon notifikasjonDistribusjon, Kanal kanal, String bestillingsId) {
-		log.info("Snot001 oppretter ny notifikasjonDistribusjon med kanal={} for notifikasjon med bestillingdId={}", kanal.toString(), bestillingsId);
+		log.info("Snot001 oppretter ny NotifikasjonDistribusjon med kanal={} for notifikasjon med bestillingsId={}", kanal, bestillingsId);
 
 		String text = notifikasjonDistribusjon.getTekst().startsWith("Påminnelse: ") ?
 				notifikasjonDistribusjon.getTekst() : "Påminnelse: " + notifikasjonDistribusjon.getTekst();
@@ -86,6 +90,6 @@ public class Snot001NotifikasjonService {
 				.opprettetDato(LocalDateTime.now())
 				.build();
 
-		return notifikasjonDistrubisjonService.save(newNotifikasjonDistribusjon);
+		return notifikasjonDistribusjonService.save(newNotifikasjonDistribusjon);
 	}
 }
