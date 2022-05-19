@@ -7,7 +7,6 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -71,7 +70,8 @@ public class Snot001Service {
 	private void publishHendelseOnTopic(int notifikasjonDistribusjonId, Kanal kanal, String bestillingsId) {
 		if (kanal == SMS) {
 			log.info("Snot001 oppretter hendelse til topic={}, kanal={} for bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, kanal, bestillingsId);
-			kafkaEventProducer.publishWithKey(KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, new DoknotifikasjonSms(notifikasjonDistribusjonId), bestillingsId);
+			// Workaround: Feil type DoknotifikasjonEpost med vilje her pga topic var konfigurert i schema registry fra starten av.
+			kafkaEventProducer.publishWithKey(KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, new DoknotifikasjonEpost(notifikasjonDistribusjonId), bestillingsId);
 		} else if (kanal == EPOST) {
 			log.info("Snot001 oppretter hendelse til topic={}, kanal={} for bestillingsId={}", KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST, kanal, bestillingsId);
 			kafkaEventProducer.publishWithKey(KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST, new DoknotifikasjonEpost(notifikasjonDistribusjonId), bestillingsId);
