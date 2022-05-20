@@ -1,0 +1,1 @@
+create index idx_notifikasjon_id on t_notifikasjon_distribusjon (notifikasjon_id);
