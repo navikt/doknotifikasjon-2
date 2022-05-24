@@ -23,4 +23,9 @@
     <logger name="no.nav.doknotifikasjon" level="INFO" additivity="false">
         <appender-ref ref="applikasjonslogg"/>
     </logger>
+
+    <!-- Remove noise due to wrong use of AddressingFeature -->
+    <logger name="org.apache.cxf.ws.addressing.ContextUtils" additivity="false" level="ERROR">
+        <appender-ref ref="applikasjonslogg"/>
+    </logger>
 </included>
