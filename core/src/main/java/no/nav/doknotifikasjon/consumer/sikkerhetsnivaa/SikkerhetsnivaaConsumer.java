@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_SIKKERHETSNIVAA_CONSUMER;
 
 @Component
@@ -38,7 +38,7 @@ public class SikkerhetsnivaaConsumer {
 	}
 
 	@Metrics(value = DOK_SIKKERHETSNIVAA_CONSUMER, createErrorMetric = true)
-	@Retryable(include = SikkerhetsnivaaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = SikkerhetsnivaaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public AuthLevelResponse lookupAuthLevel(final String personIdent) {
 		try {
 			HttpEntity<AuthLevelRequest> request = new HttpEntity<>(AuthLevelRequest.builder().personidentifikator(personIdent).build());

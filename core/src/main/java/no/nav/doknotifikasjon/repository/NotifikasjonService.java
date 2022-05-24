@@ -14,9 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.RETRY_LONG;
 
 @Slf4j
 @Component
@@ -30,19 +29,19 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
 	public Notifikasjon save(Notifikasjon notifikasjon) {
 		return notifikasjonRepository.save(notifikasjon);
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public boolean existsByBestillingsId(String notifikasjon) {
 		return notifikasjonRepository.existsByBestillingsId(notifikasjon);
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato) {
 		return notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(
 				status,
@@ -52,7 +51,7 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = RETRY_LONG, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public List<Notifikasjon> findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(Status status, LocalDateTime sistEndretDato) {
 		return notifikasjonRepository.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(
 				status.toString(),
@@ -61,7 +60,7 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public Notifikasjon findByBestillingsId(String bestillingsId) {
 		return notifikasjonRepository.findByBestillingsId(bestillingsId);
 	}

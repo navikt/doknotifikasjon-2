@@ -27,7 +27,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
 import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
@@ -52,7 +52,7 @@ public class AltinnVarselConsumer {
 	}
 
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
-	@Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = AltinnTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
 		if (!sendTilAltinn) {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
