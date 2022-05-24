@@ -27,8 +27,7 @@ public class KafkaConfig {
 	) {
 		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(kafkaConsumerFactory);
-		factory.getContainerProperties()
-				.setAuthorizationExceptionRetryInterval(Duration.ofSeconds(10L));
+		factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(10L));
 
 		factory.setConcurrency(6);
 		factory.setErrorHandler(new SeekToCurrentErrorHandler(

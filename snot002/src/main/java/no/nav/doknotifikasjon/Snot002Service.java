@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_RESENDES;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
@@ -24,44 +23,43 @@ import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 public class Snot002Service {
 
 	private final NotifikasjonService notifikasjonService;
-	private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
+	private final NotifikasjonDistrubisjonService notifikasjonDistribusjonService;
 	private final KafkaStatusEventProducer kafkaStatusEventProducer;
 
-	private final int AMOUNT_OF_DAYS_IN_SCOPE = 30;
+	private static final int AMOUNT_OF_DAYS_IN_SCOPE = 30;
 
 	@Autowired
 	public Snot002Service(
 			NotifikasjonService notifikasjonService,
 			KafkaStatusEventProducer kafkaStatusEventProducer,
-			NotifikasjonDistrubisjonService notifikasjonDistrubisjonService
+			NotifikasjonDistrubisjonService notifikasjonDistribusjonService
 	) {
 		this.notifikasjonService = notifikasjonService;
 		this.kafkaStatusEventProducer = kafkaStatusEventProducer;
-		this.notifikasjonDistrubisjonService = notifikasjonDistrubisjonService;
+		this.notifikasjonDistribusjonService = notifikasjonDistribusjonService;
 	}
 
 	public void resendNotifikasjoner() {
-		log.info("Starter Snot002 for å finne notifikasjoner som  har status={} og skal oppdateres med status={}.", OVERSENDT, FERDIGSTILT);
+		log.info("Snot002 starter for å finne notifikasjoner som  har status={} og skal oppdateres med status={}.", OVERSENDT, FERDIGSTILT);
 		LocalDateTime endretDato = LocalDateTime.now().minusDays(AMOUNT_OF_DAYS_IN_SCOPE);
 
 		List<Notifikasjon> notifikasjonList = notifikasjonService.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(OVERSENDT, endretDato)
 				.stream()
-				.filter(this::checkIfLatestNotifikasjonDistrubusjonHaveStatusFerdigstilt)
-				.collect(Collectors.toList());
+				.filter(this::checkIfLatestNotifikasjonDistrubusjonHaveStatusFerdigstilt).toList();
 
 		if (notifikasjonList.isEmpty()) {
-			log.info("Ingen notifikasjoner ble funnet for oppdatering av status. Avslutter snot002.");
+			log.info("Snot002 fant ingen notifikasjoner for oppdatering av status. Avslutter Snot002.");
 			return;
 		}
 
-		log.info("{} notifikasjoner ble funnet for oppdatering av status i snot002.", notifikasjonList.size());
+		log.info("Snot002 fant antall={} notifikasjoner for oppdatering av status.", notifikasjonList.size());
 
 		notifikasjonList.forEach(this::publishHendelseOnTopic);
 	}
 
 	private boolean checkIfLatestNotifikasjonDistrubusjonHaveStatusFerdigstilt(Notifikasjon notifikasjon) {
-		Optional<NotifikasjonDistribusjon> sms = notifikasjonDistrubisjonService.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, Kanal.SMS);
-		Optional<NotifikasjonDistribusjon> epost = notifikasjonDistrubisjonService.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, Kanal.EPOST);
+		Optional<NotifikasjonDistribusjon> sms = notifikasjonDistribusjonService.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, Kanal.SMS);
+		Optional<NotifikasjonDistribusjon> epost = notifikasjonDistribusjonService.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, Kanal.EPOST);
 
 		if (sms.isEmpty() && epost.isEmpty()) {
 			return false;
