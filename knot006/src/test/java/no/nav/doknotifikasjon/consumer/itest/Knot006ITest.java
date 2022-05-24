@@ -57,7 +57,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(notifikasjonMedkontaktInfo);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -96,7 +96,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(notifikasjonMedkontaktInfo);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -136,7 +136,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(notifikasjonMedkontaktInfo);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -175,7 +175,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(notifikasjonMedkontaktInfo);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -214,7 +214,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(notifikasjonMedkontaktInfo);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 

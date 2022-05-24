@@ -31,7 +31,6 @@ import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CALL_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CONSUMER_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_PERSONIDENTER;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_DKIF_CONSUMER;
 
 @Slf4j
@@ -55,7 +54,7 @@ public class DigitalKontaktinfoConsumer implements DigitalKontaktinformasjon {
     }
 
     @Metrics(value = DOK_DKIF_CONSUMER, createErrorMetric = true, errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class)
-    @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+    @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
     public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
         HttpHeaders headers = createHeaders();
         String fnrTrimmed = personidentifikator.trim();

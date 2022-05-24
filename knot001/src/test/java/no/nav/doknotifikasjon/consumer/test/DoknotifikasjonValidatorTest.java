@@ -35,7 +35,7 @@ class DoknotifikasjonValidatorTest {
 		Doknotifikasjon doknotifikasjon = createDoknotifikasjonWithInvalidAntallRenotifikasjoner();
 		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(doknotifikasjon));
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
 		);
 	}
@@ -54,7 +54,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateNumber(doknotifikasjon, -200, "number")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt number kan ikke være negativ", null
 		);
 	}
@@ -66,7 +66,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateString(doknotifikasjon, null, 4000, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
 		);
 	}
@@ -78,7 +78,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateString(doknotifikasjon, "         ", 4000, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
 		);
 	}
@@ -90,7 +90,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateString(doknotifikasjon, "Test", 2, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string har for lang string lengde", null
 		);
 	}
@@ -116,7 +116,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateNumberForSnot001(doknotifikasjon, 100, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "Felt string kan ikke være støre enn 30", null
 		);
 	}

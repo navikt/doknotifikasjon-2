@@ -58,7 +58,7 @@ public class Knot001Consumer {
 	@Metrics(value = DOK_KNOT001_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());
-		log.info("Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
+		log.info("Knot001 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
 			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
@@ -72,7 +72,7 @@ public class Knot001Consumer {
 			log.warn("Validering av avroskjema feilet. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
-			log.warn("BestlingsId ligger allerede i database. Feilmelding={}", e.getMessage());
+			log.warn("BestillingsId ligger allerede i database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.warn("Brukeren har ikke gyldig kontaktinfo hos DKIF. Feilmelding={}", e.getMessage());

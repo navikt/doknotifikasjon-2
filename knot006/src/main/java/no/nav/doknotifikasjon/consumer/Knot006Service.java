@@ -56,14 +56,14 @@ public class Knot006Service {
 		Notifikasjon notifikasjon = this.createNotifikasjonByNotifikasjonMedKontaktInfoTO(notifikasjonMedKontaktInfoTO);
 		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishNotifikasjonDistrubisjon(n.getId(), n.getKanal()));
 
-		statusProducer.publishDoknotikfikasjonStatusOversendt(
+		statusProducer.publishDoknotifikasjonStatusOversendt(
 				notifikasjonMedKontaktInfoTO.getBestillingsId(),
 				notifikasjonMedKontaktInfoTO.getBestillerId(),
 				OVERSENDT_NOTIFIKASJON_PROCESSED,
 				null
 		);
 
-		log.info("Sender notifikasjon med status={} til topic={} med bestillingsId={}", OVERSENDT, KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, notifikasjonMedKontaktInfoTO.getBestillingsId());
+		log.info("Knot006 Sender notifikasjon med status={} til topic={} med bestillingsId={}", OVERSENDT, KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, notifikasjonMedKontaktInfoTO.getBestillingsId());
 	}
 
 	public Notifikasjon createNotifikasjonByNotifikasjonMedKontaktInfoTO(NotifikasjonMedKontaktInfoTO doknotifikasjon) {
@@ -73,7 +73,7 @@ public class Knot006Service {
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(EPOST);
 
 		if (notifkasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
-			statusProducer.publishDoknotikfikasjonStatusInfo(
+			statusProducer.publishDoknotifikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					INFO_ALREADY_EXIST_IN_DATABASE,
@@ -97,7 +97,7 @@ public class Knot006Service {
 		try {
 			return notifkasjonService.save(notifikasjon);
 		} catch (DataIntegrityViolationException e) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					FEILET_TECHNICAL_EXCEPTION_DATABASE,
@@ -154,7 +154,7 @@ public class Knot006Service {
 	public void publishNotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
 		String topic = EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 
-		log.info("Publiserer bestilling med kontaktinfo til kafka topic={} med bestillingsId={}", topic, bestillingsId);
+		log.info("Knot006 Publiserer bestilling med kontaktinfo til kafka topic={} med bestillingsId={}", topic, bestillingsId);
 		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);
 		producer.publish(
 				topic,

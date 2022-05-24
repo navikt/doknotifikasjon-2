@@ -58,7 +58,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}
@@ -74,7 +74,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}
@@ -91,7 +91,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer, times(0)).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer, times(0)).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}
@@ -103,7 +103,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer, times(0)).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer, times(0)).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}
@@ -120,7 +120,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer, times(0)).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer, times(0)).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}
@@ -137,7 +137,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer, times(0)).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer, times(0)).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}
@@ -154,7 +154,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		scheduler.scheduledJob();
 
-		verify(statusProducer, times(0)).publishDoknotikfikasjonStatusFerdigstilt(
+		verify(statusProducer, times(0)).publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FERDIGSTILT_RESENDES, null
 		);
 	}

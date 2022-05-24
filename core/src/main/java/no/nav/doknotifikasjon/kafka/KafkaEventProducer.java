@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
 
 @Slf4j
 @Component
@@ -33,12 +33,12 @@ public class KafkaEventProducer {
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Autowired
-	KafkaEventProducer(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") KafkaTemplate<String, Object> kafkaTemplate) {
+	KafkaEventProducer(KafkaTemplate<String, Object> kafkaTemplate) {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
-	@Retryable(include = KafkaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void publish(String topic, Object event) {
 		this.publish(
 				topic,
@@ -48,7 +48,7 @@ public class KafkaEventProducer {
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
-	@Retryable(include = KafkaTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void publishWithKey(String topic, Object event, String keyValue) {
 		this.publish(
 				topic,

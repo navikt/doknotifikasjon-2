@@ -27,10 +27,9 @@ public class KafkaConfig {
 	) {
 		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(kafkaConsumerFactory);
-		factory.getContainerProperties()
-				.setAuthorizationExceptionRetryInterval(Duration.ofSeconds(10L));
+		factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(10L));
 
-		factory.setConcurrency(3);
+		factory.setConcurrency(6);
 		factory.setErrorHandler(new SeekToCurrentErrorHandler(
 				(rec, thr) -> log.error("Exception oppstått i doknotifikasjon={} kafka record til topic={}, partition={}, offset={}, UUID={} feilmelding={}",
 						thr.getClass().getSimpleName(),

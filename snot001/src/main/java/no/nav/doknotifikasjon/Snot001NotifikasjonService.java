@@ -5,7 +5,7 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonDistrubisjonService;
+import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,12 +23,12 @@ public class Snot001NotifikasjonService {
 	private static final String SNOT001 = "SNOT001";
 
 	private final NotifikasjonService notifikasjonService;
-	private final NotifikasjonDistrubisjonService notifikasjonDistribusjonService;
+	private final NotifikasjonDistribusjonService notifikasjonDistribusjonService;
 
 	@Autowired
 	public Snot001NotifikasjonService(
 			NotifikasjonService notifikasjonService,
-			NotifikasjonDistrubisjonService notifikasjonDistribusjonService
+			NotifikasjonDistribusjonService notifikasjonDistribusjonService
 	) {
 		this.notifikasjonService = notifikasjonService;
 		this.notifikasjonDistribusjonService = notifikasjonDistribusjonService;

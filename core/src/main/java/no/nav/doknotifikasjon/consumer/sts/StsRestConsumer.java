@@ -19,7 +19,7 @@ import java.time.Duration;
 
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.STS_CACHE;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
+import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_STS_CONSUMER;
 
 
@@ -42,7 +42,7 @@ public class StsRestConsumer {
 
 	@Cacheable(STS_CACHE)
 	@Metrics(value = DOK_STS_CONSUMER, createErrorMetric = true, errorMetricInclude = StsTechnicalException.class)
-	@Retryable(include = StsTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = StsTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public String getOidcToken() {
 		try {
 			StsResponseTo stsResponseTo = restTemplate.getForObject(stsUrl + "?grant_type=client_credentials&scope=openid", StsResponseTo.class);

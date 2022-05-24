@@ -19,12 +19,12 @@ public class Snot002Scheduler {
 		this.leaderElection = leaderElection;
 	}
 
-	//@Scheduled(cron = "0 0 1 * * *")
+	@Scheduled(cron = "0 0 1 * * *")
 	public void scheduledJob() {
 		try {
 			if (leaderElection.isLeader()) {
 				log.info("Snot002 pod is leader");
-				snot002Service.resendNotifikasjoner();
+				snot002Service.oppdaterNotifikasjonStatus();
 			} else {
 				log.info("Snot002 pod is not leader");
 			}

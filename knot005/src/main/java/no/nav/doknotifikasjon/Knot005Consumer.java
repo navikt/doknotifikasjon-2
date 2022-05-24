@@ -46,7 +46,7 @@ public class Knot005Consumer {
 	@Transactional
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());
-		log.info("Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
+		log.info("Knot005 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
 			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value()

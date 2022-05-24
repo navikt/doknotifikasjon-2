@@ -18,23 +18,21 @@ import java.util.Optional;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_DELAY;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.MAX_INT;
-import static no.nav.doknotifikasjon.constants.RetryConstants.RETRY_LONG;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
 
 @Slf4j
 @Component
-public class NotifikasjonDistrubisjonService {
+public class NotifikasjonDistribusjonService {
 
 	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@Autowired
-	NotifikasjonDistrubisjonService(NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
+	NotifikasjonDistribusjonService(NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
 		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
 	public NotifikasjonDistribusjon save(NotifikasjonDistribusjon notifikasjonDistribusjon) {
 		try {
 			return notifikasjonDistribusjonRepository.save(notifikasjonDistribusjon);
@@ -55,12 +53,12 @@ public class NotifikasjonDistrubisjonService {
 				});
 	}
 
-	@Retryable(maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonInAndKanal(Notifikasjon notifikasjon, Kanal kanal) {
 		return notifikasjonDistribusjonRepository.findFirstByNotifikasjonAndKanal(notifikasjon, kanal);
 	}
 
-	@Retryable(maxAttempts = RETRY_LONG, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(Notifikasjon notifikasjon, Kanal kanal) {
 		return notifikasjonDistribusjonRepository.findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(notifikasjon, kanal);
 	}

@@ -75,7 +75,7 @@ public class Knot001Service {
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon, kontaktinfo);
 		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonDistrubisjon(n.getId(), n.getKanal()));
 
-		statusProducer.publishDoknotikfikasjonStatusOversendt(
+		statusProducer.publishDoknotifikasjonStatusOversendt(
 				doknotifikasjon.getBestillingsId(),
 				doknotifikasjon.getBestillerId(),
 				OVERSENDT_NOTIFIKASJON_PROCESSED,
@@ -92,7 +92,7 @@ public class Knot001Service {
 			log.info("Henter kontaktinfo fra DKIF for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 			digitalKontaktinformasjon = kontaktinfoConsumer.hentDigitalKontaktinfo(fnrTrimmed);
 		} catch (DigitalKontaktinformasjonFunctionalException e) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					FEILET_FUNCTIONAL_EXCEPTION_DKIF,
@@ -106,22 +106,22 @@ public class Knot001Service {
 
 		if (kontaktinfo == null) {
 			if (digitalKontaktinformasjon.getFeil() != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed) != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding() != null) {
-				publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding());
+				publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding());
 			}
-			publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
+			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
 		} else if (kontaktinfo.isReservert()) {
-			publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
+			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
 		} else if (!kontaktinfo.isKanVarsles()) {
-			publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
+			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		} else if ((kontaktinfo.getEpostadresse() == null || kontaktinfo.getEpostadresse().trim().isEmpty()) &&
 				(kontaktinfo.getMobiltelefonnummer() == null || kontaktinfo.getMobiltelefonnummer().trim().isEmpty())) {
-			publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
+			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		}
 		return kontaktinfo;
 	}
 
-	public void publishDoknotikfikasjonStatusIfValidationOfKontaktinfoFails(DoknotifikasjonTO doknotifikasjon, String message) {
-		statusProducer.publishDoknotikfikasjonStatusFeilet(
+	public void publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(DoknotifikasjonTO doknotifikasjon, String message) {
+		statusProducer.publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(),
 				doknotifikasjon.getBestillerId(),
 				message,
@@ -137,7 +137,7 @@ public class Knot001Service {
 				log.info("Knot001 gjør oppslag mot sikkerhetsnivaa for hendelse med bestillingsId={}", doknotifikasjonTO.getBestillingsId());
 				authLevelResponse = sikkerhetsnivaaConsumer.lookupAuthLevel(doknotifikasjonTO.getFodselsnummer());
 			} catch (SikkerhetsnivaaFunctionalException exception) {
-				statusProducer.publishDoknotikfikasjonStatusFeilet(
+				statusProducer.publishDoknotifikasjonStatusFeilet(
 						doknotifikasjonTO.getBestillingsId(),
 						doknotifikasjonTO.getBestillerId(),
 						FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
@@ -147,7 +147,7 @@ public class Knot001Service {
 				throw exception;
 			}
 			if (!authLevelResponse.isHarbruktnivaa4()) {
-				statusProducer.publishDoknotikfikasjonStatusFeilet(
+				statusProducer.publishDoknotifikasjonStatusFeilet(
 						doknotifikasjonTO.getBestillingsId(),
 						doknotifikasjonTO.getBestillerId(),
 						FEILET_SIKKERHETSNIVAA,
@@ -164,7 +164,7 @@ public class Knot001Service {
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(Kanal.EPOST);
 
 		if (notifikasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
-			statusProducer.publishDoknotikfikasjonStatusInfo(
+			statusProducer.publishDoknotifikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					INFO_ALREADY_EXIST_IN_DATABASE,
@@ -188,7 +188,7 @@ public class Knot001Service {
 		try {
 			return notifikasjonService.save(notifikasjon);
 		} catch (DataIntegrityViolationException e) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					FEILET_TECHNICAL_EXCEPTION_DATABASE,

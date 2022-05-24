@@ -55,7 +55,7 @@ public class Knot006Consumer {
 	@Metrics(value = DOK_KNOT006_CONSUMER, createErrorMetric = true)
 	public void onMessage(final ConsumerRecord<String, Object> record) {
 		generateNewCallIdIfThereAreNone(record.key());
-		log.info("Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
+		log.info("Knot006 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
 			NotifikasjonMedkontaktInfo notifikasjonMedkontaktInfo = objectMapper.readValue(record.value().toString(), NotifikasjonMedkontaktInfo.class);
