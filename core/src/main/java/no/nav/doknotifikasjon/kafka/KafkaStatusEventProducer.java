@@ -17,28 +17,23 @@ public class KafkaStatusEventProducer {
 		this.producer = producer;
 	}
 
-	public void publishDoknotikfikasjonStatusOversendt(String bestillingsId, String bestillerId,
-													   String melding, Long distribusjonId) {
+	public void publishDoknotifikasjonStatusOversendt(String bestillingsId, String bestillerId,
+													  String melding, Long distribusjonId) {
 		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OVERSENDT, melding, distribusjonId);
 	}
 
-	public void publishDoknotikfikasjonStatusOpprettet(String bestillingsId, String bestillerId,
-													   String melding, Long distribusjonId) {
-		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.OPPRETTET, melding, distribusjonId);
-	}
-
-	public void publishDoknotikfikasjonStatusFerdigstilt(String bestillingsId, String bestillerId,
-														 String melding, Long distribusjonId) {
+	public void publishDoknotifikasjonStatusFerdigstilt(String bestillingsId, String bestillerId,
+														String melding, Long distribusjonId) {
 		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.FERDIGSTILT, melding, distribusjonId);
 	}
 
-	public void publishDoknotikfikasjonStatusInfo(String bestillingsId, String bestillerId,
-												  String melding, Long distribusjonId) {
+	public void publishDoknotifikasjonStatusInfo(String bestillingsId, String bestillerId,
+												 String melding, Long distribusjonId) {
 		this.publishDoknotifikasjonStatus(bestillingsId, bestillerId, Status.INFO, melding, distribusjonId);
 	}
 
-	public void publishDoknotikfikasjonStatusFeilet(String bestillingsId, String bestillerId,
-													String melding, Long distribusjonId) {
+	public void publishDoknotifikasjonStatusFeilet(String bestillingsId, String bestillerId,
+												   String melding, Long distribusjonId) {
 		this.publishDoknotifikasjonStatus(
 				bestillingsId == null ? "Ukjent" : bestillingsId,
 				bestillerId == null ? "Ukjent" : bestillerId,

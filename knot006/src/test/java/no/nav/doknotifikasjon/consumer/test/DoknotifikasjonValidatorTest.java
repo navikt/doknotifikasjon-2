@@ -36,7 +36,7 @@ class DoknotifikasjonValidatorTest {
 		NotifikasjonMedkontaktInfo notifikasjon = createDoknotifikasjonWithInvalidAntallRenotifikasjoner();
 		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(notifikasjon));
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
 		);
 	}
@@ -46,7 +46,7 @@ class DoknotifikasjonValidatorTest {
 		NotifikasjonMedkontaktInfo notifikasjon = createDoknotifikasjonWithoutEpostOrSms();
 		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(notifikasjon));
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT, null
 		);
 	}
@@ -58,7 +58,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateNumber(notifikasjon, -200, "number")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt number kan ikke være negativ", null
 		);
 	}
@@ -70,7 +70,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateString(notifikasjon, null, 4000, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
 		);
 	}
@@ -82,7 +82,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateString(notifikasjon, "         ", 4000, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
 		);
 	}
@@ -94,7 +94,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateString(notifikasjon, "Test", 2, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt string har for lang string lengde", null
 		);
 	}
@@ -119,7 +119,7 @@ class DoknotifikasjonValidatorTest {
 				doknotifikasjonValidator.validateNumberForSnot001(notifikasjon, 100, "string")
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "Felt string kan ikke være støre enn 30", null
 		);
 	}

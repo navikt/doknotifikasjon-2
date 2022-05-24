@@ -15,7 +15,7 @@ public class DoknotifikasjonStatusMessage {
 	public static final String FEILET_SIKKERHETSNIVAA = "Mottaker har ikke tilgang til login med nivå 4";
 
 	public static final String OVERSENDT_NOTIFIKASJON_PROCESSED = "Notifikasjon er behandlet og distribusjon er bestilt";
-	public static final String FEILET_DATABASE_IKKE_OPPDATERT = "Oppdatering av distrubusjon feilet i database";
+	public static final String FEILET_DATABASE_IKKE_OPPDATERT = "Oppdatering av distribusjon feilet i database";
 
 	public static final String FERDIGSTILT_NOTIFIKASJON_SMS = "notifikasjon sendt via sms";
 	public static final String FEILET_SMS_UGYLDIG_STATUS = "distribusjon til sms feilet: ugyldig status";

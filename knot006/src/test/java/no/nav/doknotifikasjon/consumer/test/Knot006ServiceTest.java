@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon.consumer.test;
 
-import no.nav.doknotifikasjon.consumer.NotifikasjonMedKontaktInfoTO;
 import no.nav.doknotifikasjon.consumer.Knot006Service;
+import no.nav.doknotifikasjon.consumer.NotifikasjonMedKontaktInfoTO;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
@@ -45,7 +45,7 @@ class Knot006ServiceTest {
 				knot006Service.createNotifikasjonByNotifikasjonMedKontaktInfoTO(doknotifikasjon)
 		);
 
-		verify(statusProducer).publishDoknotikfikasjonStatusInfo(
+		verify(statusProducer).publishDoknotifikasjonStatusInfo(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), INFO_ALREADY_EXIST_IN_DATABASE, null
 		);
 	}

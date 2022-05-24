@@ -55,7 +55,7 @@ public class AltinnVarselConsumer {
 	@Retryable(include = AltinnTechnicalException.class, maxAttempts = MAX_INT, backoff = @Backoff(delay = DELAY_LONG))
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
 		if (!sendTilAltinn) {
-			log.info("Sender ikke melding til Altinn fordi flagg er satt");
+			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
 			return;
 		}
 		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(

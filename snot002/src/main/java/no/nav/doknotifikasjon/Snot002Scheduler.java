@@ -24,7 +24,7 @@ public class Snot002Scheduler {
 		try {
 			if (leaderElection.isLeader()) {
 				log.info("Snot002 pod is leader");
-				snot002Service.resendNotifikasjoner();
+				snot002Service.oppdaterNotifikasjonStatus();
 			} else {
 				log.info("Snot002 pod is not leader");
 			}

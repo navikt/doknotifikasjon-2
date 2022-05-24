@@ -24,12 +24,12 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_D
 
 @Slf4j
 @Component
-public class NotifikasjonDistrubisjonService {
+public class NotifikasjonDistribusjonService {
 
 	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@Autowired
-	NotifikasjonDistrubisjonService(NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
+	NotifikasjonDistribusjonService(NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository) {
 		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonRepository;
 	}
 

@@ -39,7 +39,7 @@ public class DoknotifikasjonValidator {
 		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
 
 		if (doknotifikasjon.getFodselsnummer().trim().length() != 11) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					"påkrevd felt fodselsnummer er påkrevd til å være 11 siffer",
@@ -50,7 +50,7 @@ public class DoknotifikasjonValidator {
 
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER,
@@ -66,7 +66,7 @@ public class DoknotifikasjonValidator {
 		if (StringUtils.isBlank(string) || string.length() > maxLength) {
 			String addedString = StringUtils.isBlank(string) ? " ikke satt" : " har for lang string lengde";
 
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					"påkrevd felt " + fieldName + addedString,
@@ -83,7 +83,7 @@ public class DoknotifikasjonValidator {
 			String fieldName
 	) {
 		if (NumberToValidate != null && NumberToValidate > 30) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					"Felt " + fieldName + " kan ikke være støre enn 30",
@@ -95,7 +95,7 @@ public class DoknotifikasjonValidator {
 
 	public void validateNumber(Doknotifikasjon doknotifikasjon, Integer number, String fieldName) {
 		if (number != null && number < 0) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
 					"påkrevd felt " + fieldName + " kan ikke være negativ",

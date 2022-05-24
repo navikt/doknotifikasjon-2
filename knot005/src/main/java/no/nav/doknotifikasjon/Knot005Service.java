@@ -38,10 +38,10 @@ public class Knot005Service {
 		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsId(doknotifikasjonStoppTo.getBestillingsId());
 
 		if (notifikasjon == null) {
-			log.warn("Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
+			log.warn("Knot005 Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
 					doknotifikasjonStoppTo.getBestillingsId());
 		} else if (FERDIGSTILT.equals(notifikasjon.getStatus())) {
-			log.warn("Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
+			log.warn("Knot005 Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
 					doknotifikasjonStoppTo.getBestillingsId(), FERDIGSTILT);
 		} else {
 			log.info("Knot005 oppdaterer notifikasjon med bestillingsId={}", doknotifikasjonStoppTo.getBestillingsId());
@@ -52,7 +52,7 @@ public class Knot005Service {
 	}
 
 	private void publishNewDoknotifikasjonStatus(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
-		kafkaDoknotifikasjonStatusProducer.publishDoknotikfikasjonStatusFerdigstilt(
+		kafkaDoknotifikasjonStatusProducer.publishDoknotifikasjonStatusFerdigstilt(
 				doknotifikasjonStoppTo.getBestillingsId(),
 				doknotifikasjonStoppTo.getBestillerId(),
 				FERDIGSTILT_RENOTIFIKASJON_STANSET,

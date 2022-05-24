@@ -39,7 +39,7 @@ public class NotifikasjonValidator {
 		this.validateNumberForSnot001(notifikasjon, notifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
 
 		if (isBlank(notifikasjon.getEpostadresse()) && isBlank(notifikasjon.getMobiltelefonnummer())) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					notifikasjon.getBestillingsId(),
 					notifikasjon.getBestillerId(),
 					FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT,
@@ -52,7 +52,7 @@ public class NotifikasjonValidator {
 
 		if ((notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(notifikasjon.getRenotifikasjonIntervall() != null && notifikasjon.getRenotifikasjonIntervall() > 0)) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					notifikasjon.getBestillingsId(),
 					notifikasjon.getBestillerId(),
 					FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER,
@@ -68,7 +68,7 @@ public class NotifikasjonValidator {
 		if (string == null || string.trim().isEmpty() || string.length() > maxLength) {
 			String addedString = string == null || string.trim().isEmpty() ? " ikke satt" : " har for lang string lengde";
 
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					notifikasjon.getBestillingsId(),
 					notifikasjon.getBestillerId(),
 					"påkrevd felt " + fieldName + addedString,
@@ -80,7 +80,7 @@ public class NotifikasjonValidator {
 
 	public void validateNumber(NotifikasjonMedkontaktInfo notifikasjon, Integer number, String fieldName) {
 		if (number != null && number < 0) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					notifikasjon.getBestillingsId(),
 					notifikasjon.getBestillerId(),
 					"påkrevd felt " + fieldName + " kan ikke være negativ",
@@ -97,7 +97,7 @@ public class NotifikasjonValidator {
 			String fieldName
 	){
 		if (numberToValidate != null && numberToValidate > 30) {
-			statusProducer.publishDoknotikfikasjonStatusFeilet(
+			statusProducer.publishDoknotifikasjonStatusFeilet(
 					notifikasjon.getBestillingsId(),
 					notifikasjon.getBestillerId(),
 					"Felt " + fieldName + " kan ikke være støre enn 30",

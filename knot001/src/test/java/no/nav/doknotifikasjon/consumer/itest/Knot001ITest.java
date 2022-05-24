@@ -73,7 +73,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -113,7 +113,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -153,7 +153,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusOversendt(
+			verify(statusProducer).publishDoknotifikasjonStatusOversendt(
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
@@ -201,7 +201,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+			verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_SIKKERHETSNIVAA, null
 			);
 
@@ -216,7 +216,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			verify(statusProducer).publishDoknotikfikasjonStatusFeilet(
+			verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "Ingen kontaktinformasjon er registrert på personen", null
 			);
 

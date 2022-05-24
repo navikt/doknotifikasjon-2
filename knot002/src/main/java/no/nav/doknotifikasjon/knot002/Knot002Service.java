@@ -12,7 +12,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonDistrubisjonService;
+import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,22 +34,23 @@ public class Knot002Service {
 	private final MetricService metricService;
 	private final KafkaEventProducer kafkaEventProducer;
 	private final AltinnVarselConsumer altinnVarselConsumer;
-	private final NotifikasjonDistrubisjonService notifikasjonDistrubisjonService;
+	private final NotifikasjonDistribusjonService notifikasjonDistribusjonService;
 
 	@Autowired
 	public Knot002Service(Knot002Mapper knot002Mapper, KafkaEventProducer kafkaEventProducer,
-						  AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistrubisjonService notifikasjonDistrubisjonService,
+						  AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistribusjonService notifikasjonDistribusjonService,
 						  MetricService metricService) {
 		this.knot002Mapper = knot002Mapper;
 		this.kafkaEventProducer = kafkaEventProducer;
 		this.altinnVarselConsumer = altinnVarselConsumer;
-		this.notifikasjonDistrubisjonService = notifikasjonDistrubisjonService;
+		this.notifikasjonDistribusjonService = notifikasjonDistribusjonService;
 		this.metricService = metricService;
 	}
 
 	public void shouldSendSms(int notifikasjonDistribusjonId) {
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistrubisjonService.findById(notifikasjonDistribusjonId);
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonService.findById(notifikasjonDistribusjonId);
 		Notifikasjon notifikasjon = notifikasjonDistribusjon.getNotifikasjon();
+		final var bestillingsId = notifikasjon.getBestillingsId();
 
 		DoknotifikasjonSmsObject doknotifikasjonSmsObject = knot002Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
@@ -57,14 +58,14 @@ public class Knot002Service {
 			String melding = doknotifikasjonSmsObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_SMS_UGYLDIG_KANAL : FEILET_SMS_UGYLDIG_STATUS;
 			publishStatus(doknotifikasjonSmsObject, FEILET, melding);
 
-			log.warn("Behandling av melding på kafka-topic={} avsluttes pga feil={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, melding);
+			log.warn("Knot002 behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, melding, bestillingsId);
 			throw new DoknotifikasjonValidationException(String.format("Valideringsfeil oppstod i Knot002. Feilmelding: %s", melding));
 		}
 
 		try {
-			log.info("Knot002 kontakter Altinn for distribusjon av notifikasjonDistribusjon med id={}", notifikasjonDistribusjonId);
+			log.info("Knot002 kontakter Altinn for distribusjon av SMS. notifikasjonDistribusjonId={}, bestillingsId={}", notifikasjonDistribusjonId, bestillingsId);
 			altinnVarselConsumer.sendVarsel(Kanal.SMS, doknotifikasjonSmsObject.getKontaktInfo(), doknotifikasjonSmsObject.getFodselsnummer(), doknotifikasjonSmsObject.getTekst(), "");
-			log.info(FERDIGSTILT_NOTIFIKASJON_SMS + " for notifikasjonDistribusjon med Id={}", notifikasjonDistribusjonId);
+			log.info("Knot002 har sendt SMS notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}", notifikasjonDistribusjonId, bestillingsId);
 		} catch (AltinnFunctionalException altinnFunctionalException) {
 			publishStatus(doknotifikasjonSmsObject, FEILET, altinnFunctionalException.getMessage());
 			throw altinnFunctionalException;
@@ -107,6 +108,6 @@ public class Knot002Service {
 		notifikasjonDistribusjon.setSendtDato(now);
 		notifikasjonDistribusjon.setEndretDato(now);
 
-		notifikasjonDistrubisjonService.save(notifikasjonDistribusjon);
+		notifikasjonDistribusjonService.save(notifikasjonDistribusjon);
 	}
 }
