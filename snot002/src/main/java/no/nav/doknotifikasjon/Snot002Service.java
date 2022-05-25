@@ -55,6 +55,8 @@ public class Snot002Service {
 		log.info("Snot002 fant antall={} notifikasjoner for oppdatering av status.", notifikasjonList.size());
 
 		notifikasjonList.forEach(this::publishHendelseOnTopic);
+
+		log.info("Snot002 er ferdig med å oppdatere status på antall={} notifikasjoner.", notifikasjonList.size());
 	}
 
 	private boolean checkIfLatestNotifikasjonDistribusjonHaveStatusFerdigstilt(Notifikasjon notifikasjon) {
