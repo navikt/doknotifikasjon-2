@@ -32,7 +32,7 @@ public class NotifikasjonValidator {
 		this.validateString(notifikasjon, notifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
 		this.validateString(notifikasjon, notifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
 		this.validateString(notifikasjon, notifikasjon.getFodselsnummer(), MAX_STRING_SIZE_SMALL, "Fodselsnummer");
-		this.validateString(notifikasjon, notifikasjon.getTittel(), MAX_STRING_SIZE_SMALL, "Tittel");
+		this.validateString(notifikasjon, notifikasjon.getTittel(), MAX_STRING_SIZE_MEDIUM, "Tittel");
 		this.validateString(notifikasjon, notifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
 		this.validateString(notifikasjon, notifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
 		this.validateNumberForSnot001(notifikasjon, notifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
