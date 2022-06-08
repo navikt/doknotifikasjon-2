@@ -29,10 +29,10 @@ public class Notifikasjon implements Serializable {
 	@Column(name = "ID")
 	private Integer id;
 
-	@Column(name = "BESTILLINGS_ID", length = 40)
+	@Column(name = "BESTILLINGS_ID", length = 100)
 	private String bestillingsId;
 
-	@Column(name = "BESTILLER_ID", length = 40)
+	@Column(name = "BESTILLER_ID", length = 100)
 	private String bestillerId;
 
 	@Column(name = "MOTTAKER_ID", length = 40)
@@ -58,13 +58,13 @@ public class Notifikasjon implements Serializable {
 	@Column(name = "PREFERERTE_KANALER", length = 20)
 	private String prefererteKanaler;
 
-	@Column(name = "OPPRETTET_AV", length = 40)
+	@Column(name = "OPPRETTET_AV", length = 100)
 	private String opprettetAv;
 
 	@Column(name = "OPPRETTET_DATO")
 	private LocalDateTime opprettetDato;
 
-	@Column(name = "ENDRET_AV", length = 40)
+	@Column(name = "ENDRET_AV", length = 100)
 	private String endretAv;
 
 	@Column(name = "ENDRET_DATO")
