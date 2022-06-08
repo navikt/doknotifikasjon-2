@@ -32,7 +32,7 @@ public class DoknotifikasjonValidator {
 		this.validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
 		this.validateString(doknotifikasjon, doknotifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
 		this.validateString(doknotifikasjon, doknotifikasjon.getFodselsnummer(), MAX_STRING_SIZE_SMALL, "Fodselsnummer");
-		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_SMALL, "Tittel");
+		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_MEDIUM, "Tittel");
 		this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
 		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
 		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
@@ -45,7 +45,7 @@ public class DoknotifikasjonValidator {
 					"påkrevd felt fodselsnummer er påkrevd til å være 11 siffer",
 					null
 			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gyldig for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
 		}
 
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&

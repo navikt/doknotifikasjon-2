@@ -43,7 +43,7 @@ public class NotifikasjonDistribusjon implements Serializable {
 	@Column(name = "KONTAKT_INFO", length = 255)
 	private String kontaktInfo;
 
-	@Column(name = "TITTEL", length = 40)
+	@Column(name = "TITTEL", length = 100)
 	private String tittel;
 
 	@Column(name = "TEKST", length = 4000)
@@ -52,13 +52,13 @@ public class NotifikasjonDistribusjon implements Serializable {
 	@Column(name = "SENDT_DATO")
 	private LocalDateTime sendtDato;
 
-	@Column(name = "OPPRETTET_AV", length = 40)
+	@Column(name = "OPPRETTET_AV", length = 100)
 	private String opprettetAv;
 
 	@Column(name = "OPPRETTET_DATO")
 	private LocalDateTime opprettetDato;
 
-	@Column(name = "ENDRET_AV", length = 40)
+	@Column(name = "ENDRET_AV", length = 100)
 	private String endretAv;
 
 	@Column(name = "ENDRET_DATO")
