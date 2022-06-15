@@ -42,7 +42,6 @@ public class Knot002Consumer {
 
 	@KafkaListener(
 			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS,
-			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot002"
 	)
 	@Transactional

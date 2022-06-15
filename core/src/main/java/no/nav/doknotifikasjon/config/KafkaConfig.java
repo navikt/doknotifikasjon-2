@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
 import java.time.Duration;
@@ -20,7 +20,7 @@ import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 @Configuration
 public class KafkaConfig {
 
-	@Bean("kafkaListenerContainerFactory")
+	@Bean
 	@Primary
 	ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerFactory(
 			ConsumerFactory<Object, Object> kafkaConsumerFactory
@@ -30,7 +30,7 @@ public class KafkaConfig {
 		factory.getContainerProperties().setAuthExceptionRetryInterval(Duration.ofSeconds(10L));
 
 		factory.setConcurrency(6);
-		factory.setErrorHandler(new SeekToCurrentErrorHandler(
+		factory.setCommonErrorHandler(new DefaultErrorHandler(
 				(rec, thr) -> log.error("Exception oppstått i doknotifikasjon={} kafka record til topic={}, partition={}, offset={}, UUID={} feilmelding={}",
 						thr.getClass().getSimpleName(),
 						rec.topic(),

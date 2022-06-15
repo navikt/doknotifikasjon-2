@@ -48,7 +48,6 @@ public class Knot006Consumer {
 
 	@KafkaListener(
 			topics = PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO,
-			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot006"
 	)
 	@Transactional
