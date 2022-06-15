@@ -12,8 +12,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidAntallRenotifikasjoner;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithoutEpostOrSms;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createNotifikasjon;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.MOBILTELEFONNUMMER_OR_EPOSTADESSE_MUST_BE_SET;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
@@ -37,7 +37,7 @@ class DoknotifikasjonValidatorTest {
 		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(notifikasjon));
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
+				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
 		);
 	}
 
@@ -47,19 +47,7 @@ class DoknotifikasjonValidatorTest {
 		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(notifikasjon));
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT, null
-		);
-	}
-
-	@Test
-	void shouldFailValidateNumberWhenFieldIsNegative() {
-		NotifikasjonMedkontaktInfo notifikasjon = createNotifikasjon();
-		assertThrows(InvalidAvroSchemaFieldException.class, () ->
-				doknotifikasjonValidator.validateNumber(notifikasjon, -200, "number")
-		);
-
-		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt number kan ikke være negativ", null
+				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), MOBILTELEFONNUMMER_OR_EPOSTADESSE_MUST_BE_SET, null
 		);
 	}
 
@@ -71,7 +59,7 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
+				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "string må være satt", null
 		);
 	}
 
@@ -83,19 +71,19 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
+				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "string må være satt", null
 		);
 	}
 
 	@Test
-	void shouldFailValidateStringWhenFieldIsToShort() {
+	void shouldFailValidateStringWhenFieldIsTooLong() {
 		NotifikasjonMedkontaktInfo notifikasjon = createNotifikasjon();
 		assertThrows(InvalidAvroSchemaFieldException.class, () ->
 				doknotifikasjonValidator.validateString(notifikasjon, "Test", 2, "string")
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "påkrevd felt string har for lang string lengde", null
+				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "string kan ikke være lenger enn 2 tegn", null
 		);
 	}
 
@@ -120,7 +108,7 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "Felt string kan ikke være støre enn 30", null
+				notifikasjon.getBestillingsId(), notifikasjon.getBestillerId(), "string kan ikke være større enn 30", null
 		);
 	}
 }

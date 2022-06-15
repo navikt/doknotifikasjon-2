@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.consumer;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
@@ -8,7 +7,8 @@ import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Component
@@ -18,7 +18,7 @@ public class DoknotifikasjonValidator {
 
 	private static final int MAX_STRING_SIZE_LARGE = 4000;
 	private static final int MAX_STRING_SIZE_MEDIUM = 100;
-	private static final int MAX_STRING_SIZE_SMALL = 40;
+	private static final int MAX_SIZE_RENOTIFIKASJONER = 30;
 
 	@Autowired
 	DoknotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
@@ -26,83 +26,72 @@ public class DoknotifikasjonValidator {
 	}
 
 	public void validate(Doknotifikasjon doknotifikasjon) {
-		log.info("Begynner med validering av AVRO skjema med bestillingsId={}", doknotifikasjon.getBestillingsId());
+		log.info("Starter validering av Doknotifikasjon-melding med bestillingsId={}", doknotifikasjon.getBestillingsId());
 
+		validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "bestillingsId");
+		validateString(doknotifikasjon, doknotifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "bestillerId");
+		validateFoedselsnummer(doknotifikasjon);
+		validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_MEDIUM, "tittel");
+		validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "epostTekst");
+		validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "smsTekst");
 
-		this.validateString(doknotifikasjon, doknotifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
-		this.validateString(doknotifikasjon, doknotifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
-		this.validateString(doknotifikasjon, doknotifikasjon.getFodselsnummer(), MAX_STRING_SIZE_SMALL, "Fodselsnummer");
-		this.validateString(doknotifikasjon, doknotifikasjon.getTittel(), MAX_STRING_SIZE_MEDIUM, "Tittel");
-		this.validateString(doknotifikasjon, doknotifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
-		this.validateString(doknotifikasjon, doknotifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
-		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
-		this.validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
+		validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
+		validateNumberForSnot001(doknotifikasjon, doknotifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
+		validateRenotifikasjoner(doknotifikasjon);
+	}
 
-		if (doknotifikasjon.getFodselsnummer().trim().length() != 11) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					doknotifikasjon.getBestillingsId(),
-					doknotifikasjon.getBestillerId(),
-					"påkrevd felt fodselsnummer er påkrevd til å være 11 siffer",
-					null
-			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gyldig for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+	private void validateFoedselsnummer(Doknotifikasjon doknotifikasjon) {
+		var feilmelding = "";
+		var fnr = doknotifikasjon.getFodselsnummer();
+
+		if (isBlank(fnr)) {
+			feilmelding = "fødselsnummer må være satt";
+		} else if (fnr.trim().length() != 11) {
+			feilmelding = "fødselsnummer må være 11 siffer";
 		}
 
-		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
-				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					doknotifikasjon.getBestillingsId(),
-					doknotifikasjon.getBestillerId(),
-					FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER,
-					null
-			);
-
-			throw new InvalidAvroSchemaFieldException(String.format("Feilet med å validere Doknotifikasjon AVRO skjema med bestillingsId=%s. Feilmelding: %s. ",
-					doknotifikasjon.getBestillingsId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER));
-		}
+		processValidationResult(doknotifikasjon, feilmelding);
 	}
 
 	public void validateString(Doknotifikasjon doknotifikasjon, String string, int maxLength, String fieldName) {
-		if (StringUtils.isBlank(string) || string.length() > maxLength) {
-			String addedString = StringUtils.isBlank(string) ? " ikke satt" : " har for lang string lengde";
+		var feilmelding = "";
 
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					doknotifikasjon.getBestillingsId(),
-					doknotifikasjon.getBestillerId(),
-					"påkrevd felt " + fieldName + addedString,
-					null
-			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+		if (isBlank(string)) {
+			feilmelding = String.format("%s må være satt", fieldName);
+		} else if (string.length() > maxLength) {
+			feilmelding = String.format("%s kan ikke være lenger enn %s tegn", fieldName, maxLength);
 		}
+
+		processValidationResult(doknotifikasjon, feilmelding);
 	}
 
-	/* Denne funksjonen vil forhindre at feltet antallRenotifikasjoner og renotifikasjonIntervall vil aldri bli støre enn 30*/
 	public void validateNumberForSnot001(
 			Doknotifikasjon doknotifikasjon,
-			Integer NumberToValidate,
+			Integer numberToValidate,
 			String fieldName
 	) {
-		if (NumberToValidate != null && NumberToValidate > 30) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					doknotifikasjon.getBestillingsId(),
-					doknotifikasjon.getBestillerId(),
-					"Felt " + fieldName + " kan ikke være støre enn 30",
-					null
-			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+		if (numberToValidate != null && numberToValidate > MAX_SIZE_RENOTIFIKASJONER) {
+			processValidationResult(doknotifikasjon, String.format("%s kan ikke være større enn %s", fieldName, MAX_SIZE_RENOTIFIKASJONER));
 		}
 	}
 
-	public void validateNumber(Doknotifikasjon doknotifikasjon, Integer number, String fieldName) {
-		if (number != null && number < 0) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					doknotifikasjon.getBestillingsId(),
-					doknotifikasjon.getBestillerId(),
-					"påkrevd felt " + fieldName + " kan ikke være negativ",
-					null
-			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + doknotifikasjon.getBestillingsId());
+	private void validateRenotifikasjoner(Doknotifikasjon doknotifikasjon) {
+		if (doknotifikasjon.getAntallRenotifikasjoner() > 0 && !(doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
+			processValidationResult(doknotifikasjon, RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER);
 		}
 	}
 
+	private void processValidationResult(Doknotifikasjon doknotifikasjon, String feilmelding) {
+		if(!feilmelding.isEmpty()) {
+			statusProducer.publishDoknotifikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(),
+					doknotifikasjon.getBestillerId(),
+					feilmelding,
+					null
+			);
+
+			throw new InvalidAvroSchemaFieldException(String.format("Doknotifikasjon-melding med bestillingsId=%s feilet validering: %s.",
+					doknotifikasjon.getBestillingsId(), feilmelding));
+		}
+	}
 }

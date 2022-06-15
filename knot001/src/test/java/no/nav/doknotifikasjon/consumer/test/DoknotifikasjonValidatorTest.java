@@ -12,7 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjon;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidAntallRenotifikasjoner;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidFnr;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
@@ -36,7 +36,7 @@ class DoknotifikasjonValidatorTest {
 		assertThrows(InvalidAvroSchemaFieldException.class, () -> doknotifikasjonValidator.validate(doknotifikasjon));
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER, null
 		);
 	}
 
@@ -48,18 +48,6 @@ class DoknotifikasjonValidatorTest {
 	}
 
 	@Test
-	void shouldFailValidateNumberWhenFieldIsNegative() {
-		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
-		assertThrows(InvalidAvroSchemaFieldException.class, () ->
-				doknotifikasjonValidator.validateNumber(doknotifikasjon, -200, "number")
-		);
-
-		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt number kan ikke være negativ", null
-		);
-	}
-
-	@Test
 	void shouldFailValidateStringWhenFieldIsNull() {
 		Doknotifikasjon doknotifikasjon = createDoknotifikasjon();
 		assertThrows(InvalidAvroSchemaFieldException.class, () ->
@@ -67,7 +55,7 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "string må være satt", null
 		);
 	}
 
@@ -79,7 +67,7 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string ikke satt", null
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "string må være satt", null
 		);
 	}
 
@@ -91,7 +79,7 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "påkrevd felt string har for lang string lengde", null
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "string kan ikke være lenger enn 2 tegn", null
 		);
 	}
 
@@ -117,7 +105,7 @@ class DoknotifikasjonValidatorTest {
 		);
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
-				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "Felt string kan ikke være støre enn 30", null
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), "string kan ikke være større enn 30", null
 		);
 	}
 }

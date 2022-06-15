@@ -68,7 +68,7 @@ public class Knot001Consumer {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.warn("Validering av avroskjema feilet. Feilmelding={}", e.getMessage());
+			log.error("Validering av Doknotifikasjon-melding feilet. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
 			log.warn("BestillingsId ligger allerede i database. Feilmelding={}", e.getMessage());
