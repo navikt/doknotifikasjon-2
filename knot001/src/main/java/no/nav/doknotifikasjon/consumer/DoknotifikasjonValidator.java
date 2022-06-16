@@ -76,7 +76,8 @@ public class DoknotifikasjonValidator {
 	}
 
 	private void validateRenotifikasjoner(Doknotifikasjon doknotifikasjon) {
-		if (doknotifikasjon.getAntallRenotifikasjoner() > 0 && !(doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
+		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
+				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
 			processValidationResult(doknotifikasjon, RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER);
 		}
 	}
