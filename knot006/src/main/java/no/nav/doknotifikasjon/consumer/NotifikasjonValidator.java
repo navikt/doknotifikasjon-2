@@ -86,7 +86,8 @@ public class NotifikasjonValidator {
 	}
 
 	private void validateRenotifikasjoner(NotifikasjonMedkontaktInfo notifikasjon) {
-		if (notifikasjon.getAntallRenotifikasjoner() > 0 && !(notifikasjon.getRenotifikasjonIntervall() > 0)) {
+		if ((notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) &&
+				!(notifikasjon.getRenotifikasjonIntervall() != null && notifikasjon.getRenotifikasjonIntervall() > 0)) {
 			processValidationResult(notifikasjon, RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER);
 		}
 	}
