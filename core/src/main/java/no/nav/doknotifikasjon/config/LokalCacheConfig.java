@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,7 +27,7 @@ public class LokalCacheConfig {
 	@Profile({"nais", "local"})
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
-		manager.setCaches(Arrays.asList(new CaffeineCache(STS_CACHE, Caffeine.newBuilder().expireAfterWrite(55, TimeUnit.MINUTES).build())));
+		manager.setCaches(List.of(new CaffeineCache(STS_CACHE, Caffeine.newBuilder().expireAfterWrite(55, TimeUnit.MINUTES).build())));
 		return manager;
 	}
 }

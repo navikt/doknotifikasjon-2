@@ -40,7 +40,6 @@ public class Knot004Consumer {
 
 	@KafkaListener(
 			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
-			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot004"
 	)
 	@Metrics(value = DOK_KNOT004_CONSUMER, createErrorMetric = true)

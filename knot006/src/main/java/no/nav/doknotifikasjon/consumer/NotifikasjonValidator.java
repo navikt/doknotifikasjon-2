@@ -7,8 +7,8 @@ import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.MOBILTELEFONNUMMER_OR_EPOSTADESSE_MUST_BE_SET;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Slf4j
@@ -19,7 +19,7 @@ public class NotifikasjonValidator {
 
 	private static final int MAX_STRING_SIZE_LARGE = 4000;
 	private static final int MAX_STRING_SIZE_MEDIUM = 100;
-	private static final int MAX_STRING_SIZE_SMALL = 40;
+	private static final int MAX_SIZE_RENOTIFIKASJONER = 30;
 
 	@Autowired
 	NotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
@@ -27,83 +27,82 @@ public class NotifikasjonValidator {
 	}
 
 	public void validate(NotifikasjonMedkontaktInfo notifikasjon) {
-		log.info("Begynner med validering av AVRO skjema med bestillingsId={}", notifikasjon.getBestillingsId());
+		log.info("Starter validering av NotifikasjonMedkontaktInfo-melding med bestillingsId={}", notifikasjon.getBestillingsId());
 
-		this.validateString(notifikasjon, notifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
-		this.validateString(notifikasjon, notifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
-		this.validateString(notifikasjon, notifikasjon.getFodselsnummer(), MAX_STRING_SIZE_SMALL, "Fodselsnummer");
-		this.validateString(notifikasjon, notifikasjon.getTittel(), MAX_STRING_SIZE_MEDIUM, "Tittel");
-		this.validateString(notifikasjon, notifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
-		this.validateString(notifikasjon, notifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
-		this.validateNumberForSnot001(notifikasjon, notifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
-		this.validateNumberForSnot001(notifikasjon, notifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
+		validateString(notifikasjon, notifikasjon.getBestillingsId(), MAX_STRING_SIZE_MEDIUM, "BestillingsId");
+		validateString(notifikasjon, notifikasjon.getBestillerId(), MAX_STRING_SIZE_MEDIUM, "BestillerId");
+		validateFoedselsnummer(notifikasjon);
+		validateString(notifikasjon, notifikasjon.getTittel(), MAX_STRING_SIZE_MEDIUM, "Tittel");
+		validateString(notifikasjon, notifikasjon.getEpostTekst(), MAX_STRING_SIZE_LARGE, "EpostTekst");
+		validateString(notifikasjon, notifikasjon.getSmsTekst(), MAX_STRING_SIZE_LARGE, "SmsTekst");
 
-		if (isBlank(notifikasjon.getEpostadresse()) && isBlank(notifikasjon.getMobiltelefonnummer())) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					notifikasjon.getBestillingsId(),
-					notifikasjon.getBestillerId(),
-					FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT,
-					null
-			);
+		validateNumberForSnot001(notifikasjon, notifikasjon.getAntallRenotifikasjoner(), "antallRenotifikasjoner");
+		validateNumberForSnot001(notifikasjon, notifikasjon.getRenotifikasjonIntervall(), "renotifikasjonIntervall");
 
-			throw new InvalidAvroSchemaFieldException(String.format("Feilet med å validere DoknotifikasjonMedKontaktInfo AVRO skjema med bestillingsId=%s. Feilmelding: %s. ",
-					notifikasjon.getBestillingsId(), FEILET_MUST_HAVE_EITHER_MOBILTELEFONNUMMER_OR_EPOSTADESSE_AS_SETT));
-		}
-
-		if ((notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) &&
-				!(notifikasjon.getRenotifikasjonIntervall() != null && notifikasjon.getRenotifikasjonIntervall() > 0)) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					notifikasjon.getBestillingsId(),
-					notifikasjon.getBestillerId(),
-					FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER,
-					null
-			);
-
-			throw new InvalidAvroSchemaFieldException(String.format("Feilet med å validere Doknotifikasjon AVRO skjema med bestillingsId=%s. Feilmelding: %s. ",
-					notifikasjon.getBestillingsId(), FEILET_FIELD_RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER));
-		}
+		validateTelefonnummerOgEpost(notifikasjon);
+		validateRenotifikasjoner(notifikasjon);
 	}
 
 	public void validateString(NotifikasjonMedkontaktInfo notifikasjon, String string, int maxLength, String fieldName) {
-		if (string == null || string.trim().isEmpty() || string.length() > maxLength) {
-			String addedString = string == null || string.trim().isEmpty() ? " ikke satt" : " har for lang string lengde";
+		var feilmelding = new StringBuilder();
 
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					notifikasjon.getBestillingsId(),
-					notifikasjon.getBestillerId(),
-					"påkrevd felt " + fieldName + addedString,
-					null
-			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId: " + notifikasjon.getBestillingsId());
+		if (isBlank(string)) {
+			feilmelding.append(fieldName).append(" må være satt");
+		} else if (string.length() > maxLength) {
+			feilmelding.append(fieldName).append(" kan ikke være lenger enn ").append(maxLength).append(" tegn");
 		}
+
+		processValidationResult(notifikasjon, feilmelding.toString());
 	}
 
-	public void validateNumber(NotifikasjonMedkontaktInfo notifikasjon, Integer number, String fieldName) {
-		if (number != null && number < 0) {
-			statusProducer.publishDoknotifikasjonStatusFeilet(
-					notifikasjon.getBestillingsId(),
-					notifikasjon.getBestillerId(),
-					"påkrevd felt " + fieldName + " kan ikke være negativ",
-					null
-			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId: " + notifikasjon.getBestillingsId());
+	private void validateFoedselsnummer(NotifikasjonMedkontaktInfo notifikasjon) {
+		var feilmelding = new StringBuilder();
+		var fnr = notifikasjon.getFodselsnummer();
+
+		if (isBlank(fnr)) {
+			feilmelding.append("fødselsnummer må være ").append("satt");
+		} else if (fnr.trim().length() != 11) {
+			feilmelding.append("fødselsnummer må være ").append("11 siffer");
 		}
+
+		processValidationResult(notifikasjon, feilmelding.toString());
 	}
 
-	/* Denne funksjonen vil forhindre at feltet antallRenotifikasjoner og renotifikasjonIntervall vil aldri bli støre enn 30*/
 	public void validateNumberForSnot001(
 			NotifikasjonMedkontaktInfo notifikasjon,
 			Integer numberToValidate,
 			String fieldName
-	){
-		if (numberToValidate != null && numberToValidate > 30) {
+	) {
+		if (numberToValidate != null && numberToValidate > MAX_SIZE_RENOTIFIKASJONER) {
+			processValidationResult(notifikasjon, String.format("%s kan ikke være større enn %s", fieldName, MAX_SIZE_RENOTIFIKASJONER));
+		}
+	}
+
+	private void validateTelefonnummerOgEpost(NotifikasjonMedkontaktInfo notifikasjon) {
+
+		if (isBlank(notifikasjon.getEpostadresse()) && isBlank(notifikasjon.getMobiltelefonnummer())) {
+			processValidationResult(notifikasjon, MOBILTELEFONNUMMER_OR_EPOSTADESSE_MUST_BE_SET);
+		}
+	}
+
+	private void validateRenotifikasjoner(NotifikasjonMedkontaktInfo notifikasjon) {
+		if (notifikasjon.getAntallRenotifikasjoner() > 0 && !(notifikasjon.getRenotifikasjonIntervall() > 0)) {
+			processValidationResult(notifikasjon, RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER);
+		}
+	}
+
+	private void processValidationResult(NotifikasjonMedkontaktInfo notifikasjon, String feilmelding) {
+		if(!feilmelding.isEmpty()) {
 			statusProducer.publishDoknotifikasjonStatusFeilet(
 					notifikasjon.getBestillingsId(),
 					notifikasjon.getBestillerId(),
-					"Felt " + fieldName + " kan ikke være støre enn 30",
+					feilmelding,
 					null
 			);
-			throw new InvalidAvroSchemaFieldException("AVRO skjema Doknotifikasjon er ikke gylding for bestilling med bestillingsId=" + notifikasjon.getBestillingsId());
+
+			throw new InvalidAvroSchemaFieldException(String.format("NotifikasjonMedkontaktInfo-melding med bestillingsId=%s feilet validering: %s.",
+					notifikasjon.getBestillingsId(), feilmelding));
 		}
 	}
+
 }

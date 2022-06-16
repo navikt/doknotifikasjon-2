@@ -48,7 +48,6 @@ public class Knot006Consumer {
 
 	@KafkaListener(
 			topics = PRIVAT_DOK_NOTIFIKASJON_MED_KONTAKT_INFO,
-			containerFactory = "kafkaListenerContainerFactory",
 			groupId = "doknotifikasjon-knot006"
 	)
 	@Transactional
@@ -66,7 +65,7 @@ public class Knot006Consumer {
 			log.warn("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.warn("Validering av avroskjema feilet. Feilmelding: {}", e.getMessage());
+			log.error("Validering av NotifikasjonMedkontaktInfo-melding feilet. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
 			log.warn("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());

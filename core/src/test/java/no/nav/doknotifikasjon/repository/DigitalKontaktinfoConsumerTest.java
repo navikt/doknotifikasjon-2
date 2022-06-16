@@ -10,11 +10,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import wiremock.org.apache.http.HttpHeaders;
-import wiremock.org.apache.http.entity.ContentType;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -24,12 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpStatus.OK;
+import static wiremock.org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static wiremock.org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 @SpringBootTest(classes = {ApplicationTestConfig.class, STSTestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DirtiesContext()
+@DirtiesContext
 @ActiveProfiles({"itest", "itestWeb"})
 class DigitalKontaktinfoConsumerTest {
 
@@ -81,15 +81,18 @@ class DigitalKontaktinfoConsumerTest {
 	}
 
 	private void stubSecurityToken() {
-		stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(HttpStatus.OK.value())
-				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-				.withBodyFile("sts-response.json")));
+		stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withBodyFile("sts-response.json")));
 	}
 
 	private void stubDkifWithBodyFile(String bodyfile) {
 		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-				.willReturn(aResponse().withStatus(HttpStatus.OK.value())
-						.withHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 						.withBodyFile(bodyfile)));
 	}
 }
