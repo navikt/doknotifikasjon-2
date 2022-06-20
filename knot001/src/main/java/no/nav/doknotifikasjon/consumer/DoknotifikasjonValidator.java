@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.ANTALL_RENOTIFIKASJONER_REQUIRES_RENOTIFIKASJON_INTERVALL;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
@@ -75,10 +75,10 @@ public class DoknotifikasjonValidator {
 		}
 	}
 
-	private void validateRenotifikasjoner(Doknotifikasjon doknotifikasjon) {
+	public void validateRenotifikasjoner(Doknotifikasjon doknotifikasjon) {
 		if ((doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(doknotifikasjon.getRenotifikasjonIntervall() != null && doknotifikasjon.getRenotifikasjonIntervall() > 0)) {
-			processValidationResult(doknotifikasjon, RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER);
+			processValidationResult(doknotifikasjon, ANTALL_RENOTIFIKASJONER_REQUIRES_RENOTIFIKASJON_INTERVALL);
 		}
 	}
 

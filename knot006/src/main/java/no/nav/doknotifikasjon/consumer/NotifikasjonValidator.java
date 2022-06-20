@@ -7,7 +7,7 @@ import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.ANTALL_RENOTIFIKASJONER_REQUIRES_RENOTIFIKASJON_INTERVALL;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.MOBILTELEFONNUMMER_OR_EPOSTADESSE_MUST_BE_SET;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
@@ -85,10 +85,10 @@ public class NotifikasjonValidator {
 		}
 	}
 
-	private void validateRenotifikasjoner(NotifikasjonMedkontaktInfo notifikasjon) {
+	public void validateRenotifikasjoner(NotifikasjonMedkontaktInfo notifikasjon) {
 		if ((notifikasjon.getAntallRenotifikasjoner() != null && notifikasjon.getAntallRenotifikasjoner() > 0) &&
 				!(notifikasjon.getRenotifikasjonIntervall() != null && notifikasjon.getRenotifikasjonIntervall() > 0)) {
-			processValidationResult(notifikasjon, RENOTIFIKASJON_INTERVALL_REQUIRES_ANTALL_RENOTIFIKASJONER);
+			processValidationResult(notifikasjon, ANTALL_RENOTIFIKASJONER_REQUIRES_RENOTIFIKASJON_INTERVALL);
 		}
 	}
 
