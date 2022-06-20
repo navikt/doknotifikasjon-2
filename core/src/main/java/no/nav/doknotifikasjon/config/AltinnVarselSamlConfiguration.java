@@ -8,6 +8,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.apache.cxf.ws.addressing.WSAddressingFeature;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ public class AltinnVarselSamlConfiguration {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(INotificationAgencyExternalBasic.class);
         factory.setAddress(Objects.requireNonNull(altinnProps.getUrl()));
+        factory.getFeatures().add(new WSAddressingFeature());
         INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = (INotificationAgencyExternalBasic) factory.create();
         stsConfig.configureSTS(iNotificationAgencyExternalBasic);
         Client client = ClientProxy.getClient(iNotificationAgencyExternalBasic);
