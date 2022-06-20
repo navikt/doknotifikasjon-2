@@ -22,7 +22,7 @@ public class KafkaConfig {
 
 	@Bean
 	@Primary
-	ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerFactory(
+	ConcurrentKafkaListenerContainerFactory<Object, Object> kafkaListenerContainerFactory(
 			ConsumerFactory<Object, Object> kafkaConsumerFactory
 	) {
 		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
