@@ -23,6 +23,8 @@ spec:
       value: "{{ SEND_TIL_ALTINN }}"
     - name: APPD_NAME
       value: {{ APPD_NAME }}
+    - name: AZURE_APP_SCOPE
+      value: {{AZURE_APP_SCOPE}}
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
@@ -61,3 +63,7 @@ spec:
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: {{ APPDYNAMICS }}
         mountPath: "/var/run/secrets/nais.io/appdynamics"
+  azure:
+    application:
+      enabled: true
+  webproxy: true

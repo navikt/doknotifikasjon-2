@@ -11,6 +11,7 @@
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "3",
   "APPD_NAME": "doknotifikasjon-2",
+  "AZURE_APP_SCOPE": "api://dev-gcp.team-rocket.digdir-krr-proxy/.default",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "INGRESSES": [
     "https://doknotifikasjon-2.dev.adeo.no"
