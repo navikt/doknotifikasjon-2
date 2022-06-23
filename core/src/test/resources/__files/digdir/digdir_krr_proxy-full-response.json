@@ -1,10 +1,8 @@
 {
   "feil": {
-    "12345678911": {
-      "melding": null
-    }
+    "12345678911": "feil"
   },
-  "kontaktinfo": {
+  "personer": {
     "12345678911": {
       "epostadresse": "epost",
       "kanVarsles": true,

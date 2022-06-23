@@ -2,8 +2,8 @@ package no.nav.doknotifikasjon.consumer.test;
 
 import no.nav.doknotifikasjon.consumer.DoknotifikasjonTO;
 import no.nav.doknotifikasjon.consumer.Knot001Service;
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
@@ -61,8 +61,8 @@ class Knot001ServiceTest {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createDigitalKontaktinformasjonInfo());
 
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = knot001Service.getKontaktInfoByFnr(createDoknotifikasjonTO());
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo validKontaktInfo = createValidKontaktInfo();
+		DigitalKontaktinfo kontaktinfo = knot001Service.getKontaktInfoByFnr(createDoknotifikasjonTO());
+		DigitalKontaktinfo validKontaktInfo = createValidKontaktInfo();
 
 		assertEquals(validKontaktInfo.getEpostadresse(), kontaktinfo.getEpostadresse());
 		assertEquals(validKontaktInfo.getMobiltelefonnummer(), kontaktinfo.getMobiltelefonnummer());
@@ -146,7 +146,7 @@ class Knot001ServiceTest {
 	@Test
 	void shouldGetExceptionWhenNotifikasjonWithTheSameBestillingsIdAlreadyExist() {
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo digitalKontaktinfo = createValidKontaktInfo();
+		DigitalKontaktinfo digitalKontaktinfo = createValidKontaktInfo();
 
 		when(notifikasjonService.existsByBestillingsId(anyString()))
 				.thenReturn(true);

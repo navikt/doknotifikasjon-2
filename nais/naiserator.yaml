@@ -25,6 +25,8 @@ spec:
       value: {{ APPD_NAME }}
     - name: AZURE_APP_SCOPE
       value: {{AZURE_APP_SCOPE}}
+    - name: DIGDIR_KRR_PROXY_BASE_URL
+      value: {{DIGDIR_KRR_PROXY_BASE_URL}}
   ingresses:
     {{#each INGRESSES}}
        - {{this }}

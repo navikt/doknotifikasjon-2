@@ -6,7 +6,6 @@ import no.nav.doknotifikasjon.exception.technical.KafkaTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaProducerException;
@@ -16,12 +15,11 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
+import static no.nav.doknotifikasjon.mdc.MDCGenerate.getDefaultUuidIfNoCallIdIsSett;
 
 @Slf4j
 @Component
@@ -43,7 +41,7 @@ public class KafkaEventProducer {
 		this.publish(
 				topic,
 				event,
-				this.getDefaultUuidIfNoCallIdIsSett()
+				getDefaultUuidIfNoCallIdIsSett()
 		);
 	}
 
@@ -89,12 +87,5 @@ public class KafkaEventProducer {
 		} catch (InterruptedException | KafkaException e) {
 			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, e);
 		}
-	}
-
-	private String getDefaultUuidIfNoCallIdIsSett() {
-		if (MDC.get(MDC_CALL_ID) != null && !MDC.get(MDC_CALL_ID).trim().isEmpty()) {
-			return MDC.get(MDC_CALL_ID);
-		}
-		return UUID.randomUUID().toString();
 	}
 }

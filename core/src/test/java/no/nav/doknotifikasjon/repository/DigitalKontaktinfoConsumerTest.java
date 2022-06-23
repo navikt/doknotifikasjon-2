@@ -1,7 +1,8 @@
 package no.nav.doknotifikasjon.repository;
 
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import no.nav.doknotifikasjon.repository.utils.STSTestConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +15,17 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
-import static wiremock.org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static wiremock.org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 
 @SpringBootTest(classes = {ApplicationTestConfig.class, STSTestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,15 +44,15 @@ class DigitalKontaktinfoConsumerTest {
 
 	@BeforeEach
 	public void setup() {
-		stubSecurityToken();
+		stubAzure();
 	}
 
 	@Test
-	void shouldReturnKontaktinfoWhenFullResponseFromDkif() {
-		stubDkifWithBodyFile("dkif/dkif-full-response.json");
+	void shouldReturnKontaktinfoWhenFullResponseFromDigdirKRRProxy() {
+		stubDigdirKRRProxyWithBodyFile("digdir/digdir_krr_proxy-full-response.json");
 
 		DigitalKontaktinformasjonTo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getKontaktinfo().get(FNR);
+		DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getPersoner().get(FNR);
 
 		assertEquals(EPOST, kontaktinfo.getEpostadresse());
 		assertEquals(MOBIL, kontaktinfo.getMobiltelefonnummer());
@@ -59,11 +61,11 @@ class DigitalKontaktinfoConsumerTest {
 	}
 
 	@Test
-	void shouldReturnKontaktinfoWhenOnlyKontaktinfoFromDkif() {
-		stubDkifWithBodyFile("dkif/dkif-kontaktinfo-response.json");
+	void shouldReturnKontaktinfoWhenOnlyKontaktinfoFromDigdirKRRProxy() {
+		stubDigdirKRRProxyWithBodyFile("digdir/digdir_krr_proxy-kontaktinfo-response.json");
 
 		DigitalKontaktinformasjonTo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getKontaktinfo().get(FNR);
+		DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getPersoner().get(FNR);
 
 		assertEquals(EPOST, kontaktinfo.getEpostadresse());
 		assertEquals(MOBIL, kontaktinfo.getMobiltelefonnummer());
@@ -72,27 +74,27 @@ class DigitalKontaktinfoConsumerTest {
 	}
 
 	@Test
-	void shouldReturnNullWhenFeilFromDkif() {
-		stubDkifWithBodyFile("dkif/dkif-feil.json");
+	void shouldReturnNullWhenFeilFromDigdirKRRProxy() {
+		stubDigdirKRRProxyWithBodyFile("digdir/digdir_krr_proxy-feil.json");
 		DigitalKontaktinformasjonTo digitalKontaktinformasjon = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
 
-		assertNull(digitalKontaktinformasjon.getKontaktinfo());
-		assertEquals("Ingen kontaktinformasjon er registrert på personen", digitalKontaktinformasjon.getFeil().get(FNR).getMelding());
+		assertNull(digitalKontaktinformasjon.getPersoner());
+		assertEquals("Ingen kontaktinformasjon er registrert på personen", digitalKontaktinformasjon.getFeil().get(FNR));
 	}
 
-	private void stubSecurityToken() {
-		stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid")
+	private void stubDigdirKRRProxyWithBodyFile(String bodyfile) {
+		stubFor(post(urlEqualTo("/digdir_krr_proxy/rest/v1/personer"))
 				.willReturn(aResponse()
 						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("sts-response.json")));
-	}
-
-	private void stubDkifWithBodyFile(String bodyfile) {
-		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-				.willReturn(aResponse()
-						.withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile(bodyfile)));
+	}
+
+	private void stubAzure() {
+		stubFor(post("/azure_token")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response.json")));
 	}
 }
