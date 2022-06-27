@@ -4,7 +4,6 @@ import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsum
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
-import no.nav.doknotifikasjon.repository.utils.STSTestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,7 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 
-@SpringBootTest(classes = {ApplicationTestConfig.class, STSTestConfig.class},
+@SpringBootTest(classes = {ApplicationTestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
