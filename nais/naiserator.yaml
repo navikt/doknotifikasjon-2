@@ -21,8 +21,8 @@ spec:
       value: "{{ SEND_TIL_ALTINN }}"
     - name: APPD_NAME
       value: {{ APPD_NAME }}
-    - name: AZURE_APP_SCOPE
-      value: {{AZURE_APP_SCOPE}}
+    - name: DIGDIR_KRR_PROXY_SCOPE
+      value: {{DIGDIR_KRR_PROXY_SCOPE}}
     - name: DIGDIR_KRR_PROXY_BASE_URL
       value: {{DIGDIR_KRR_PROXY_BASE_URL}}
   ingresses:

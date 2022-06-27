@@ -20,8 +20,6 @@ public class AzureConfig {
     @NotEmpty
     private String openidConfigTokenEndpoint;
     @NotEmpty
-    private String appScope;
-    @NotEmpty
     private String appClientId;
     @NotEmpty
     private String appClientSecret;

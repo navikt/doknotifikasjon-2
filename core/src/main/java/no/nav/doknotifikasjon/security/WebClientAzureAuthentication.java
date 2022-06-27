@@ -8,13 +8,15 @@ import reactor.core.publisher.Mono;
 
 public class WebClientAzureAuthentication implements ExchangeFilterFunction {
     final private AzureToken azureToken;
+    final private String scope;
 
-    public WebClientAzureAuthentication(AzureToken azureToken) {
+    public WebClientAzureAuthentication(AzureToken azureToken, String scope) {
         this.azureToken = azureToken;
+        this.scope = scope;
     }
 
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-        return next.exchange(ClientRequest.from(request).headers((headers) -> headers.setBearerAuth(azureToken.accessToken())).build());
+        return next.exchange(ClientRequest.from(request).headers((headers) -> headers.setBearerAuth(azureToken.accessToken(scope))).build());
     }
 }

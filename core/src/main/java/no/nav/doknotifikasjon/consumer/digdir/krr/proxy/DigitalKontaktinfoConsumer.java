@@ -8,6 +8,7 @@ import no.nav.doknotifikasjon.security.AzureToken;
 import no.nav.doknotifikasjon.security.WebClientAzureAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -30,10 +31,11 @@ public class DigitalKontaktinfoConsumer {
 
     @Autowired
     public DigitalKontaktinfoConsumer(AzureToken azureToken,
+                                      @Value("digdirKrrProxyScope") String scope,
                                       @Qualifier("digdirKrrProxyClient") WebClient webClient) {
         this.webClient = webClient
                 .mutate()
-                .filter(new WebClientAzureAuthentication(azureToken))
+                .filter(new WebClientAzureAuthentication(azureToken, scope))
                 .build();
     }
 

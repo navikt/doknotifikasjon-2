@@ -41,17 +41,17 @@ public class AzureToken {
 
     @Retryable(include = AbstractDoknotifikasjonFunctionalException.class, backoff = @Backoff(delay = DELAY_LONG))
     @Cacheable(AZURE_TOKEN_CACHE)
-    public String accessToken() {
-		return fetchAccessToken();
+    public String accessToken(String scope) {
+		return fetchAccessToken(scope);
     }
 
-    private String fetchAccessToken() {
+    private String fetchAccessToken(String scope) {
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", azureConfig.getAppClientId());
         formData.add("client_secret", azureConfig.getAppClientSecret());
         formData.add("grant_type", "client_credentials");
-        formData.add("scope", azureConfig.getAppScope());
+        formData.add("scope", scope);
 
         String responseJson = webClient.post()
                 .body(BodyInserters.fromFormData(formData))
