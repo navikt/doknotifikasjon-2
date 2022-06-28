@@ -20,6 +20,9 @@ public class DigdirKrrProxyConfig {
 	@NotEmpty
 	private String baseUrl;
 
+	@NotEmpty
+	private String scope;
+
 	@Bean("digdirKrrProxyClient")
 	public WebClient webClient(WebClient.Builder webClientBuilder) {
 		return webClientBuilder

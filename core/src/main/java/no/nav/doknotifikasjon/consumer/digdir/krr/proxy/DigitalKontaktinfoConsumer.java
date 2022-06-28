@@ -1,6 +1,7 @@
 package no.nav.doknotifikasjon.consumer.digdir.krr.proxy;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.config.DigdirKrrProxyConfig;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
@@ -31,11 +32,12 @@ public class DigitalKontaktinfoConsumer {
 
     @Autowired
     public DigitalKontaktinfoConsumer(AzureToken azureToken,
-                                      @Value("digdirKrrProxyScope") String scope,
+                                      DigdirKrrProxyConfig digdirKrrProxyConfig,
                                       @Qualifier("digdirKrrProxyClient") WebClient webClient) {
+        log.info("digdirKrrProxyScope: {}", digdirKrrProxyConfig.getScope());
         this.webClient = webClient
                 .mutate()
-                .filter(new WebClientAzureAuthentication(azureToken, scope))
+                .filter(new WebClientAzureAuthentication(azureToken, digdirKrrProxyConfig.getScope()))
                 .build();
     }
 
