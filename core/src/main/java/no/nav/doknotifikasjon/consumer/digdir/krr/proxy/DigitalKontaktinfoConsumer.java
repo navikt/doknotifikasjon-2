@@ -34,7 +34,6 @@ public class DigitalKontaktinfoConsumer {
     public DigitalKontaktinfoConsumer(AzureToken azureToken,
                                       DigdirKrrProxyConfig digdirKrrProxyConfig,
                                       @Qualifier("digdirKrrProxyClient") WebClient webClient) {
-        log.info("digdirKrrProxyScope: {}", digdirKrrProxyConfig.getScope());
         this.webClient = webClient
                 .mutate()
                 .filter(new WebClientAzureAuthentication(azureToken, digdirKrrProxyConfig.getScope()))
