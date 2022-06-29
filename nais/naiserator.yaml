@@ -11,8 +11,6 @@ spec:
   env:
     - name: DKIF_URL
       value: {{ DKIF_URL }}
-    - name: SECURITY_TOKEN_SERVICE_TOKEN_URL
-      value: {{ SECURITY_TOKEN_SERVICE_TOKEN_URL }}
     - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
       value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
     - name: SIKKERHETSNIVAA_V1_URL
@@ -23,6 +21,10 @@ spec:
       value: "{{ SEND_TIL_ALTINN }}"
     - name: APPD_NAME
       value: {{ APPD_NAME }}
+    - name: DIGDIR_KRR_PROXY_SCOPE
+      value: {{DIGDIR_KRR_PROXY_SCOPE}}
+    - name: DIGDIR_KRR_PROXY_BASE_URL
+      value: {{DIGDIR_KRR_PROXY_BASE_URL}}
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
@@ -61,3 +63,7 @@ spec:
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: {{ APPDYNAMICS }}
         mountPath: "/var/run/secrets/nais.io/appdynamics"
+  azure:
+    application:
+      enabled: true
+  webproxy: true

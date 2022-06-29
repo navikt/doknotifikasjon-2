@@ -4,13 +4,14 @@
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "DKIF_URL": "https://dkif.nais.adeo.no",
   "SIKKERHETSNIVAA_V1_URL": "https://sikkerhetsnivaa.nais.adeo.no",
-  "SECURITY_TOKEN_SERVICE_TOKEN_URL": "https://security-token-service.nais.adeo.no/rest/v1/sts/token",
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "MOUNT_PATH": "postgresql/prod-fss",
   "SEND_TIL_ALTINN": "true",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
   "APPD_NAME": "doknotifikasjon-2",
+  "DIGDIR_KRR_PROXY_SCOPE": "api://prod-gcp.team-rocket.digdir-krr-proxy/.default",
+  "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.intern.nav.no",
   "APPDYNAMICS": "/apikey/appdynamics/prod",
   "INGRESSES": [
     "https://doknotifikasjon-2.nais.adeo.no"

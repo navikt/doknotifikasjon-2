@@ -1,6 +1,7 @@
 package no.nav.doknotifikasjon.consumer;
 
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
@@ -133,11 +134,8 @@ public final class TestUtils {
 	}
 
 	public static DigitalKontaktinformasjonTo createDigitalKontaktinformasjonInfoWithErrorMessage() {
-		DigitalKontaktinformasjonTo.Melding melding = new DigitalKontaktinformasjonTo.Melding();
-		melding.setMelding("Ingen kontaktinformasjon er registrert på personen");
-
 		return new DigitalKontaktinformasjonTo(
-				Collections.singletonMap(FODSELSNUMMER, melding),
+				Collections.singletonMap(FODSELSNUMMER, "Ingen kontaktinformasjon er registrert på personen"),
 				null
 		);
 	}
@@ -163,17 +161,17 @@ public final class TestUtils {
 		);
 	}
 
-	public static DigitalKontaktinformasjonTo.DigitalKontaktinfo createValidKontaktInfo() {
+	public static DigitalKontaktinfo createValidKontaktInfo() {
 		return createKontaktInfo("bogus", "bogus", true, false);
 	}
 
-	public static DigitalKontaktinformasjonTo.DigitalKontaktinfo createKontaktInfo(
+	public static DigitalKontaktinfo createKontaktInfo(
 			String epost,
 			String sms,
 			boolean varsel,
 			boolean reservert
 	) {
-		return DigitalKontaktinformasjonTo.DigitalKontaktinfo.builder()
+		return DigitalKontaktinfo.builder()
 				.epostadresse(epost)
 				.mobiltelefonnummer(sms)
 				.kanVarsles(varsel)

@@ -20,14 +20,16 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class LokalCacheConfig {
 
-	public static final String STS_CACHE = "stsCache";
+	public static final String AZURE_TOKEN_CACHE = "AzureToken";
 
 	@Bean
 	@Primary
 	@Profile({"nais", "local"})
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
-		manager.setCaches(List.of(new CaffeineCache(STS_CACHE, Caffeine.newBuilder().expireAfterWrite(55, TimeUnit.MINUTES).build())));
+		manager.setCaches(List.of(new CaffeineCache(AZURE_TOKEN_CACHE, Caffeine.newBuilder()
+				.expireAfterWrite(55, TimeUnit.MINUTES)
+				.build())));
 		return manager;
 	}
 }

@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -38,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @ActiveProfiles("itestWeb")
 class Knot001ITest extends AbstractKafkaBrokerTest {
@@ -56,7 +56,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 
 	@BeforeAll
 	public void beforeAll() {
-		this.stubGetSecurityToken();
+		stubAzure();
 	}
 
 	@BeforeEach
@@ -210,7 +210,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldPutErrorMessageOnStatusTopicWhenDkifFails() {
+	void shouldPutErrorMessageOnStatusTopicWhenDigdirKRRProxyFails() {
 		this.stubGetKontaktInfoFail();
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 		this.putMessageOnKafkaTopic(doknotifikasjon);
@@ -231,31 +231,16 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		);
 	}
 
-	private void stubGetSecurityToken() {
-		stubFor(get("/securitytoken?grant_type=client_credentials&scope=openid").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-				.withBodyFile("stsResponse_happy.json")));
-	}
-
 	private void stubGetKontaktInfo() {
-		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("dkif_happy.json")));
+		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_happy.json");
 	}
 
 	private void stubGetKontaktInfoWithoutSmsInKontaktInfo() {
-		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("dkif_without_sms.json")));
+		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_without_sms.json");
 	}
 
 	private void stubGetKontaktInfoFail() {
-		stubFor(get(urlEqualTo("/dkif/api/v1/personer/kontaktinformasjon?inkluderSikkerDigitalPost=false"))
-				.willReturn(aResponse().withStatus(OK.value())
-						.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-						.withBodyFile("dkif_fail.json")));
+		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_fail.json");
 	}
 
 	private void stubSikkerhetsnivaa() {
@@ -263,4 +248,21 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
 				.withBodyFile("sikkerhetsnivaa.json")));
 	}
+
+	private void stubDigdirKRRProxyWithBodyFile(String bodyfile) {
+		stubFor(post(urlEqualTo("/digdir_krr_proxy/rest/v1/personer"))
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile(bodyfile)));
+	}
+
+	private void stubAzure() {
+		stubFor(post("/azure_token")
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("azure/token_response.json")));
+	}
+
 }

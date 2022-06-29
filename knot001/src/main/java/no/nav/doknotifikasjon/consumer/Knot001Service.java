@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon.consumer;
 
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinfoConsumer;
-import no.nav.doknotifikasjon.consumer.dkif.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
@@ -18,6 +18,7 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DKIF;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
@@ -71,7 +72,7 @@ public class Knot001Service {
 
 		this.checkSikkerhetsnivaa(doknotifikasjon);
 
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = this.getKontaktInfoByFnr(doknotifikasjon);
+		DigitalKontaktinfo kontaktinfo = this.getKontaktInfoByFnr(doknotifikasjon);
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon, kontaktinfo);
 		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonDistrubisjon(n.getId(), n.getKanal()));
 
@@ -84,29 +85,30 @@ public class Knot001Service {
 		log.info("Sender en DoknotifikasjonStatus med status={} til topic={} for bestillingsId={}", Status.OVERSENDT, KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, doknotifikasjon.getBestillingsId());
 	}
 
-	public DigitalKontaktinformasjonTo.DigitalKontaktinfo getKontaktInfoByFnr(DoknotifikasjonTO doknotifikasjon) {
+	public DigitalKontaktinfo getKontaktInfoByFnr(DoknotifikasjonTO doknotifikasjon) {
 		String fnrTrimmed = doknotifikasjon.getFodselsnummer().trim();
 		DigitalKontaktinformasjonTo digitalKontaktinformasjon;
 
 		try {
-			log.info("Henter kontaktinfo fra DKIF for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
+			log.info("Henter kontaktinfo fra DigdirKRRProxy for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 			digitalKontaktinformasjon = kontaktinfoConsumer.hentDigitalKontaktinfo(fnrTrimmed);
 		} catch (DigitalKontaktinformasjonFunctionalException e) {
 			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
-					FEILET_FUNCTIONAL_EXCEPTION_DKIF,
+					FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY,
 					null
 			);
 			log.warn("Problemer med å hente kontaktinfo med bestillingsId={}. Feilmelding: {}", doknotifikasjon.getBestillingsId(), e.getMessage());
 			throw e;
 		}
 
-		DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinfo = digitalKontaktinformasjon.getKontaktinfo() != null ? digitalKontaktinformasjon.getKontaktinfo().get(fnrTrimmed) : null;
+		DigitalKontaktinfo kontaktinfo = digitalKontaktinformasjon.getPersoner() != null ? digitalKontaktinformasjon.getPersoner().get(fnrTrimmed) : null;
 
 		if (kontaktinfo == null) {
-			if (digitalKontaktinformasjon.getFeil() != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed) != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding() != null) {
-				publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed).getMelding());
+			if (digitalKontaktinformasjon.getFeil() != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed) != null) {
+
+				publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed));
 			}
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
 		} else if (kontaktinfo.isReservert()) {
@@ -127,7 +129,7 @@ public class Knot001Service {
 				message,
 				null
 		);
-		throw new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra DKIF med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
+		throw new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra Digdir KRR Proxy med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
 	}
 
 	public void checkSikkerhetsnivaa(DoknotifikasjonTO doknotifikasjonTO) {
@@ -157,7 +159,7 @@ public class Knot001Service {
 		}
 	}
 
-	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinformasjonTo.DigitalKontaktinfo kontaktinformasjon) {
+	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinfo kontaktinformasjon) {
 		log.info("Knot001 starter med opprettelse av notifikasjon til databasen for bestillingsId={}.", doknotifikasjon.getBestillingsId());
 
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(Kanal.SMS);
