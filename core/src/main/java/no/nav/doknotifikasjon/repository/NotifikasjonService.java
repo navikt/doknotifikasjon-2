@@ -13,7 +13,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
@@ -54,11 +53,8 @@ public class NotifikasjonService {
 
 	@Metrics(createErrorMetric = true)
 	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
-	public List<Notifikasjon> findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(Status status, LocalDateTime sistEndretDato) {
-		return notifikasjonRepository.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(
-				status.toString(),
-				sistEndretDato
-		);
+	public List<Notifikasjon> findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner() {
+		return notifikasjonRepository.findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner();
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricExclude = NotifikasjonIkkeFunnetException.class)

@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
-import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
@@ -10,6 +9,8 @@ import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -23,6 +24,9 @@ import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatus;
 import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatusOversendt;
 import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatusOversendtAndAntallRenotifikasjoner;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FERDIGSTILT_RESENDES;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,8 +54,8 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 	void happyPath() {
 		Notifikasjon notifikasjon = createNotifikasjonWithStatusOversendt(LocalDateTime.now());
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.SMS));
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, SMS));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
@@ -63,11 +67,12 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		);
 	}
 
-	@Test
-	void happyPathWithOneNotifikasjonsDistrubisjon() {
-		Notifikasjon notifikasjon = createNotifikasjonWithStatusOversendt(LocalDateTime.now());
+	@ParameterizedTest
+	@EnumSource(value = Status.class, names = {"OPPRETTET", "OVERSENDT"})
+	void happyPathWithOneNotifikasjonsDistribusjon(Status status) {
+		Notifikasjon notifikasjon = createNotifikasjonWithStatus(LocalDateTime.now(), status);
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
@@ -83,8 +88,8 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 	void shouldNotUpdateStatusWhenNotAllNotifikasjonDistribusjonHaveStatusFerdigstilt() {
 		Notifikasjon notifikasjon = createNotifikasjonWithStatusOversendt(LocalDateTime.now());
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.SMS));
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonAndStatusAndKanal(notifikasjon, Status.OVERSENDT, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, SMS));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonAndStatusAndKanal(notifikasjon, OVERSENDT, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
@@ -112,8 +117,8 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 	void shouldNotUpdateStatusWhenNotifikasjonHaveAntallRenotifikasjonGreaterThenZero() {
 		Notifikasjon notifikasjon = createNotifikasjonWithStatusOversendtAndAntallRenotifikasjoner(LocalDateTime.now(), 2);
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.SMS));
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, SMS));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
@@ -129,8 +134,8 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 	void shouldNotUpdateStatusWhenEndretDatoIsOutOfscope() {
 		Notifikasjon notifikasjon = createNotifikasjonWithStatusOversendt(LocalDateTime.now().minusDays(60));
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.SMS));
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, SMS));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
@@ -142,12 +147,13 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 		);
 	}
 
-	@Test
-	void shouldNotUpdateStatusWhenNotifikasjonHaveStatusNotOversendt() {
-		Notifikasjon notifikasjon = createNotifikasjonWithStatus(LocalDateTime.now().minusDays(29), Status.OPPRETTET);
+	@ParameterizedTest
+	@EnumSource(value = Status.class, names = {"FEILET", "INFO"})
+	void shouldNotUpdateStatusWhenNotifikasjonHaveStatusNotOpprettetOrOversendt(Status status) {
+		Notifikasjon notifikasjon = createNotifikasjonWithStatus(LocalDateTime.now().minusDays(29), status);
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.SMS));
-		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, SMS));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonSetAsFerdigstilt(notifikasjon, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
