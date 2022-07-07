@@ -24,6 +24,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Knot005ITest extends AbstractKafkaBrokerTest {
 
@@ -46,7 +47,7 @@ class Knot005ITest extends AbstractKafkaBrokerTest {
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
 			assertNotNull(updatedNotifikasjon);
 			assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
 			assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
@@ -62,7 +63,7 @@ class Knot005ITest extends AbstractKafkaBrokerTest {
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
 		await().pollDelay(2, SECONDS).atMost(10, SECONDS).untilAsserted(() ->
-			assertNull(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID))
+			assertTrue(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).isEmpty())
 		);
 	}
 
@@ -74,7 +75,7 @@ class Knot005ITest extends AbstractKafkaBrokerTest {
 		putMessageOnKafkaTopic(doknotifikasjonStopp);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
-			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+			Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
 			assertNotNull(updatedNotifikasjon);
 			assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
 			assertEquals(NESTE_RENOTIFIKASJONSDATO, updatedNotifikasjon.getNesteRenotifikasjonDato());

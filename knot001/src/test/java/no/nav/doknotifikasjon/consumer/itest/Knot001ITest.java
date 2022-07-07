@@ -77,7 +77,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
@@ -117,7 +117,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());
@@ -157,7 +157,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(doknotifikasjon.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(doknotifikasjon.getBestillerId(), notifikasjon.getBestillerId());

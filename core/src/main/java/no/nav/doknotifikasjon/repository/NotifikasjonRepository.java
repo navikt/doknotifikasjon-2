@@ -10,10 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Integer> {
-	Notifikasjon findByBestillingsId(String bestillingsId);
+	Optional<Notifikasjon> findByBestillingsId(String bestillingsId);
 
 	boolean existsByBestillingsId(String bestillingsId);
 
