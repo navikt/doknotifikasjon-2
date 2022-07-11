@@ -20,16 +20,17 @@ public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Inte
 	List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato);
 
 	@Query(
-			value = query,
+			value = opprettetEllerOversendtQuery,
 			nativeQuery = true
 	)
 	List<Notifikasjon> findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner();
 
-	String query = """
+	String opprettetEllerOversendtQuery = """
 			Select * from t_notifikasjon
 			where k_status in ('OPPRETTET', 'OVERSENDT')
 			  and (antall_renotifikasjoner = 0 or antall_renotifikasjoner is null)
 			  and endret_dato is not null
 			  and endret_dato >= current_date - 30
 			  """;
+
 }
