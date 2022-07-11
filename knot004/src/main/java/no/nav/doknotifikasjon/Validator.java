@@ -12,6 +12,9 @@ import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_F
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 import static no.nav.doknotifikasjon.kodeverk.Status.INFO;
 
@@ -23,7 +26,10 @@ public class Validator {
 			FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
 			FEILET_SIKKERHETSNIVAA,
 			FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY,
-			FEILET_TECHNICAL_EXCEPTION_DATABASE
+			FEILET_TECHNICAL_EXCEPTION_DATABASE,
+			FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET,
+			FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT,
+			FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION
 	);
 
 	public void validateInput(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {

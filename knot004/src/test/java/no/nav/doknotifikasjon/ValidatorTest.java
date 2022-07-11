@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ValidatorTest {
 
 	private final Validator validator = new Validator();
+	private static final String FEILET_FEIL_SOM_SKJER_ETTER_LAGRING_AV_NOTIFIKASJON_I_DB = "Feil etter lagring i db";
 
 	@Test
 	public void shouldValidateInput() {
@@ -94,9 +95,10 @@ public class ValidatorTest {
 				Arguments.of(FEILET_TECHNICAL_EXCEPTION_DATABASE, true),
 				Arguments.of(FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA, true),
 				Arguments.of(FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY, true),
-				Arguments.of(FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET, false),
-				Arguments.of(FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, false),
-				Arguments.of(FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION, false)
+				Arguments.of(FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET, true),
+				Arguments.of(FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, true),
+				Arguments.of(FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION, true),
+				Arguments.of(FEILET_FEIL_SOM_SKJER_ETTER_LAGRING_AV_NOTIFIKASJON_I_DB, false)
 		);
 	}
 }
