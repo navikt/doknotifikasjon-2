@@ -73,5 +73,11 @@ public class NotifikasjonService {
 		log.info("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter {} forsøk.", bestillingsId, 3);
 		return null;
 	}
+
+	@Metrics(createErrorMetric = true)
+	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
+	public Notifikasjon findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(String bestillingsId) {
+		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElse(null);
+	}
 }
 

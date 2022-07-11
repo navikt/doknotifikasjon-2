@@ -35,7 +35,7 @@ public class Knot005Service {
 
 	public void shouldStopResending(DoknotifikasjonStoppTo doknotifikasjonStoppTo) {
 		doknotifikasjonStoppValidadator.validateInput(doknotifikasjonStoppTo);
-		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsId(doknotifikasjonStoppTo.getBestillingsId());
+		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(doknotifikasjonStoppTo.getBestillingsId());
 
 		if (notifikasjon == null) {
 			log.warn("Knot005 Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
