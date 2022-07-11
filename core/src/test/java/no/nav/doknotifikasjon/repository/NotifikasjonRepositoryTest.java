@@ -157,9 +157,10 @@ public class NotifikasjonRepositoryTest {
 		List<Notifikasjon> notifikasjonList = new ArrayList<>();
 		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(FEILET, 2, LocalDate.now(), LocalDateTime.now()));
 
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OPPRETTET, 2, LocalDate.now(), LocalDateTime.now()));
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OPPRETTET, 0, LocalDate.now(), LocalDateTime.now()));
-		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OPPRETTET, null, LocalDate.now(), LocalDateTime.now()));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OPPRETTET, 2, LocalDate.now(), null));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OPPRETTET, 0, LocalDate.now(), null));
+		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OPPRETTET, null, LocalDate.now(), null));
+
 
 		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 2, LocalDate.now(), LocalDateTime.now()));
 		notifikasjonList.add(createNotifikasjonWithStatusAntallRenotifikasjonerAndNesteRenotifikasjonDato(OVERSENDT, 0, LocalDate.now(), LocalDateTime.now()));
@@ -236,7 +237,7 @@ public class NotifikasjonRepositoryTest {
 				.nesteRenotifikasjonDato(nesteRenotifikasjonsDato)
 				.prefererteKanaler(PREFERERTE_KANALER)
 				.opprettetAv(OPPRETTET_AV)
-				.opprettetDato(OPPRETTET_DATO)
+				.opprettetDato(LocalDateTime.now())
 				.endretAv(ENDRET_AV)
 				.endretDato(endretDato)
 				.build();

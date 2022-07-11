@@ -27,10 +27,17 @@ public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Inte
 
 	String opprettetEllerOversendtQuery = """
 			Select * from t_notifikasjon
-			where k_status in ('OPPRETTET', 'OVERSENDT')
-			  and (antall_renotifikasjoner = 0 or antall_renotifikasjoner is null)
-			  and endret_dato is not null
-			  and endret_dato >= current_date - 30
-			  """;
-
+			where k_status = 'OVERSENDT'
+					and (antall_renotifikasjoner = 0 or antall_renotifikasjoner is null)
+					and endret_dato is not null
+					and endret_dato >= current_date - 30
+					UNION
+			Select * from t_notifikasjon
+			where k_status = 'OPPRETTET'
+					and (antall_renotifikasjoner = 0 or antall_renotifikasjoner is null)
+					and opprettet_dato is not null
+					and opprettet_dato >= current_date - 30
+					order by id asc
+					limit 50000;
+			""";
 }

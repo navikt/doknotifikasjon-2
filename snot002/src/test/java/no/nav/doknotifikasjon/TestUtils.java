@@ -53,6 +53,7 @@ public final class TestUtils {
 				.nesteRenotifikasjonDato(null)
 				.endretDato(endretDato)
 				.prefererteKanaler(PREFERERTE_KANALER)
+				.opprettetDato(LocalDateTime.now())
 				.build();
 	}
 

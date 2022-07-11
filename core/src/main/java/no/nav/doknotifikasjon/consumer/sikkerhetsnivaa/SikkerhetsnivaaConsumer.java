@@ -46,12 +46,9 @@ public class SikkerhetsnivaaConsumer {
 			return response.getBody();
 		} catch (HttpClientErrorException e) {
 			switch (e.getStatusCode()) {
-				case UNAUTHORIZED:
-					throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten avviste accesstoken. Feilmelding: %s", e.getMessage()), e);
-				case FORBIDDEN:
-					throw new SikkerhetsnivaaFunctionalException(String.format("Bruker er ikke registrert som ID-porten bruker. Feilmelding: %s", e.getMessage()), e);
-				default:
-					throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten feilet med ukjent funksjonell feil. Feilmelding: %s", e.getMessage()), e);
+				case UNAUTHORIZED -> throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten avviste accesstoken. Feilmelding: %s", e.getMessage()), e);
+				case FORBIDDEN -> throw new SikkerhetsnivaaFunctionalException(String.format("Bruker er ikke registrert som ID-porten bruker. Feilmelding: %s", e.getMessage()), e);
+				default -> throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten feilet med ukjent funksjonell feil. Feilmelding: %s", e.getMessage()), e);
 			}
 		} catch (HttpServerErrorException e) {
 			throw new SikkerhetsnivaaTechnicalException(String.format("Teknisk feil mot Difi IdPorten. Feilmelding: %s", e.getMessage()), e);

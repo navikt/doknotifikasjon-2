@@ -61,7 +61,7 @@ public class Validator {
 
 		if (FEILET.equals(status)) {
 			if (feilmeldingerSomIkkeSkalBliProsessert.contains(melding)) {
-				log.info("Melding med status FEILET og melding={} skal ikke oppdatere status i Knot004. Avslutter behandlingen.", melding);
+				log.info("Melding med status FEILET og melding='{}' skal ikke oppdatere status i Knot004. Avslutter behandlingen.", melding);
 				return true;
 			}
 		}
