@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_DELAY;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
@@ -43,7 +42,7 @@ public class NotifikasjonDistribusjonService {
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricExclude = DoknotifikasjonDistribusjonIkkeFunnetException.class)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DATABASE_DELAY))
+	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:50}"))
 	public NotifikasjonDistribusjon findById(int notifikasjonDistribusjonId) {
 		return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(
 				() -> {

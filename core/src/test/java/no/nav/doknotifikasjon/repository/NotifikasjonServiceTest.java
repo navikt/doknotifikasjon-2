@@ -13,6 +13,7 @@ import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,8 +36,18 @@ class NotifikasjonServiceTest {
 
 		var result = notifikasjonService.findByBestillingsId(BESTILLINGS_ID);
 
-		verify(notifikasjonRepository, times(3)).findByBestillingsId(BESTILLINGS_ID);
+		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
 		assertNull(result);
+	}
+
+	@Test
+	void shouldRetryIfTechnicalErrorInKnot004() {
+		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall"){ });
+
+		Exception e = assertThrows(ExhaustedRetryException.class, () -> notifikasjonService.findByBestillingsId(BESTILLINGS_ID));
+
+		assertTrue(e.getMessage().contains("Cannot locate recovery method"));
+		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
 	}
 
 	@Test
@@ -55,7 +66,7 @@ class NotifikasjonServiceTest {
 
 		Exception e = assertThrows(ExhaustedRetryException.class, () -> notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(BESTILLINGS_ID));
 
-		assertEquals(ExhaustedRetryException.class, e.getClass());
+		assertTrue(e.getMessage().contains("Cannot locate recovery method"));
 		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
 	}
 

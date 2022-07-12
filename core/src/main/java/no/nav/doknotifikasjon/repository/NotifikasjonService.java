@@ -58,7 +58,7 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricExclude = NotifikasjonIkkeFunnetException.class)
-	@Retryable(value = NotifikasjonIkkeFunnetException.class, recover = "notifikasjonIkkeFunnetRecovery", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
+	@Retryable(maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
 	public Notifikasjon findByBestillingsId(String bestillingsId) {
 		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(
 				() -> {
@@ -70,7 +70,7 @@ public class NotifikasjonService {
 
 	@Recover
 	public Notifikasjon notifikasjonIkkeFunnetRecovery(NotifikasjonIkkeFunnetException e, String bestillingsId) {
-		log.info("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter {} forsøk.", bestillingsId, 3);
+		log.warn("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter {} forsøk.", bestillingsId, 3);
 		return null;
 	}
 
