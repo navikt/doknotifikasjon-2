@@ -19,7 +19,7 @@ public class Snot002Scheduler {
 		this.leaderElection = leaderElection;
 	}
 
-	@Scheduled(cron = "0 0 14 * * *")
+	@Scheduled(cron = "0 0 13 * * *")
 	public void scheduledJob() {
 		try {
 			if (leaderElection.isLeader()) {
