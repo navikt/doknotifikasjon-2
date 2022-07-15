@@ -63,7 +63,7 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		snot001Scheduler.scheduledJob();
 
-		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
 		LocalDate now = LocalDate.now();
 
 		assertEquals(ANTALL_RENOTIFIKASJONER - 1, updatedNotifikasjon.getAntallRenotifikasjoner());
@@ -96,7 +96,7 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		snot001Scheduler.scheduledJob();
 
-		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
 		LocalDate now = LocalDate.now();
 
 		assertEquals(ANTALL_RENOTIFIKASJONER - 1, updatedNotifikasjon.getAntallRenotifikasjoner());
@@ -129,7 +129,7 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		snot001Scheduler.scheduledJob();
 
-		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
 		LocalDate now = LocalDate.now();
 
 		assertEquals(ANTALL_RENOTIFIKASJONER - 1, updatedNotifikasjon.getAntallRenotifikasjoner());
@@ -160,7 +160,7 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.saveAndFlush(TestUtils.createNotifikasjonWithStatus(Status.FERDIGSTILT));
 		snot001Scheduler.scheduledJob();
 
-		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID);
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
 
 		assertEquals(ANTALL_RENOTIFIKASJONER, updatedNotifikasjon.getAntallRenotifikasjoner());
 		assertEquals(NESTE_RENOTIFIKASJONS_DATO, updatedNotifikasjon.getNesteRenotifikasjonDato());

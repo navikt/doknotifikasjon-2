@@ -1,17 +1,18 @@
 package no.nav.doknotifikasjon.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetException;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
@@ -52,17 +53,31 @@ public class NotifikasjonService {
 
 	@Metrics(createErrorMetric = true)
 	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
-	public List<Notifikasjon> findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(Status status, LocalDateTime sistEndretDato) {
-		return notifikasjonRepository.findAllByStatusAndEndretDatoIsGreaterThanEqualWithNoAntallRenotifikasjoner(
-				status.toString(),
-				sistEndretDato
-		);
+	public List<Notifikasjon> findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner() {
+		return notifikasjonRepository.findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner();
+	}
+
+	@Metrics(createErrorMetric = true, errorMetricExclude = NotifikasjonIkkeFunnetException.class)
+	@Retryable(maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
+	public Notifikasjon findByBestillingsId(String bestillingsId) {
+		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(
+				() -> {
+					throw new NotifikasjonIkkeFunnetException(String.format(
+							"Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId)
+					);
+				});
+	}
+
+	@Recover
+	public Notifikasjon notifikasjonIkkeFunnetRecovery(NotifikasjonIkkeFunnetException e, String bestillingsId) {
+		log.warn("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter {} forsøk.", bestillingsId, 3);
+		return null;
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
-	public Notifikasjon findByBestillingsId(String bestillingsId) {
-		return notifikasjonRepository.findByBestillingsId(bestillingsId);
+	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
+	public Notifikasjon findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(String bestillingsId) {
+		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElse(null);
 	}
 }
 

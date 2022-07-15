@@ -1,76 +1,93 @@
 package no.nav.doknotifikasjon;
 
-import no.nav.doknotifikasjon.kodeverk.Status;
-import no.nav.doknotifikasjon.model.Notifikasjon;
-import org.junit.jupiter.api.Test;
+import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
+import no.nav.doknotifikasjon.metrics.MetricService;
+import no.nav.doknotifikasjon.repository.NotifikasjonService;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
-import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
-import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
-import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = {Knot004Service.class})
 public class Knot004ServiceTest {
 
-	Knot004Service knot004Service = new Knot004Service(null, null, null, null);
+	private static final String BESTILLER_ID = "BESTILLER_ID";
+	private static final String BESTILLINGS_ID = "BESTILLINGS_ID";
+	private static final String FEILET_FEIL_SOM_SKJER_ETTER_LAGRING_AV_NOTIFIKASJON_I_DB = "Feil etter lagring i db";
 
-	@Test
-	public void shouldUpdateStatusFromOpprettetToOversendt() {
-		Notifikasjon notifikasjon = new Notifikasjon();
-		notifikasjon.setStatus(OPPRETTET);
-		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
-		assertTrue(knot004Service.statusIsNewerThanPreviousStatus(
-				updateStatusTo,
-				notifikasjon
-		));
+	@Autowired
+	Knot004Service knot004Service;
+
+	@MockBean
+	NotifikasjonService notifikasjonService;
+
+	@MockBean
+	Validator validator;
+
+	@MockBean
+	KafkaStatusEventProducer kafkaStatusEventProducer;
+
+	@MockBean
+	MetricService metricService;
+
+	@ParameterizedTest
+	@ValueSource(strings = {
+			FEILET_SIKKERHETSNIVAA,
+			FEILET_TECHNICAL_EXCEPTION_DATABASE,
+			FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
+			FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY,
+			FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET,
+			FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT,
+			FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION
+	})
+	public void shouldReturnForSpecificFeilmeldinger(String feilmelding) {
+		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo.DoknotifikasjonStatusToBuilder()
+				.bestillerId(BESTILLER_ID)
+				.bestillingsId(BESTILLINGS_ID)
+				.status(FEILET)
+				.melding(feilmelding)
+				.distribusjonId(null)
+				.build();
+		when(validator.erStatusInfoEllerFeiletMedSpesiellFeilmelding(doknotifikasjonStatusTo.getStatus(), doknotifikasjonStatusTo.getMelding()))
+				.thenReturn(true);
+
+		knot004Service.shouldUpdateStatus(doknotifikasjonStatusTo);
+
+		verifyNoInteractions(notifikasjonService);
 	}
 
-	@Test
-	public void shouldUpdateStatusOversendtToFerdigstilt() {
-		Notifikasjon notifikasjon = new Notifikasjon();
-		notifikasjon.setStatus(OVERSENDT);
-		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(FERDIGSTILT);
-		assertTrue(knot004Service.statusIsNewerThanPreviousStatus(
-				updateStatusTo,
-				notifikasjon
-		));
-	}
+	@ParameterizedTest
+	@ValueSource(strings = {
+			FEILET_FEIL_SOM_SKJER_ETTER_LAGRING_AV_NOTIFIKASJON_I_DB
+	})
+	public void shouldProceeedForDifferentFeilmeldinger(String feilmelding) {
+		DoknotifikasjonStatusTo doknotifikasjonStatusTo = new DoknotifikasjonStatusTo.DoknotifikasjonStatusToBuilder()
+				.bestillerId(BESTILLER_ID)
+				.bestillingsId(BESTILLINGS_ID)
+				.status(FEILET)
+				.melding(feilmelding)
+				.distribusjonId(null)
+				.build();
+		when(validator.erStatusInfoEllerFeiletMedSpesiellFeilmelding(doknotifikasjonStatusTo.getStatus(), doknotifikasjonStatusTo.getMelding()))
+				.thenReturn(false);
+		when(notifikasjonService.findByBestillingsId(BESTILLINGS_ID)).thenReturn(null);
 
-	@Test
-	public void shouldUpdateStatusFerdigstiltToFeilet() {
-		Notifikasjon notifikasjon = new Notifikasjon();
-		notifikasjon.setStatus(FERDIGSTILT);
-		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(FEILET);
-		assertTrue(knot004Service.statusIsNewerThanPreviousStatus(
-				updateStatusTo,
-				notifikasjon
-		));
-	}
+		knot004Service.shouldUpdateStatus(doknotifikasjonStatusTo);
 
-	@Test
-	public void shouldNotUpdateStatusFerdigstiltToOversendt() {
-		Notifikasjon notifikasjon = new Notifikasjon();
-		notifikasjon.setStatus(FERDIGSTILT);
-		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
-		assertFalse(knot004Service.statusIsNewerThanPreviousStatus(
-				updateStatusTo,
-				notifikasjon
-		));
-	}
-
-	@Test
-	public void shouldNotUpdateStatusFeiletToOversendt() {
-		Notifikasjon notifikasjon = new Notifikasjon();
-		notifikasjon.setStatus(FEILET);
-		DoknotifikasjonStatusTo updateStatusTo = doknotifikasjonStatusBuilder(OVERSENDT);
-		assertFalse(knot004Service.statusIsNewerThanPreviousStatus(
-				updateStatusTo,
-				notifikasjon
-		));
-	}
-
-	private DoknotifikasjonStatusTo doknotifikasjonStatusBuilder(Status status) {
-		return new DoknotifikasjonStatusTo(null, null, status, null, null);
+		verify(notifikasjonService, times(1)).findByBestillingsId(BESTILLINGS_ID);
 	}
 }

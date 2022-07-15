@@ -11,12 +11,12 @@ import java.util.Collections;
 
 public final class TestUtils {
 
-	protected static final String BESTILLINGS_ID = "1234-5678-9101";
-	protected static final String BESTILLER_ID = "teamdokumenthandtering";
-	protected static final String KONTAKTINFO = "Hallohallo";
-	protected static final String TITTEL = "Melding";
-	protected static final String TEKST = "Lang tekst";
-	protected static final LocalDate NESTE_RENOTIFIKASJONS_DATO = LocalDate.parse("2020-10-01");
+	static final String BESTILLINGS_ID = "1234-5678-9101";
+	static final String BESTILLER_ID = "teamdokumenthandtering";
+	static final String KONTAKTINFO = "Hallohallo";
+	static final String TITTEL = "Melding";
+	static final String TEKST = "Lang tekst";
+	static final LocalDate NESTE_RENOTIFIKASJONS_DATO = LocalDate.parse("2020-10-01");
 	private static final String OPPRETTET_AV = "srvdokument";
 	private static final int RENOTIFIKASJON_INTERVALL = 10;
 	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
@@ -26,11 +26,9 @@ public final class TestUtils {
 	public TestUtils() {
 	}
 
-
 	public static Notifikasjon createNotifikasjonWithStatusOversendt(LocalDateTime endretDato) {
 		return createNotifikasjonWithStatusOversendtAndAntallRenotifikasjoner(endretDato, 0);
 	}
-
 
 	public static Notifikasjon createNotifikasjonWithStatusOversendtAndAntallRenotifikasjoner(LocalDateTime endretDato, int antallRenotifikasjoner) {
 		return Notifikasjon.builder()
@@ -45,7 +43,6 @@ public final class TestUtils {
 				.build();
 	}
 
-
 	public static Notifikasjon createNotifikasjonWithStatus(LocalDateTime endretDato, Status status) {
 		return Notifikasjon.builder()
 				.bestillingsId(BESTILLINGS_ID)
@@ -56,6 +53,7 @@ public final class TestUtils {
 				.nesteRenotifikasjonDato(null)
 				.endretDato(endretDato)
 				.prefererteKanaler(PREFERERTE_KANALER)
+				.opprettetDato(LocalDateTime.now())
 				.build();
 	}
 

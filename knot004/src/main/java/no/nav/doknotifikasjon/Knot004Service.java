@@ -16,26 +16,25 @@ import java.util.Set;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
-import static no.nav.doknotifikasjon.kodeverk.Status.INFO;
 
 @Slf4j
 @Component
 public class Knot004Service {
 
 	private final NotifikasjonService notifikasjonService;
-	private final DoknotifikasjonStatusValidator doknotifikasjonStatusValidator;
+	private final Validator validator;
 	private final KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer;
 	private final MetricService metricService;
 
 	@Autowired
 	public Knot004Service(
 			NotifikasjonService notifikasjonService,
-			DoknotifikasjonStatusValidator doknotifikasjonStatusValidator,
+			Validator validator,
 			KafkaStatusEventProducer kafkaDoknotifikasjonStatusProducer,
 			MetricService metricService
 	) {
 		this.notifikasjonService = notifikasjonService;
-		this.doknotifikasjonStatusValidator = doknotifikasjonStatusValidator;
+		this.validator = validator;
 		this.kafkaDoknotifikasjonStatusProducer = kafkaDoknotifikasjonStatusProducer;
 		this.metricService = metricService;
 	}
@@ -43,12 +42,9 @@ public class Knot004Service {
 	public void shouldUpdateStatus(DoknotifikasjonStatusTo doknotifikasjonStatusTo) {
 		metricService.metricKnot004Status(doknotifikasjonStatusTo.getStatus());
 
-		if (INFO.equals(doknotifikasjonStatusTo.getStatus())) {
-			log.info("Knot004 Melding med status {} skal ikke oppdatere status. Avslutter behandlingen.", INFO);
-			return;
-		}
+		if (validator.erStatusInfoEllerFeiletMedSpesiellFeilmelding(doknotifikasjonStatusTo.getStatus(), doknotifikasjonStatusTo.getMelding())) return;
+		validator.validateInput(doknotifikasjonStatusTo);
 
-		doknotifikasjonStatusValidator.validateInput(doknotifikasjonStatusTo);
 		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
 
 		if (notifikasjon == null) {

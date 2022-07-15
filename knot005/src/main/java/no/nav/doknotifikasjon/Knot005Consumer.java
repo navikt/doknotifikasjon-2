@@ -48,8 +48,8 @@ public class Knot005Consumer {
 		log.info("Knot005 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
-			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value()
-					.toString(), DoknotifikasjonStopp.class);
+			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value().toString(),
+					DoknotifikasjonStopp.class);
 			knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());

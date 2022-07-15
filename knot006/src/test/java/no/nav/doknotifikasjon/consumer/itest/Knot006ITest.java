@@ -61,7 +61,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
@@ -100,7 +100,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
@@ -140,7 +140,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
@@ -179,7 +179,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 			assertEquals(notifikasjonMedkontaktInfo.getBestillerId(), notifikasjon.getBestillerId());
@@ -218,7 +218,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 					notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjonMedkontaktInfo.getBestillerId(), OVERSENDT_NOTIFIKASJON_PROCESSED, null
 			);
 
-			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId());
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(notifikasjonMedkontaktInfo.getBestillingsId()).orElse(null);
 
 			assertNotNull(notifikasjon);
 
