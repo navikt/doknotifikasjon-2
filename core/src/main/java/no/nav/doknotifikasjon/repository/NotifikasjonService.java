@@ -57,11 +57,11 @@ public class NotifikasjonService {
 		return notifikasjonRepository.findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner();
 	}
 
-	@Metrics(createErrorMetric = true, errorMetricExclude = NotifikasjonIkkeFunnetException.class)
 	@Retryable(maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
 	public Notifikasjon findByBestillingsId(String bestillingsId) {
 		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(
 				() -> {
+					log.info(String.format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
 					throw new NotifikasjonIkkeFunnetException(String.format(
 							"Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId)
 					);
