@@ -41,11 +41,11 @@ public class NotifikasjonDistribusjonService {
 		}
 	}
 
-	@Metrics(createErrorMetric = true, errorMetricExclude = DoknotifikasjonDistribusjonIkkeFunnetException.class)
 	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:50}"))
 	public NotifikasjonDistribusjon findById(int notifikasjonDistribusjonId) {
 		return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(
 				() -> {
+					log.info(String.format("NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId));
 					throw new DoknotifikasjonDistribusjonIkkeFunnetException(String.format(
 							"NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId)
 					);
