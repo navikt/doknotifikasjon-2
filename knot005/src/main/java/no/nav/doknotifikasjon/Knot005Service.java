@@ -38,10 +38,10 @@ public class Knot005Service {
 		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(doknotifikasjonStoppTo.getBestillingsId());
 
 		if (notifikasjon == null) {
-			log.warn("Knot005 Notifikasjon med bestillingsId={} finnes ikke i notifikasjons databasen. Avslutter behandlingen. ",
+			log.warn("Knot005 Notifikasjon med bestillingsId={} finnes ikke i databasen. Avslutter behandlingen.",
 					doknotifikasjonStoppTo.getBestillingsId());
 		} else if (FERDIGSTILT.equals(notifikasjon.getStatus())) {
-			log.warn("Knot005 Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen. ",
+			log.info("Knot005 Notifikasjon med bestillingsId={} har status={}. Avslutter behandlingen.",
 					doknotifikasjonStoppTo.getBestillingsId(), FERDIGSTILT);
 		} else {
 			log.info("Knot005 oppdaterer notifikasjon med bestillingsId={}", doknotifikasjonStoppTo.getBestillingsId());
