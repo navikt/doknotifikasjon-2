@@ -70,8 +70,14 @@ public class NotifikasjonService {
 
 	@Recover
 	public Notifikasjon notifikasjonIkkeFunnetRecovery(NotifikasjonIkkeFunnetException e, String bestillingsId) {
-		log.warn("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter {} forsøk.", bestillingsId, 3);
+		log.warn("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter maks. antall forsøk.", bestillingsId);
 		return null;
+	}
+
+	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
+	@Recover
+	public Notifikasjon otherExceptionsRecovery(RuntimeException e, String bestillingsId) {
+		throw e;
 	}
 
 	@Metrics(createErrorMetric = true)

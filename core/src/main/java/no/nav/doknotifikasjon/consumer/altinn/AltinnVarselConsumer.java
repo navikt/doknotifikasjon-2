@@ -18,6 +18,7 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.soap.SoapFaultException;
@@ -90,6 +91,18 @@ public class AltinnVarselConsumer {
 		} catch (Exception e) {
 			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn.", e);
 		}
+	}
+
+	@Recover
+	public void altinnTechnicalExceptionRecovery(AltinnTechnicalException e, Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+		log.warn("Teknisk feil for sending av sms/epost til Altinn - maks. antall forsøk brukt");
+		throw e;
+	}
+
+	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
+	@Recover
+	public void otherExceptionsRecovery(RuntimeException e, Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+		throw e;
 	}
 
 	private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
