@@ -32,7 +32,6 @@ class NotifikasjonDistribusjonServiceTest {
 
 		Exception e = assertThrows(DoknotifikasjonDistribusjonIkkeFunnetException.class, () -> notifikasjonDistribusjonService.findById(NOTIFIKASJONDISTRIBUSJON_ID));
 
-		// ExhaustedRetryException kommer kun hvis @Recover-metode er spesifisert
 		assertEquals(DoknotifikasjonDistribusjonIkkeFunnetException.class, e.getClass());
 		verify(notifikasjonDistribusjonRepository, times(5)).findById(NOTIFIKASJONDISTRIBUSJON_ID);
 	}

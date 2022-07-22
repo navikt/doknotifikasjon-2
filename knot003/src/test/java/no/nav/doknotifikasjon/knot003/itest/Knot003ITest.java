@@ -157,7 +157,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-							"Funksjonell feil fra Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=30010, errorMessage=Ugyldig epostadresse angitt på et ReceiverEndPoint.", id))
+							"Funksjonell feil i kall mot Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=30010, errorMessage=Ugyldig epostadresse angitt på et ReceiverEndPoint.", id))
 			);
 		});
 	}

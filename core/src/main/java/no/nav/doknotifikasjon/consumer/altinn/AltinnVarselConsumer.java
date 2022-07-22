@@ -18,6 +18,7 @@ import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.soap.SoapFaultException;
@@ -26,9 +27,10 @@ import javax.xml.bind.JAXBElement;
 import java.util.List;
 
 import static java.lang.String.format;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
+import static no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil.erFunksjonellFeil;
 import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
 @Slf4j
@@ -36,7 +38,7 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 public class AltinnVarselConsumer {
 
 	private static final String SEND_TIL_ALTINN = "${SEND_TIL_ALTINN}";
-	private Boolean sendTilAltinn;
+	private final Boolean sendTilAltinn;
 
 	private static final String DEFAULTNOTIFICATIONTYPE = "TokenTextOnly";
 	private static final String TOKEN_VALUE = "TokenValue";
@@ -52,7 +54,7 @@ public class AltinnVarselConsumer {
 	}
 
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
-	@Retryable(include = AltinnTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = AltinnTechnicalException.class, maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:2000}"))
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
 		if (!sendTilAltinn) {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
@@ -75,7 +77,13 @@ public class AltinnVarselConsumer {
 			);
 		} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 			final String altinnErrorMessage = constructAltinnErrorMessage(e);
-			throw new AltinnFunctionalException(format("Funksjonell feil fra Altinn. %s", altinnErrorMessage), e);
+
+			Integer feilkode = getFeilkode(e);
+			if (erFunksjonellFeil(feilkode)) {
+				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s", altinnErrorMessage), e);
+			} else {
+				throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn. %s", altinnErrorMessage), e);
+			}
 		} catch (SoapFaultException e) {
 			throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. Feilmelding: %s", e.getMessage()), e);
 		} catch (RuntimeException e) {
@@ -83,6 +91,18 @@ public class AltinnVarselConsumer {
 		} catch (Exception e) {
 			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn.", e);
 		}
+	}
+
+	@Recover
+	public void altinnTechnicalExceptionRecovery(AltinnTechnicalException e, Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+		log.warn("Teknisk feil for sending av sms/epost til Altinn - maks. antall forsøk brukt");
+		throw e;
+	}
+
+	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
+	@Recover
+	public void otherExceptionsRecovery(RuntimeException e, Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+		throw e;
 	}
 
 	private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
@@ -98,7 +118,7 @@ public class AltinnVarselConsumer {
 	}
 
 	private JAXBElement<TextTokenSubstitutionBEList> generateTextTokens(Kanal kanal, String tekst, String tittel) {
-		if (kanal == Kanal.SMS) {
+		if (kanal == SMS) {
 			return ns("TextTokens",
 					TextTokenSubstitutionBEList.class,
 					new TextTokenSubstitutionBEList().withTextToken(List.of(
@@ -110,7 +130,7 @@ public class AltinnVarselConsumer {
 									.withTokenValue(ns(TOKEN_VALUE, ""))
 					)));
 		}
-		if (kanal == Kanal.EPOST) {
+		if (kanal == EPOST) {
 			return ns("TextTokens",
 					TextTokenSubstitutionBEList.class,
 					new TextTokenSubstitutionBEList().withTextToken(List.of(
@@ -126,8 +146,8 @@ public class AltinnVarselConsumer {
 	}
 
 	private static TransportType kanalToTransportType(Kanal kanal) {
-		if (Kanal.SMS == kanal) return TransportType.SMS;
-		if (Kanal.EPOST == kanal) return TransportType.EMAIL;
+		if (SMS == kanal) return TransportType.SMS;
+		if (EPOST == kanal) return TransportType.EMAIL;
 		throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
 	}
 
@@ -141,6 +161,14 @@ public class AltinnVarselConsumer {
 				"userGuid=" + unwrap(faultInfo.getUserGuid()) + ", " +
 				"errorId=" + faultInfo.getErrorID() + ", " +
 				"errorMessage=" + unwrap(faultInfo.getAltinnErrorMessage());
+	}
+
+	private Integer getFeilkode(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+		AltinnFault faultInfo = e.getFaultInfo();
+		if (faultInfo == null) {
+			return null;
+		}
+		return faultInfo.getErrorID();
 	}
 
 	private String unwrap(JAXBElement<String> jaxbElement) {

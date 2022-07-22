@@ -6,11 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
-import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.test.context.ActiveProfiles;
 
 import static java.util.Optional.empty;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,12 +39,12 @@ class NotifikasjonServiceTest {
 	}
 
 	@Test
-	void shouldRetryIfTechnicalErrorInKnot004() {
+	void shouldRetryAndThrowExceptionIfTechnicalErrorInKnot004() {
 		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall"){ });
 
-		Exception e = assertThrows(ExhaustedRetryException.class, () -> notifikasjonService.findByBestillingsId(BESTILLINGS_ID));
+		Exception e = assertThrows(DataAccessException.class, () -> notifikasjonService.findByBestillingsId(BESTILLINGS_ID));
 
-		assertTrue(e.getMessage().contains("Cannot locate recovery method"));
+		assertTrue(e.getMessage().contains("Feil i databasekall"));
 		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
 	}
 
@@ -61,12 +59,12 @@ class NotifikasjonServiceTest {
 	}
 
 	@Test
-	void shouldRetryForNonSpecifiedExceptionsInKnot005() {
+	void shouldRetryAndThrowExceptionForNonSpecifiedExceptionsInKnot005() {
 		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall"){ });
 
-		Exception e = assertThrows(ExhaustedRetryException.class, () -> notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(BESTILLINGS_ID));
+		Exception e = assertThrows(DataAccessException.class, () -> notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(BESTILLINGS_ID));
 
-		assertTrue(e.getMessage().contains("Cannot locate recovery method"));
+		assertTrue(e.getMessage().contains("Feil i databasekall"));
 		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
 	}
 
