@@ -196,7 +196,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldPutErrorMessageOnStatusTopicWhenIkkeVarselIsFalseAndAntallRenotifikasjonerSatt() {
+	void shouldPutErrorMessageOnStatusTopicWhenKanVarslesIsFalseAndAntallRenotifikasjonerSatt() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 
 		this.stubGetKontaktInfo("digdir_krr_proxy_kanvarsles_false.json");

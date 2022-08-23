@@ -72,7 +72,7 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void shouldGetExceptionWhenIkkeVarslesErFalseAndAntallRenotifikasjonerGreaterThanZero() {
+	void shouldGetExceptionWhenKanVarslesErFalseAndAntallRenotifikasjonerGreaterThanZero() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createDKIFWithKanVarslesFalse());
 
