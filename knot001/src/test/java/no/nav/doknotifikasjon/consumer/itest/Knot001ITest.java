@@ -24,6 +24,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
+import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.OVERSENDT_NOTIFIKASJON_PROCESSED;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
@@ -109,7 +111,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	void shouldRunWhenReceivingKafkaEventWithSmsAsPreferedKanal() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithPreferedKanalAsSms();
 
-		this.stubGetKontaktInfo();
+		this.stubGetKontaktInfo("digdir_krr_proxy_happy.json");
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
@@ -149,7 +151,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	void shouldCreateNotifikasjonDistribusjonForBothSmsAndEpost() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 
-		this.stubGetKontaktInfo();
+		this.stubGetKontaktInfo("digdir_krr_proxy_happy.json");
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
@@ -194,6 +196,38 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
+	void shouldPutErrorMessageOnStatusTopicWhenKanVarslesIsFalseAndAntallRenotifikasjonerSatt() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
+
+		this.stubGetKontaktInfo("digdir_krr_proxy_kanvarsles_false.json");
+		this.putMessageOnKafkaTopic(doknotifikasjon);
+
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verify(statusProducer).publishDoknotifikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION, null
+			);
+			assertEquals(0, notifikasjonRepository.findAll().size());
+
+		});
+	}
+
+	@Test
+	void shouldPutErrorMessageOnStatusTopicWhenReservertAndAntallRenotifikasjonerSatt() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
+
+		this.stubGetKontaktInfo("digdir_krr_proxy_reservert.json");
+		this.putMessageOnKafkaTopic(doknotifikasjon);
+
+		await().atMost(10, SECONDS).untilAsserted(() -> {
+			verify(statusProducer).publishDoknotifikasjonStatusFeilet(
+					doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, null
+			);
+			assertEquals(0, notifikasjonRepository.findAll().size());
+
+		});
+	}
+
+	@Test
 	void shouldPutErrorMessageOnStatusTopicWhenSikkerhetnivaaIsNot4() {
 		this.stubSikkerhetsnivaa();
 
@@ -231,8 +265,8 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		);
 	}
 
-	private void stubGetKontaktInfo() {
-		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_happy.json");
+	private void stubGetKontaktInfo(String path) {
+		stubDigdirKRRProxyWithBodyFile(path);
 	}
 
 	private void stubGetKontaktInfoWithoutSmsInKontaktInfo() {

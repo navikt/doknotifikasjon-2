@@ -10,6 +10,8 @@ import no.nav.doknotifikasjon.schemas.PrefererteKanal;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonMap;
+
 public final class TestUtils {
 
 	public static final String BESTILLINGS_ID = "bestillingsId";
@@ -122,7 +124,14 @@ public final class TestUtils {
 	public static DigitalKontaktinformasjonTo createDigitalKontaktinformasjonInfo() {
 		return new DigitalKontaktinformasjonTo(
 				null,
-				Collections.singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", true, false))
+				singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", true, false))
+		);
+	}
+
+	public static DigitalKontaktinformasjonTo createDKIFWithKanVarslesFalse() {
+		return new DigitalKontaktinformasjonTo(
+				null,
+				singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", false, false))
 		);
 	}
 
@@ -135,7 +144,7 @@ public final class TestUtils {
 
 	public static DigitalKontaktinformasjonTo createDigitalKontaktinformasjonInfoWithErrorMessage() {
 		return new DigitalKontaktinformasjonTo(
-				Collections.singletonMap(FODSELSNUMMER, "Ingen kontaktinformasjon er registrert på personen"),
+				singletonMap(FODSELSNUMMER, "Ingen kontaktinformasjon er registrert på personen"),
 				null
 		);
 	}
@@ -143,21 +152,21 @@ public final class TestUtils {
 	public static DigitalKontaktinformasjonTo createInvalidKontaktInfoWithoutKontaktInfo() {
 		return new DigitalKontaktinformasjonTo(
 				null,
-				Collections.singletonMap(FODSELSNUMMER, createKontaktInfo(null, null, true, false))
+				singletonMap(FODSELSNUMMER, createKontaktInfo(null, null, true, false))
 		);
 	}
 
 	public static DigitalKontaktinformasjonTo createValidKontaktInfoReserved() {
 		return new DigitalKontaktinformasjonTo(
 				null,
-				Collections.singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", true, true))
+				singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", true, true))
 		);
 	}
 
 	public static DigitalKontaktinformasjonTo createInvalidKontaktInfo() {
 		return new DigitalKontaktinformasjonTo(
 				null,
-				Collections.singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", false, false))
+				singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", false, false))
 		);
 	}
 

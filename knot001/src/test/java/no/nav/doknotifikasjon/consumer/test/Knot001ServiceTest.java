@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.FODSELSNUMMER;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDKIFWithKanVarslesFalse;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfo;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfoWithErrorMessage;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
@@ -57,7 +58,7 @@ class Knot001ServiceTest {
 	SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
 
 	@Test
-	void ShouldGetValidKontaktInfoWhenSendingWithValidFnr() {
+	void shouldGetValidKontaktInfoWhenSendingWithValidFnr() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createDigitalKontaktinformasjonInfo());
 
@@ -71,7 +72,35 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void ShouldGetExceptionWhenDigitalKontaktinfoConsumerThrows() {
+	void shouldGetExceptionWhenKanVarslesErFalseAndAntallRenotifikasjonerGreaterThanZero() {
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
+				.thenReturn(createDKIFWithKanVarslesFalse());
+
+		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
+		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION, null
+		);
+
+	}
+
+	@Test
+	void shouldGetExceptionWhenReservertAndAntallRenotifikasjonerGreaterThanZero() {
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
+				.thenReturn(createValidKontaktInfoReserved());
+
+		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
+		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, null
+		);
+
+	}
+
+	@Test
+	void shouldGetExceptionWhenDigitalKontaktinfoConsumerThrows() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenThrow(new DigitalKontaktinformasjonTechnicalException(""));
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
@@ -79,7 +108,7 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void ShouldGetExceptionWhenRequestingKontaktInfoWithInvalidFnr() {
+	void shouldGetExceptionWhenRequestingKontaktInfoWithInvalidFnr() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createEmptyDigitalKontaktinformasjonInfo());
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
@@ -91,7 +120,7 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void ShouldGetExceptionWhenRequestingKontaktInfoWithErrorMessage() {
+	void shouldGetExceptionWhenRequestingKontaktInfoWithErrorMessage() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createDigitalKontaktinformasjonInfoWithErrorMessage());
 
@@ -105,7 +134,7 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void ShouldGetExceptionWhenRequestingKontaktInfoWithReserved() {
+	void shouldGetExceptionWhenRequestingKontaktInfoWithReserved() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createValidKontaktInfoReserved());
 
@@ -118,7 +147,7 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void ShouldGetExceptionWhenRequestingKontaktInfoWithVarselFalse() {
+	void shouldGetExceptionWhenRequestingKontaktInfoWithVarselFalse() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createInvalidKontaktInfo());
 
@@ -131,7 +160,7 @@ class Knot001ServiceTest {
 	}
 
 	@Test
-	void ShouldGetExceptionWhenRequestingKontaktInfoWithMissingEmailAndSms() {
+	void shouldGetExceptionWhenRequestingKontaktInfoWithMissingEmailAndSms() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenReturn(createInvalidKontaktInfoWithoutKontaktInfo());
 
