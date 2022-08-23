@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.springframework.stereotype.Component;
 
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 
 @Slf4j
 @Component
@@ -37,7 +38,7 @@ public class KafkaStatusEventProducer {
 		this.publishDoknotifikasjonStatus(
 				bestillingsId == null ? "Ukjent" : bestillingsId,
 				bestillerId == null ? "Ukjent" : bestillerId,
-				Status.FEILET,
+				FEILET,
 				melding,
 				distribusjonId
 		);

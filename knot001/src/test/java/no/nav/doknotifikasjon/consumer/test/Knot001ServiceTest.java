@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.FODSELSNUMMER;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDKIFWithKanVarselFalse;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfo;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfoWithErrorMessage;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
@@ -71,6 +72,34 @@ class Knot001ServiceTest {
 	}
 
 	@Test
+	void ShouldGetExceptionWhenIkkeVarselErFasleAndAntallRenotifikasjonerGreaterThanZero() {
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
+				.thenReturn(createDKIFWithKanVarselFalse());
+
+		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
+		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION, null
+		);
+
+	}
+
+	@Test
+	void ShouldGetExceptionWhenReservetAndAntallRenotifikasjonerGreaterThanZero() {
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
+				.thenReturn(createValidKontaktInfoReserved());
+
+		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
+		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+
+		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
+				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, null
+		);
+
+	}
+
+	@Test
 	void ShouldGetExceptionWhenDigitalKontaktinfoConsumerThrows() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
 				.thenThrow(new DigitalKontaktinformasjonTechnicalException(""));
@@ -89,6 +118,7 @@ class Knot001ServiceTest {
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET, null
 		);
 	}
+
 
 	@Test
 	void ShouldGetExceptionWhenRequestingKontaktInfoWithErrorMessage() {

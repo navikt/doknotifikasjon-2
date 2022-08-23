@@ -126,6 +126,13 @@ public final class TestUtils {
 		);
 	}
 
+	public static DigitalKontaktinformasjonTo createDKIFWithKanVarselFalse() {
+		return new DigitalKontaktinformasjonTo(
+				null,
+				Collections.singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", false, false))
+		);
+	}
+
 	public static DigitalKontaktinformasjonTo createEmptyDigitalKontaktinformasjonInfo() {
 		return new DigitalKontaktinformasjonTo(
 				null,
