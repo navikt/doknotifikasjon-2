@@ -111,15 +111,23 @@ public class Knot001Service {
 				publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed));
 			}
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
-		} else if (kontaktinfo.isReservert() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) {
+		} else if (erReservertOgErBestiltMedRenotifikasjon(doknotifikasjon, kontaktinfo)) {
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
-		} else if (!kontaktinfo.isKanVarsles() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0) {
+		} else if (kanIkkeVarslesOgErBestiltMedRenotifikasjon(doknotifikasjon, kontaktinfo)) {
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		} else if ((kontaktinfo.getEpostadresse() == null || kontaktinfo.getEpostadresse().trim().isEmpty()) &&
 				(kontaktinfo.getMobiltelefonnummer() == null || kontaktinfo.getMobiltelefonnummer().trim().isEmpty())) {
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		}
 		return kontaktinfo;
+	}
+
+	private boolean erReservertOgErBestiltMedRenotifikasjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinfo digitalKontaktinfo) {
+		return digitalKontaktinfo.isReservert() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0;
+	}
+
+	private boolean kanIkkeVarslesOgErBestiltMedRenotifikasjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinfo digitalKontaktinfo) {
+		return !digitalKontaktinfo.isKanVarsles() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0;
 	}
 
 	public void publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(DoknotifikasjonTO doknotifikasjon, String message) {

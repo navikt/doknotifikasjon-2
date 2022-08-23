@@ -196,10 +196,10 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void PutErrorMessageOnStatusTopicWhenIkkeVarselIsFalseAndAntallRenotifikasjonerSatt() {
+	void shouldPutErrorMessageOnStatusTopicWhenIkkeVarselIsFalseAndAntallRenotifikasjonerSatt() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 
-		this.stubGetKontaktInfo("digdir_krr_proxy_kanvarsel_false.json");
+		this.stubGetKontaktInfo("digdir_krr_proxy_kanvarsles_false.json");
 		this.putMessageOnKafkaTopic(doknotifikasjon);
 
 		await().atMost(10, SECONDS).untilAsserted(() -> {
@@ -212,7 +212,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void PutErrorMessageOnStatusTopicWhenReservertAndAntallRenotifikasjonerSatt() {
+	void shouldPutErrorMessageOnStatusTopicWhenReservertAndAntallRenotifikasjonerSatt() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 
 		this.stubGetKontaktInfo("digdir_krr_proxy_reservert.json");
