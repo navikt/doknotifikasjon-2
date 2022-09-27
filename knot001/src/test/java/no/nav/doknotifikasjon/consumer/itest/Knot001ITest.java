@@ -9,7 +9,6 @@ import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
 import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@ActiveProfiles("itestWeb")
+@ActiveProfiles("wiremock")
 class Knot001ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
@@ -56,15 +55,11 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 	@Autowired
 	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-	@BeforeAll
-	public void beforeAll() {
-		stubAzure();
-	}
-
 	@BeforeEach
 	public void setup() {
 		notifikasjonRepository.deleteAll();
 		notifikasjonDistribusjonRepository.deleteAll();
+		stubAzure();
 	}
 
 	@Test
