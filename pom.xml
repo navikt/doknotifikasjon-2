@@ -21,6 +21,7 @@
 		<module>knot006</module>
 		<module>snot001</module>
 		<module>snot002</module>
+		<module>web</module>
 	</modules>
 
 	<parent>
@@ -92,6 +93,11 @@
 			<dependency>
 				<groupId>no.nav.doknotifikasjon</groupId>
 				<artifactId>snot002</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
