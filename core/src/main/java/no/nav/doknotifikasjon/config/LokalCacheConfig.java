@@ -13,9 +13,8 @@ import org.springframework.context.annotation.Profile;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 @Configuration
 @EnableCaching
 public class LokalCacheConfig {
@@ -28,7 +27,7 @@ public class LokalCacheConfig {
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(List.of(new CaffeineCache(AZURE_TOKEN_CACHE, Caffeine.newBuilder()
-				.expireAfterWrite(55, TimeUnit.MINUTES)
+				.expireAfterWrite(55, MINUTES)
 				.build())));
 		return manager;
 	}

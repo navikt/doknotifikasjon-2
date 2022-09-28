@@ -14,6 +14,6 @@
   "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.dev.intern.nav.no",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
   "INGRESSES": [
-    "https://doknotifikasjon-2.dev.adeo.no"
+    "https://doknotifikasjon-2.dev.intern.nav.no"
   ]
 }
