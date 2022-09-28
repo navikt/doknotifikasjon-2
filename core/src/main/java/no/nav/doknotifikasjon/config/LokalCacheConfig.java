@@ -15,9 +15,6 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-/**
- * @author Joakim Bjørnstad, Jbit AS
- */
 @Configuration
 @EnableCaching
 public class LokalCacheConfig {
