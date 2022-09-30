@@ -15,7 +15,7 @@
   "APPDYNAMICS": "/apikey/appdynamics/prod",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
   "INGRESSES": [
-    "https://doknotifikasjon-2.nais.adeo.no"
+    "https://doknotifikasjon-2.intern.nav.no"
   ],
   "AZURE_IAC_RULES": [
     {

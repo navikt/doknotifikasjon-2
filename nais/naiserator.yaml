@@ -34,7 +34,7 @@ spec:
   image: {{ image }}
   leaderElection: true
   liveness:
-    path: /isAlive
+    path: /actuator/health/liveness
     port: 8080
     initialDelay: 30
     failureThreshold: 10
@@ -43,7 +43,7 @@ spec:
     enabled: true
     path: /actuator/prometheus
   readiness:
-    path: /isReady
+    path: /actuator/health/readiness
     port: 8080
     initialDelay: 30
     timeout: 3

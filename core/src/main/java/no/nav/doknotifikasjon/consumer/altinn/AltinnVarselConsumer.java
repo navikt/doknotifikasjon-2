@@ -54,7 +54,11 @@ public class AltinnVarselConsumer {
 	}
 
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
-	@Retryable(include = AltinnTechnicalException.class, maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:2000}"))
+	@Retryable(
+			include = AltinnTechnicalException.class,
+			maxAttemptsExpression = "${retry.attempts:10}",
+			backoff = @Backoff(delayExpression = "${retry.delay:1000}", multiplier = 2, maxDelay = 60_000L)
+	)
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
 		if (!sendTilAltinn) {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
