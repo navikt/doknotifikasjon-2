@@ -1,28 +1,40 @@
 package no.nav.doknotifikasjon.rnot001;
 
+import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetException;
-import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
-import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
+import no.nav.doknotifikasjon.model.Notifikasjon;
+import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
+import org.slf4j.MDC;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import static no.nav.doknotifikasjon.rnot001.Rnot001Mapper.mapNotifikasjon;
+import static no.nav.doknotifikasjon.utils.MDCUtils.handleMdc;
 
+@Slf4j
+@Component
 public class Rnot001Service {
-	private final NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
-	private final Rnot001Mapper rnot001Mapper;
+	private final NotifikasjonRepository notifikasjonRepository;
 
-	public Rnot001Service(NotifikasjonDistribusjonService notifikasjonDistribusjonService,
-						  NotifikasjonDistribusjonRepository notifikasjonDistribusjonService1, Rnot001Mapper rnot001Mapper) {
-		this.notifikasjonDistribusjonRepository = notifikasjonDistribusjonService1;
-		this.rnot001Mapper = rnot001Mapper;
+	public Rnot001Service(NotifikasjonRepository notifikasjonRepository) {
+		this.notifikasjonRepository = notifikasjonRepository;
 	}
 
-	public NotifikasjonInfoTo getNotifikasjonInfo(String bestillingsId){
-		List<NotifikasjonDistribusjon> notifikasjonDistribusjoner = notifikasjonDistribusjonRepository.findAllByNotifikasjon_BestillingsId(bestillingsId);
-		if(notifikasjonDistribusjoner.isEmpty()){
-			throw new NotifikasjonIkkeFunnetException(String.format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
+	@Transactional(readOnly = true)
+	public NotifikasjonInfoTo getNotifikasjonInfo(String bestillingsId) {
+		try {
+			handleMdc();
+			Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(
+					() -> {
+						log.info(String.format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
+						throw new NotifikasjonIkkeFunnetException(String.format(
+								"Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId)
+						);
+					});
+			return mapNotifikasjon(notifikasjon);
+		} finally {
+			MDC.clear();
 		}
-		return rnot001Mapper.mapNotifikasjonDistribusjon(notifikasjonDistribusjoner);
 	}
 
 }

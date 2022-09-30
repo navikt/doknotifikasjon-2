@@ -13,7 +13,15 @@
   "DIGDIR_KRR_PROXY_SCOPE": "api://dev-gcp.team-rocket.digdir-krr-proxy/.default",
   "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.dev.intern.nav.no",
   "APPDYNAMICS": "/apikey/appdynamics/dev",
+  "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
   "INGRESSES": [
     "https://doknotifikasjon-2.dev.adeo.no"
+  ],
+  "AZURE_IAC_RULES": [
+    {
+      "app": "dokdistdittnav",
+      "namespace": "teamdokumenthandtering",
+      "cluster": "dev-fss"
+    }
   ]
 }

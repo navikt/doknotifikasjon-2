@@ -7,12 +7,7 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 
@@ -38,13 +33,25 @@ public class TestUtils {
 	public static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
 
-	public static NotifikasjonDistribusjon createNotifikasjonWithDistribusjon(Notifikasjon not, LocalDateTime sistEndret){
-		NotifikasjonDistribusjon notdist = createNotifikasjonDistribusjonWithNotifikasjon(not, sistEndret);
-		not.setNotifikasjonDistribusjon(Set.of(notdist));
-		return notdist;
+	public static Notifikasjon createNotifikasjon() {
+		return Notifikasjon.builder()
+				.bestillerId(BESTILLER_ID)
+				.bestillingsId(BESTILLINGS_ID)
+				.mottakerId(MOTTAKER_ID)
+				.mottakerIdType(MottakerIdType.FNR)
+				.status(OPPRETTET)
+				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
+				.renotifikasjonIntervall(RENOTIFIKASJON_INTERVALL)
+				.nesteRenotifikasjonDato(NESTE_RENOTIFIKASJON_DATO)
+				.prefererteKanaler(PREFERERTE_KANALER)
+				.opprettetAv(OPPRETTET_AV)
+				.opprettetDato(OPPRETTET_DATO)
+				.endretAv(ENDRET_AV)
+				.endretDato(ENDRET_DATO)
+				.build();
 	}
 
-	public static Notifikasjon createNotifikasjon() {
+	public static Notifikasjon createNotifikasjonWithId() {
 		return Notifikasjon.builder()
 				.id(1)
 				.bestillerId(BESTILLER_ID)
@@ -63,12 +70,28 @@ public class TestUtils {
 				.build();
 	}
 
-	private static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithNotifikasjon(Notifikasjon notifikasjon, LocalDateTime sistEndret) {
+	public static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithId(Notifikasjon notifikasjon, LocalDateTime sistEndret, Kanal kanal, int id) {
 		return NotifikasjonDistribusjon.builder()
-				.id(1)
+				.id(id)
 				.notifikasjon(notifikasjon)
 				.status(FERDIGSTILT)
-				.kanal(SMS)
+				.kanal(kanal)
+				.kontaktInfo(KONTAKTINFO)
+				.tittel(TITTEL)
+				.tekst(TEKST)
+				.sendtDato(SENDT_DATO)
+				.opprettetAv(OPPRETTET_AV_2)
+				.opprettetDato(OPPRETTET_DATO_2)
+				.endretAv(ENDRET_AV_2)
+				.endretDato(sistEndret)
+				.build();
+	}
+
+	public static NotifikasjonDistribusjon createNotifikasjonDistribusjon(Notifikasjon notifikasjon, LocalDateTime sistEndret, Kanal kanal) {
+		return NotifikasjonDistribusjon.builder()
+				.notifikasjon(notifikasjon)
+				.status(FERDIGSTILT)
+				.kanal(kanal)
 				.kontaktInfo(KONTAKTINFO)
 				.tittel(TITTEL)
 				.tekst(TEKST)

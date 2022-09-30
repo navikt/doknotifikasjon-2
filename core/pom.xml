@@ -125,6 +125,12 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 
+		<!-- NAV deps-->
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-spring</artifactId>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

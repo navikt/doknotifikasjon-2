@@ -11,7 +11,7 @@ public class NotifikasjonDistribusjonDto {
 	int id;
 	Status status;
 	Kanal kanal;
-	String kontaktinfo;
+	String kontaktInfo;
 	String tittel;
 	String tekst;
 	LocalDateTime sendtDato;
