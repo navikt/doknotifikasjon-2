@@ -72,8 +72,8 @@ spec:
   accessPolicy:
     inbound:
       rules:
-    {{ #each AZURE_IAC_RULES}}
-        - application: {{app } }
+    {{#each AZURE_IAC_RULES}}
+        - application: {{app}}
           namespace: {{namespace}}
           cluster: {{cluster}}
     {{/each}}
