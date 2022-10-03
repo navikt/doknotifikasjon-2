@@ -23,5 +23,4 @@ public interface NotifikasjonDistribusjonRepository extends JpaRepository<Notifi
 
 	List<NotifikasjonDistribusjon> findAllByNotifikasjon(Notifikasjon notifikasjon);
 
-	List<NotifikasjonDistribusjon> findAllByNotifikasjon_BestillingsId(String bestillingsId);
 }
