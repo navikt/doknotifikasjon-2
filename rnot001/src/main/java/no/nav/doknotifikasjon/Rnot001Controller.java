@@ -29,7 +29,7 @@ public class Rnot001Controller {
 		try {
 			handleMdc();
 			if (isBlank(bestillingsId)) {
-				throw new DoknotifikasjonDistribusjonIkkeFunnetException("Det finnes ingen distribusjon med id=" + bestillingsId);
+				throw new DoknotifikasjonDistribusjonIkkeFunnetException("Ugyldig bestillingsId for distribusjon oppgitt. BestillingsId kan ikke være tom");
 			}
 			return rnot001Service.getNotifikasjonInfo(bestillingsId);
 		} finally {
