@@ -25,6 +25,8 @@ spec:
       value: {{DIGDIR_KRR_PROXY_SCOPE}}
     - name: DIGDIR_KRR_PROXY_BASE_URL
       value: {{DIGDIR_KRR_PROXY_BASE_URL}}
+    - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL
+      value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL }}
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
@@ -63,7 +65,15 @@ spec:
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: {{ APPDYNAMICS }}
         mountPath: "/var/run/secrets/nais.io/appdynamics"
+  webproxy: true
   azure:
     application:
       enabled: true
-  webproxy: true
+  accessPolicy:
+    inbound:
+      rules:
+    {{#each AZURE_IAC_RULES}}
+        - application: {{app}}
+          namespace: {{namespace}}
+          cluster: {{cluster}}
+    {{/each}}

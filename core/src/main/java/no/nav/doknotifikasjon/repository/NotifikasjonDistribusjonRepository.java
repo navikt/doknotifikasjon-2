@@ -19,8 +19,8 @@ public interface NotifikasjonDistribusjonRepository extends JpaRepository<Notifi
 
 	Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonAndKanal(Notifikasjon notifikasjon, Kanal kanal);
 
-
 	Optional<NotifikasjonDistribusjon> findFirstByNotifikasjonAndKanalAndEndretDatoIsNotNullOrderByEndretDatoDesc(Notifikasjon notifikasjon, Kanal kanal);
 
 	List<NotifikasjonDistribusjon> findAllByNotifikasjon(Notifikasjon notifikasjon);
+
 }

@@ -2,6 +2,7 @@ package no.nav.doknotifikasjon.repository;
 
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface NotifikasjonRepository extends JpaRepository<Notifikasjon, Integer> {
 
+	@EntityGraph(attributePaths = {"notifikasjonDistribusjon"})
 	Optional<Notifikasjon> findByBestillingsId(String bestillingsId);
 
 	boolean existsByBestillingsId(String bestillingsId);
