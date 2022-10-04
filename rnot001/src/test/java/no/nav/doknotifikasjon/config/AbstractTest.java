@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.rnot001.config;
+package no.nav.doknotifikasjon.config;
 
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
@@ -32,14 +32,8 @@ import java.util.Map;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Transactional
-@AutoConfigureDataJpa
 @EnableMockOAuth2Server
 @ActiveProfiles("itest")
-@EnableAutoConfiguration
-@AutoConfigureTestDatabase
-@AutoConfigureTestEntityManager
-@AutoConfigureWireMock(port = 0)
-@EntityScan(basePackages = {"no.nav.doknotifikasjon.core.model"})
 @SpringBootTest(classes = {AbstractTest.TestConfig.class, ApplicationTestConfig.class},
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AbstractTest {

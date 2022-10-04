@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.rnot001;
+package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
@@ -70,7 +70,7 @@ public class TestUtils {
 				.build();
 	}
 
-	public static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithId(Notifikasjon notifikasjon, LocalDateTime sistEndret, Kanal kanal, int id) {
+	public static NotifikasjonDistribusjon createNotifikasjonDistribusjonWithId(Notifikasjon notifikasjon, Kanal kanal, int id) {
 		return NotifikasjonDistribusjon.builder()
 				.id(id)
 				.notifikasjon(notifikasjon)
@@ -83,7 +83,7 @@ public class TestUtils {
 				.opprettetAv(OPPRETTET_AV_2)
 				.opprettetDato(OPPRETTET_DATO_2)
 				.endretAv(ENDRET_AV_2)
-				.endretDato(sistEndret)
+				.endretDato(OPPRETTET_DATO)
 				.build();
 	}
 

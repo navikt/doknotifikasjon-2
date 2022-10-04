@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.doknotifikasjon</groupId>
-            <artifactId>web</artifactId>
+            <artifactId>rnot001</artifactId>
         </dependency>
     </dependencies>
 

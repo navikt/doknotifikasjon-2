@@ -1,8 +1,8 @@
-package no.nav.doknotifikasjon.rnot001;
+package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
-import no.nav.doknotifikasjon.rnot001.config.AbstractTest;
+import no.nav.doknotifikasjon.config.AbstractTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
-import static no.nav.doknotifikasjon.rnot001.TestUtils.BESTILLINGS_ID;
-import static no.nav.doknotifikasjon.rnot001.TestUtils.createNotifikasjon;
-import static no.nav.doknotifikasjon.rnot001.TestUtils.createNotifikasjonDistribusjon;
+import static no.nav.doknotifikasjon.TestUtils.BESTILLINGS_ID;
+import static no.nav.doknotifikasjon.TestUtils.createNotifikasjon;
+import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonDistribusjon;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-public class Rnot001Itest extends AbstractTest {
+public class Rnot001ITest extends AbstractTest {
 
 	private static final String RNOT001_BASE_URL = "/rest/v1/notifikasjoninfo/";
 	private static final String BAD_BESTILLINGS_ID = "bare_tull";
@@ -30,10 +30,9 @@ public class Rnot001Itest extends AbstractTest {
 	public void shouldGetBestilling() {
 		LocalDateTime now = LocalDateTime.now();
 		Notifikasjon notifikasjon = createNotifikasjon();
-		NotifikasjonDistribusjon notDist = createNotifikasjonDistribusjon(notifikasjon, now, SMS);
-		NotifikasjonDistribusjon notDist2 = createNotifikasjonDistribusjon(notifikasjon, now, EPOST);
-		notifikasjonDistribusjonRepository.save(notDist);
-		notifikasjonDistribusjonRepository.save(notDist2);
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjon(notifikasjon, now, SMS));
+		notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjon(notifikasjon, now, EPOST));
+		notifikasjonRepository.save(notifikasjon);
 		commitAndBeginNewTransaction();
 
 

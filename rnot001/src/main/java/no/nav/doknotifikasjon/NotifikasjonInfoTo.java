@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.rnot001;
+package no.nav.doknotifikasjon;
 
 import lombok.Value;
 import no.nav.doknotifikasjon.kodeverk.Status;
