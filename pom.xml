@@ -26,7 +26,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.4</version>
+		<version>2.7.5</version>
 	</parent>
 
 	<properties>
@@ -36,8 +36,8 @@
 		<apache-cxf.version>3.5.3</apache-cxf.version>
 
 		<!-- Dersom confluent blir oppgradert bør også teamdokumenthandtering-avro-schemas sin avro-versjon bli det for å være i synk med confluent -->
-		<!-- Confluent-versjon 7.2.1 av kafka-avro-serializer bruker avro-versjon 1.11.0 -->
-		<confluent.version>7.2.1</confluent.version>
+		<!-- Confluent-versjon 7.2.2 av kafka-avro-serializer bruker avro-versjon 1.11.0 -->
+		<confluent.version>7.2.2</confluent.version>
 		<teamdokumenthandtering-avro-schemas.version>357738b9</teamdokumenthandtering-avro-schemas.version>
 
 		<tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
