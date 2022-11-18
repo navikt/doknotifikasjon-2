@@ -1,8 +1,7 @@
 package no.nav.doknotifikasjon;
 
-import no.nav.doknotifikasjon.model.Notifikasjon;
-import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.config.AbstractTest;
+import no.nav.doknotifikasjon.model.Notifikasjon;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 
-import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
-import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.TestUtils.BESTILLINGS_ID;
 import static no.nav.doknotifikasjon.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonDistribusjon;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.GET;
