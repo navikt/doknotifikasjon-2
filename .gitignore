@@ -1,26 +1,5 @@
-#Maven
+# Maven
 target
 
-#IntelliJ
-*.iml
-*.iws
+# IntelliJ
 *.idea
-atlassian-ide-plugin.xml
-
-#Eclipse
-.classpath
-.project
-.settings
-
-*.tm*.epoch
-*.lck
-*.log
-testDb.properties
-
-**/application-q*.properties
-
-node_modules
-
-*.pem
-*.ppk
-*known_hosts
