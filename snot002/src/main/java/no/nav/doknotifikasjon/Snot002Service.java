@@ -6,7 +6,6 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,7 +24,6 @@ public class Snot002Service {
 	private final NotifikasjonDistribusjonService notifikasjonDistribusjonService;
 	private final KafkaStatusEventProducer kafkaStatusEventProducer;
 
-	@Autowired
 	public Snot002Service(
 			NotifikasjonService notifikasjonService,
 			KafkaStatusEventProducer kafkaStatusEventProducer,

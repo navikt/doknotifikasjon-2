@@ -3,7 +3,6 @@ package no.nav.doknotifikasjon.consumer.sikkerhetsnivaa;
 import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.SikkerhetsnivaaTechnicalException;
 import no.nav.doknotifikasjon.metrics.Metrics;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -27,7 +26,6 @@ public class SikkerhetsnivaaConsumer {
 	private final RestTemplate restTemplate;
 	private final String sikkerhetsnivaaUrl;
 
-	@Autowired
 	public SikkerhetsnivaaConsumer(@Value("${sikkerhetsnivaa_v1_url}") String sikkerhetsnivaaUrl,
 								   RestTemplateBuilder restTemplateBuilder) {
 		this.sikkerhetsnivaaUrl = sikkerhetsnivaaUrl;

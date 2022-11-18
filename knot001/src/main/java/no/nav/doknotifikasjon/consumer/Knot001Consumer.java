@@ -34,7 +34,6 @@ public class Knot001Consumer {
 	private final DoknotifikasjonMapper doknotifikasjonMapper;
 	private final DoknotifikasjonValidator doknotifikasjonValidator;
 
-	@Autowired
 	Knot001Consumer(
 			ObjectMapper objectMapper,
 			Knot001Service knot001Service,

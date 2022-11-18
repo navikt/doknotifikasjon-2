@@ -20,7 +20,6 @@ public class DoknotifikasjonValidator {
 	private static final int MAX_STRING_SIZE_MEDIUM = 100;
 	private static final int MAX_SIZE_RENOTIFIKASJONER = 30;
 
-	@Autowired
 	DoknotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
 		this.statusProducer = statusProducer;
 	}

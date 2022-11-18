@@ -7,7 +7,6 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,6 @@ public class Snot001NotifikasjonService {
 	private final NotifikasjonService notifikasjonService;
 	private final NotifikasjonDistribusjonService notifikasjonDistribusjonService;
 
-	@Autowired
 	public Snot001NotifikasjonService(
 			NotifikasjonService notifikasjonService,
 			NotifikasjonDistribusjonService notifikasjonDistribusjonService

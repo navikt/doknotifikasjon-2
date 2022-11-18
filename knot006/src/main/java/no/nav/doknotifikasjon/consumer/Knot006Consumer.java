@@ -10,7 +10,6 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -31,7 +30,6 @@ public class Knot006Consumer {
 	private final DoknotifikasjonMedKontaktInfoMapper doknotifikasjonMedKontaktInfoMapper;
 	private final NotifikasjonValidator doknotifikasjonValidator;
 
-	@Autowired
 	Knot006Consumer(
 			ObjectMapper objectMapper,
 			Knot006Service knot006Service,

@@ -12,7 +12,6 @@ import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,6 @@ public class Knot002Consumer {
 	private final Knot002Service knot002Service;
 	private final MetricService metricService;
 
-	@Autowired
 	Knot002Consumer(Knot002Service knot002Service, ObjectMapper objectMapper, MetricService metricService) {
 		this.knot002Service = knot002Service;
 		this.objectMapper = objectMapper;

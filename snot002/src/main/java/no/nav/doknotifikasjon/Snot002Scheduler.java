@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.leaderelection.LeaderElection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +12,6 @@ public class Snot002Scheduler {
 	private final Snot002Service snot002Service;
 	private final LeaderElection leaderElection;
 
-	@Autowired
 	public Snot002Scheduler(Snot002Service snot002Service, LeaderElection leaderElection) {
 		this.snot002Service = snot002Service;
 		this.leaderElection = leaderElection;

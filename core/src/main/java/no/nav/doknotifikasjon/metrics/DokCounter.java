@@ -3,7 +3,6 @@ package no.nav.doknotifikasjon.metrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import no.nav.doknotifikasjon.exception.technical.AbstractDoknotifikasjonTechnicalException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +21,6 @@ public class DokCounter {
 	private static final String TECHNICAL_ERROR = "technical";
 	private static MeterRegistry meterRegistry;
 
-	@Autowired
 	DokCounter(MeterRegistry meterRegistry) {
 		DokCounter.meterRegistry = meterRegistry;
 	}

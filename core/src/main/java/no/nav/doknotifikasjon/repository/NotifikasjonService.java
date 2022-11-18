@@ -5,7 +5,6 @@ import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetExcepti
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -24,7 +23,6 @@ public class NotifikasjonService {
 
 	private final NotifikasjonRepository notifikasjonRepository;
 
-	@Autowired
 	NotifikasjonService(NotifikasjonRepository notifikasjonRepository) {
 		this.notifikasjonRepository = notifikasjonRepository;
 	}

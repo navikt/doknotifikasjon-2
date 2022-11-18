@@ -14,7 +14,6 @@ import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -36,7 +35,6 @@ public class Knot002Service {
 	private final AltinnVarselConsumer altinnVarselConsumer;
 	private final NotifikasjonDistribusjonService notifikasjonDistribusjonService;
 
-	@Autowired
 	public Knot002Service(Knot002Mapper knot002Mapper, KafkaEventProducer kafkaEventProducer,
 						  AltinnVarselConsumer altinnVarselConsumer, NotifikasjonDistribusjonService notifikasjonDistribusjonService,
 						  MetricService metricService) {

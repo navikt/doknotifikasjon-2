@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.ANTALL_RENOTIFIKASJONER_REQUIRES_RENOTIFIKASJON_INTERVALL;
@@ -21,7 +20,6 @@ public class NotifikasjonValidator {
 	private static final int MAX_STRING_SIZE_MEDIUM = 100;
 	private static final int MAX_SIZE_RENOTIFIKASJONER = 30;
 
-	@Autowired
 	NotifikasjonValidator(KafkaStatusEventProducer statusProducer) {
 		this.statusProducer = statusProducer;
 	}

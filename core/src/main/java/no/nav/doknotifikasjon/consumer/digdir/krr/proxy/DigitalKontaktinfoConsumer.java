@@ -7,9 +7,7 @@ import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechn
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.security.AzureToken;
 import no.nav.doknotifikasjon.security.WebClientAzureAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -30,7 +28,6 @@ public class DigitalKontaktinfoConsumer {
 
     private final WebClient webClient;
 
-    @Autowired
     public DigitalKontaktinfoConsumer(AzureToken azureToken,
                                       DigdirKrrProxyConfig digdirKrrProxyConfig,
                                       @Qualifier("digdirKrrProxyClient") WebClient webClient) {
