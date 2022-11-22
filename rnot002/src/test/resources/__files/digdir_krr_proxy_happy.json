@@ -1,0 +1,11 @@
+{
+  "personer": {
+    "12345678901": {
+      "epostadresse": "epost",
+      "kanVarsles": true,
+      "mobiltelefonnummer": "+4799999999",
+      "reservert": false
+    }
+  },
+  "feil": {}
+}

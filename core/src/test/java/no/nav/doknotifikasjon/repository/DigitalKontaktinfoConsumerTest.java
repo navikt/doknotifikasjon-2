@@ -49,12 +49,12 @@ class DigitalKontaktinfoConsumerTest {
 		stubDigdirKRRProxyWithBodyFile("digdir/digdir_krr_proxy-full-response.json");
 
 		DigitalKontaktinformasjonTo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
-		DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getPersoner().get(FNR);
+		DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.personer().get(FNR);
 
-		assertEquals(EPOST, kontaktinfo.getEpostadresse());
-		assertEquals(MOBIL, kontaktinfo.getMobiltelefonnummer());
-		assertTrue(kontaktinfo.isKanVarsles());
-		assertFalse(kontaktinfo.isReservert());
+		assertEquals(EPOST, kontaktinfo.epostadresse());
+		assertEquals(MOBIL, kontaktinfo.mobiltelefonnummer());
+		assertTrue(kontaktinfo.kanVarsles());
+		assertFalse(kontaktinfo.reservert());
 	}
 
 	@Test
@@ -62,12 +62,12 @@ class DigitalKontaktinfoConsumerTest {
 		stubDigdirKRRProxyWithBodyFile("digdir/digdir_krr_proxy-kontaktinfo-response.json");
 
 		DigitalKontaktinformasjonTo digitalKontaktinfo = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
-		DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.getPersoner().get(FNR);
+		DigitalKontaktinfo kontaktinfo = digitalKontaktinfo.personer().get(FNR);
 
-		assertEquals(EPOST, kontaktinfo.getEpostadresse());
-		assertEquals(MOBIL, kontaktinfo.getMobiltelefonnummer());
-		assertTrue(kontaktinfo.isKanVarsles());
-		assertFalse(kontaktinfo.isReservert());
+		assertEquals(EPOST, kontaktinfo.epostadresse());
+		assertEquals(MOBIL, kontaktinfo.mobiltelefonnummer());
+		assertTrue(kontaktinfo.kanVarsles());
+		assertFalse(kontaktinfo.reservert());
 	}
 
 	@Test
@@ -75,8 +75,8 @@ class DigitalKontaktinfoConsumerTest {
 		stubDigdirKRRProxyWithBodyFile("digdir/digdir_krr_proxy-feil.json");
 		DigitalKontaktinformasjonTo digitalKontaktinformasjon = digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FNR);
 
-		assertNull(digitalKontaktinformasjon.getPersoner());
-		assertEquals("Ingen kontaktinformasjon er registrert på personen", digitalKontaktinformasjon.getFeil().get(FNR));
+		assertNull(digitalKontaktinformasjon.personer());
+		assertEquals("Ingen kontaktinformasjon er registrert på personen", digitalKontaktinformasjon.feil().get(FNR));
 	}
 
 	private void stubDigdirKRRProxyWithBodyFile(String bodyfile) {

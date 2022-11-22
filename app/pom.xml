@@ -50,6 +50,10 @@
             <groupId>no.nav.doknotifikasjon</groupId>
             <artifactId>rnot001</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.doknotifikasjon</groupId>
+            <artifactId>rnot002</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

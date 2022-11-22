@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.utils;
+package no.nav.doknotifikasjon.mdc;
 
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,6 @@ import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CALL_ID;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-@Component
 public class MDCUtils {
 
 	public static void handleMdc() {
