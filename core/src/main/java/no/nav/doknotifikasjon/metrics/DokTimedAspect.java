@@ -60,7 +60,7 @@ public class DokTimedAspect {
 		String mdcRequestId = (MDC.get(MDCConstants.MDC_REQUEST_ID) == null) ? "" : (MDC.get(MDCConstants.MDC_REQUEST_ID) + " ");
 
 		if (isFunctionalException(method, e)) {
-			log.warn(mdcRequestId + e.getMessage(), e);
+			log.info(mdcRequestId + e.getMessage(), e);
 		} else {
 			log.error(mdcRequestId + e.getMessage(), e);
 		}

@@ -8,6 +8,7 @@ import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
+import no.nav.doknotifikasjon.exception.functional.KontaktInfoUserReservedAgainstCommFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
@@ -26,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
@@ -110,7 +112,7 @@ public class Knot001Service {
 			}
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
 		} else if (erReservertOgErBestiltMedRenotifikasjon(doknotifikasjon, kontaktinfo)) {
-			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
+			publishDoknotifikasjonStatusIfUserReservedAgainstDigitalCommunication(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
 		} else if (kanIkkeVarslesOgErBestiltMedRenotifikasjon(doknotifikasjon, kontaktinfo)) {
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		} else if ((kontaktinfo.getEpostadresse() == null || kontaktinfo.getEpostadresse().trim().isEmpty()) &&
@@ -129,13 +131,23 @@ public class Knot001Service {
 	}
 
 	public void publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(DoknotifikasjonTO doknotifikasjon, String message) {
+		publishDoknotifikasjonStatusAndThrowException(doknotifikasjon, message, () ->
+				new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra Digdir KRR Proxy med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message)));
+	}
+
+	public void publishDoknotifikasjonStatusIfUserReservedAgainstDigitalCommunication(DoknotifikasjonTO doknotifikasjon, String message) {
+		publishDoknotifikasjonStatusAndThrowException(doknotifikasjon, message, () ->
+				new KontaktInfoUserReservedAgainstCommFunctionalException(String.format("Bruker er reservert mot digital kommunikasjon i KRR. bestillingsId=%s. Feilmelding=%s", doknotifikasjon.getBestillingsId(), message)));
+	}
+
+	private void publishDoknotifikasjonStatusAndThrowException(DoknotifikasjonTO doknotifikasjon, String message, Supplier<? extends RuntimeException> exceptionSupplier) {
 		statusProducer.publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(),
 				doknotifikasjon.getBestillerId(),
 				message,
 				null
 		);
-		throw new KontaktInfoValidationFunctionalException(String.format("Problemer med å hente kontaktinfo fra Digdir KRR Proxy med bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message));
+		throw exceptionSupplier.get();
 	}
 
 	public void checkSikkerhetsnivaa(DoknotifikasjonTO doknotifikasjonTO) {
@@ -151,7 +163,7 @@ public class Knot001Service {
 						FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
 						null
 				);
-				log.warn("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
+				log.debug("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
 				throw exception;
 			}
 			if (!authLevelResponse.isHarbruktnivaa4()) {
