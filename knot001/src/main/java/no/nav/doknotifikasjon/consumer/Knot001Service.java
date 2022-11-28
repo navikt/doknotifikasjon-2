@@ -137,7 +137,7 @@ public class Knot001Service {
 
 	public void publishDoknotifikasjonStatusIfUserReservedAgainstDigitalCommunication(DoknotifikasjonTO doknotifikasjon, String message) {
 		publishDoknotifikasjonStatusAndThrowException(doknotifikasjon, message, () ->
-				new KontaktInfoUserReservedAgainstCommFunctionalException(String.format("Bruker reservert mot digital kommuniksjon i KRR: bestillingsId=%s. Feilmelding: %s", doknotifikasjon.getBestillingsId(), message)));
+				new KontaktInfoUserReservedAgainstCommFunctionalException(String.format("Bruker er reservert mot digital kommunikasjon i KRR. bestillingsId=%s. Feilmelding=%s", doknotifikasjon.getBestillingsId(), message)));
 	}
 
 	private void publishDoknotifikasjonStatusAndThrowException(DoknotifikasjonTO doknotifikasjon, String message, Supplier<? extends RuntimeException> exceptionSupplier) {
