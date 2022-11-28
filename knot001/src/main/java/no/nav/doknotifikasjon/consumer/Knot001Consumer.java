@@ -73,13 +73,13 @@ public class Knot001Consumer {
 			log.warn("BestillingsId ligger allerede i database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
-			log.warn("Brukeren har ikke gyldig kontaktinfo hos Digdir KRR Proxy. Feilmelding={}", e.getMessage());
+			log.info("Brukeren har ikke gyldig kontaktinfo hos Digdir KRR Proxy. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DigitalKontaktinformasjonFunctionalException e) {
 			log.warn("Funksjonell feil mot Digdir KRR Proxy. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (SikkerhetsnivaaFunctionalException e) {
-			log.warn("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
+			log.info("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DataIntegrityViolationException e) {
 			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());

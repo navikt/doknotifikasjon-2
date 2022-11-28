@@ -151,7 +151,7 @@ public class Knot001Service {
 						FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
 						null
 				);
-				log.warn("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
+				log.debug("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
 				throw exception;
 			}
 			if (!authLevelResponse.isHarbruktnivaa4()) {
