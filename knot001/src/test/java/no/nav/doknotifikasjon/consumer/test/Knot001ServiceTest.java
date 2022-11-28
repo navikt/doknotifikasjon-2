@@ -6,6 +6,7 @@ import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsum
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
+import no.nav.doknotifikasjon.exception.functional.KontaktInfoUserReservedAgainstCommFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.DigitalKontaktinformasjonTechnicalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
@@ -91,7 +92,7 @@ class Knot001ServiceTest {
 				.thenReturn(createValidKontaktInfoReserved());
 
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+		assertThrows(KontaktInfoUserReservedAgainstCommFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, null
@@ -139,7 +140,7 @@ class Knot001ServiceTest {
 				.thenReturn(createValidKontaktInfoReserved());
 
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
-		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
+		assertThrows(KontaktInfoUserReservedAgainstCommFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));
 
 		verify(statusProducer).publishDoknotifikasjonStatusFeilet(
 				doknotifikasjon.getBestillingsId(), doknotifikasjon.getBestillerId(), FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, null

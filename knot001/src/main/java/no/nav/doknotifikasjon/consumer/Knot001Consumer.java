@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
+import no.nav.doknotifikasjon.exception.functional.KontaktInfoUserReservedAgainstCommFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -74,6 +75,9 @@ public class Knot001Consumer {
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
 			log.info("Brukeren har ikke gyldig kontaktinfo hos Digdir KRR Proxy. Feilmelding={}", e.getMessage());
+			metricService.metricHandleException(e);
+		} catch (KontaktInfoUserReservedAgainstCommFunctionalException e) {
+			log.info("Brukeren reservert mot digital kommuniksasjon i KRR. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DigitalKontaktinformasjonFunctionalException e) {
 			log.warn("Funksjonell feil mot Digdir KRR Proxy. Feilmelding={}", e.getMessage());
