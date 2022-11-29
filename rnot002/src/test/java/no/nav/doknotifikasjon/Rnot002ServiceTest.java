@@ -1,26 +1,24 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
-import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.stream.Stream;
 
 import static no.nav.doknotifikasjon.TestUtils.createDigitalKontaktinformasjonInfo;
-import static no.nav.doknotifikasjon.TestUtils.createDigitalKontaktinformasjonInfoMedFeil;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -43,8 +41,8 @@ class Rnot002ServiceTest {
 	@ParameterizedTest
 	@MethodSource
 	void kanVarslesMedSikkerhetsnivaa(boolean harBruktSikkerhetsnivaa4, int sikkerhetsnivaa) {
-		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(PERSONIDENT))
-				.thenReturn(createDigitalKontaktinformasjonInfo());
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfoForPerson(PERSONIDENT))
+				.thenReturn(createDigitalKontaktinformasjonInfo(true, false, EPOST, SMS));
 
 		when(sikkerhetsnivaaConsumer.lookupAuthLevel(PERSONIDENT))
 				.thenReturn(TestUtils.createAuthLevelResponse(harBruktSikkerhetsnivaa4));
@@ -69,8 +67,8 @@ class Rnot002ServiceTest {
 						boolean kanVarsles,
 						boolean reservert) {
 
-		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(PERSONIDENT))
-				.thenReturn(createDigitalKontaktinformasjonInfo(epost, sms, kanVarsles, reservert));
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfoForPerson(PERSONIDENT))
+				.thenReturn(createDigitalKontaktinformasjonInfo(kanVarsles, reservert, epost, sms));
 
 		var result = rnot002Service.getKanVarsles(PERSONIDENT);
 
@@ -87,14 +85,26 @@ class Rnot002ServiceTest {
 		);
 	}
 
-	@Test
-	void kanIkkeVarslesNaarFeil() {
-		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(PERSONIDENT))
-				.thenReturn(createDigitalKontaktinformasjonInfoMedFeil());
+	// 403 mangler tilgang til person (kode 6/7 etc.)
+	// 404 person finnes ikke
+	@ParameterizedTest
+	@EnumSource(value = HttpStatus.class, names = {"FORBIDDEN", "NOT_FOUND"})
+	void kanIkkeVarsles403Eller404FraDigdir(HttpStatus httpStatus) {
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfoForPerson(PERSONIDENT))
+				.thenThrow(new DigitalKontaktinformasjonFunctionalException("message", null, httpStatus));
 
 		var result = rnot002Service.getKanVarsles(PERSONIDENT);
 
 		assertFalse(result.kanVarsles());
 		assertEquals(3, result.sikkerhetsnivaa());
+	}
+
+	@ParameterizedTest
+	@EnumSource(value = HttpStatus.class, names = {"UNAUTHORIZED", "BAD_REQUEST"})
+	void kanIkkeVarslesNaar4xxFraDigdir(HttpStatus httpStatus) {
+		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfoForPerson(PERSONIDENT))
+				.thenThrow(new DigitalKontaktinformasjonFunctionalException("message", null, httpStatus));
+
+		assertThrows(DigitalKontaktinformasjonFunctionalException.class, () -> rnot002Service.getKanVarsles(PERSONIDENT));
 	}
 }

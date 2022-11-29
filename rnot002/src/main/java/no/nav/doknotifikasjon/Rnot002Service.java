@@ -1,18 +1,29 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
-import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
+import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.KontaktinfoTo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
+import no.nav.doknotifikasjon.domain.Epostadresse;
+import no.nav.doknotifikasjon.domain.Mobiltelefonnummer;
+import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
+import no.nav.doknotifikasjon.exception.functional.UgyldigEpostException;
+import no.nav.doknotifikasjon.exception.functional.UgyldigMobiltelefonnummerException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import java.util.Set;
+
+import static no.nav.doknotifikasjon.Kontaktinfo.personKanVarsles;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Component
 public class Rnot002Service {
 
 	private final DigitalKontaktinfoConsumer digdirConsumer;
 	private final SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
+	private static final Set<HttpStatus> PERSON_IKKE_TILGJENGELIG = Set.of(FORBIDDEN, NOT_FOUND);
 
 	public Rnot002Service(DigitalKontaktinfoConsumer digdirConsumer,
 						  SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer) {
@@ -22,28 +33,24 @@ public class Rnot002Service {
 
 	public KanVarslesResponse getKanVarsles(String personident) {
 
-		DigitalKontaktinformasjonTo digitalKontaktinformasjonTo = digdirConsumer.hentDigitalKontaktinfo(personident);
+		KontaktinfoTo kontaktinfoTo;
+		try {
+			kontaktinfoTo = digdirConsumer.hentDigitalKontaktinfoForPerson(personident);
+		} catch (DigitalKontaktinformasjonFunctionalException e) {
+			if (PERSON_IKKE_TILGJENGELIG.contains(e.getHttpStatus())) {
+				return new KanVarslesResponse(false, 3);
+			}
+			throw e;
+		}
 
-		if (kanIkkeVarsles(digitalKontaktinformasjonTo, personident)) {
+		Kontaktinfo kontaktinfo = Kontaktinfo.from(kontaktinfoTo);
+
+		if (!personKanVarsles(kontaktinfo)) {
 			return new KanVarslesResponse(false, 3);
 		}
 
 		AuthLevelResponse authLevelResponse = sikkerhetsnivaaConsumer.lookupAuthLevel(personident);
 
-		return new KanVarslesResponse(true, authLevelResponse.isHarbruktnivaa4()? 4 : 3);
-	}
-
-	private boolean kanIkkeVarsles(DigitalKontaktinformasjonTo digitalKontaktinformasjonTo, String personident) {
-
-		if (digitalKontaktinformasjonTo.feil() != null && digitalKontaktinformasjonTo.feil().get(personident) != null) {
-			return true;
-		} else if (digitalKontaktinformasjonTo.personer() != null && digitalKontaktinformasjonTo.personer().get(personident) != null) {
-			var digitalKontaktInfo = digitalKontaktinformasjonTo.personer().get(personident);
-
-			return !digitalKontaktInfo.kanVarsles() ||
-					digitalKontaktInfo.reservert() ||
-					(isBlank(digitalKontaktInfo.epostadresse()) && isBlank(digitalKontaktInfo.mobiltelefonnummer()));
-		}
-		return false;
+		return new KanVarslesResponse(true, authLevelResponse.isHarbruktnivaa4() ? 4 : 3);
 	}
 }

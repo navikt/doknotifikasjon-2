@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon;
 
-
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -44,6 +45,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class Rnot002ITest {
 
 	private static final String PERSONIDENT = "12345678901";
+	private static final String UGYLDIG_PERSONIDENT = "123";
 
 	@Autowired
 	WebTestClient webTestClient;
@@ -58,7 +60,7 @@ public class Rnot002ITest {
 
 	@Test
 	void shouldReturnKanVarsles() {
-		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_happy.json");
+		stubDigdirKRRProxyHappy();
 		stubSikkerhetsnivaaWithBodyFile("sikkerhetsnivaa3.json");
 
 		var response = getKanVarsles();
@@ -69,8 +71,18 @@ public class Rnot002ITest {
 	}
 
 	@Test
-	void shouldReturnKanVarslesFalseOnFeilFromDigdir() {
-		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_person_ikke_funnet.json");
+	void shouldValidatePersonident() {
+		webTestClient
+				.get()
+				.uri("/rest/v1/kanvarsles/" + UGYLDIG_PERSONIDENT)
+				.headers((headers) -> headers.setBearerAuth(jwt()))
+				.exchange()
+				.expectStatus().is4xxClientError();
+	}
+
+	@Test
+	void shouldReturnKanVarslesFalseOn404FromDigdir() {
+		stubDigdirKRRProxyWithStatus(HttpStatus.NOT_FOUND);
 
 		var response = getKanVarsles();
 
@@ -81,8 +93,21 @@ public class Rnot002ITest {
 	}
 
 	@Test
+	void shouldThrowOn400FromDigdir() {
+		stubDigdirKRRProxyWithStatus(HttpStatus.BAD_REQUEST);
+
+		webTestClient
+				.get()
+				.uri("/rest/v1/kanvarsles/" + PERSONIDENT)
+				.headers((headers) -> headers.setBearerAuth(jwt()))
+				.exchange()
+				.expectStatus().is5xxServerError();
+	}
+
+
+	@Test
 	void shouldReturnSikkerhetsnivaa4() {
-		stubDigdirKRRProxyWithBodyFile("digdir_krr_proxy_happy.json");
+		stubDigdirKRRProxyHappy();
 		stubSikkerhetsnivaaWithBodyFile("sikkerhetsnivaa4.json");
 
 		var response = getKanVarsles();
@@ -129,12 +154,18 @@ public class Rnot002ITest {
 						.withBodyFile("azure/token_response.json")));
 	}
 
-	private void stubDigdirKRRProxyWithBodyFile(String bodyfile) {
-		stubFor(post(urlEqualTo("/digdir_krr_proxy/rest/v1/personer"))
+	private void stubDigdirKRRProxyHappy() {
+		stubFor(get(urlEqualTo("/digdir_krr_proxy/rest/v1/person"))
 				.willReturn(aResponse()
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-						.withBodyFile(bodyfile)));
+						.withBodyFile("digdir_krr_proxy_person_happy.json")));
+	}
+
+	private void stubDigdirKRRProxyWithStatus(HttpStatus httpStatus) {
+		stubFor(get(urlEqualTo("/digdir_krr_proxy/rest/v1/person"))
+				.willReturn(aResponse()
+						.withStatus(httpStatus.value())));
 	}
 
 	private void stubSikkerhetsnivaaWithBodyFile(String bodyfile) {
