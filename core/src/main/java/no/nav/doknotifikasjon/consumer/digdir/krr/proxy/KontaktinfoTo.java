@@ -9,4 +9,10 @@ public record KontaktinfoTo(
 		String epostadresse,
 		String mobiltelefonnummer
 ) {
+	public KontaktinfoTo(boolean kanVarsles, boolean reservert, String epostadresse, String mobiltelefonnummer) {
+		this.kanVarsles = kanVarsles;
+		this.reservert = reservert;
+		this.epostadresse = epostadresse != null ? epostadresse : "";
+		this.mobiltelefonnummer = mobiltelefonnummer != null ? mobiltelefonnummer : "";
+	}
 }
