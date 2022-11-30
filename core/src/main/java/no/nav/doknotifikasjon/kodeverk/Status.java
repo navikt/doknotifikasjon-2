@@ -7,7 +7,7 @@ public enum Status {
 	FERDIGSTILT(3),
 	FEILET(4);
 
-	int priority;
+	final int priority;
 
 	Status(int priority) {
 		this.priority = priority;

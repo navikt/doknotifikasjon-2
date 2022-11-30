@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetException;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -21,15 +22,15 @@ public class Rnot001Service {
 	@Transactional(readOnly = true)
 	public NotifikasjonInfoTo getNotifikasjonInfo(String bestillingsId) {
 
-		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(
-				() -> {
+		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(bestillingsId)
+				.orElseThrow(() -> {
 					log.info(String.format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
 					throw new NotifikasjonIkkeFunnetException(String.format(
 							"Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId)
 					);
 				});
-		return mapNotifikasjon(notifikasjon);
 
+		return mapNotifikasjon(notifikasjon);
 	}
 
 }
