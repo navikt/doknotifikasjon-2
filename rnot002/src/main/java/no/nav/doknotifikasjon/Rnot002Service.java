@@ -4,11 +4,7 @@ import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsum
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.KontaktinfoTo;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
-import no.nav.doknotifikasjon.domain.Epostadresse;
-import no.nav.doknotifikasjon.domain.Mobiltelefonnummer;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.UgyldigEpostException;
-import no.nav.doknotifikasjon.exception.functional.UgyldigMobiltelefonnummerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
