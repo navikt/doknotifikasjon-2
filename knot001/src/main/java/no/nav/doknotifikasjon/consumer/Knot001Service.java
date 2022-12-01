@@ -103,31 +103,31 @@ public class Knot001Service {
 			throw e;
 		}
 
-		DigitalKontaktinfo kontaktinfo = digitalKontaktinformasjon.getPersoner() != null ? digitalKontaktinformasjon.getPersoner().get(fnrTrimmed) : null;
+		DigitalKontaktinfo kontaktinfo = digitalKontaktinformasjon.personer() != null ? digitalKontaktinformasjon.personer().get(fnrTrimmed) : null;
 
 		if (kontaktinfo == null) {
-			if (digitalKontaktinformasjon.getFeil() != null && digitalKontaktinformasjon.getFeil().get(fnrTrimmed) != null) {
+			if (digitalKontaktinformasjon.feil() != null && digitalKontaktinformasjon.feil().get(fnrTrimmed) != null) {
 
-				publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.getFeil().get(fnrTrimmed));
+				publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, digitalKontaktinformasjon.feil().get(fnrTrimmed));
 			}
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET);
 		} else if (erReservertOgErBestiltMedRenotifikasjon(doknotifikasjon, kontaktinfo)) {
 			publishDoknotifikasjonStatusIfUserReservedAgainstDigitalCommunication(doknotifikasjon, FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT);
 		} else if (kanIkkeVarslesOgErBestiltMedRenotifikasjon(doknotifikasjon, kontaktinfo)) {
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
-		} else if ((kontaktinfo.getEpostadresse() == null || kontaktinfo.getEpostadresse().trim().isEmpty()) &&
-				(kontaktinfo.getMobiltelefonnummer() == null || kontaktinfo.getMobiltelefonnummer().trim().isEmpty())) {
+		} else if ((kontaktinfo.epostadresse() == null || kontaktinfo.epostadresse().trim().isEmpty()) &&
+				(kontaktinfo.mobiltelefonnummer() == null || kontaktinfo.mobiltelefonnummer().trim().isEmpty())) {
 			publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(doknotifikasjon, FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION);
 		}
 		return kontaktinfo;
 	}
 
 	private boolean erReservertOgErBestiltMedRenotifikasjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinfo digitalKontaktinfo) {
-		return digitalKontaktinfo.isReservert() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0;
+		return digitalKontaktinfo.reservert() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0;
 	}
 
 	private boolean kanIkkeVarslesOgErBestiltMedRenotifikasjon(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinfo digitalKontaktinfo) {
-		return !digitalKontaktinfo.isKanVarsles() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0;
+		return !digitalKontaktinfo.kanVarsles() && doknotifikasjon.getAntallRenotifikasjoner() != null && doknotifikasjon.getAntallRenotifikasjoner() > 0;
 	}
 
 	public void publishDoknotifikasjonStatusIfValidationOfKontaktinfoFails(DoknotifikasjonTO doknotifikasjon, String message) {
@@ -196,12 +196,12 @@ public class Knot001Service {
 
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon);
 
-		if (kontaktinformasjon.getEpostadresse() != null && (shouldStoreEpost || kontaktinformasjon.getMobiltelefonnummer() == null)) {
-			this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.getEpostadresse(), doknotifikasjon.getTittel());
+		if (kontaktinformasjon.epostadresse() != null && (shouldStoreEpost || kontaktinformasjon.mobiltelefonnummer() == null)) {
+			this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.epostadresse(), doknotifikasjon.getTittel());
 			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal EPOST for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
-		if (kontaktinformasjon.getMobiltelefonnummer() != null && (shouldStoreSms || kontaktinformasjon.getEpostadresse() == null)) {
-			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
+		if (kontaktinformasjon.mobiltelefonnummer() != null && (shouldStoreSms || kontaktinformasjon.epostadresse() == null)) {
+			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.mobiltelefonnummer(), doknotifikasjon.getTittel());
 			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 

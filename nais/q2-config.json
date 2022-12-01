@@ -10,6 +10,7 @@
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "3",
   "APPD_NAME": "doknotifikasjon-2",
+  "SPRINGDOC_ENABLED": "true",
   "DIGDIR_KRR_PROXY_SCOPE": "api://dev-gcp.team-rocket.digdir-krr-proxy/.default",
   "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.dev.intern.nav.no",
   "APPDYNAMICS": "/apikey/appdynamics/dev",

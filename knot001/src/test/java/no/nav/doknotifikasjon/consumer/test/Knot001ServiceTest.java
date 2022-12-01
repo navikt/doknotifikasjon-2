@@ -66,10 +66,10 @@ class Knot001ServiceTest {
 		DigitalKontaktinfo kontaktinfo = knot001Service.getKontaktInfoByFnr(createDoknotifikasjonTO());
 		DigitalKontaktinfo validKontaktInfo = createValidKontaktInfo();
 
-		assertEquals(validKontaktInfo.getEpostadresse(), kontaktinfo.getEpostadresse());
-		assertEquals(validKontaktInfo.getMobiltelefonnummer(), kontaktinfo.getMobiltelefonnummer());
-		assertEquals(validKontaktInfo.isKanVarsles(), kontaktinfo.isKanVarsles());
-		assertEquals(validKontaktInfo.isReservert(), kontaktinfo.isReservert());
+		assertEquals(validKontaktInfo.epostadresse(), kontaktinfo.epostadresse());
+		assertEquals(validKontaktInfo.mobiltelefonnummer(), kontaktinfo.mobiltelefonnummer());
+		assertEquals(validKontaktInfo.kanVarsles(), kontaktinfo.kanVarsles());
+		assertEquals(validKontaktInfo.reservert(), kontaktinfo.reservert());
 	}
 
 	@Test

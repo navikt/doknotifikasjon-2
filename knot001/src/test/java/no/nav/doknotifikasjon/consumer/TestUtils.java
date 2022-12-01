@@ -180,12 +180,7 @@ public final class TestUtils {
 			boolean varsel,
 			boolean reservert
 	) {
-		return DigitalKontaktinfo.builder()
-				.epostadresse(epost)
-				.mobiltelefonnummer(sms)
-				.kanVarsles(varsel)
-				.reservert(reservert)
-				.build();
+		return new DigitalKontaktinfo(epost, varsel, sms, reservert);
 	}
 
 	public static AuthLevelResponse createAuthLevelResponse() {

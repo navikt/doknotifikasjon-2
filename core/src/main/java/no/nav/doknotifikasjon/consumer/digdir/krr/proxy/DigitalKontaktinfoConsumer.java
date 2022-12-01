@@ -26,46 +26,64 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_DIGDIR_KRR_PROXY_CON
 @Component
 public class DigitalKontaktinfoConsumer {
 
-    private final WebClient webClient;
+	private final WebClient webClient;
 
-    public DigitalKontaktinfoConsumer(AzureToken azureToken,
-                                      DigdirKrrProxyConfig digdirKrrProxyConfig,
-                                      @Qualifier("digdirKrrProxyClient") WebClient webClient) {
-        this.webClient = webClient
-                .mutate()
-                .filter(new WebClientAzureAuthentication(azureToken, digdirKrrProxyConfig.getScope()))
-                .build();
-    }
+	public DigitalKontaktinfoConsumer(AzureToken azureToken,
+									  DigdirKrrProxyConfig digdirKrrProxyConfig,
+									  @Qualifier("digdirKrrProxyClient") WebClient webClient) {
+		this.webClient = webClient
+				.mutate()
+				.filter(new WebClientAzureAuthentication(azureToken, digdirKrrProxyConfig.getScope()))
+				.build();
+	}
 
-    @Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true, errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class)
-    @Retryable(include = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
-    public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
+	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true, errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class)
+	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
+	public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
 
-        var fnrTrimmed = personidentifikator.trim();
-        var body = PostPersonerRequest.builder().personidenter(List.of(fnrTrimmed)).build();
+		var fnrTrimmed = personidentifikator.trim();
+		var body = PostPersonerRequest.builder().personidenter(List.of(fnrTrimmed)).build();
 
-        return webClient.post()
-                .uri("/rest/v1/personer")
-                .header(NAV_CALL_ID, getDefaultUuidIfNoCallIdIsSett())
-                .body(Mono.just(body), PostPersonerRequest.class)
-                .retrieve()
-                .bodyToMono(DigitalKontaktinformasjonTo.class)
-                .doOnError(this::handleError)
-                .block();
-    }
+		return webClient.post()
+				.uri("/rest/v1/personer")
+				.header(NAV_CALL_ID, getDefaultUuidIfNoCallIdIsSett())
+				.body(Mono.just(body), PostPersonerRequest.class)
+				.retrieve()
+				.bodyToMono(DigitalKontaktinformasjonTo.class)
+				.doOnError(this::handleError)
+				.block();
+	}
 
-    private void handleError(Throwable error) {
-        if(error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-            throw new DigitalKontaktinformasjonFunctionalException(
-                    String.format("Kall mot DigitalKontaktinformasjonV1.kontaktinformasjon feilet med status=%s, feilmelding=%s",
-                            response.getRawStatusCode(),
-                            response.getMessage()),
-                    error);
-        } else {
-            throw new DigitalKontaktinformasjonTechnicalException(
-                    String.format("Kall mot DigitalKontaktinformasjonV1.kontaktinformasjon feilet med feilmelding=%s", error.getMessage()),
-                    error);
-        }
-    }
+	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true,
+			errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class,
+			logExceptions = false)
+	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class)
+	public KontaktinfoTo hentDigitalKontaktinfoForPerson(final String personidentifikator) {
+
+		var fnrTrimmed = personidentifikator.trim();
+
+		return webClient.get()
+				.uri("/rest/v1/person")
+				.header(NAV_CALL_ID, getDefaultUuidIfNoCallIdIsSett())
+				.header("Nav-Personident", fnrTrimmed)
+				.retrieve()
+				.bodyToMono(KontaktinfoTo.class)
+				.doOnError(this::handleError)
+				.block();
+	}
+
+	private void handleError(Throwable error) {
+		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+			throw new DigitalKontaktinformasjonFunctionalException(
+					String.format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
+							response.getRawStatusCode(),
+							response.getMessage()),
+					error, response.getStatusCode());
+		} else {
+			throw new DigitalKontaktinformasjonTechnicalException(
+					String.format("Kall mot Digdir-krr-proxy feilet med feilmelding=%s", error.getMessage()),
+					error);
+		}
+	}
 
 }

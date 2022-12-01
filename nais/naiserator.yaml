@@ -19,6 +19,8 @@ spec:
       value: {{ MOUNT_PATH }}
     - name: SEND_TIL_ALTINN
       value: "{{ SEND_TIL_ALTINN }}"
+    - name: SPRINGDOC_ENABLED
+      value: "{{ SPRINGDOC_ENABLED }}"
     - name: APPD_NAME
       value: {{ APPD_NAME }}
     - name: DIGDIR_KRR_PROXY_SCOPE

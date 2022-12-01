@@ -1,0 +1,13 @@
+{
+  "personident": "12345678901",
+  "aktiv": true,
+  "kanVarsles": true,
+  "reservert": false,
+  "spraakOppdatert": "2022-08-02T09:52:43.570213Z",
+  "epostadresse": "person@nav.no",
+  "epostadresseOppdatert": "2022-08-02T09:52:43.570212Z",
+  "epostadresseVerifisert": "2022-08-02T09:52:43.570212Z",
+  "mobiltelefonnummer": "91234567",
+  "mobiltelefonnummerOppdatert": "2022-08-02T09:52:43.570211Z",
+  "mobiltelefonnummerVerifisert": "2022-08-02T09:52:43.570211Z"
+}

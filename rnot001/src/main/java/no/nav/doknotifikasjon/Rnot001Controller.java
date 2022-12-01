@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static no.nav.doknotifikasjon.utils.MDCUtils.handleMdc;
+import static no.nav.doknotifikasjon.mdc.MDCUtils.handleMdc;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
