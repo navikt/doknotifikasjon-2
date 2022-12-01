@@ -57,7 +57,7 @@ public class DigitalKontaktinfoConsumer {
 	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true,
 			errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class,
 			logExceptions = false)
-	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class)
 	public KontaktinfoTo hentDigitalKontaktinfoForPerson(final String personidentifikator) {
 
 		var fnrTrimmed = personidentifikator.trim();

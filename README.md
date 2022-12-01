@@ -5,7 +5,7 @@ Appen leser meldinger fra Kafka-topicene `teamdokumenthandtering.privat-dok-noti
 og ruter dette videre til Kafka-topicene `teamdokumenthandtering.privat-dok-notifikasjon-sms` og `teamdokumenthandtering.privat-dok-notifikasjon-epost` som potensielt gir en notifikasjon på henholdsvis sms eller epost.
 [Avro-skjema for meldinger som blir produsert og konsumert](https://github.com/navikt/teamdokumenthandtering-avro-schemas) av appen ligger på Github.
 
-Appen tilbyr følgende tjenester, dokumentert i [swagger](https://doknotifikasjon-2.dev.intern.nav.no/swagger-ui/index.html#/'): 
+Appen tilbyr følgende tjenester, dokumentert i [swagger](https://doknotifikasjon-2.dev.intern.nav.no/swagger-ui/index.html): 
 - Henting av informasjon om notifikasjon [rnot001](https://confluence.adeo.no/display/BOA/RNOT001+-+NotifikasjonInfo)
 - Henting av informasjon om en bruker kan varsles digitalt [rno002](https://confluence.adeo.no/display/BOA/RNOT002+-+kanVarsles)
 

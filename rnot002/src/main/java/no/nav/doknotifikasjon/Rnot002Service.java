@@ -8,7 +8,7 @@ import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunc
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.EnumSet;
 
 import static no.nav.doknotifikasjon.Kontaktinfo.personKanVarsles;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -19,7 +19,7 @@ public class Rnot002Service {
 
 	private final DigitalKontaktinfoConsumer digdirConsumer;
 	private final SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
-	private static final Set<HttpStatus> PERSON_IKKE_TILGJENGELIG = Set.of(FORBIDDEN, NOT_FOUND);
+	private static final EnumSet<HttpStatus> PERSON_IKKE_TILGJENGELIG = EnumSet.of(FORBIDDEN, NOT_FOUND);
 
 	public Rnot002Service(DigitalKontaktinfoConsumer digdirConsumer,
 						  SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer) {

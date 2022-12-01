@@ -47,6 +47,9 @@ public class Rnot002ITest {
 	private static final String PERSONIDENT = "12345678901";
 	private static final String UGYLDIG_PERSONIDENT = "123";
 
+	private static final KanVarslesRequest KANVARSLES_REQUEST = new KanVarslesRequest(PERSONIDENT);
+	private static final KanVarslesRequest UGYLDIG_KANVARSLES_REQUEST = new KanVarslesRequest(UGYLDIG_PERSONIDENT);
+
 	@Autowired
 	WebTestClient webTestClient;
 
@@ -73,12 +76,35 @@ public class Rnot002ITest {
 	@Test
 	void shouldValidatePersonident() {
 		webTestClient
-				.get()
-				.uri("/rest/v1/kanvarsles/" + UGYLDIG_PERSONIDENT)
+				.post()
+				.uri("/rest/v1/kanvarsles/")
 				.headers((headers) -> headers.setBearerAuth(jwt()))
+				.bodyValue(UGYLDIG_KANVARSLES_REQUEST)
 				.exchange()
 				.expectStatus().is4xxClientError();
 	}
+
+	@Test
+	void shouldFailOnMissingAuthToken() {
+		webTestClient
+				.post()
+				.uri("/rest/v1/kanvarsles/")
+				.bodyValue(UGYLDIG_KANVARSLES_REQUEST)
+				.exchange()
+				.expectStatus().is4xxClientError();
+	}
+
+	@Test
+	void shouldFailOnInvalidAuthToken() {
+		webTestClient
+				.post()
+				.uri("/rest/v1/kanvarsles/")
+				.headers((headers) -> headers.setBearerAuth(jwt("ikke_azurev2")))
+				.bodyValue(UGYLDIG_KANVARSLES_REQUEST)
+				.exchange()
+				.expectStatus().is4xxClientError();
+	}
+
 
 	@Test
 	void shouldReturnKanVarslesFalseOn404FromDigdir() {
@@ -97,9 +123,10 @@ public class Rnot002ITest {
 		stubDigdirKRRProxyWithStatus(HttpStatus.BAD_REQUEST);
 
 		webTestClient
-				.get()
-				.uri("/rest/v1/kanvarsles/" + PERSONIDENT)
+				.post()
+				.uri("/rest/v1/kanvarsles/")
 				.headers((headers) -> headers.setBearerAuth(jwt()))
+				.bodyValue(KANVARSLES_REQUEST)
 				.exchange()
 				.expectStatus().is5xxServerError();
 	}
@@ -118,10 +145,12 @@ public class Rnot002ITest {
 	}
 
 	private KanVarslesResponse getKanVarsles() {
+
 		return webTestClient
-				.get()
-				.uri("/rest/v1/kanvarsles/" + PERSONIDENT)
+				.post()
+				.uri("/rest/v1/kanvarsles")
 				.headers((headers) -> headers.setBearerAuth(jwt()))
+				.bodyValue(KANVARSLES_REQUEST)
 				.exchange()
 				.expectStatus().isOk()
 				.returnResult(KanVarslesResponse.class)
@@ -129,14 +158,17 @@ public class Rnot002ITest {
 				.blockFirst();
 	}
 
-	protected String jwt() {
-		String issuerId = "azurev2";
+	private String jwt() {
+		return jwt("azurev2");
+	}
+
+	private String jwt(String issuer) {
 		String audience = "gosys";
 		return server.issueToken(
-				issuerId,
+				issuer,
 				"gosys-clientid",
 				new DefaultOAuth2TokenCallback(
-						issuerId,
+						issuer,
 						"subject",
 						"JWT",
 						List.of(audience),

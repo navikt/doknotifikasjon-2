@@ -35,7 +35,11 @@ public class MobiltelefonnummerTest {
 			"004621212121212121212",
 			"12345678a",
 			"1234+1234",
-			"1234_1234"
+			"1234_1234",
+			"4790000000",
+			"+004790000000",
+			"3725000000",
+			"46730000000"
 	})
 	void shouldNotValidateMobiltelefonnummer(String ugyldigMobiltelefonnummer) {
 		assertThrows(UgyldigMobiltelefonnummerException.class, () -> new Mobiltelefonnummer(ugyldigMobiltelefonnummer));

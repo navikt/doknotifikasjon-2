@@ -28,7 +28,7 @@ public class Springdoc {
 						.description("""
 								Her dokumenteres REST tjenestegrensesnittet til doknotifikasjon-2.
 								                      								
-								Til autentisering brukes OIDC-token (JWT via OAuth 2.0).
+								Til autentisering brukes OIDC-token (JWT via OAuth 2.0) utstedt av Azure.
 								
 								Har du spørsmål? Kontakt oss på Slack-kanalen #team_dokumentløsninger
 								"""))
