@@ -41,7 +41,7 @@ public class Rnot001ITest extends AbstractTest {
 
 		assertThat(response.getStatusCode(), is(HttpStatus.OK));
 		NotifikasjonInfoTo notifikasjonInfoTo = response.getBody();
-		assertThat(notifikasjonInfoTo.getNotifikasjonDistribusjoner().size(), is(2));
+		assertThat(notifikasjonInfoTo.notifikasjonDistribusjoner().size(), is(2));
 
 	}
 

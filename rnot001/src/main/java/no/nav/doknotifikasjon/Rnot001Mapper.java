@@ -3,8 +3,6 @@ package no.nav.doknotifikasjon;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 
-import java.util.stream.Collectors;
-
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 
 public class Rnot001Mapper {
@@ -15,8 +13,7 @@ public class Rnot001Mapper {
 				notifikasjon.getBestillerId(),
 				notifikasjon.getStatus(),
 				notifikasjon.getAntallRenotifikasjoner(),
-				notifikasjon.getNotifikasjonDistribusjon().stream().map(notifikasjonDistribusjon ->
-						mapNotifikasjonDistribusjon(notifikasjonDistribusjon)).collect(Collectors.toList())
+				notifikasjon.getNotifikasjonDistribusjon().stream().map(Rnot001Mapper::mapNotifikasjonDistribusjon).toList()
 		);
 	}
 

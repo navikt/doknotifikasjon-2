@@ -23,13 +23,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Transactional
 @EnableMockOAuth2Server
 @ActiveProfiles("itest")
-@SpringBootTest(classes = {AbstractTest.TestConfig.class, ApplicationTestConfig.class},
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+		classes = {AbstractTest.TestConfig.class, ApplicationTestConfig.class},
+		webEnvironment = RANDOM_PORT
+)
 public class AbstractTest {
 
 	@Configuration
