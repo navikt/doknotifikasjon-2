@@ -7,8 +7,8 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import java.time.LocalDateTime;
 
 public record NotifikasjonDistribusjonDto(
-		@Schema(description = "Unik ID for sms/epost", example = "97221337") int id,
-		@Schema(description = "Status på sms/epost", example = "FERDIGSTILT") Status status,
+		@Schema(description = "Unik ID for notifikasjon (sms/epost)", example = "227221337") int id,
+		@Schema(description = "Status på notifikasjon (sms/epost)", example = "FERDIGSTILT") Status status,
 		@Schema(description = "Kanal notifikasjonen har blitt sendt i (sms eller epost)", example = "SMS") Kanal kanal,
 		@Schema(description = "Epostadresse/telefonnummer notifikasjonen er sendt til", example = "98765432") String kontaktInfo,
 		@Schema(description = "Tittel - kun satt hvis kanal=epost", example = " ") String tittel,
