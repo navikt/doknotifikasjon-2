@@ -67,6 +67,6 @@ public class Rnot002Controller {
 	@ResponseStatus(BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<String> invalidPersonidentHandler() {
-		return new ResponseEntity<>("Personident må bestå av nøyaktig 11 siffer.", BAD_REQUEST);
+		return new ResponseEntity<>("Request må inneholde feltet personident, som må bestå av nøyaktig 11 siffer.", BAD_REQUEST);
 	}
 }

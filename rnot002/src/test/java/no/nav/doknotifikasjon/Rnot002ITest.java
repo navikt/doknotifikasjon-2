@@ -74,12 +74,25 @@ public class Rnot002ITest {
 	}
 
 	@Test
-	void shouldValidatePersonident() {
+	void shouldReturnClientErrorOnInvalidPersonident() {
 		webTestClient
 				.post()
 				.uri("/rest/v1/kanvarsles/")
 				.headers((headers) -> headers.setBearerAuth(jwt()))
 				.bodyValue(UGYLDIG_KANVARSLES_REQUEST)
+				.exchange()
+				.expectStatus().is4xxClientError();
+	}
+
+	@Test
+	void shouldReturnClientErrorOnMissingPersonident() {
+		var jsonRequest = "{\"ukjentFelt\": \"123\"}";
+
+		webTestClient
+				.post()
+				.uri("/rest/v1/kanvarsles/")
+				.headers((headers) -> headers.setBearerAuth(jwt()))
+				.bodyValue(jsonRequest)
 				.exchange()
 				.expectStatus().is4xxClientError();
 	}
