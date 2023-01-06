@@ -7,7 +7,7 @@ og ruter dette videre til Kafka-topicene `teamdokumenthandtering.privat-dok-noti
 
 Appen tilbyr følgende tjenester, dokumentert i [swagger](https://doknotifikasjon-2.dev.intern.nav.no/swagger-ui/index.html): 
 - (Kun til intern bruk) Henting av informasjon om notifikasjon [rnot001](https://confluence.adeo.no/display/BOA/RNOT001+-+NotifikasjonInfo)
-- Henting av informasjon om en bruker kan varsles digitalt [rno002](https://confluence.adeo.no/display/BOA/RNOT002+-+kanVarsles)
+- Henting av informasjon om en bruker kan varsles digitalt [rnot002](https://confluence.adeo.no/display/BOA/RNOT002+-+kanVarsles)
 
 For mer informasjon om appen kan du se på [funksjonell beskrivelse på confluence](https://confluence.adeo.no/display/BOA/doknotifikasjon+-+Funksjonell+Beskrivelse).
  
