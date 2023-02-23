@@ -14,4 +14,4 @@ For mer informasjon om appen kan du se på [funksjonell beskrivelse på confluen
 Merk at en tidligere versjon av appen som brukte onprem-Kafka, [doknotifikasjon](https://github.com/navikt/doknotifikasjon), nå har blitt erstattet av doknotifikasjon-2 som bruker managed Kafka (Aiven). 
 
 ## Henvendelser
-Spørsmål om koden eller prosjektet kan rettes til [Slack-kanalen for \#Team Dokumentløsninger](https://nav-it.slack.com/archives/C6W9E5GPJ)
+Spørsmål om koden eller prosjektet kan rettes til [Slack-kanalen for \#Team Dokumentløsninger](https://nav-it.slack.com/archives/C6W9E5GPJ).
