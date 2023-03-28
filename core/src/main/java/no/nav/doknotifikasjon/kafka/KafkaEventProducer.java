@@ -36,28 +36,16 @@ public class KafkaEventProducer {
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
 	@Retryable(include = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void publish(String topic, Object event) {
-		this.publish(
-				topic,
-				event,
-				getDefaultUuidIfNoCallIdIsSett()
-		);
+		publish(topic, event, getDefaultUuidIfNoCallIdIsSett());
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
 	@Retryable(include = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void publishWithKey(String topic, Object event, String keyValue) {
-		this.publish(
-				topic,
-				event,
-				keyValue
-		);
+		publish(topic, event, keyValue);
 	}
 
-	void publish(
-			String topic,
-			Object event,
-			String keyValue
-	) {
+	void publish(String topic, Object event, String keyValue) {
 		ProducerRecord<String, Object> producerRecord = new ProducerRecord(
 				topic,
 				null,
@@ -68,12 +56,12 @@ public class KafkaEventProducer {
 
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
+
 			log.info("Message stored on topic. Timestamp={}, partition={}, offset={}, topic={}",
 					sendResult.getRecordMetadata().timestamp(),
 					sendResult.getRecordMetadata().partition(),
 					sendResult.getRecordMetadata().offset(),
-					sendResult.getRecordMetadata().topic()
-			);
+					sendResult.getRecordMetadata().topic());
 		} catch (ExecutionException executionException) {
 			if (executionException.getCause() instanceof KafkaProducerException) {
 				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
