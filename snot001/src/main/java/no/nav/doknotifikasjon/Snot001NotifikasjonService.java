@@ -58,7 +58,7 @@ public class Snot001NotifikasjonService {
 
 	private void updateNotifikasjon(Notifikasjon notifikasjon) {
 		int antallRenotifikasjoner = notifikasjon.getAntallRenotifikasjoner() - 1;
-		LocalDate nesteRenotifikasjonDato = notifikasjon.getAntallRenotifikasjoner() > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null;
+		LocalDate nesteRenotifikasjonDato = antallRenotifikasjoner > 0 ? LocalDate.now().plusDays(notifikasjon.getRenotifikasjonIntervall()) : null;
 
 		notifikasjon.setAntallRenotifikasjoner(antallRenotifikasjoner);
 		notifikasjon.setNesteRenotifikasjonDato(nesteRenotifikasjonDato);

@@ -24,7 +24,14 @@ import static no.nav.doknotifikasjon.TestUtils.NESTE_RENOTIFIKASJONS_DATO;
 import static no.nav.doknotifikasjon.TestUtils.PAAMINNELSE_TEKST;
 import static no.nav.doknotifikasjon.TestUtils.SNOT001;
 import static no.nav.doknotifikasjon.TestUtils.TITTEL;
-import static no.nav.doknotifikasjon.TestUtils.createNotifikasjon;
+import static no.nav.doknotifikasjon.TestUtils.createDefaultNotifikasjon;
+import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal;
+import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithAntallRenotifikasjoner;
+import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithStatus;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
@@ -53,10 +60,10 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 
 	@Test
 	void shouldResendNotifikasjonDistribusjonWithAllKanal() {
-		Notifikasjon notifikasjon = createNotifikasjon();
+		Notifikasjon notifikasjon = createDefaultNotifikasjon();
 		Set<NotifikasjonDistribusjon> notifikasjonDistribusjon = new HashSet<>();
-		notifikasjonDistribusjon.add(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.SMS));
-		notifikasjonDistribusjon.add(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.EPOST));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, SMS));
+		notifikasjonDistribusjon.add(createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, EPOST));
 
 		notifikasjon.setNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
@@ -71,27 +78,27 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		assertEquals(SNOT001, updatedNotifikasjon.getEndretAv());
 		assertNotNull(updatedNotifikasjon.getEndretDato());
 
-		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, Status.OPPRETTET);
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, OPPRETTET);
 
 		notifikasjonDistribusjonList.forEach(nd -> {
-			assertEquals(Status.OPPRETTET, nd.getStatus());
+			assertEquals(OPPRETTET, nd.getStatus());
 			assertEquals(KONTAKTINFO, nd.getKontaktInfo());
 			assertEquals(TITTEL, nd.getTittel());
 			assertEquals(PAAMINNELSE_TEKST, nd.getTekst());
 			assertEquals(SNOT001, nd.getOpprettetAv());
 			assertNotNull(nd.getOpprettetDato());
-			assertThat(nd.getKanal(), anyOf(is(Kanal.SMS), is(Kanal.EPOST)));
+			assertThat(nd.getKanal(), anyOf(is(SMS), is(EPOST)));
 		});
 
-		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> Kanal.SMS.equals(n.getKanal())));
-		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> Kanal.EPOST.equals(n.getKanal())));
+		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> SMS.equals(n.getKanal())));
+		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> EPOST.equals(n.getKanal())));
 	}
 
 
 	@Test
 	void shouldResendNotifikasjonDistribusjonWithKanalSMS() {
-		Notifikasjon notifikasjon = createNotifikasjon();
-		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.SMS)));
+		Notifikasjon notifikasjon = createDefaultNotifikasjon();
+		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, SMS)));
 
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		snot001Scheduler.scheduledJob();
@@ -104,27 +111,27 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		assertEquals(SNOT001, updatedNotifikasjon.getEndretAv());
 		assertNotNull(updatedNotifikasjon.getEndretDato());
 
-		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, Status.OPPRETTET);
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, OPPRETTET);
 
 		notifikasjonDistribusjonList.forEach(notifikasjonDistribusjon -> {
-			assertEquals(Status.OPPRETTET, notifikasjonDistribusjon.getStatus());
+			assertEquals(OPPRETTET, notifikasjonDistribusjon.getStatus());
 			assertEquals(KONTAKTINFO, notifikasjonDistribusjon.getKontaktInfo());
 			assertEquals(TITTEL, notifikasjonDistribusjon.getTittel());
 			assertEquals(PAAMINNELSE_TEKST, notifikasjonDistribusjon.getTekst());
 			assertEquals(SNOT001, notifikasjonDistribusjon.getOpprettetAv());
 			assertNotNull(notifikasjonDistribusjon.getOpprettetDato());
-			assertEquals(Kanal.SMS, notifikasjonDistribusjon.getKanal());
+			assertEquals(SMS, notifikasjonDistribusjon.getKanal());
 		});
 
 
-		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> Kanal.SMS.equals(n.getKanal())));
-		assertFalse(notifikasjonDistribusjonList.stream().anyMatch(n -> Kanal.EPOST.equals(n.getKanal())));
+		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> SMS.equals(n.getKanal())));
+		assertFalse(notifikasjonDistribusjonList.stream().anyMatch(n -> EPOST.equals(n.getKanal())));
 	}
 
 	@Test
 	void shouldResendNotifikasjonDistribusjonWithKanalEpost() {
-		Notifikasjon notifikasjon = createNotifikasjon();
-		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(TestUtils.createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, Kanal.EPOST)));
+		Notifikasjon notifikasjon = createDefaultNotifikasjon();
+		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, EPOST)));
 
 		notifikasjonRepository.saveAndFlush(notifikasjon);
 		snot001Scheduler.scheduledJob();
@@ -137,27 +144,27 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		assertEquals(SNOT001, updatedNotifikasjon.getEndretAv());
 		assertNotNull(updatedNotifikasjon.getEndretDato());
 
-		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, Status.OPPRETTET);
+		List<NotifikasjonDistribusjon> notifikasjonDistribusjonList = notifikasjonDistribusjonRepository.findAllByNotifikasjonAndStatus(updatedNotifikasjon, OPPRETTET);
 
 		notifikasjonDistribusjonList.forEach(notifikasjonDistribusjon -> {
-			assertEquals(Status.OPPRETTET, notifikasjonDistribusjon.getStatus());
+			assertEquals(OPPRETTET, notifikasjonDistribusjon.getStatus());
 			assertEquals(KONTAKTINFO, notifikasjonDistribusjon.getKontaktInfo());
 			assertEquals(TITTEL, notifikasjonDistribusjon.getTittel());
 			assertEquals(PAAMINNELSE_TEKST, notifikasjonDistribusjon.getTekst());
 			assertEquals(SNOT001, notifikasjonDistribusjon.getOpprettetAv());
 			assertNotNull(notifikasjonDistribusjon.getOpprettetDato());
-			assertEquals(Kanal.EPOST, notifikasjonDistribusjon.getKanal());
+			assertEquals(EPOST, notifikasjonDistribusjon.getKanal());
 		});
 
 
-		assertFalse(notifikasjonDistribusjonList.stream().anyMatch(n -> Kanal.SMS.equals(n.getKanal())));
-		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> Kanal.EPOST.equals(n.getKanal())));
+		assertFalse(notifikasjonDistribusjonList.stream().anyMatch(n -> SMS.equals(n.getKanal())));
+		assertTrue(notifikasjonDistribusjonList.stream().anyMatch(n -> EPOST.equals(n.getKanal())));
 	}
 
 	@Test
 	void shouldNotResendNotifikasjonWhenNoNotifikasjonToResend() {
 
-		notifikasjonRepository.saveAndFlush(TestUtils.createNotifikasjonWithStatus(Status.FERDIGSTILT));
+		notifikasjonRepository.saveAndFlush(createNotifikasjonWithStatus(FERDIGSTILT));
 		snot001Scheduler.scheduledJob();
 
 		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
@@ -167,5 +174,21 @@ class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 		assertNull(updatedNotifikasjon.getEndretAv());
 		assertNull(updatedNotifikasjon.getEndretDato());
 		assertEquals(0, notifikasjonDistribusjonRepository.findAll().size());
+	}
+
+	@Test
+	void shouldNotSetNesteRenotifikasjonsDatoWhenAntallRenotifikasjonerIsZero() {
+		Notifikasjon notifikasjon = createNotifikasjonWithAntallRenotifikasjoner(1);
+		notifikasjon.setNotifikasjonDistribusjon(Collections.singleton(createNotifikasjonDistribusjonWithNotifikasjonAndKanal(notifikasjon, EPOST)));
+
+		notifikasjonRepository.saveAndFlush(notifikasjon);
+		snot001Scheduler.scheduledJob();
+
+		Notifikasjon updatedNotifikasjon = notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID).orElse(null);
+
+		assertEquals(0, updatedNotifikasjon.getAntallRenotifikasjoner());
+		assertNull(updatedNotifikasjon.getNesteRenotifikasjonDato());
+		assertEquals(SNOT001, updatedNotifikasjon.getEndretAv());
+		assertNotNull(updatedNotifikasjon.getEndretDato());
 	}
 }
