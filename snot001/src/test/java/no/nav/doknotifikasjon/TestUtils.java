@@ -24,29 +24,34 @@ public final class TestUtils {
 	private static final int RENOTIFIKASJON_INTERVALL = 10;
 	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
 	private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
+	private static final Status DEFAULT_STATUS = Status.OVERSENDT;
+	private static final int DEFAULT_ANTALL_RENOTIFIKASJONER = ANTALL_RENOTIFIKASJONER;
 	public TestUtils() {
 	}
 
-	public static Notifikasjon createNotifikasjon() {
-		return Notifikasjon.builder()
-				.bestillingsId(BESTILLINGS_ID)
-				.bestillerId(BESTILLER_ID)
-				.status(Status.OVERSENDT)
-				.notifikasjonDistribusjon(Collections.emptySet())
-				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
-				.nesteRenotifikasjonDato(NESTE_RENOTIFIKASJONS_DATO)
-				.renotifikasjonIntervall(RENOTIFIKASJON_INTERVALL)
-				.build();
+	public static Notifikasjon createNotifikasjonWithAntallRenotifikasjoner(int antallRenotifikasjoner) {
+		return createNotifikasjon(antallRenotifikasjoner, DEFAULT_STATUS);
+	}
+
+
+	public static Notifikasjon createDefaultNotifikasjon() {
+		return createNotifikasjon(DEFAULT_ANTALL_RENOTIFIKASJONER, DEFAULT_STATUS);
 	}
 
 	public static Notifikasjon createNotifikasjonWithStatus(Status status) {
+		return createNotifikasjon(DEFAULT_ANTALL_RENOTIFIKASJONER, status);
+	}
+
+
+	private static Notifikasjon createNotifikasjon(int antallRenotifikasjoner, Status status) {
 		return Notifikasjon.builder()
 				.bestillingsId(BESTILLINGS_ID)
 				.bestillerId(BESTILLER_ID)
 				.status(status)
 				.notifikasjonDistribusjon(Collections.emptySet())
-				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
+				.antallRenotifikasjoner(antallRenotifikasjoner)
 				.nesteRenotifikasjonDato(NESTE_RENOTIFIKASJONS_DATO)
+				.renotifikasjonIntervall(RENOTIFIKASJON_INTERVALL)
 				.build();
 	}
 
