@@ -86,6 +86,9 @@ public class AltinnVarselConsumer {
 			if (erFunksjonellFeil(feilkode)) {
 				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s", altinnErrorMessage), e);
 			} else {
+				if(erUhandterbarTekniskFeil(e)) {
+					throw new AltinnFunctionalException(format("Uhandterbar teknisk feil feil i kall mot Altinn. Håndteres som funksjonell feil. %s", altinnErrorMessage), e);
+				}
 				throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn. %s", altinnErrorMessage), e);
 			}
 		} catch (SoapFaultException e) {
@@ -95,6 +98,16 @@ public class AltinnVarselConsumer {
 		} catch (Exception e) {
 			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn.", e);
 		}
+	}
+
+	private boolean erUhandterbarTekniskFeil(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
+		AltinnFault faultInfo = e.getFaultInfo();
+		if(faultInfo != null) {
+			log.error("Utvidet teknisk feil info errorGuid={}, altinnLocalizedErrorMessage={}, altinnExtendedErrorMessage={}",
+					unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnLocalizedErrorMessage()), unwrap(faultInfo.getAltinnExtendedErrorMessage()));
+			return unwrap(faultInfo.getAltinnLocalizedErrorMessage()).contains("Object reference not set to an instance of an object");
+		}
+		return false;
 	}
 
 	@Recover
@@ -158,9 +171,6 @@ public class AltinnVarselConsumer {
 	// Liste over errorID: https://altinn.github.io/docs/api/tjenesteeiere/soap/grensesnitt/varseltjeneste/#feilsituasjoner
 	private String constructAltinnErrorMessage(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 		AltinnFault faultInfo = e.getFaultInfo();
-
-		log.warn("Altinn localized error message for errorGuid={}: {}", unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnLocalizedErrorMessage()));
-		log.warn("Altinn extended error message for errorGuid={}: {}", unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnExtendedErrorMessage()));
 
 		if (faultInfo == null) {
 			return e.getMessage();
