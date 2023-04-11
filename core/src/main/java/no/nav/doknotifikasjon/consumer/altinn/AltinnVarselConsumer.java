@@ -159,8 +159,8 @@ public class AltinnVarselConsumer {
 	private String constructAltinnErrorMessage(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 		AltinnFault faultInfo = e.getFaultInfo();
 
-		log.warn("Altinn localized error message for errorGuid={}: {}", faultInfo.getErrorGuid(), faultInfo.getAltinnLocalizedErrorMessage());
-		log.warn("Altinn extended error message for errorGuid={}: {}", faultInfo.getErrorGuid(), faultInfo.getAltinnExtendedErrorMessage());
+		log.warn("Altinn localized error message for errorGuid={}: {}", unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnLocalizedErrorMessage()));
+		log.warn("Altinn extended error message for errorGuid={}: {}", unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnExtendedErrorMessage()));
 
 		if (faultInfo == null) {
 			return e.getMessage();
