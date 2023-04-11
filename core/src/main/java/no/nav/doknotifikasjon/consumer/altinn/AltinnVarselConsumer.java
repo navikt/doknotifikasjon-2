@@ -158,9 +158,14 @@ public class AltinnVarselConsumer {
 	// Liste over errorID: https://altinn.github.io/docs/api/tjenesteeiere/soap/grensesnitt/varseltjeneste/#feilsituasjoner
 	private String constructAltinnErrorMessage(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 		AltinnFault faultInfo = e.getFaultInfo();
+
+		log.warn("Altinn localized error message for errorGuid={}: {}", faultInfo.getErrorGuid(), faultInfo.getAltinnLocalizedErrorMessage());
+		log.warn("Altinn extended error message for errorGuid={}: {}", faultInfo.getErrorGuid(), faultInfo.getAltinnExtendedErrorMessage());
+
 		if (faultInfo == null) {
 			return e.getMessage();
 		}
+
 		return "errorGuid=" + unwrap(faultInfo.getErrorGuid()) + ", " +
 				"userGuid=" + unwrap(faultInfo.getUserGuid()) + ", " +
 				"errorId=" + faultInfo.getErrorID() + ", " +
