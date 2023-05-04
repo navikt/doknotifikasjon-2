@@ -3,7 +3,7 @@
   "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "DKIF_URL": "https://dkif.nais.adeo.no",
-  "SIKKERHETSNIVAA_V1_URL": "https://sikkerhetsnivaa.nais.adeo.no",
+  "SIKKERHETSNIVAA_V1_URL": "https://sikkerhetsnivaa.intern.nav.no",
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "MOUNT_PATH": "postgresql/prod-fss",
   "SEND_TIL_ALTINN": "true",
