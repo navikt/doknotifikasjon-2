@@ -27,20 +27,20 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.10</version>
+		<version>2.7.12</version>
 	</parent>
 
 	<properties>
 		<java.version>17</java.version>
 
 		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<apache-cxf.version>3.5.5</apache-cxf.version>
+		<apache-cxf.version>3.6.0</apache-cxf.version>
 		<commons-validator.version>1.7</commons-validator.version>
-		<springdoc-openapi-ui.version>1.6.15</springdoc-openapi-ui.version>
+		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 
 		<!-- Dersom confluent blir oppgradert bør også teamdokumenthandtering-avro-schemas sin avro-versjon bli det for å være i synk med confluent -->
-		<!-- Confluent-versjon 7.3.2 av kafka-avro-serializer bruker avro-versjon 1.11.0 -->
-		<confluent.version>7.3.2</confluent.version>
+		<!-- Confluent-versjon 7.4.0 av kafka-avro-serializer bruker avro-versjon 1.11.0 -->
+		<confluent.version>7.4.0</confluent.version>
 		<teamdokumenthandtering-avro-schemas.version>357738b9</teamdokumenthandtering-avro-schemas.version>
 
 		<tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
@@ -48,7 +48,7 @@
 		<token-support.version>2.1.9</token-support.version>
 
 		<!-- Test -->
-		<spring-cloud-contract-wiremock.version>3.1.6</spring-cloud-contract-wiremock.version>
+		<spring-cloud-contract-wiremock.version>3.1.7</spring-cloud-contract-wiremock.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
