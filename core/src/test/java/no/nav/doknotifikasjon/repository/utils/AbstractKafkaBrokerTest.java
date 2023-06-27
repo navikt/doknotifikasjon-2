@@ -8,7 +8,8 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
+
 import javax.xml.namespace.QName;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;

@@ -42,12 +42,12 @@ public class SikkerhetsnivaaConsumer {
 			HttpEntity<AuthLevelRequest> request = new HttpEntity<>(AuthLevelRequest.builder().personidentifikator(personIdent).build());
 			ResponseEntity<AuthLevelResponse> response = restTemplate.postForEntity(sikkerhetsnivaaUrl, request, AuthLevelResponse.class);
 			return response.getBody();
+		} catch (HttpClientErrorException.Unauthorized e) {
+			throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten avviste accesstoken. Feilmelding: %s", e.getMessage()), e);
+		} catch (HttpClientErrorException.NotFound|HttpClientErrorException.Forbidden e) {
+			throw new SikkerhetsnivaaFunctionalException(String.format("Bruker er ikke registrert som ID-porten bruker. Feilmelding: %s", e.getMessage()), e);
 		} catch (HttpClientErrorException e) {
-			switch (e.getStatusCode()) {
-				case UNAUTHORIZED -> throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten avviste accesstoken. Feilmelding: %s", e.getMessage()), e);
-				case NOT_FOUND, FORBIDDEN -> throw new SikkerhetsnivaaFunctionalException(String.format("Bruker er ikke registrert som ID-porten bruker. Feilmelding: %s", e.getMessage()), e);
-				default -> throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten feilet med ukjent funksjonell feil. Feilmelding: %s", e.getMessage()), e);
-			}
+			throw new SikkerhetsnivaaFunctionalException(String.format("Difi IdPorten feilet med ukjent funksjonell feil. Feilmelding: %s", e.getMessage()), e);
 		} catch (HttpServerErrorException e) {
 			throw new SikkerhetsnivaaTechnicalException(String.format("Teknisk feil mot Difi IdPorten. Feilmelding: %s", e.getMessage()), e);
 		}

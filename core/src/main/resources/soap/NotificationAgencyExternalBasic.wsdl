@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-                  xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex"
-                  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa10="http://www.w3.org/2005/08/addressing"
-                  xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
-                  xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy"
-                  xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract"
-                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
-                  xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
-                  xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+<wsdl:definitions name="NotificationAgencyExternalBasicSF"
+                  targetNamespace="http://www.altinn.no/services/ServiceEngine/Notification/2010/10"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                   xmlns:tns="http://www.altinn.no/services/ServiceEngine/Notification/2010/10"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-                  name="NotificationAgencyExternalBasicSF"
-                  targetNamespace="http://www.altinn.no/services/ServiceEngine/Notification/2010/10">
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl">
     <wsdl:types>
         <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.altinn.no/services/2009/10">
             <xsd:element name="Test">
@@ -28,16 +19,16 @@
                 </xsd:complexType>
             </xsd:element>
         </xsd:schema>
-        <xsd:schema xmlns:tns="http://www.altinn.no/services/common/fault/2009/10" elementFormDefault="qualified"
-                    targetNamespace="http://www.altinn.no/services/common/fault/2009/10">
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.altinn.no/services/common/fault/2009/10"
+                    xmlns:tns="http://www.altinn.no/services/common/fault/2009/10">
             <xsd:complexType name="AltinnFault">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a SOAP fault message used by Altinn to convey exception information to the
                                 caller.
@@ -50,11 +41,11 @@
                     <xsd:element minOccurs="0" name="AltinnErrorMessage" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the error message.
                                         &lt;/summary&gt;
@@ -66,11 +57,11 @@
                     <xsd:element minOccurs="0" name="AltinnExtendedErrorMessage" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the verbose version of the error message.
                                         &lt;/summary&gt;
@@ -82,11 +73,11 @@
                     <xsd:element minOccurs="0" name="AltinnLocalizedErrorMessage" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the localized version of the error message.
                                         &lt;/summary&gt;
@@ -98,11 +89,11 @@
                     <xsd:element minOccurs="0" name="ErrorGuid" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the unique GUID for the specific fault.
                                         &lt;/summary&gt;
@@ -114,11 +105,11 @@
                     <xsd:element minOccurs="0" name="ErrorID" type="xsd:int">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the error type id.
                                         &lt;/summary&gt;
@@ -130,11 +121,11 @@
                     <xsd:element minOccurs="0" name="UserGuid" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the GUID of the user.
                                         &lt;/summary&gt;
@@ -146,11 +137,11 @@
                     <xsd:element minOccurs="0" name="UserId" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the id of the user.
                                         &lt;/summary&gt;
@@ -163,10 +154,10 @@
             </xsd:complexType>
             <xsd:element name="AltinnFault" nillable="true" type="tns:AltinnFault"/>
         </xsd:schema>
-        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/"
-                   attributeFormDefault="qualified"
-                   elementFormDefault="qualified"
-                   targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/">
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified"
+                   targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
             <xs:element name="anyType" nillable="true" type="xs:anyType"/>
             <xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
             <xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
@@ -216,8 +207,8 @@
                     <xsd:sequence>
                         <xsd:element minOccurs="1" name="systemUserName" type="xsd:string"/>
                         <xsd:element minOccurs="1" name="systemPassword" type="xsd:string"/>
-                        <xsd:element xmlns:q1="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10" minOccurs="1" name="standaloneNotifications"
-                                     type="q1:StandaloneNotificationBEList"/>
+                        <xsd:element minOccurs="1" name="standaloneNotifications" type="q1:StandaloneNotificationBEList"
+                                     xmlns:q1="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -231,8 +222,8 @@
                     <xsd:sequence>
                         <xsd:element minOccurs="1" name="systemUserName" type="xsd:string"/>
                         <xsd:element minOccurs="1" name="systemPassword" type="xsd:string"/>
-                        <xsd:element xmlns:q2="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10" minOccurs="1" name="standaloneNotifications"
-                                     type="q2:StandaloneNotificationBEList"/>
+                        <xsd:element minOccurs="1" name="standaloneNotifications" type="q2:StandaloneNotificationBEList"
+                                     xmlns:q2="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -249,33 +240,33 @@
                     <xsd:sequence>
                         <xsd:element minOccurs="1" name="systemUserName" type="xsd:string"/>
                         <xsd:element minOccurs="1" name="systemPassword" type="xsd:string"/>
-                        <xsd:element xmlns:q3="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10" minOccurs="1" name="standaloneNotifications"
-                                     type="q3:StandaloneNotificationBEList"/>
+                        <xsd:element minOccurs="1" name="standaloneNotifications" type="q3:StandaloneNotificationBEList"
+                                     xmlns:q3="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="SendStandaloneNotificationBasicV3Response">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element xmlns:q4="http://schemas.altinn.no/services/ServiceEngine/Notification/2015/06" minOccurs="0" name="SendStandaloneNotificationBasicV3Result"
-                                     nillable="true"
-                                     type="q4:SendNotificationResultList"/>
+                        <xsd:element minOccurs="0" name="SendStandaloneNotificationBasicV3Result" nillable="true"
+                                     type="q4:SendNotificationResultList"
+                                     xmlns:q4="http://schemas.altinn.no/services/ServiceEngine/Notification/2015/06"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
         </xsd:schema>
-        <xsd:schema xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10"
-                    elementFormDefault="qualified"
-                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10">
+        <xsd:schema elementFormDefault="qualified"
+                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10"
+                    xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2009/10">
             <xsd:import namespace="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10"/>
             <xsd:complexType name="StandaloneNotificationBEList">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a strongly typed collection of stand alone notifications.
                                 &lt;/summary&gt;
@@ -284,26 +275,26 @@
                     </xsd:appinfo>
                 </xsd:annotation>
                 <xsd:sequence>
-                    <xsd:element xmlns:q5="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10" minOccurs="0" maxOccurs="unbounded" name="StandaloneNotification"
-                                 nillable="true"
-                                 type="q5:StandaloneNotification"/>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="StandaloneNotification" nillable="true"
+                                 type="q5:StandaloneNotification"
+                                 xmlns:q5="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10"/>
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:element name="StandaloneNotificationBEList" nillable="true" type="tns:StandaloneNotificationBEList"/>
         </xsd:schema>
-        <xsd:schema xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10"
-                    elementFormDefault="qualified"
-                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10">
+        <xsd:schema elementFormDefault="qualified"
+                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10"
+                    xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Notification/2009/10">
             <xsd:import namespace="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06"/>
             <xsd:import namespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10"/>
             <xsd:complexType name="StandaloneNotification">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a stand alone notification.
                                 &lt;/summary&gt;
@@ -315,11 +306,11 @@
                     <xsd:element minOccurs="0" name="FromAddress" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the from address.
                                         &lt;/summary&gt;
@@ -331,11 +322,11 @@
                     <xsd:element minOccurs="0" name="IsReservable" nillable="true" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets a value indicating whether it is possible to be reserved against
                                         this specific notification.
@@ -348,11 +339,11 @@
                     <xsd:element minOccurs="0" name="LanguageID" type="xsd:int">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets language code for the language of the notification.
                                         &lt;/summary&gt;
@@ -364,11 +355,11 @@
                     <xsd:element minOccurs="0" name="NotificationType" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the notification type.
                                         &lt;/summary&gt;
@@ -381,11 +372,11 @@
                                  type="tns:ReceiverEndPointBEList">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets a list of receivers of the notification.
                                         &lt;/summary&gt;
@@ -397,11 +388,11 @@
                     <xsd:element minOccurs="0" name="ReporteeNumber" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the receiver id.
                                         &lt;/summary&gt;
@@ -410,15 +401,15 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:element>
-                    <xsd:element xmlns:q6="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06" minOccurs="0" name="Roles" nillable="true"
-                                 type="q6:Roles">
+                    <xsd:element minOccurs="0" name="Roles" nillable="true" type="q6:Roles"
+                                 xmlns:q6="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets a collection of Roles. Users with these roles will receive a
                                         Notification. (NOT IMPLEMENTED)
@@ -428,15 +419,15 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:element>
-                    <xsd:element xmlns:q7="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06" minOccurs="0" name="Service" nillable="true"
-                                 type="q7:Service">
+                    <xsd:element minOccurs="0" name="Service" nillable="true" type="q7:Service"
+                                 xmlns:q7="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the Service info for the StandaloneNotification.
                                         &lt;/summary&gt;
@@ -448,11 +439,11 @@
                     <xsd:element minOccurs="0" name="ShipmentDateTime" type="xsd:dateTime">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the date and time for when the notification should be sent.
                                         &lt;/summary&gt;
@@ -464,11 +455,11 @@
                     <xsd:element minOccurs="0" name="TextTokens" nillable="true" type="tns:TextTokenSubstitutionBEList">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets a list of replacement tokens. These are used to insert dynamic text
                                         into notification templates.
@@ -482,11 +473,11 @@
                                  type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets a value indicating whether the registered shortname of the service
                                         owner should be used to set the name of the sender for SMS notifications
@@ -502,11 +493,11 @@
             <xsd:complexType name="ReceiverEndPointBEList">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a strongly typed list of ReceiverEndPoint elements that can be accessed by
                                 index.
@@ -524,11 +515,11 @@
             <xsd:complexType name="ReceiverEndPoint">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a receiver of a notification.
                                 &lt;/summary&gt;
@@ -537,15 +528,15 @@
                     </xsd:appinfo>
                 </xsd:annotation>
                 <xsd:sequence>
-                    <xsd:element xmlns:q8="http://schemas.altinn.no/serviceengine/formsengine/2009/10" minOccurs="0" name="TransportType" nillable="true"
-                                 type="q8:TransportType">
+                    <xsd:element minOccurs="0" name="TransportType" nillable="true" type="q8:TransportType"
+                                 xmlns:q8="http://schemas.altinn.no/serviceengine/formsengine/2009/10">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets what type of transport this receiver end point is. (Email, SMS.)
                                         &lt;/summary&gt;
@@ -557,11 +548,11 @@
                     <xsd:element minOccurs="0" name="ReceiverAddress" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the address of the receiver. Email address or mobile phone number.
                                         &lt;/summary&gt;
@@ -576,11 +567,11 @@
             <xsd:complexType name="TextTokenSubstitutionBEList">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a strongly typed list of TextToken elements that can be accessed by index.
                                 &lt;/summary&gt;
@@ -597,11 +588,11 @@
             <xsd:complexType name="TextToken">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a TextToken. TextTokens is used to create more dynamic notification texts. A
                                 Token can trigger text substitution
@@ -615,11 +606,11 @@
                     <xsd:element minOccurs="0" name="TokenNum" type="xsd:int">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the token number.
                                         &lt;/summary&gt;
@@ -631,11 +622,11 @@
                     <xsd:element minOccurs="0" name="TokenValue" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the token value.
                                         &lt;/summary&gt;
@@ -648,17 +639,17 @@
             </xsd:complexType>
             <xsd:element name="TextToken" nillable="true" type="tns:TextToken"/>
         </xsd:schema>
-        <xsd:schema xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06"
-                    elementFormDefault="qualified"
-                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06">
+        <xsd:schema elementFormDefault="qualified"
+                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06"
+                    xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/StandaloneNotificationBE/2015/06">
             <xsd:complexType name="Roles">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 List of Roles in unit that should receive Notifications.
                                 &lt;/summary&gt;
@@ -674,11 +665,11 @@
             <xsd:complexType name="Service">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 List of Roles in unit that should receive Notifications.
                                 &lt;/summary&gt;
@@ -690,11 +681,11 @@
                     <xsd:element name="ServiceCode" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the ServiceCode. Users who are able to read ReporteeElements with
                                         this ServiceCode for the Reportee will receive a Notification if they're
@@ -708,11 +699,11 @@
                     <xsd:element name="ServiceEdition" type="xsd:int">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the ServiceCode. Users who are able to read ReporteeElements with
                                         this ServiceCode for the Reportee will receive a Notification if they're
@@ -727,24 +718,24 @@
             </xsd:complexType>
             <xsd:element name="Service" nillable="true" type="tns:Service"/>
         </xsd:schema>
-        <xsd:schema xmlns:tns="http://schemas.altinn.no/serviceengine/formsengine/2009/10"
-                    elementFormDefault="qualified"
-                    targetNamespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10">
+        <xsd:schema elementFormDefault="qualified"
+                    targetNamespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10"
+                    xmlns:tns="http://schemas.altinn.no/serviceengine/formsengine/2009/10">
             <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
             <xsd:simpleType name="TransportType">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:EnumAnnotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:EnumAnnotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:EnumText z:Id="2">&lt;summary&gt;
                                 Defines types of transportation for sending notifications.
                                 &lt;/summary&gt;
                             </d1p1:EnumText>
-                            <d1p1:Members xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="3"
-                                          z:Size="6">
+                            <d1p1:Members z:Id="3" z:Size="6"
+                                          xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
                                 <d2p1:KeyValueOfstringstring>
                                     <d2p1:Key z:Id="4">SMS</d2p1:Key>
                                     <d2p1:Value z:Id="5">&lt;summary&gt;
@@ -846,18 +837,18 @@
             </xsd:simpleType>
             <xsd:element name="TransportType" nillable="true" type="tns:TransportType"/>
         </xsd:schema>
-        <xsd:schema xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Notification/2015/06"
-                    elementFormDefault="qualified"
-                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Notification/2015/06">
+        <xsd:schema elementFormDefault="qualified"
+                    targetNamespace="http://schemas.altinn.no/services/ServiceEngine/Notification/2015/06"
+                    xmlns:tns="http://schemas.altinn.no/services/ServiceEngine/Notification/2015/06">
             <xsd:import namespace="http://schemas.altinn.no/serviceengine/formsengine/2009/10"/>
             <xsd:complexType name="SendNotificationResultList">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents the result of a SendStandaloneNotificationV3 service call.
                                 &lt;/summary&gt;
@@ -874,11 +865,11 @@
             <xsd:complexType name="NotificationResult">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 A collection of SendStandaloneNotificationReceiverEndpointResults for a Notification.
                                 &lt;/summary&gt;
@@ -890,11 +881,11 @@
                     <xsd:element minOccurs="0" name="EndPoints" nillable="true" type="tns:EndPointResultList">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets list of EndPoints.
                                         &lt;/summary&gt;
@@ -906,11 +897,11 @@
                     <xsd:element minOccurs="0" name="NotificationType" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets Notification Type.
                                         &lt;/summary&gt;
@@ -922,11 +913,11 @@
                     <xsd:element minOccurs="0" name="ReporteeNumber" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets Reportee.
                                         &lt;/summary&gt;
@@ -941,11 +932,11 @@
             <xsd:complexType name="EndPointResultList">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 A collection of ReceiverEndPointResults.
                                 &lt;/summary&gt;
@@ -962,11 +953,11 @@
             <xsd:complexType name="EndPointResult">
                 <xsd:annotation>
                     <xsd:appinfo>
-                        <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                   xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                   z:Id="1"
-                                   i:type="d1p1:Annotation"
-                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                        <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                   xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                   xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                   xmlns:d1p1="XmlCommentsExporter.Annotation">
                             <d1p1:Text z:Id="2">&lt;summary&gt;
                                 Represents a ReceiverEndpoint that received a SendStandaloneNotification.
                                 &lt;/summary&gt;
@@ -978,11 +969,11 @@
                     <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets name of the Reportee
                                         &lt;/summary&gt;
@@ -994,11 +985,11 @@
                     <xsd:element minOccurs="0" name="ReceiverAddress" nillable="true" type="xsd:string">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the ReceiverAddress.
                                         &lt;/summary&gt;
@@ -1010,11 +1001,11 @@
                     <xsd:element minOccurs="0" name="RetrieveFromProfile" nillable="true" type="xsd:boolean">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets a value indicating whether the receiver address was retrieved from
                                         the reportee profile.
@@ -1024,15 +1015,15 @@
                             </xsd:appinfo>
                         </xsd:annotation>
                     </xsd:element>
-                    <xsd:element xmlns:q9="http://schemas.altinn.no/serviceengine/formsengine/2009/10" minOccurs="0" name="TransportType"
-                                 type="q9:TransportType">
+                    <xsd:element minOccurs="0" name="TransportType" type="q9:TransportType"
+                                 xmlns:q9="http://schemas.altinn.no/serviceengine/formsengine/2009/10">
                         <xsd:annotation>
                             <xsd:appinfo>
-                                <Surrogate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
-                                           xmlns:d1p1="XmlCommentsExporter.Annotation"
-                                           z:Id="1"
-                                           i:type="d1p1:Annotation"
-                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                                <Surrogate z:Id="1" i:type="d1p1:Annotation"
+                                           xmlns="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/"
+                                           xmlns:d1p1="XmlCommentsExporter.Annotation">
                                     <d1p1:Text z:Id="2">&lt;summary&gt;
                                         Gets or sets the TransportType.
                                         &lt;/summary&gt;
@@ -1047,14 +1038,14 @@
         </xsd:schema>
     </wsdl:types>
     <wsdl:message name="INotificationAgencyExternalBasic_Test_InputMessage">
-        <wsdl:part xmlns:q10="http://www.altinn.no/services/2009/10" name="parameters" element="q10:Test"/>
+        <wsdl:part name="parameters" element="q10:Test" xmlns:q10="http://www.altinn.no/services/2009/10"/>
     </wsdl:message>
     <wsdl:message name="INotificationAgencyExternalBasic_Test_OutputMessage">
-        <wsdl:part xmlns:q11="http://www.altinn.no/services/2009/10" name="parameters" element="q11:TestResponse"/>
+        <wsdl:part name="parameters" element="q11:TestResponse" xmlns:q11="http://www.altinn.no/services/2009/10"/>
     </wsdl:message>
     <wsdl:message name="INotificationAgencyExternalBasic_Test_AltinnFaultFault_FaultMessage">
-        <wsdl:part xmlns:q12="http://www.altinn.no/services/common/fault/2009/10" name="detail"
-                   element="q12:AltinnFault"/>
+        <wsdl:part name="detail" element="q12:AltinnFault"
+                   xmlns:q12="http://www.altinn.no/services/common/fault/2009/10"/>
     </wsdl:message>
     <wsdl:message name="INotificationAgencyExternalBasic_SendStandaloneNotificationBasic_InputMessage">
         <wsdl:part name="parameters" element="tns:SendStandaloneNotificationBasic"/>
@@ -1063,8 +1054,8 @@
         <wsdl:part name="parameters" element="tns:SendStandaloneNotificationBasicResponse"/>
     </wsdl:message>
     <wsdl:message name="INotificationAgencyExternalBasic_SendStandaloneNotificationBasic_AltinnFaultFault_FaultMessage">
-        <wsdl:part xmlns:q13="http://www.altinn.no/services/common/fault/2009/10" name="detail"
-                   element="q13:AltinnFault"/>
+        <wsdl:part name="detail" element="q13:AltinnFault"
+                   xmlns:q13="http://www.altinn.no/services/common/fault/2009/10"/>
     </wsdl:message>
     <wsdl:message name="INotificationAgencyExternalBasic_SendStandaloneNotificationBasicV2_InputMessage">
         <wsdl:part name="parameters" element="tns:SendStandaloneNotificationBasicV2"/>
@@ -1074,8 +1065,8 @@
     </wsdl:message>
     <wsdl:message
             name="INotificationAgencyExternalBasic_SendStandaloneNotificationBasicV2_AltinnFaultFault_FaultMessage">
-        <wsdl:part xmlns:q14="http://www.altinn.no/services/common/fault/2009/10" name="detail"
-                   element="q14:AltinnFault"/>
+        <wsdl:part name="detail" element="q14:AltinnFault"
+                   xmlns:q14="http://www.altinn.no/services/common/fault/2009/10"/>
     </wsdl:message>
     <wsdl:message name="INotificationAgencyExternalBasic_SendStandaloneNotificationBasicV3_InputMessage">
         <wsdl:part name="parameters" element="tns:SendStandaloneNotificationBasicV3"/>
@@ -1085,8 +1076,8 @@
     </wsdl:message>
     <wsdl:message
             name="INotificationAgencyExternalBasic_SendStandaloneNotificationBasicV3_AltinnFaultFault_FaultMessage">
-        <wsdl:part xmlns:q15="http://www.altinn.no/services/common/fault/2009/10" name="detail"
-                   element="q15:AltinnFault"/>
+        <wsdl:part name="detail" element="q15:AltinnFault"
+                   xmlns:q15="http://www.altinn.no/services/common/fault/2009/10"/>
     </wsdl:message>
     <wsdl:portType name="INotificationAgencyExternalBasic">
         <wsdl:documentation>&lt;summary&gt;&#xD;
@@ -1296,7 +1287,7 @@
     <wsdl:service name="NotificationAgencyExternalBasicSF">
         <wsdl:port name="BasicHttpBinding_INotificationAgencyExternalBasic"
                    binding="tns:BasicHttpBinding_INotificationAgencyExternalBasic">
-            <soap:address location="http://www.altinn.no/ServiceEngineExternal/NotificationAgencyExternalBasic.svc"/>
+            <soap:address location="http://tt02.altinn.no/ServiceEngineExternal/NotificationAgencyExternalBasic.svc"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

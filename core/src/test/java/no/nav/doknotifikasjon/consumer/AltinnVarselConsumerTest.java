@@ -15,7 +15,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
+
 import javax.xml.namespace.QName;
 import java.util.stream.Stream;
 
@@ -65,13 +66,15 @@ public class AltinnVarselConsumerTest {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
 		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
+
+		var altinnFault = new AltinnFault();
+		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", feil.beskrivelse));
+		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
+		altinnFault.setErrorID(feil.feilkode);
+		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
+
 		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
-				"Feil i altinn",
-				new AltinnFault()
-						.withAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", feil.beskrivelse))
-						.withErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"))
-						.withErrorID(feil.feilkode)
-						.withUserGuid(constructJaxbElement("UserGuid", "abcdef"))
+				"Feil i altinn", altinnFault
 		);
 		doThrow(altinnException)
 				.when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
@@ -91,13 +94,13 @@ public class AltinnVarselConsumerTest {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
 		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
+		AltinnFault altinnFault = new AltinnFault();
+		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", beskrivelse));
+		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
+		altinnFault.setErrorID(feilkode);
+		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
 		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
-				"Feil i altinn",
-				new AltinnFault()
-						.withAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", beskrivelse))
-						.withErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"))
-						.withErrorID(feilkode)
-						.withUserGuid(constructJaxbElement("UserGuid", "abcdef"))
+				"Feil i altinn", altinnFault
 		);
 
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any())).thenThrow(altinnException);

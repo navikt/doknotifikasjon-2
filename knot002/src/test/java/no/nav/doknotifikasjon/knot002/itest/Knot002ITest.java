@@ -140,13 +140,15 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 
 	@Test
 	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		var altinnFault = new AltinnFault();
+		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", "Ugyldig norsk mobiltelefonnummer."));
+		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
+		altinnFault.setErrorID(30303);
+		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
+
 		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
 				"Feil i altinn",
-				new AltinnFault()
-						.withAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", "Ugyldig norsk mobiltelefonnummer."))
-						.withErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"))
-						.withErrorID(30303)
-						.withUserGuid(constructJaxbElement("UserGuid", "abcdef"))
+				altinnFault
 		);
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));

@@ -8,6 +8,7 @@ import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.security.AzureToken;
 import no.nav.doknotifikasjon.security.WebClientAzureAuthentication;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -78,7 +79,7 @@ public class DigitalKontaktinfoConsumer {
 					String.format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
 							response.getRawStatusCode(),
 							response.getMessage()),
-					error, response.getStatusCode());
+					error, (HttpStatus) response.getStatusCode());
 		} else {
 			throw new DigitalKontaktinformasjonTechnicalException(
 					String.format("Kall mot Digdir-krr-proxy feilet med feilmelding=%s", error.getMessage()),

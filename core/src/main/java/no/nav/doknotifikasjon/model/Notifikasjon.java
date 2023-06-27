@@ -6,7 +6,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +24,7 @@ public class Notifikasjon implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notifikasjonIdSeq")
 	@GenericGenerator(name = "notifikasjonIdSeq", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+			@Parameter(name = "increment_size", value = "1"),
 			@Parameter(name = "sequence_name", value = "NOTIFIKASJON_ID_SEQ")
 	})
 	@Column(name = "ID")

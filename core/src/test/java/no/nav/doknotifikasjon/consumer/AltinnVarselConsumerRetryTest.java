@@ -48,11 +48,12 @@ public class AltinnVarselConsumerRetryTest {
 	@ParameterizedTest
 	@ValueSource(ints = {0, 44})
 	void shouldRetryIfTechnicalError(Integer feilkode) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		var altinnFault = new AltinnFault();
+		altinnFault.setErrorID(feilkode);
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any()))
 				.thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
-						"Feil i altinn",
-						new AltinnFault().withErrorID(feilkode))
-				);
+						"Feil i altinn", altinnFault
+						));
 
 		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 
@@ -62,10 +63,12 @@ public class AltinnVarselConsumerRetryTest {
 	@ParameterizedTest
 	@EnumSource(AltinnFunksjonellFeil.class)
 	void shouldNotRetryIfFunctionalError(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		var altinnFault = new AltinnFault();
+		altinnFault.setErrorID(feil.feilkode);
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any()))
 				.thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
 						"Feil i altinn",
-						new AltinnFault().withErrorID(feil.feilkode))
+						altinnFault)
 				);
 
 		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
