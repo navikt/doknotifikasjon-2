@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>app</module>
+		<module>altinn-schemas</module>
 		<module>core</module>
 		<module>knot001</module>
 		<module>knot002</module>
@@ -56,6 +57,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>altinn-schemas</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>no.nav.doknotifikasjon</groupId>
 				<artifactId>core</artifactId>
