@@ -36,7 +36,7 @@
 		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
 		<apache-cxf.version>4.0.2</apache-cxf.version>
 		<commons-validator.version>1.7</commons-validator.version>
-		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
 
 		<!-- Dersom confluent blir oppgradert bør også teamdokumenthandtering-avro-schemas sin avro-versjon bli det for å være i synk med confluent -->
 		<!-- Confluent-versjon 7.4.0 av kafka-avro-serializer bruker avro-versjon 1.11.0 -->
@@ -139,8 +139,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
-				<artifactId>springdoc-openapi-ui</artifactId>
-				<version>${springdoc-openapi-ui.version}</version>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
 			</dependency>
 
 			<!-- Kafka -->
