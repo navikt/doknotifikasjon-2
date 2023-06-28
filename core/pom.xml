@@ -33,14 +33,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>no.nav.tjenestespesifikasjoner</groupId>
-			<artifactId>altinn-notification-agency-external-basic</artifactId>
-		</dependency>
-		-->
-
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
