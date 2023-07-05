@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>app</module>
+		<module>altinn-schemas</module>
 		<module>core</module>
 		<module>knot001</module>
 		<module>knot002</module>
@@ -27,35 +28,40 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.12</version>
+		<version>3.1.1</version>
 	</parent>
 
 	<properties>
 		<java.version>17</java.version>
 
-		<logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
-		<apache-cxf.version>3.6.0</apache-cxf.version>
+		<logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+		<apache-cxf.version>4.0.2</apache-cxf.version>
 		<commons-validator.version>1.7</commons-validator.version>
-		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
 
 		<!-- Dersom confluent blir oppgradert bør også teamdokumenthandtering-avro-schemas sin avro-versjon bli det for å være i synk med confluent -->
 		<!-- Confluent-versjon 7.4.0 av kafka-avro-serializer bruker avro-versjon 1.11.0 -->
 		<confluent.version>7.4.0</confluent.version>
 		<teamdokumenthandtering-avro-schemas.version>357738b9</teamdokumenthandtering-avro-schemas.version>
 
-		<tjenestespesifikasjon.version>1.2019.09.25-00.21-49b69f0625e0</tjenestespesifikasjon.version>
 		<vault-jdbc.version>1.3.9</vault-jdbc.version>
-		<token-support.version>2.1.9</token-support.version>
+		<token-support.version>3.1.0</token-support.version>
 
 		<!-- Test -->
-		<spring-cloud-contract-wiremock.version>3.1.7</spring-cloud-contract-wiremock.version>
+		<spring-cloud-contract-wiremock.version>4.0.3</spring-cloud-contract-wiremock.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
+		<cxf-codegen-plugin.version>4.0.2</cxf-codegen-plugin.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>no.nav.doknotifikasjon</groupId>
+				<artifactId>altinn-schemas</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>no.nav.doknotifikasjon</groupId>
 				<artifactId>core</artifactId>
@@ -111,13 +117,6 @@
 				<artifactId>rnot002</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
-			<dependency>
-				<groupId>no.nav.tjenestespesifikasjoner</groupId>
-				<artifactId>altinn-notification-agency-external-basic</artifactId>
-				<version>${tjenestespesifikasjon.version}</version>
-			</dependency>
-
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-bom</artifactId>
@@ -137,8 +136,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springdoc</groupId>
-				<artifactId>springdoc-openapi-ui</artifactId>
-				<version>${springdoc-openapi-ui.version}</version>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
 			</dependency>
 
 			<!-- Kafka -->
@@ -194,6 +193,15 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.cxf</groupId>
+					<artifactId>cxf-codegen-plugin</artifactId>
+					<version>${cxf-codegen-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

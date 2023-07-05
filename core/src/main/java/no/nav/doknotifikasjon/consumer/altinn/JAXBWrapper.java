@@ -1,6 +1,7 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
+
 import javax.xml.namespace.QName;
 
 public class JAXBWrapper {

@@ -23,7 +23,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.soap.SoapFaultException;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -64,15 +64,17 @@ public class AltinnVarselConsumer {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
 			return;
 		}
-		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList().withStandaloneNotification(
-				new StandaloneNotification()
-						.withReporteeNumber(ns("ReporteeNumber", fnr))
-						.withLanguageID(1044)
-						.withNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE))
-						.withReceiverEndPoints(generateEndpoint(kanal, kontaktInfo))
-						.withTextTokens(generateTextTokens(kanal, tekst, tittel))
-						.withFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV))
-						.withUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true)));
+		StandaloneNotification standaloneNotificationItem = new StandaloneNotification();
+		standaloneNotificationItem.setReporteeNumber(ns("ReporteeNumber", fnr));
+		standaloneNotificationItem.setLanguageID(1044);
+		standaloneNotificationItem.setNotificationType(ns("NotificationType", DEFAULTNOTIFICATIONTYPE));
+		standaloneNotificationItem.setReceiverEndPoints(generateEndpoint(kanal, kontaktInfo));
+		standaloneNotificationItem.setTextTokens(generateTextTokens(kanal, tekst, tittel));
+		standaloneNotificationItem.setFromAddress(ns("FromAddress", IKKE_BESVAR_DENNE_NAV));
+		standaloneNotificationItem.setUseServiceOwnerShortNameAsSenderOfSms(ns("UseServiceOwnerShortNameAsSenderOfSms", true));
+
+		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList();
+		standaloneNotification.getStandaloneNotification().add(standaloneNotificationItem);
 		try {
 			iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
 					altinnProps.getUsername(),
@@ -123,41 +125,49 @@ public class AltinnVarselConsumer {
 	}
 
 	private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
+		var receiverEndPoint = new ReceiverEndPoint();
+		receiverEndPoint.setReceiverAddress(ns("ReceiverAddress", kontaktInfo));
+		receiverEndPoint.setTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal)));
+		ReceiverEndPointBEList receiverEndPointBEList = new ReceiverEndPointBEList();
+		receiverEndPointBEList.getReceiverEndPoint().add(receiverEndPoint);
 		return ns(
 				"ReceiverEndPoints",
 				ReceiverEndPointBEList.class,
-				new ReceiverEndPointBEList()
-						.withReceiverEndPoint(
-								new ReceiverEndPoint()
-										.withReceiverAddress(ns("ReceiverAddress", kontaktInfo))
-										.withTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal))))
+				receiverEndPointBEList
 		);
 	}
 
 	private JAXBElement<TextTokenSubstitutionBEList> generateTextTokens(Kanal kanal, String tekst, String tittel) {
 		if (kanal == SMS) {
+			var textToken1 = new TextToken();
+			textToken1.setTokenNum(0);
+			textToken1.setTokenValue(ns(TOKEN_VALUE, tekst));
+			var textToken2 = new TextToken();
+			textToken2.setTokenNum(1);
+			textToken2.setTokenValue(ns(TOKEN_VALUE, ""));
+
+			var textTokenSubstitutionBEList = new TextTokenSubstitutionBEList();
+			textTokenSubstitutionBEList.getTextToken().add(textToken1);
+			textTokenSubstitutionBEList.getTextToken().add(textToken2);
 			return ns("TextTokens",
 					TextTokenSubstitutionBEList.class,
-					new TextTokenSubstitutionBEList().withTextToken(List.of(
-							new TextToken()
-									.withTokenNum(0)
-									.withTokenValue(ns(TOKEN_VALUE, tekst)),
-							new TextToken()
-									.withTokenNum(1)
-									.withTokenValue(ns(TOKEN_VALUE, ""))
-					)));
+					textTokenSubstitutionBEList
+					);
 		}
 		if (kanal == EPOST) {
+			var textToken1 = new TextToken();
+			textToken1.setTokenNum(0);
+			textToken1.setTokenValue(ns(TOKEN_VALUE, tittel));
+			var textToken2 = new TextToken();
+			textToken2.setTokenNum(1);
+			textToken2.setTokenValue(ns(TOKEN_VALUE, tekst));
+
+			var textTokenSubstitutionBEList = new TextTokenSubstitutionBEList();
+			textTokenSubstitutionBEList.getTextToken().add(textToken1);
+			textTokenSubstitutionBEList.getTextToken().add(textToken2);
 			return ns("TextTokens",
 					TextTokenSubstitutionBEList.class,
-					new TextTokenSubstitutionBEList().withTextToken(List.of(
-							new TextToken()
-									.withTokenNum(0)
-									.withTokenValue(ns(TOKEN_VALUE, tittel)),
-							new TextToken()
-									.withTokenNum(1)
-									.withTokenValue(ns(TOKEN_VALUE, tekst))
-					)));
+					textTokenSubstitutionBEList);
 		}
 		throw new AltinnFunctionalException("Funksjonell feil mot Altinn: Kanal er verken epost eller sms.");
 	}

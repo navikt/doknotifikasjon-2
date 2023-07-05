@@ -59,23 +59,27 @@ public final class TestUtils {
 	}
 
 	public static SendNotificationResultList generateAltinnResponse(TransportType transportType, String kontaktinfo) {
-		return new SendNotificationResultList()
-				.withNotificationResult(
-						new NotificationResult()
-								.withEndPoints(
-										ns(
-												"EndPointResultList",
-												EndPointResultList.class,
-												new EndPointResultList()
-														.withEndPointResult(
-																new EndPointResult()
-																		.withName(ns("Name", "Knot To"))
-																		.withReceiverAddress(ns("ReceiverAddress", kontaktinfo))
-																		.withTransportType(transportType)
-														)
-										)
-								)
-								.withNotificationType(ns("NotificationType", "TokenTextOnly"))
-				);
+		var endPointResult = new EndPointResult();
+		endPointResult.setName(ns("Name", "Knot To"));
+		endPointResult.setReceiverAddress(ns("ReceiverAddress", kontaktinfo));
+		endPointResult.setTransportType(transportType);
+
+		var endPointResultList = new EndPointResultList();
+		endPointResultList.getEndPointResult().add(endPointResult);
+
+		var notificationResult =
+				new NotificationResult();
+		notificationResult.setEndPoints(
+				ns(
+						"EndPointResultList",
+						EndPointResultList.class,
+						endPointResultList
+				)
+		);
+		notificationResult.setNotificationType(ns("NotificationType", "TokenTextOnly"));
+
+		SendNotificationResultList sendNotificationResultList = new SendNotificationResultList();
+		sendNotificationResultList.getNotificationResult().add(notificationResult);
+		return sendNotificationResultList;
 	}
 }

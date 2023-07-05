@@ -137,7 +137,7 @@ public class Rnot002ITest {
 
 		webTestClient
 				.post()
-				.uri("/rest/v1/kanvarsles/")
+				.uri("/rest/v1/kanvarsles")
 				.headers((headers) -> headers.setBearerAuth(jwt()))
 				.bodyValue(KANVARSLES_REQUEST)
 				.exchange()
