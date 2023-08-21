@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.consumer;
 
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
@@ -31,18 +30,7 @@ public final class TestUtils {
 	}
 
 	public static Doknotifikasjon createDoknotifikasjon() {
-		return new Doknotifikasjon(
-				BESTILLINGS_ID,
-				BESTILLER_ID,
-				SIKKERHETSNIVAA,
-				FODSELSNUMMER,
-				ANTALL_RENOTIFIKASJONER,
-				RENOTIFIKASJON_INTERVALL,
-				TITTEL,
-				EPOST_TEKST,
-				EPOST_SMS,
-				PREFERTE_KANALER
-		);
+		return createDoknotifikasjonWithSikkerhetsnivaa(SIKKERHETSNIVAA);
 	}
 
 	public static Doknotifikasjon createDoknotifikasjonWithInvalidFnr() {
@@ -181,10 +169,6 @@ public final class TestUtils {
 			boolean reservert
 	) {
 		return new DigitalKontaktinfo(epost, varsel, sms, reservert);
-	}
-
-	public static AuthLevelResponse createAuthLevelResponse() {
-		return new AuthLevelResponse(true, FODSELSNUMMER);
 	}
 
 }

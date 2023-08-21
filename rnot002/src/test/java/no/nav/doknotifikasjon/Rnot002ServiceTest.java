@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import java.util.stream.Stream;
 
 import static no.nav.doknotifikasjon.TestUtils.createDigitalKontaktinformasjonInfo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,32 +31,17 @@ class Rnot002ServiceTest {
 	@Mock
 	DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;
 
-	@Mock
-	SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
-
 	@InjectMocks
 	Rnot002Service rnot002Service;
 
-	@ParameterizedTest
-	@MethodSource
-	void kanVarslesMedSikkerhetsnivaa(boolean harBruktSikkerhetsnivaa4, int sikkerhetsnivaa) {
+	@Test
+	void kanVarsles() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfoForPerson(PERSONIDENT))
 				.thenReturn(createDigitalKontaktinformasjonInfo(true, false, EPOST, SMS));
-
-		when(sikkerhetsnivaaConsumer.lookupAuthLevel(PERSONIDENT))
-				.thenReturn(TestUtils.createAuthLevelResponse(harBruktSikkerhetsnivaa4));
 
 		var result = rnot002Service.getKanVarsles(PERSONIDENT);
 
 		assertTrue(result.kanVarsles());
-		assertEquals(sikkerhetsnivaa, result.sikkerhetsnivaa());
-	}
-
-	public static Stream<Arguments> kanVarslesMedSikkerhetsnivaa() {
-		return Stream.of(
-				Arguments.of(true, 4),
-				Arguments.of(false, 3)
-		);
 	}
 
 	@ParameterizedTest
@@ -73,7 +57,6 @@ class Rnot002ServiceTest {
 		var result = rnot002Service.getKanVarsles(PERSONIDENT);
 
 		assertFalse(result.kanVarsles());
-		assertEquals(3, result.sikkerhetsnivaa());
 	}
 
 	public static Stream<Arguments> kanIkkeVarsles() {
@@ -96,7 +79,6 @@ class Rnot002ServiceTest {
 		var result = rnot002Service.getKanVarsles(PERSONIDENT);
 
 		assertFalse(result.kanVarsles());
-		assertEquals(3, result.sikkerhetsnivaa());
 	}
 
 	@ParameterizedTest

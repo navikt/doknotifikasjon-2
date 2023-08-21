@@ -4,13 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoUserReservedAgainstCommFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -30,8 +27,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
@@ -51,26 +46,21 @@ public class Knot001Service {
 	private final NotifikasjonService notifikasjonService;
 	private final KafkaEventProducer producer;
 	private final DigitalKontaktinfoConsumer kontaktinfoConsumer;
-	private final SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
 
 	Knot001Service(
 			DigitalKontaktinfoConsumer kontaktinfoConsumer,
 			KafkaEventProducer producer,
 			NotifikasjonService notifikasjonService,
-			KafkaStatusEventProducer statusProducer,
-			SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer
+			KafkaStatusEventProducer statusProducer
 	) {
 		this.statusProducer = statusProducer;
 		this.notifikasjonService = notifikasjonService;
 		this.producer = producer;
 		this.kontaktinfoConsumer = kontaktinfoConsumer;
-		this.sikkerhetsnivaaConsumer = sikkerhetsnivaaConsumer;
 	}
 
 	public void processDoknotifikasjon(DoknotifikasjonTO doknotifikasjon) {
 		log.info("Knot001 begynner med prossesering av kafka event med bestillingsId={}", doknotifikasjon.getBestillingsId());
-
-		this.checkSikkerhetsnivaa(doknotifikasjon);
 
 		DigitalKontaktinfo kontaktinfo = this.getKontaktInfoByFnr(doknotifikasjon);
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon, kontaktinfo);
@@ -148,33 +138,6 @@ public class Knot001Service {
 				null
 		);
 		throw exceptionSupplier.get();
-	}
-
-	public void checkSikkerhetsnivaa(DoknotifikasjonTO doknotifikasjonTO) {
-		if (doknotifikasjonTO.getSikkerhetsnivaa() == 4) {
-			AuthLevelResponse authLevelResponse;
-			try {
-				log.info("Knot001 gjør oppslag mot sikkerhetsnivaa for hendelse med bestillingsId={}", doknotifikasjonTO.getBestillingsId());
-				authLevelResponse = sikkerhetsnivaaConsumer.lookupAuthLevel(doknotifikasjonTO.getFodselsnummer());
-			} catch (SikkerhetsnivaaFunctionalException exception) {
-				statusProducer.publishDoknotifikasjonStatusFeilet(
-						doknotifikasjonTO.getBestillingsId(),
-						doknotifikasjonTO.getBestillerId(),
-						FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
-						null
-				);
-				log.debug("Problemer med å hente sikkerhetsnivaa for bestillingsId={}. Feilmelding: {}", doknotifikasjonTO.getBestillingsId(), exception.getMessage());
-				throw exception;
-			}
-			if (!authLevelResponse.isHarbruktnivaa4()) {
-				statusProducer.publishDoknotifikasjonStatusFeilet(
-						doknotifikasjonTO.getBestillingsId(),
-						doknotifikasjonTO.getBestillerId(),
-						FEILET_SIKKERHETSNIVAA,
-						null);
-				throw new SikkerhetsnivaaFunctionalException(FEILET_SIKKERHETSNIVAA);
-			}
-		}
 	}
 
 	public Notifikasjon createNotifikasjonByDoknotifikasjonTO(DoknotifikasjonTO doknotifikasjon, DigitalKontaktinfo kontaktinformasjon) {

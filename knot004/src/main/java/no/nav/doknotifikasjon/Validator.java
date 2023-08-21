@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
@@ -23,8 +21,6 @@ import static no.nav.doknotifikasjon.kodeverk.Status.INFO;
 public class Validator {
 
 	private static final List<String> feilmeldingerSomIkkeSkalBliProsessert = List.of(
-			FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA,
-			FEILET_SIKKERHETSNIVAA,
 			FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY,
 			FEILET_TECHNICAL_EXCEPTION_DATABASE,
 			FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET,

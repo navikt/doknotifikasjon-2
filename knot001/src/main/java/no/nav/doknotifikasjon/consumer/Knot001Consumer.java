@@ -9,12 +9,10 @@ import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBExce
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoUserReservedAgainstCommFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.SikkerhetsnivaaFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -81,9 +79,6 @@ public class Knot001Consumer {
 			metricService.metricHandleException(e);
 		} catch (DigitalKontaktinformasjonFunctionalException e) {
 			log.warn("Funksjonell feil mot Digdir KRR Proxy. Feilmelding={}", e.getMessage());
-			metricService.metricHandleException(e);
-		} catch (SikkerhetsnivaaFunctionalException e) {
-			log.info("Sjekk mot sikkerhetsnivaa feilet: Mottaker har ikke tilgang til login på nivå 4. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DataIntegrityViolationException e) {
 			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());

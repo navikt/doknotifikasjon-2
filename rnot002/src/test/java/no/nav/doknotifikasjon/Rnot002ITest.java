@@ -19,14 +19,10 @@ import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,13 +60,11 @@ public class Rnot002ITest {
 	@Test
 	void shouldReturnKanVarsles() {
 		stubDigdirKRRProxyHappy();
-		stubSikkerhetsnivaaWithBodyFile("sikkerhetsnivaa3.json");
 
 		var response = getKanVarsles();
 
 		assertNotNull(response);
 		assertTrue(response.kanVarsles());
-		assertEquals(3, response.sikkerhetsnivaa());
 	}
 
 	@Test
@@ -127,8 +121,6 @@ public class Rnot002ITest {
 
 		assertNotNull(response);
 		assertFalse(response.kanVarsles());
-		verify(0, getRequestedFor(urlEqualTo("/sikkerhetsnivaa")));
-		assertEquals(3, response.sikkerhetsnivaa());
 	}
 
 	@Test
@@ -144,18 +136,6 @@ public class Rnot002ITest {
 				.expectStatus().is5xxServerError();
 	}
 
-
-	@Test
-	void shouldReturnSikkerhetsnivaa4() {
-		stubDigdirKRRProxyHappy();
-		stubSikkerhetsnivaaWithBodyFile("sikkerhetsnivaa4.json");
-
-		var response = getKanVarsles();
-
-		assertNotNull(response);
-		assertTrue(response.kanVarsles());
-		assertEquals(4, response.sikkerhetsnivaa());
-	}
 
 	private KanVarslesResponse getKanVarsles() {
 
@@ -211,11 +191,5 @@ public class Rnot002ITest {
 		stubFor(get(urlEqualTo("/digdir_krr_proxy/rest/v1/person"))
 				.willReturn(aResponse()
 						.withStatus(httpStatus.value())));
-	}
-
-	private void stubSikkerhetsnivaaWithBodyFile(String bodyfile) {
-		stubFor(post("/sikkerhetsnivaa").willReturn(aResponse().withStatus(OK.value())
-				.withHeader(CONTENT_TYPE, APPLICATION_JSON.getMimeType())
-				.withBodyFile(bodyfile)));
 	}
 }
