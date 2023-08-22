@@ -143,10 +143,9 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		});
 	}
 
-	@ParameterizedTest
-	@ValueSource(ints = {0, 3, 4})
-	void shouldCreateNotifikasjonDistribusjonForBothSmsAndEpost(int sikkerhetsnivaa) {
-		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjonWithSikkerhetsnivaa(sikkerhetsnivaa);
+	@Test
+	void shouldCreateNotifikasjonDistribusjonForBothSmsAndEpost() {
+		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 
 		this.stubGetKontaktInfo("digdir_krr_proxy_happy.json");
 		this.putMessageOnKafkaTopic(doknotifikasjon);

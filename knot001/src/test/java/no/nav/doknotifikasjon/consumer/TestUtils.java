@@ -16,7 +16,7 @@ public final class TestUtils {
 	public static final String BESTILLINGS_ID = "bestillingsId";
 	public static final String BESTILLER_ID = "bestillerId";
 	public static final String FODSELSNUMMER = "12345678901";
-	public static final int SIKKERHETSNIVAA = 0;
+	public static final int SIKKERHETSNIVAA_ER_DEPRECATED = 0;
 	public static final int ANTALL_RENOTIFIKASJONER = 20;
 	public static final int RENOTIFIKASJON_INTERVALL = 20;
 	public static final String TITTEL = "tittel";
@@ -30,14 +30,25 @@ public final class TestUtils {
 	}
 
 	public static Doknotifikasjon createDoknotifikasjon() {
-		return createDoknotifikasjonWithSikkerhetsnivaa(SIKKERHETSNIVAA);
+		return new Doknotifikasjon(
+				BESTILLINGS_ID,
+				BESTILLER_ID,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
+				FODSELSNUMMER,
+				ANTALL_RENOTIFIKASJONER,
+				RENOTIFIKASJON_INTERVALL,
+				TITTEL,
+				EPOST_TEKST,
+				EPOST_SMS,
+				PREFERTE_KANALER
+		);
 	}
 
 	public static Doknotifikasjon createDoknotifikasjonWithInvalidFnr() {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				"123",
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -52,7 +63,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -67,7 +78,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				0,
@@ -89,23 +100,7 @@ public final class TestUtils {
 				TITTEL,
 				EPOST_TEKST,
 				EPOST_SMS,
-				PREFERTE_KANALER_TO,
-				SIKKERHETSNIVAA
-		);
-	}
-
-	public static Doknotifikasjon createDoknotifikasjonWithSikkerhetsnivaa(int sikkerhetsnivaa) {
-		return new Doknotifikasjon(
-				BESTILLINGS_ID,
-				BESTILLER_ID,
-				sikkerhetsnivaa,
-				FODSELSNUMMER,
-				ANTALL_RENOTIFIKASJONER,
-				RENOTIFIKASJON_INTERVALL,
-				TITTEL,
-				EPOST_TEKST,
-				EPOST_SMS,
-				PREFERTE_KANALER
+				PREFERTE_KANALER_TO
 		);
 	}
 
