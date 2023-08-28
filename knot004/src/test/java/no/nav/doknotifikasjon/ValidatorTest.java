@@ -9,8 +9,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA;
-import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SIKKERHETSNIVAA;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_DOES_NOT_HAVE_VALID_CONTACT_INFORMATION;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET;
@@ -91,9 +89,7 @@ public class ValidatorTest {
 
 	private static Stream<Arguments> hentFeilmeldinger() {
 		return Stream.of(
-				Arguments.of(FEILET_SIKKERHETSNIVAA, true),
 				Arguments.of(FEILET_TECHNICAL_EXCEPTION_DATABASE, true),
-				Arguments.of(FEILET_FUNCTIONAL_EXCEPTION_SIKKERHETSNIVAA, true),
 				Arguments.of(FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY, true),
 				Arguments.of(FEILET_USER_NOT_FOUND_IN_RESERVASJONSREGISTERET, true),
 				Arguments.of(FEILET_USER_RESERVED_AGAINST_DIGITAL_CONTACT, true),

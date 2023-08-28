@@ -14,8 +14,6 @@ public class MetricName {
 	public static final String DOK_KNOT006_CONSUMER = "dok_knot006_consumer";
 	public static final String DOK_KNOT006_BEHANDLET = "dok_knot006_behandlet";
 	public static final String DOK_DIGDIR_KRR_PROXY_CONSUMER = "dok_digdir_krr_proxy_consumer";
-	public static final String DOK_SIKKERHETSNIVAA_CONSUMER = "dok_sikkerhetsnivaa_consumer";
-	public static final String DOK_STS_CONSUMER = "dok_sts_consumer";
 	public static final String DOK_ALTIN_CONSUMER = "dok_altin_consumer";
 	public static final String DOK_EXCEPTION = "dok_exception";
 

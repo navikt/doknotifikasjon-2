@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.KontaktinfoTo;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 
 public class TestUtils {
 
@@ -23,10 +22,6 @@ public class TestUtils {
 			String sms
 	) {
 		return new KontaktinfoTo(varsel, reservert, epost, sms);
-	}
-
-	public static AuthLevelResponse createAuthLevelResponse(boolean harBruktSikkerhetsnivaa4) {
-		return new AuthLevelResponse(harBruktSikkerhetsnivaa4, FODSELSNUMMER);
 	}
 
 }

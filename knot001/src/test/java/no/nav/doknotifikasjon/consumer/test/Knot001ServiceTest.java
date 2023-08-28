@@ -4,7 +4,6 @@ import no.nav.doknotifikasjon.consumer.DoknotifikasjonTO;
 import no.nav.doknotifikasjon.consumer.Knot001Service;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.SikkerhetsnivaaConsumer;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoUserReservedAgainstCommFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.KontaktInfoValidationFunctionalException;
@@ -54,9 +53,6 @@ class Knot001ServiceTest {
 
 	@MockBean
 	KafkaEventProducer producer;
-
-	@MockBean
-	SikkerhetsnivaaConsumer sikkerhetsnivaaConsumer;
 
 	@Test
 	void shouldGetValidKontaktInfoWhenSendingWithValidFnr() {

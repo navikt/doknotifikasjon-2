@@ -41,7 +41,7 @@ public class Rnot002Controller {
 	@ApiResponses(value = {
 			@ApiResponse(
 					responseCode = "200",
-					description = "Returnerer informasjon om en person kan varsles med tilhørende sikkerhetsnivå.",
+					description = "Returnerer informasjon om en person kan varsles.",
 					content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = KanVarslesResponse.class))}
 			),
 			@ApiResponse(

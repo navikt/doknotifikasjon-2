@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon.consumer;
 
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
-import no.nav.doknotifikasjon.consumer.sikkerhetsnivaa.AuthLevelResponse;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import no.nav.doknotifikasjon.schemas.PrefererteKanal;
@@ -17,7 +16,7 @@ public final class TestUtils {
 	public static final String BESTILLINGS_ID = "bestillingsId";
 	public static final String BESTILLER_ID = "bestillerId";
 	public static final String FODSELSNUMMER = "12345678901";
-	public static final int SIKKERHETSNIVAA = 0;
+	public static final int SIKKERHETSNIVAA_ER_DEPRECATED = 0;
 	public static final int ANTALL_RENOTIFIKASJONER = 20;
 	public static final int RENOTIFIKASJON_INTERVALL = 20;
 	public static final String TITTEL = "tittel";
@@ -34,7 +33,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -49,7 +48,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				"123",
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -64,7 +63,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				RENOTIFIKASJON_INTERVALL,
@@ -79,7 +78,7 @@ public final class TestUtils {
 		return new Doknotifikasjon(
 				BESTILLINGS_ID,
 				BESTILLER_ID,
-				SIKKERHETSNIVAA,
+				SIKKERHETSNIVAA_ER_DEPRECATED,
 				FODSELSNUMMER,
 				ANTALL_RENOTIFIKASJONER,
 				0,
@@ -101,23 +100,7 @@ public final class TestUtils {
 				TITTEL,
 				EPOST_TEKST,
 				EPOST_SMS,
-				PREFERTE_KANALER_TO,
-				SIKKERHETSNIVAA
-		);
-	}
-
-	public static Doknotifikasjon createDoknotifikasjonWithSikkerhetsnivaa(int sikkerhetsnivaa) {
-		return new Doknotifikasjon(
-				BESTILLINGS_ID,
-				BESTILLER_ID,
-				sikkerhetsnivaa,
-				FODSELSNUMMER,
-				ANTALL_RENOTIFIKASJONER,
-				RENOTIFIKASJON_INTERVALL,
-				TITTEL,
-				EPOST_TEKST,
-				EPOST_SMS,
-				PREFERTE_KANALER
+				PREFERTE_KANALER_TO
 		);
 	}
 
@@ -181,10 +164,6 @@ public final class TestUtils {
 			boolean reservert
 	) {
 		return new DigitalKontaktinfo(epost, varsel, sms, reservert);
-	}
-
-	public static AuthLevelResponse createAuthLevelResponse() {
-		return new AuthLevelResponse(true, FODSELSNUMMER);
 	}
 
 }

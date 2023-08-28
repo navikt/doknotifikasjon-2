@@ -18,5 +18,4 @@ public class DoknotifikasjonTO {
 	String epostTekst;
 	String smsTekst;
 	List<Kanal> prefererteKanaler;
-	int sikkerhetsnivaa;
 }

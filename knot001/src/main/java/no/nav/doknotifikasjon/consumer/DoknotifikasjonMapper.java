@@ -24,7 +24,6 @@ public class DoknotifikasjonMapper {
 				.epostTekst(doknotifikasjon.getEpostTekst())
 				.smsTekst(doknotifikasjon.getSmsTekst())
 				.prefererteKanaler(this.setDefaultPrefererteKanaler(doknotifikasjon.getPrefererteKanaler()))
-				.sikkerhetsnivaa(doknotifikasjon.getSikkerhetsnivaa())
 				.build();
 	}
 
