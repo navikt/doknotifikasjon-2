@@ -6,8 +6,4 @@ public class NotifikasjonFerdigstiltFunctionalException extends AbstractDoknotif
 	public NotifikasjonFerdigstiltFunctionalException(String message) {
 		super(message);
 	}
-
-	public NotifikasjonFerdigstiltFunctionalException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }

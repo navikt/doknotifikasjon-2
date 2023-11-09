@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static no.nav.doknotifikasjon.consumer.sts.STSConfigUtil.configureStsRequestSamlToken;
+
 @Component
 @Profile({"nais", "local"})
 public class STSConfig {
@@ -21,6 +23,6 @@ public class STSConfig {
 
     public void configureSTS(Object port) {
         Client client = ClientProxy.getClient(port);
-        STSConfigUtil.configureStsRequestSamlToken(client, stsUrl, serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
+        configureStsRequestSamlToken(client, stsUrl, serviceuserAlias.getUsername(), serviceuserAlias.getPassword());
     }
 }

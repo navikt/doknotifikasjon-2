@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public record Mobiltelefonnummer(String mobiltelefonnummer) {
+
 	private static final String REGEX_NORSK_MOBILTELEFONNUMMER = "^((0047)?|(\\+47)?)[4|9]\\d{7}$";
 	private static final String REGEX_INTERNASJONALT_TELEFONNUMMER = "^(?:00|\\+)(?!47|0)[-0-9]+";
 	private static final Pattern PATTERN_NORSK_MOBILTELEFONNUMMER = Pattern.compile(REGEX_NORSK_MOBILTELEFONNUMMER);

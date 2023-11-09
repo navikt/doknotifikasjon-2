@@ -47,13 +47,12 @@ public class KafkaStatusEventProducer {
 	public void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
 											 Status status, String melding, Long distribusjonId) {
 		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
+
 		this.publishDoknotifikasjonStatus(doknotifikasjonStatus);
 	}
 
 	public void publishDoknotifikasjonStatus(DoknotifikasjonStatus doknotifikasjonStatus) {
-		producer.publish(
-				KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
-				doknotifikasjonStatus
-		);
+
+		producer.publish(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS, doknotifikasjonStatus);
 	}
 }

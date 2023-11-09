@@ -7,6 +7,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 @Slf4j
 public record Epostadresse(String epostadresse) {
+
 	private static final int MAKS_LENGDE_EPOST_BRUKERNAVN = 50;
 	private static final EmailValidator emailValidator = EmailValidator.getInstance();
 

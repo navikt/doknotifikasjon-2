@@ -5,8 +5,4 @@ public class UgyldigEpostException extends AbstractDoknotifikasjonFunctionalExce
 	public UgyldigEpostException(String message) {
 		super(message);
 	}
-
-	public UgyldigEpostException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }
