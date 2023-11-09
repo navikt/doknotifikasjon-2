@@ -5,8 +5,4 @@ public class UgyldigMobiltelefonnummerException extends AbstractDoknotifikasjonF
 	public UgyldigMobiltelefonnummerException(String message) {
 		super(message);
 	}
-
-	public UgyldigMobiltelefonnummerException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }

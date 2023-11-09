@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CALL_ID;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.getDefaultUuidIfNoCallIdIsSett;
@@ -39,7 +40,7 @@ public class DigitalKontaktinfoConsumer {
 	}
 
 	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true, errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class)
-	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(retryFor = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
 	public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
 
 		var fnrTrimmed = personidentifikator.trim();
@@ -58,7 +59,7 @@ public class DigitalKontaktinfoConsumer {
 	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true,
 			errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class,
 			logExceptions = false)
-	@Retryable(include = DigitalKontaktinformasjonTechnicalException.class)
+	@Retryable(retryFor = DigitalKontaktinformasjonTechnicalException.class)
 	public KontaktinfoTo hentDigitalKontaktinfoForPerson(final String personidentifikator) {
 
 		var fnrTrimmed = personidentifikator.trim();
@@ -76,14 +77,11 @@ public class DigitalKontaktinfoConsumer {
 	private void handleError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
 			throw new DigitalKontaktinformasjonFunctionalException(
-					String.format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
-							response.getRawStatusCode(),
-							response.getMessage()),
-					error, (HttpStatus) response.getStatusCode());
+					format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
+							response.getStatusCode(), response.getMessage()), error, (HttpStatus) response.getStatusCode()
+			);
 		} else {
-			throw new DigitalKontaktinformasjonTechnicalException(
-					String.format("Kall mot Digdir-krr-proxy feilet med feilmelding=%s", error.getMessage()),
-					error);
+			throw new DigitalKontaktinformasjonTechnicalException(format("Kall mot Digdir-krr-proxy feilet med feilmelding=%s", error.getMessage()), error);
 		}
 	}
 

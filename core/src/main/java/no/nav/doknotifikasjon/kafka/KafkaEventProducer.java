@@ -34,25 +34,19 @@ public class KafkaEventProducer {
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
-	@Retryable(include = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(retryFor = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void publish(String topic, Object event) {
 		publish(topic, event, getDefaultUuidIfNoCallIdIsSett());
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
-	@Retryable(include = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(retryFor = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
 	public void publishWithKey(String topic, Object event, String keyValue) {
 		publish(topic, event, keyValue);
 	}
 
 	void publish(String topic, Object event, String keyValue) {
-		ProducerRecord<String, Object> producerRecord = new ProducerRecord(
-				topic,
-				null,
-				System.currentTimeMillis(),
-				keyValue,
-				event
-		);
+		ProducerRecord<String, Object> producerRecord = new ProducerRecord(topic, null, System.currentTimeMillis(), keyValue, event);
 
 		try {
 			SendResult<String, Object> sendResult = kafkaTemplate.send(producerRecord).get();
@@ -63,8 +57,7 @@ public class KafkaEventProducer {
 					sendResult.getRecordMetadata().offset(),
 					sendResult.getRecordMetadata().topic());
 		} catch (ExecutionException executionException) {
-			if (executionException.getCause() instanceof KafkaProducerException) {
-				KafkaProducerException kafkaProducerException = (KafkaProducerException) executionException.getCause();
+			if (executionException.getCause() instanceof KafkaProducerException kafkaProducerException) {
 				if (kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
 					throw new KafkaTechnicalException(KAFKA_NOT_AUTHENTICATED + topic, kafkaProducerException.getCause());
 				}

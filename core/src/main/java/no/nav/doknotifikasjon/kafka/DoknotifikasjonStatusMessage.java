@@ -9,7 +9,7 @@ public class DoknotifikasjonStatusMessage {
 	public static final String ANTALL_RENOTIFIKASJONER_REQUIRES_RENOTIFIKASJON_INTERVALL = "antallRenotifikasjoner krever at renotifikasjonIntervall er satt";
 	public static final String MOBILTELEFONNUMMER_OR_EPOSTADESSE_MUST_BE_SET = "epostadresse eller mobiltelefonnummer må være satt";
 	public static final String FERDIGSTILT_RENOTIFIKASJON_STANSET = "renotifikasjon er stanset";
-	public static final String FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY = "Funksjonell feil mot DigitalKontakinformasjon";
+	public static final String FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY = "Funksjonell feil mot DigitalKontaktinformasjon";
 	public static final String FEILET_TECHNICAL_EXCEPTION_DATABASE = "Feilet med DataIntegrityViolationException i databasen";
 
 	public static final String OVERSENDT_NOTIFIKASJON_PROCESSED = "Notifikasjon er behandlet og distribusjon er bestilt";

@@ -6,7 +6,4 @@ public class DuplicateNotifikasjonInDBException extends AbstractDoknotifikasjonF
 		super(message);
 	}
 
-	public DuplicateNotifikasjonInDBException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }

@@ -7,6 +7,7 @@ import static no.nav.doknotifikasjon.constants.MDCConstants.DISTRIBUSJON_ID;
 import static no.nav.doknotifikasjon.constants.MDCConstants.MDC_CALL_ID;
 
 public class MDCGenerate {
+
 	public static void generateNewCallIdIfThereAreNone(String uuid) {
 		if (uuid != null) {
 			MDC.put(MDC_CALL_ID, uuid);

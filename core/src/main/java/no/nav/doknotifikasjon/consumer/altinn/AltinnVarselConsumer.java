@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon.consumer.altinn;
 
+import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.ReceiverEndPoint;
@@ -22,9 +23,6 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.soap.SoapFaultException;
-
-import jakarta.xml.bind.JAXBElement;
-import java.util.List;
 
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil.erFunksjonellFeil;
@@ -55,7 +53,7 @@ public class AltinnVarselConsumer {
 
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
 	@Retryable(
-			include = AltinnTechnicalException.class,
+			retryFor = AltinnTechnicalException.class,
 			maxAttemptsExpression = "${retry.attempts:10}",
 			backoff = @Backoff(delayExpression = "${retry.delay:1000}", multiplier = 2, maxDelay = 60_000L)
 	)
@@ -64,6 +62,7 @@ public class AltinnVarselConsumer {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
 			return;
 		}
+
 		StandaloneNotification standaloneNotificationItem = new StandaloneNotification();
 		standaloneNotificationItem.setReporteeNumber(ns("ReporteeNumber", fnr));
 		standaloneNotificationItem.setLanguageID(1044);
@@ -75,6 +74,7 @@ public class AltinnVarselConsumer {
 
 		StandaloneNotificationBEList standaloneNotification = new StandaloneNotificationBEList();
 		standaloneNotification.getStandaloneNotification().add(standaloneNotificationItem);
+
 		try {
 			iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
 					altinnProps.getUsername(),
@@ -88,7 +88,7 @@ public class AltinnVarselConsumer {
 			if (erFunksjonellFeil(feilkode)) {
 				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s", altinnErrorMessage), e);
 			} else {
-				if(erUhandterbarTekniskFeil(e)) {
+				if (erUhandterbarTekniskFeil(e)) {
 					throw new AltinnFunctionalException(format("Uhandterbar teknisk feil feil i kall mot Altinn. Håndteres som funksjonell feil. %s", altinnErrorMessage), e);
 				}
 				throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn. %s", altinnErrorMessage), e);
@@ -104,37 +104,38 @@ public class AltinnVarselConsumer {
 
 	private boolean erUhandterbarTekniskFeil(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 		AltinnFault faultInfo = e.getFaultInfo();
-		if(faultInfo != null) {
+
+		if (faultInfo != null) {
 			log.error("Utvidet teknisk feil info errorGuid={}, altinnLocalizedErrorMessage={}, altinnExtendedErrorMessage={}",
 					unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnLocalizedErrorMessage()), unwrap(faultInfo.getAltinnExtendedErrorMessage()));
 			return unwrap(faultInfo.getAltinnLocalizedErrorMessage()).contains("Object reference not set to an instance of an object");
 		}
+
 		return false;
 	}
 
 	@Recover
-	public void altinnTechnicalExceptionRecovery(AltinnTechnicalException e, Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+	public void altinnTechnicalExceptionRecovery(AltinnTechnicalException e) {
 		log.warn("Teknisk feil for sending av sms/epost til Altinn - maks. antall forsøk brukt");
+
 		throw e;
 	}
 
 	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
 	@Recover
-	public void otherExceptionsRecovery(RuntimeException e, Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+	public void otherExceptionsRecovery(RuntimeException e) {
 		throw e;
 	}
 
 	private JAXBElement<ReceiverEndPointBEList> generateEndpoint(Kanal kanal, String kontaktInfo) {
 		var receiverEndPoint = new ReceiverEndPoint();
+
 		receiverEndPoint.setReceiverAddress(ns("ReceiverAddress", kontaktInfo));
 		receiverEndPoint.setTransportType(ns("TransportType", TransportType.class, kanalToTransportType(kanal)));
 		ReceiverEndPointBEList receiverEndPointBEList = new ReceiverEndPointBEList();
 		receiverEndPointBEList.getReceiverEndPoint().add(receiverEndPoint);
-		return ns(
-				"ReceiverEndPoints",
-				ReceiverEndPointBEList.class,
-				receiverEndPointBEList
-		);
+
+		return ns("ReceiverEndPoints", ReceiverEndPointBEList.class, receiverEndPointBEList);
 	}
 
 	private JAXBElement<TextTokenSubstitutionBEList> generateTextTokens(Kanal kanal, String tekst, String tittel) {
@@ -152,8 +153,9 @@ public class AltinnVarselConsumer {
 			return ns("TextTokens",
 					TextTokenSubstitutionBEList.class,
 					textTokenSubstitutionBEList
-					);
+			);
 		}
+
 		if (kanal == EPOST) {
 			var textToken1 = new TextToken();
 			textToken1.setTokenNum(0);
@@ -169,12 +171,14 @@ public class AltinnVarselConsumer {
 					TextTokenSubstitutionBEList.class,
 					textTokenSubstitutionBEList);
 		}
+
 		throw new AltinnFunctionalException("Funksjonell feil mot Altinn: Kanal er verken epost eller sms.");
 	}
 
 	private static TransportType kanalToTransportType(Kanal kanal) {
 		if (SMS == kanal) return TransportType.SMS;
 		if (EPOST == kanal) return TransportType.EMAIL;
+
 		throw new AltinnFunctionalException("Kanal er verken SMS eller EMAIL, kanal=" + kanal);
 	}
 
@@ -187,9 +191,9 @@ public class AltinnVarselConsumer {
 		}
 
 		return "errorGuid=" + unwrap(faultInfo.getErrorGuid()) + ", " +
-				"userGuid=" + unwrap(faultInfo.getUserGuid()) + ", " +
-				"errorId=" + faultInfo.getErrorID() + ", " +
-				"errorMessage=" + unwrap(faultInfo.getAltinnErrorMessage());
+			   "userGuid=" + unwrap(faultInfo.getUserGuid()) + ", " +
+			   "errorId=" + faultInfo.getErrorID() + ", " +
+			   "errorMessage=" + unwrap(faultInfo.getAltinnErrorMessage());
 	}
 
 	private Integer getFeilkode(INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
@@ -197,6 +201,7 @@ public class AltinnVarselConsumer {
 		if (faultInfo == null) {
 			return null;
 		}
+
 		return faultInfo.getErrorID();
 	}
 
@@ -204,6 +209,7 @@ public class AltinnVarselConsumer {
 		if (jaxbElement == null) {
 			return "null";
 		}
+
 		return jaxbElement.getValue();
 	}
 }

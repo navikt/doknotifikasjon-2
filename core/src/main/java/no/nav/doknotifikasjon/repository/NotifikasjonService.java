@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 
@@ -28,7 +29,7 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), noRetryFor = DataIntegrityViolationException.class)
 	public Notifikasjon save(Notifikasjon notifikasjon) {
 		return notifikasjonRepository.save(notifikasjon);
 	}
@@ -57,24 +58,23 @@ public class NotifikasjonService {
 
 	@Retryable(maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
 	public Notifikasjon findByBestillingsId(String bestillingsId) {
-		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(
-				() -> {
-					log.info(String.format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
-					throw new NotifikasjonIkkeFunnetException(String.format(
-							"Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId)
-					);
-				});
+		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(() -> {
+			log.info(format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
+
+			return new NotifikasjonIkkeFunnetException(format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
+		});
 	}
 
 	@Recover
 	public Notifikasjon notifikasjonIkkeFunnetRecovery(NotifikasjonIkkeFunnetException e, String bestillingsId) {
 		log.warn("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter maks. antall forsøk.", bestillingsId);
+
 		return null;
 	}
 
 	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
 	@Recover
-	public Notifikasjon otherExceptionsRecovery(RuntimeException e, String bestillingsId) {
+	public Notifikasjon otherExceptionsRecovery(RuntimeException e) {
 		throw e;
 	}
 

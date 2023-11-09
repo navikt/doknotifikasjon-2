@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_DATABASE_IKKE_OPPDATERT;
@@ -29,7 +30,7 @@ public class NotifikasjonDistribusjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), exclude = DataIntegrityViolationException.class)
+	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), noRetryFor = DataIntegrityViolationException.class)
 	public NotifikasjonDistribusjon save(NotifikasjonDistribusjon notifikasjonDistribusjon) {
 		try {
 			return notifikasjonDistribusjonRepository.save(notifikasjonDistribusjon);
@@ -41,13 +42,13 @@ public class NotifikasjonDistribusjonService {
 
 	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:50}"))
 	public NotifikasjonDistribusjon findById(int notifikasjonDistribusjonId) {
-		return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(
-				() -> {
-					log.info(String.format("NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId));
-					throw new DoknotifikasjonDistribusjonIkkeFunnetException(String.format(
-							"NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId)
-					);
-				});
+		return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(() -> {
+			log.info(format("NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId));
+
+			return new DoknotifikasjonDistribusjonIkkeFunnetException(format(
+					"NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId)
+			);
+		});
 	}
 
 	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
