@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.kodeverk.Kanal;
-import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static no.nav.doknotifikasjon.Rnot001Mapper.mapNotifikasjon;
 import static no.nav.doknotifikasjon.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.TestUtils.SENDT_DATO;
 import static no.nav.doknotifikasjon.TestUtils.TEKST;
@@ -19,6 +19,7 @@ import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonDistribusjonWit
 import static no.nav.doknotifikasjon.TestUtils.createNotifikasjonWithId;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -32,7 +33,7 @@ public class Rnot001MapperTest {
 		distribusjoner.add(createNotifikasjonDistribusjonWithId(notifikasjon, EPOST, 2));
 		notifikasjon.setNotifikasjonDistribusjon(distribusjoner);
 
-		NotifikasjonInfoTo notifikasjonInfoTo = Rnot001Mapper.mapNotifikasjon(notifikasjon);
+		NotifikasjonInfoTo notifikasjonInfoTo = mapNotifikasjon(notifikasjon);
 
 		assertThat(notifikasjonInfoTo.id(), is(notifikasjon.getId()));
 		assertThat(notifikasjonInfoTo.bestillerId(), is(notifikasjon.getBestillerId()));
@@ -49,7 +50,7 @@ public class Rnot001MapperTest {
 
 	private void assertNotifikasjonDistribusjon(NotifikasjonDistribusjonDto notifDistDto, int id, Kanal kanal, String tittel) {
 		assertThat(notifDistDto.id(), is(id));
-		assertThat(notifDistDto.status(), is(Status.FERDIGSTILT));
+		assertThat(notifDistDto.status(), is(FERDIGSTILT));
 		assertThat(notifDistDto.kanal(), is(kanal));
 		assertThat(notifDistDto.kontaktInfo(), is(KONTAKTINFO));
 		assertThat(notifDistDto.tittel(), is(tittel));

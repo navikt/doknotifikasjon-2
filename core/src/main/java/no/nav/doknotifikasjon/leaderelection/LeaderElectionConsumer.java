@@ -9,6 +9,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.InetAddress;
 import java.time.Duration;
 
+import static java.lang.String.format;
+
 @Slf4j
 @Component
 public class LeaderElectionConsumer implements LeaderElection {
@@ -26,8 +28,10 @@ public class LeaderElectionConsumer implements LeaderElection {
 		this.mapper = mapper;
 	}
 
+	@Override
 	public boolean isLeader() {
 		String electorPath = System.getenv(ELECTOR_PATH);
+
 		if (electorPath == null) {
 			log.warn("Kunne ikke bestemme lederpod på grunn av manglende systemvariabel={}.", ELECTOR_PATH);
 			return true;
@@ -39,7 +43,7 @@ public class LeaderElectionConsumer implements LeaderElection {
 			String hostname = InetAddress.getLocalHost().getHostName();
 			return hostname.equals(leader);
 		} catch (Exception e) {
-			log.warn(String.format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
+			log.warn(format("Kunne ikke bestemme lederpod. Feilmelding: %s", e.getMessage()), e);
 			return true;
 		}
 	}

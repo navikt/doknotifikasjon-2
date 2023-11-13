@@ -18,6 +18,9 @@ import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 public class Rnot001ITest extends AbstractTest {
@@ -34,15 +37,13 @@ public class Rnot001ITest extends AbstractTest {
 		notifikasjonRepository.save(notifikasjon);
 		commitAndBeginNewTransaction();
 
-
 		HttpEntity<String> requestHttpEntity = new HttpEntity<>("", azureHeaders());
 		ResponseEntity<NotifikasjonInfoTo> response = restTemplate.exchange(
 				RNOT001_BASE_URL + BESTILLINGS_ID, GET, requestHttpEntity, NotifikasjonInfoTo.class);
 
-		assertThat(response.getStatusCode(), is(HttpStatus.OK));
+		assertThat(response.getStatusCode(), is(OK));
 		NotifikasjonInfoTo notifikasjonInfoTo = response.getBody();
 		assertThat(notifikasjonInfoTo.notifikasjonDistribusjoner().size(), is(2));
-
 	}
 
 	@Test
@@ -51,7 +52,7 @@ public class Rnot001ITest extends AbstractTest {
 		ResponseEntity<String> response = restTemplate.exchange(
 				RNOT001_BASE_URL + BAD_BESTILLINGS_ID, GET, requestHttpEntity, String.class);
 
-		assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+		assertThat(response.getStatusCode(), is(NOT_FOUND));
 	}
 
 	@Test
@@ -60,7 +61,7 @@ public class Rnot001ITest extends AbstractTest {
 		ResponseEntity<String> response = restTemplate.exchange(
 				RNOT001_BASE_URL + BAD_BESTILLINGS_ID, GET, requestHttpEntity, String.class);
 
-		assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+		assertThat(response.getStatusCode(), is(UNAUTHORIZED));
 	}
 
 	protected HttpHeaders badHeaders() {

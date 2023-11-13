@@ -1,17 +1,18 @@
 package no.nav.doknotifikasjon;
 
 import no.nav.doknotifikasjon.kodeverk.Kanal;
-import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static no.nav.doknotifikasjon.kodeverk.MottakerIdType.FNR;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 
 public class TestUtils {
+
 	public static final String BESTILLINGS_ID = "1234-5678-9101";
 	public static final String BESTILLER_ID = "teamdokumenthandtering";
 	public static final String MOTTAKER_ID = "03116823216";
@@ -30,7 +31,6 @@ public class TestUtils {
 	public static final LocalDateTime OPPRETTET_DATO_2 = LocalDateTime.parse("2020-10-06T10:15:30.000000");
 	public static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
 	public static final LocalDateTime ENDRET_DATO = LocalDateTime.parse("2020-10-02T10:15:30.000000");
-	public static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
 
 	public static Notifikasjon createNotifikasjon() {
@@ -38,7 +38,7 @@ public class TestUtils {
 				.bestillerId(BESTILLER_ID)
 				.bestillingsId(BESTILLINGS_ID)
 				.mottakerId(MOTTAKER_ID)
-				.mottakerIdType(MottakerIdType.FNR)
+				.mottakerIdType(FNR)
 				.status(OPPRETTET)
 				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
 				.renotifikasjonIntervall(RENOTIFIKASJON_INTERVALL)
@@ -57,7 +57,7 @@ public class TestUtils {
 				.bestillerId(BESTILLER_ID)
 				.bestillingsId(BESTILLINGS_ID)
 				.mottakerId(MOTTAKER_ID)
-				.mottakerIdType(MottakerIdType.FNR)
+				.mottakerIdType(FNR)
 				.status(OPPRETTET)
 				.antallRenotifikasjoner(ANTALL_RENOTIFIKASJONER)
 				.renotifikasjonIntervall(RENOTIFIKASJON_INTERVALL)
