@@ -4,7 +4,6 @@
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "DKIF_URL": "https://dkif.nais.adeo.no",
   "MOUNT_PATH": "postgresql/prod-fss",
-  "SEND_TIL_ALTINN": "true",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
   "APPD_NAME": "doknotifikasjon-2",

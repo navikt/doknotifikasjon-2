@@ -13,8 +13,6 @@ spec:
       value: {{ DKIF_URL }}
     - name: MOUNT_PATH
       value: {{ MOUNT_PATH }}
-    - name: SEND_TIL_ALTINN
-      value: "{{ SEND_TIL_ALTINN }}"
     - name: SPRINGDOC_ENABLED
       value: "{{ SPRINGDOC_ENABLED }}"
     - name: APPD_NAME
