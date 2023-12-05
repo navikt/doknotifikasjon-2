@@ -11,7 +11,7 @@
   "DIGDIR_KRR_PROXY_SCOPE": "api://prod-gcp.team-rocket.digdir-krr-proxy/.default",
   "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.intern.nav.no",
   "APPDYNAMICS": "/apikey/appdynamics/prod",
-  "DOKNOTIFIKASJON_CERT": "/kv/prod/fss/dokdistdpv/certificate",
+  "VIRKSOMHETSSERTIFIKAT_VAULT": "/secret/virksomhetssertifikat/prod/sdp",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
   "INGRESSES": [
     "https://doknotifikasjon-2.intern.nav.no"
