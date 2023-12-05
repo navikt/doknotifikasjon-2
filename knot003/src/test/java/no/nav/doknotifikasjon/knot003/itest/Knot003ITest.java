@@ -4,8 +4,8 @@ package no.nav.doknotifikasjon.knot003.itest;
 import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
 import no.altinn.services.common.fault._2009._10.AltinnFault;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot003.itest.utils.DoknotifikasjonStatusMatcher;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
@@ -20,14 +20,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.*;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.generateAltinnResponse;
-import static no.nav.doknotifikasjon.kodeverk.Kanal.*;
-import static no.nav.doknotifikasjon.kodeverk.Status.*;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +57,7 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 	private KafkaEventProducer kafkaEventProducer;
 
 	@MockBean
-	private INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
+	private INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
 
 	@BeforeEach
 	void setup() {
@@ -64,8 +67,8 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenReturn(generateAltinnResponse(TransportType.EMAIL, KONTAKTINFO));
+	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage {
+		when(iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenReturn(generateAltinnResponse(TransportType.EMAIL, KONTAKTINFO));
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
 
@@ -111,10 +114,10 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 		await().atMost(10, SECONDS).untilAsserted(() ->
-			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
-			)
+				verify(kafkaEventProducer, atLeastOnce()).publish(
+						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
+				)
 		);
 	}
 
@@ -127,26 +130,26 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
 		await().atMost(10, SECONDS).untilAsserted(() ->
-			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
-			)
+				verify(kafkaEventProducer, atLeastOnce()).publish(
+						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
+				)
 		);
 	}
 
 	@Test
-	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage {
 		var altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", "Ugyldig epostadresse angitt på et ReceiverEndPoint."));
 		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
 		altinnFault.setErrorID(30010);
 		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
 
-		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
+		INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage(
 				"Feil i altinn",
 				altinnFault
 		);
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
+		when(iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
 

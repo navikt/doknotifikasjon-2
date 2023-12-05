@@ -30,13 +30,12 @@
 				<artifactId>cxf-codegen-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>generate-sources-altinn-notification</id>
+						<id>generate-sources-altinn-notificationEC2</id>
 						<phase>generate-sources</phase>
 						<configuration>
-							<sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/soap/NotificationAgencyExternalBasic.wsdl</wsdl>
+									<wsdl>${basedir}/src/main/resources/soap/NotificationAgencyExternalEC2.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>

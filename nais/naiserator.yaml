@@ -11,8 +11,6 @@ spec:
   env:
     - name: DKIF_URL
       value: {{ DKIF_URL }}
-    - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
-      value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
     - name: MOUNT_PATH
       value: {{ MOUNT_PATH }}
     - name: SEND_TIL_ALTINN
@@ -65,6 +63,8 @@ spec:
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: {{ APPDYNAMICS }}
         mountPath: "/var/run/secrets/nais.io/appdynamics"
+      - kvPath: { { DOKNOTIFIKASJON_CERT } }
+        mountPath: /var/run/secrets/nais.io/certificate
   webproxy: true
   azure:
     application:

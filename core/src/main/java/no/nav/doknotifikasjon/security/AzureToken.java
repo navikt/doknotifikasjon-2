@@ -20,7 +20,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.util.Map;
 
 import static java.lang.String.format;
-import static no.nav.doknotifikasjon.config.LokalCacheConfig.AZURE_TOKEN_CACHE;
+import static no.nav.doknotifikasjon.config.cache.LokalCacheConfig.AZURE_TOKEN_CACHE;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 
 
