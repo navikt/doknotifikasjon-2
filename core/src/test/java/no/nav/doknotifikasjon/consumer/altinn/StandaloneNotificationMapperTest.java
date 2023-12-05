@@ -40,9 +40,7 @@ class StandaloneNotificationMapperTest {
 
 	private void assertEpostAndSMSToken(TextTokenSubstitutionBEList textTokenSubstitution, String tekst, String tittel) {
 		textTokenSubstitution.getTextToken()
-				.forEach(textToken -> {
-					assertThat(textToken.getTokenValue().getValue()).containsAnyOf(tekst, tittel);
-				});
+				.forEach(textToken -> assertThat(textToken.getTokenValue().getValue()).containsAnyOf(tekst, tittel));
 	}
 
 	private static Stream<Arguments> shouldMapStandaloneNotification() {

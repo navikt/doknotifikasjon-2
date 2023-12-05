@@ -24,16 +24,13 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 @Slf4j
 @Service
 public class AltinnVarselConsumer {
-	private final Boolean sendTilAltinn;
 	private final INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
 	private final AltinnProps altinnProps;
 
-	public AltinnVarselConsumer(@Value("${SEND_TIL_ALTINN}") Boolean sendTilAltinn,
-								INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2,
+	public AltinnVarselConsumer(INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2,
 								AltinnProps altinnProps) {
 		this.iNotificationAgencyExternalEC2 = iNotificationAgencyExternalEC2;
 		this.altinnProps = altinnProps;
-		this.sendTilAltinn = sendTilAltinn;
 	}
 
 	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
@@ -43,7 +40,7 @@ public class AltinnVarselConsumer {
 			backoff = @Backoff(delayExpression = "${retry.delay:1000}", multiplier = 2, maxDelay = 60_000L)
 	)
 	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
-		if (!sendTilAltinn) {
+		if (!altinnProps.sendTilAltinn()) {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
 			return;
 		}

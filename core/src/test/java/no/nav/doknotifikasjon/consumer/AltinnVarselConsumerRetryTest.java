@@ -43,6 +43,7 @@ public class AltinnVarselConsumerRetryTest {
 	public void beforeEach() {
 		when(altinnProps.username()).thenReturn("username");
 		when(altinnProps.password()).thenReturn("password");
+		when(altinnProps.sendTilAltinn()).thenReturn(true);
 	}
 
 	@ParameterizedTest

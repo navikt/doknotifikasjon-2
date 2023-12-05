@@ -12,5 +12,7 @@ public record AltinnProps(
 		@NotNull
 		String password,
 		@NotNull
-		String endpoint, boolean altinnlogg) {
+		String endpoint,
+		boolean altinnlogg,
+		boolean sendTilAltinn) {
 }
