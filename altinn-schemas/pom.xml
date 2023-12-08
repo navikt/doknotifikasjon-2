@@ -31,18 +31,22 @@
 				<version>${cxf-codegen-plugin.version}</version>
 				<executions>
 					<execution>
-						<id>generate-sources-altinn-notificationEC2</id>
+						<id>wsdl2java-generate</id>
 						<phase>generate-sources</phase>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
 						<configuration>
 							<wsdlOptions>
 								<wsdlOption>
 									<wsdl>${basedir}/src/main/resources/wsdl/NotificationAgencyExternalEC2.wsdl</wsdl>
+									<extraargs>
+										<extraarg>-autoNameResolution</extraarg>
+									</extraargs>
+									<wsdlLocation>classpsaath:wsdl/NotificationAgencyExternalEC2.wsdl</wsdlLocation>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
