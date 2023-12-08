@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon.repository;
 
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -35,6 +37,9 @@ class DigitalKontaktinfoConsumerTest {
 	private static final String FNR = "12345678911";
 	private static final String MOBIL = "+4799999999";
 	private static final String EPOST = "epost";
+
+	@MockBean
+	INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
 
 	@Autowired
 	private DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;

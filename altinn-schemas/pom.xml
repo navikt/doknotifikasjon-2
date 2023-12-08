@@ -28,6 +28,7 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>${cxf-codegen-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>generate-sources-altinn-notificationEC2</id>
@@ -35,7 +36,7 @@
 						<configuration>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/soap/NotificationAgencyExternalEC2.wsdl</wsdl>
+									<wsdl>${basedir}/src/main/resources/wsdl/NotificationAgencyExternalEC2.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>

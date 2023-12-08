@@ -1,10 +1,11 @@
-package no.nav.doknotifikasjon.config;
+package no.nav.doknotifikasjon.config.cxf;
 
 import jakarta.xml.ws.BindingProvider;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
 import no.altinn.services.serviceengine.notification._2010._10.NotificationAgencyExternalEC2SF;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.config.properties.KeyStoreProperties;
+import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
@@ -22,11 +23,12 @@ import static org.apache.cxf.rt.security.SecurityConstants.STS_ISSUE_AFTER_FAILE
 import static org.apache.cxf.rt.security.SecurityConstants.STS_TOKEN_IMMINENT_EXPIRY_VALUE;
 
 @Configuration
-public class AltinnConfig {
+public class AltinnClientConfig {
 
 	@Bean
-	public INotificationAgencyExternalEC2 iNotificationAgencyExternalBasic(AltinnProps altinnProps,
-																		   KeyStoreProperties keyStoreProperties) {
+	public INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2(AltinnProps altinnProps,
+																		 Bus bus,
+																		 KeyStoreProperties keyStoreProperties) {
 		NotificationAgencyExternalEC2SF service = new NotificationAgencyExternalEC2SF();
 		INotificationAgencyExternalEC2 port = service.getCustomBindingINotificationAgencyExternalEC2();
 		BindingProvider bindingProvider = (BindingProvider) port;

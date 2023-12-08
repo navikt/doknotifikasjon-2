@@ -11,6 +11,7 @@ import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class BusConfig {
@@ -20,6 +21,7 @@ public class BusConfig {
 	 * @return Bus
 	 */
 	@Bean
+	@Primary
 	public Bus springBus(AltinnProps altinnProps) {
 		SpringBus bus = new SpringBus();
 		bus.getInInterceptors().add(new CookiesInInterceptor());

@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon.repository;
 
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ import static org.mockito.Mockito.when;
 class NotifikasjonServiceTest {
 
 	private static final String BESTILLINGS_ID = "12345";
-
+	@MockBean
+	INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
 	@MockBean
 	private NotifikasjonRepository notifikasjonRepository;
 
