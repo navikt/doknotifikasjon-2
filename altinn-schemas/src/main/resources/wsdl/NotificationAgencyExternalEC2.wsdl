@@ -6,7 +6,7 @@
 					<wsp:Policy>
 						<sp:TransportToken>
 							<wsp:Policy>
-								<sp:HttpToken/>
+								<!--<sp:HttpToken/>-->
 							</wsp:Policy>
 						</sp:TransportToken>
 						<sp:AlgorithmSuite>
@@ -46,7 +46,7 @@
 											<wsp:Policy>
 												<sp:TransportToken>
 													<wsp:Policy>
-														<sp:HttpToken/>
+														<!--<sp:HttpToken/>-->
 													</wsp:Policy>
 												</sp:TransportToken>
 												<sp:AlgorithmSuite>
