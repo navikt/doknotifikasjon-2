@@ -1,11 +1,10 @@
 package no.nav.doknotifikasjon.knot002.itest;
 
 
-import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
 import no.altinn.services.common.fault._2009._10.AltinnFault;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -23,10 +22,8 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
-import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
-import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.generateAltinnResponse;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
@@ -40,10 +37,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class Knot002ITest extends AbstractKafkaBrokerTest {
 
@@ -67,8 +65,8 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage {
-		when(iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenReturn(generateAltinnResponse(TransportType.SMS, KONTAKTINFO));
+	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
+		doNothing().when(iNotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any(StandaloneNotificationBEList.class));
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 
@@ -140,18 +138,18 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage {
+	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
 		var altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", "Ugyldig norsk mobiltelefonnummer."));
 		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
 		altinnFault.setErrorID(30303);
 		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
 
-		INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage(
+		INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage(
 				"Feil i altinn",
 				altinnFault
 		);
-		when(iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
+		doThrow(altinnException).when(iNotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any(StandaloneNotificationBEList.class));
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);

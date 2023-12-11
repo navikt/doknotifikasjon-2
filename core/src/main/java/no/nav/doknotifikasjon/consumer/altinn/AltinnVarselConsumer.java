@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
 import no.altinn.services.common.fault._2009._10.AltinnFault;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
@@ -47,12 +47,12 @@ public class AltinnVarselConsumer {
 		StandaloneNotificationBEList standaloneNotification = StandaloneNotificationMapper.map(kanal, kontaktInfo, fnr, tekst, tittel);
 
 		try {
-			iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(
+			iNotificationAgencyExternalEC2.sendStandaloneNotificationEC(
 					altinnProps.username(),
 					altinnProps.password(),
 					standaloneNotification
 			);
-		} catch (INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage e) {
+		} catch (INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage e) {
 			final String altinnErrorMessage = constructAltinnErrorMessage(e.getFaultInfo());
 
 			Integer feilkode = getFeilkode(e.getFaultInfo());

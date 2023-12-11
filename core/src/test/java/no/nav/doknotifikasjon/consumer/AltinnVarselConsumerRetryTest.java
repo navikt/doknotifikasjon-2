@@ -2,7 +2,7 @@ package no.nav.doknotifikasjon.consumer;
 
 import no.altinn.services.common.fault._2009._10.AltinnFault;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
@@ -22,6 +22,7 @@ import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,33 +49,31 @@ public class AltinnVarselConsumerRetryTest {
 
 	@ParameterizedTest
 	@ValueSource(ints = {0, 44})
-	void shouldRetryIfTechnicalError(Integer feilkode) throws INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage {
+	void shouldRetryIfTechnicalError(Integer feilkode) throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
 		var altinnFault = new AltinnFault();
 		altinnFault.setErrorID(feilkode);
-		when(iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(anyString(), anyString(), any()))
-				.thenThrow(new INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage(
-						"Feil i altinn", altinnFault
-				));
+		doThrow(new INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage(
+				"Feil i altinn", altinnFault
+		)).when(iNotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any());
+
 
 		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 
-		verify(iNotificationAgencyExternalEC2, times(5)).sendStandaloneNotificationECV3(anyString(), anyString(), any());
+		verify(iNotificationAgencyExternalEC2, times(5)).sendStandaloneNotificationEC(anyString(), anyString(), any());
 	}
 
 	@ParameterizedTest
 	@EnumSource(AltinnFunksjonellFeil.class)
-	void shouldNotRetryIfFunctionalError(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage {
+	void shouldNotRetryIfFunctionalError(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
 		var altinnFault = new AltinnFault();
 		altinnFault.setErrorID(feil.feilkode);
-		when(iNotificationAgencyExternalEC2.sendStandaloneNotificationECV3(anyString(), anyString(), any()))
-				.thenThrow(new INotificationAgencyExternalEC2SendStandaloneNotificationECV3AltinnFaultFaultFaultMessage(
-						"Feil i altinn",
-						altinnFault)
-				);
+		doThrow(new INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage(
+				"Feil i altinn",
+				altinnFault)).when(iNotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any());
 
 		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 
-		verify(iNotificationAgencyExternalEC2, times(1)).sendStandaloneNotificationECV3(anyString(), anyString(), any());
+		verify(iNotificationAgencyExternalEC2, times(1)).sendStandaloneNotificationEC(anyString(), anyString(), any());
 	}
 
 }
