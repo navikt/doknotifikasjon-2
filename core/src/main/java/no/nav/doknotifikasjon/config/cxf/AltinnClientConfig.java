@@ -1,6 +1,8 @@
 package no.nav.doknotifikasjon.config.cxf;
 
 import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingType;
+import lombok.extern.slf4j.Slf4j;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
 import no.altinn.services.serviceengine.notification._2010._10.NotificationAgencyExternalEC2SF;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
@@ -18,10 +20,13 @@ import java.util.Set;
 
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static jakarta.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY;
+import static jakarta.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING;
 import static org.apache.cxf.rt.security.SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT;
 import static org.apache.cxf.rt.security.SecurityConstants.STS_ISSUE_AFTER_FAILED_RENEW;
 import static org.apache.cxf.rt.security.SecurityConstants.STS_TOKEN_IMMINENT_EXPIRY_VALUE;
 
+@Slf4j
+@BindingType(value = SOAP12HTTP_BINDING)
 @Configuration
 public class AltinnClientConfig {
 
@@ -34,6 +39,7 @@ public class AltinnClientConfig {
 		BindingProvider bindingProvider = (BindingProvider) port;
 		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProps.endpoint());
 
+		log.info("SOAP Binding:", bindingProvider.getBinding().getBindingID());
 		Client client = getClient(port, keyStoreProperties);
 
 		if (altinnProps.altinnlogg()) {
