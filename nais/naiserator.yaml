@@ -64,6 +64,8 @@ spec:
       - kvPath: {{ VIRKSOMHETSSERTIFIKAT_VAULT }}
         mountPath: "/secrets/virksomhetssertifikat"
   webproxy: true
+  secureLogs:
+    enabled: true
   azure:
     application:
       enabled: true
