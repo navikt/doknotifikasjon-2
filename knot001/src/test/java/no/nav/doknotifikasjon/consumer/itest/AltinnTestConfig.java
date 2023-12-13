@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.consumer.itest;
 
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
@@ -15,15 +15,15 @@ import org.springframework.context.annotation.Profile;
 @ComponentScan
 public class AltinnTestConfig {
 
-	private final INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
+	private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
-	public AltinnTestConfig(INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2) {
-		this.iNotificationAgencyExternalEC2 = iNotificationAgencyExternalEC2;
+	public AltinnTestConfig(INotificationAgencyExternalBasic iNotificationAgencyExternalBasic) {
+		this.iNotificationAgencyExternalBasic = iNotificationAgencyExternalBasic;
 	}
 
 	@Bean
 	public Client getClient() {
-		Client client = ClientProxy.getClient(iNotificationAgencyExternalEC2);
+		Client client = ClientProxy.getClient(iNotificationAgencyExternalBasic);
 		client.getRequestContext().put(HttpClientHTTPConduit.FORCE_HTTP_VERSION, "1.1");
 		return client;
 	}

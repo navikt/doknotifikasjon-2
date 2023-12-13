@@ -5,10 +5,11 @@ import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.ReceiverEndPoint;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.StandaloneNotification;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.TextToken;
+import no.altinn.schemas.services.serviceengine.notification._2015._06.SendNotificationResultList;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
 import no.altinn.services.common.fault._2009._10.AltinnFault;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
@@ -33,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -51,6 +51,8 @@ public class AltinnVarselConsumerTest {
 	private static final String TELEFONNUMMER = "+4712349876";
 	private static final String SMS_TEKST = "Viktig melding fra NAV";
 
+	private AltinnProps altinnProps;
+
 	static Stream<Arguments> serviceShouldSendToAltinn() {
 		return Stream.of(
 				Arguments.of(EPOST, EPOST_ADRESSE, FOEDSELSNUMMER, EPOST_TEKST, EPOST_TITTEL),
@@ -60,19 +62,16 @@ public class AltinnVarselConsumerTest {
 
 	@MethodSource
 	@ParameterizedTest
-	void serviceShouldSendToAltinn(Kanal kanal, String kontaktinformasjon, String fnr, String tekst, String tittel) throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
-		AltinnProps altinnProps = mock(AltinnProps.class);
-		when(altinnProps.sendTilAltinn()).thenReturn(true);
-		INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2 = mock(INotificationAgencyExternalEC2.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalEC2, altinnProps);
-		doNothing().when(iNotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any());
-		doReturn("testname").when(altinnProps).username();
-		doReturn("testpassword").when(altinnProps).password();
+	void serviceShouldSendToAltinn(Kanal kanal, String kontaktinformasjon, String fnr, String tekst, String tittel) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		altinnProps = altinnProps(true);
+		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
+		doReturn(new SendNotificationResultList()).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 
 		consumer.sendVarsel(kanal, kontaktinformasjon, fnr, tekst, tittel);
 
 		ArgumentCaptor<StandaloneNotificationBEList> xmlItem = ArgumentCaptor.forClass(StandaloneNotificationBEList.class);
-		verify(iNotificationAgencyExternalEC2, times(1)).sendStandaloneNotificationEC(anyString(), anyString(), xmlItem.capture());
+		verify(iNotificationAgencyExternalBasic, times(1)).sendStandaloneNotificationBasicV3(anyString(), anyString(), xmlItem.capture());
 
 		List<StandaloneNotification> standaloneNotificationList = xmlItem.getValue().getStandaloneNotification();
 		assertNotificationContent(kanal, standaloneNotificationList);
@@ -123,24 +122,22 @@ public class AltinnVarselConsumerTest {
 	}
 
 	@Test
-	void serviceShouldNotSendToAltinn() throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
-		AltinnProps altinnProps = mock(AltinnProps.class);
-		when(altinnProps.sendTilAltinn()).thenReturn(false);
-		INotificationAgencyExternalEC2 INotificationAgencyExternalEC2 = mock(INotificationAgencyExternalEC2.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(INotificationAgencyExternalEC2, altinnProps);
+	void serviceShouldNotSendToAltinn() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		altinnProps = altinnProps(false);
+		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
 
 		consumer.sendVarsel(EPOST, null, null, null, null);
 
-		verify(INotificationAgencyExternalEC2, never()).sendStandaloneNotificationEC(anyString(), anyString(), any());
+		verify(iNotificationAgencyExternalBasic, never()).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}
 
 	@ParameterizedTest
 	@EnumSource(AltinnFunksjonellFeil.class)
-	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsFunksjonellException(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
-		AltinnProps altinnProps = mock(AltinnProps.class);
-		when(altinnProps.sendTilAltinn()).thenReturn(true);
-		INotificationAgencyExternalEC2 INotificationAgencyExternalEC2 = mock(INotificationAgencyExternalEC2.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(INotificationAgencyExternalEC2, altinnProps);
+	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsFunksjonellException(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		altinnProps = altinnProps(true);
+		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
 
 		var altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", feil.beskrivelse));
@@ -148,13 +145,11 @@ public class AltinnVarselConsumerTest {
 		altinnFault.setErrorID(feil.feilkode);
 		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
 
-		INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage(
+		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
 				"Feil i altinn", altinnFault
 		);
 		doThrow(altinnException)
-				.when(INotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any());
-		doReturn("testname").when(altinnProps).username();
-		doReturn("testpassword").when(altinnProps).password();
+				.when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 
 		AltinnFunctionalException altinnFunctionalException = assertThrows(AltinnFunctionalException.class, () ->
 				consumer.sendVarsel(EPOST, null, null, null, null));
@@ -165,23 +160,20 @@ public class AltinnVarselConsumerTest {
 
 	@ParameterizedTest
 	@MethodSource("provideTechnicalExceptions")
-	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsTechnicalException(Integer feilkode, String beskrivelse) throws INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage {
-		AltinnProps altinnProps = mock(AltinnProps.class);
-		when(altinnProps.sendTilAltinn()).thenReturn(true);
-		INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2 = mock(INotificationAgencyExternalEC2.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalEC2, altinnProps);
+	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsTechnicalException(Integer feilkode, String beskrivelse) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
+		altinnProps = altinnProps(true);
+		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
 		AltinnFault altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", beskrivelse));
 		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
 		altinnFault.setErrorID(feilkode);
 		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
-		INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage(
+		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
 				"Feil i altinn", altinnFault
 		);
 
-		doThrow(altinnException).when(iNotificationAgencyExternalEC2).sendStandaloneNotificationEC(anyString(), anyString(), any());
-		doReturn("testname").when(altinnProps).username();
-		doReturn("testpassword").when(altinnProps).password();
+		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any())).thenThrow(altinnException);
 
 		AltinnTechnicalException altinnTechnicalException = assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 
@@ -199,5 +191,9 @@ public class AltinnVarselConsumerTest {
 
 	private JAXBElement<String> constructJaxbElement(String local, String value) {
 		return new JAXBElement<>(new QName("http://www.altinn.no/services/common/fault/2009/10", local), String.class, value);
+	}
+
+	private AltinnProps altinnProps(boolean sendTilAltinn) {
+		return new AltinnProps("username", "password", "localhost", false, sendTilAltinn);
 	}
 }

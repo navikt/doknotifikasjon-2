@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.repository;
 
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -59,7 +59,7 @@ public class NotifikasjonRepositoryTest {
 	private static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
 	@MockBean
-	INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
+	INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;
 

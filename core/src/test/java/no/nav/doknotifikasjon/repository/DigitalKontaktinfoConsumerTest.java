@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.repository;
 
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinfoConsumer;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo;
 import no.nav.doknotifikasjon.consumer.digdir.krr.proxy.DigitalKontaktinformasjonTo.DigitalKontaktinfo;
@@ -39,7 +39,7 @@ class DigitalKontaktinfoConsumerTest {
 	private static final String EPOST = "epost";
 
 	@MockBean
-	INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
+	INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
 	@Autowired
 	private DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;

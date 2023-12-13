@@ -4,8 +4,8 @@ import jakarta.xml.bind.JAXBElement;
 import lombok.extern.slf4j.Slf4j;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
 import no.altinn.services.common.fault._2009._10.AltinnFault;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
+import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
@@ -18,17 +18,18 @@ import org.springframework.ws.soap.SoapFaultException;
 
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil.erFunksjonellFeil;
+import static no.nav.doknotifikasjon.consumer.altinn.StandaloneNotificationMapper.map;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
 @Slf4j
 @Service
 public class AltinnVarselConsumer {
-	private final INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2;
+	private final INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 	private final AltinnProps altinnProps;
 
-	public AltinnVarselConsumer(INotificationAgencyExternalEC2 iNotificationAgencyExternalEC2,
+	public AltinnVarselConsumer(INotificationAgencyExternalBasic iNotificationAgencyExternalBasic,
 								AltinnProps altinnProps) {
-		this.iNotificationAgencyExternalEC2 = iNotificationAgencyExternalEC2;
+		this.iNotificationAgencyExternalBasic = iNotificationAgencyExternalBasic;
 		this.altinnProps = altinnProps;
 	}
 
@@ -44,15 +45,15 @@ public class AltinnVarselConsumer {
 			return;
 		}
 
-		StandaloneNotificationBEList standaloneNotification = StandaloneNotificationMapper.map(kanal, kontaktInfo, fnr, tekst, tittel);
+		StandaloneNotificationBEList standaloneNotification = map(kanal, kontaktInfo, fnr, tekst, tittel);
 
 		try {
-			iNotificationAgencyExternalEC2.sendStandaloneNotificationEC(
+			iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(
 					altinnProps.username(),
 					altinnProps.password(),
 					standaloneNotification
 			);
-		} catch (INotificationAgencyExternalEC2SendStandaloneNotificationECAltinnFaultFaultFaultMessage e) {
+		} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 			final String altinnErrorMessage = constructAltinnErrorMessage(e.getFaultInfo());
 
 			Integer feilkode = getFeilkode(e.getFaultInfo());

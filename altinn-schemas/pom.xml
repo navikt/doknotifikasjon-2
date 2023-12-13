@@ -14,12 +14,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>jakarta.xml.bind</groupId>
-			<artifactId>jakarta.xml.bind-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+			<groupId>jakarta.xml.ws</groupId>
+			<artifactId>jakarta.xml.ws-api</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -39,11 +35,11 @@
 						<configuration>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/wsdl/NotificationAgencyExternalEC2.wsdl</wsdl>
+									<wsdl>${basedir}/src/main/resources/wsdl/NotificationAgencyExternalBasic.wsdl</wsdl>
 									<extraargs>
 										<extraarg>-autoNameResolution</extraarg>
 									</extraargs>
-									<wsdlLocation>classpsaath:wsdl/NotificationAgencyExternalEC2.wsdl</wsdlLocation>
+									<wsdlLocation>classpsaath:wsdl/NotificationAgencyExternalBasic.wsdl</wsdlLocation>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
