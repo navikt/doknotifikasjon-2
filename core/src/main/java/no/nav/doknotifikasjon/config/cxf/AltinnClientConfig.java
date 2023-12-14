@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon.config.cxf;
 
 import jakarta.xml.ws.BindingProvider;
-import lombok.extern.slf4j.Slf4j;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.altinn.services.serviceengine.notification._2010._10.NotificationAgencyExternalBasicSF;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
@@ -18,7 +17,6 @@ import java.util.Set;
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static java.lang.Boolean.TRUE;
 
-@Slf4j
 @Configuration
 public class AltinnClientConfig {
 
@@ -30,8 +28,6 @@ public class AltinnClientConfig {
 		BindingProvider bindingProvider = (BindingProvider) port;
 		bindingProvider.getRequestContext().put(ENDPOINT_ADDRESS_PROPERTY, altinnProps.endpoint());
 
-
-		log.info("SOAP Binding:", bindingProvider.getBinding().getBindingID());
 		Client client = getClient(port, altinnProps);
 
 		if (altinnProps.altinnlogg()) {
@@ -55,5 +51,4 @@ public class AltinnClientConfig {
 		client.getRequestContext().put("jakarta.xml.ws.session.maintain", TRUE);
 		return client;
 	}
-
 }
