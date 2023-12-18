@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
+
 /**
  * Interceptor for å plukke opp <i>Cookie</i> fra header i innkommende webservice melding.
  * Den vil da finnes som en attributt <i>Set-Cookie</i>. Hvis funnet så lagres den i {@link CookieStore}.
@@ -25,7 +27,7 @@ public class CookiesInInterceptor extends AbstractPhaseInterceptor<Message> {
 
 	@Override
 	public void handleMessage(Message message) throws Fault {
-		Map<String, List> headers = (Map<String, List>) message.get(Message.PROTOCOL_HEADERS);
+		Map<String, List> headers = (Map<String, List>) message.get(PROTOCOL_HEADERS);
 		List<Cookie> cookies = headers.get("Set-Cookie");
 		if (cookies != null) {
 			secureLog.info("CookiesInInterceptor -- cookie to be stored in cookiestore: " + cookies.get(0));

@@ -80,13 +80,12 @@ public class AltinnVarselConsumer {
 					unwrap(faultInfo.getErrorGuid()), unwrap(faultInfo.getAltinnLocalizedErrorMessage()), unwrap(faultInfo.getAltinnExtendedErrorMessage()));
 			return unwrap(faultInfo.getAltinnLocalizedErrorMessage()).contains("Object reference not set to an instance of an object");
 		}
-
 		return false;
 	}
 
 	// Liste over errorID: https://altinn.github.io/docs/api/tjenesteeiere/soap/grensesnitt/varseltjeneste/#feilsituasjoner
 	private String constructAltinnErrorMessage(AltinnFault faultInfo) {
-		return "errorGuid=" + unwrap(faultInfo.getErrorGuid()) + ", " +
+		return faultInfo == null ? "ukjent feil" : "errorGuid=" + unwrap(faultInfo.getErrorGuid()) + ", " +
 				"userGuid=" + unwrap(faultInfo.getUserGuid()) + ", " +
 				"errorId=" + faultInfo.getErrorID() + ", " +
 				"errorMessage=" + unwrap(faultInfo.getAltinnErrorMessage());

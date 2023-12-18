@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.repository;
 
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.MottakerIdType;
 import no.nav.doknotifikasjon.kodeverk.Status;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -58,8 +56,6 @@ public class NotifikasjonRepositoryTest {
 	private static final LocalDateTime ENDRET_DATO = LocalDateTime.parse("2020-10-02T10:15:30.000000");
 	private static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
-	@MockBean
-	INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;
 

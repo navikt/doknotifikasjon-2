@@ -12,8 +12,6 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Set;
-
 import static jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import static java.lang.Boolean.TRUE;
 
@@ -32,11 +30,7 @@ public class AltinnClientConfig {
 
 		if (altinnProps.altinnlogg()) {
 			client.getInInterceptors().add(new LoggingInInterceptor());
-			LoggingOutInterceptor outInterceptor = new LoggingOutInterceptor();
-			outInterceptor.setSensitiveElementNames(Set.of("ns2:systemPassword"));
-			outInterceptor.setPrettyLogging(true);
-			outInterceptor.setLimit(1024 * 1024 * 100);
-			client.getOutInterceptors().add(outInterceptor);
+			client.getOutInterceptors().add( new LoggingOutInterceptor());
 			client.getInFaultInterceptors().add(new LoggingInInterceptor());
 		}
 		return port;

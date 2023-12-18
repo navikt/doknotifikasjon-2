@@ -61,8 +61,6 @@ spec:
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: {{ APPDYNAMICS }}
         mountPath: "/var/run/secrets/nais.io/appdynamics"
-      - kvPath: {{ VIRKSOMHETSSERTIFIKAT_VAULT }}
-        mountPath: "/secrets/virksomhetssertifikat"
   webproxy: true
   secureLogs:
     enabled: true
