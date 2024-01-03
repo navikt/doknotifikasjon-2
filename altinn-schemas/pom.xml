@@ -38,7 +38,7 @@
 									<extraargs>
 										<extraarg>-autoNameResolution</extraarg>
 									</extraargs>
-									<wsdlLocation>classpsaath:wsdl/NotificationAgencyExternalBasic.wsdl</wsdlLocation>
+									<wsdlLocation>classpath:wsdl/NotificationAgencyExternalBasic.wsdl</wsdlLocation>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
