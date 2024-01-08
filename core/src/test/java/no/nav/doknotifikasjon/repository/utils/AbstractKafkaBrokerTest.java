@@ -1,5 +1,7 @@
 package no.nav.doknotifikasjon.repository.utils;
 
+import jakarta.xml.bind.JAXBElement;
+import no.nav.doknotifikasjon.config.cxf.BusConfig;
 import no.nav.doknotifikasjon.repository.RepositoryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,14 +10,15 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 
-import jakarta.xml.bind.JAXBElement;
-
 import javax.xml.namespace.QName;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(
-		classes = {ApplicationTestConfig.class, RepositoryConfig.class},
+		classes = {
+				ApplicationTestConfig.class,
+				RepositoryConfig.class,
+				BusConfig.class},
 		webEnvironment = RANDOM_PORT
 )
 @ActiveProfiles({"itest", "itestKafka"})

@@ -56,7 +56,6 @@ public class NotifikasjonRepositoryTest {
 	private static final LocalDateTime ENDRET_DATO = LocalDateTime.parse("2020-10-02T10:15:30.000000");
 	private static final LocalDateTime ENDRET_DATO_2 = LocalDateTime.parse("2020-10-05T10:15:30.000000");
 
-
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;
 

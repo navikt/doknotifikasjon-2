@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon.knot002.itest;
 
 
-import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
+import no.altinn.schemas.services.serviceengine.notification._2015._06.SendNotificationResultList;
 import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
 import no.altinn.services.common.fault._2009._10.AltinnFault;
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
@@ -23,13 +23,12 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
-import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
-import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.generateAltinnResponse;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
-import static no.nav.doknotifikasjon.kodeverk.Status.*;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,6 +38,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,7 +67,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 
 	@Test
 	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenReturn(generateAltinnResponse(TransportType.SMS, KONTAKTINFO));
+		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any())).thenReturn(new SendNotificationResultList());
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 
@@ -150,7 +150,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 				"Feil i altinn",
 				altinnFault
 		);
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
+		doThrow(altinnException).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class));
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
