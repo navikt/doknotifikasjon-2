@@ -11,8 +11,12 @@ spec:
   env:
     - name: DKIF_URL
       value: {{ DKIF_URL }}
+    - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
+      value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
     - name: MOUNT_PATH
       value: {{ MOUNT_PATH }}
+    - name: SEND_TIL_ALTINN
+      value: "{{ SEND_TIL_ALTINN }}"
     - name: SPRINGDOC_ENABLED
       value: "{{ SPRINGDOC_ENABLED }}"
     - name: APPD_NAME
@@ -62,8 +66,6 @@ spec:
       - kvPath: {{ APPDYNAMICS }}
         mountPath: "/var/run/secrets/nais.io/appdynamics"
   webproxy: true
-  secureLogs:
-    enabled: true
   azure:
     application:
       enabled: true

@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.consumer;
 
-import jakarta.xml.bind.JAXBElement;
 import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.ReceiverEndPoint;
 import no.altinn.schemas.services.serviceengine.notification._2009._10.StandaloneNotification;
@@ -22,6 +21,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+
+import jakarta.xml.bind.JAXBElement;
 
 import javax.xml.namespace.QName;
 import java.util.List;
@@ -51,22 +52,21 @@ public class AltinnVarselConsumerTest {
 	private static final String TELEFONNUMMER = "+4712349876";
 	private static final String SMS_TEKST = "Viktig melding fra NAV";
 
-	private AltinnProps altinnProps;
-
 	static Stream<Arguments> serviceShouldSendToAltinn() {
 		return Stream.of(
 				Arguments.of(EPOST, EPOST_ADRESSE, FOEDSELSNUMMER, EPOST_TEKST, EPOST_TITTEL),
 				Arguments.of(SMS, TELEFONNUMMER, FOEDSELSNUMMER, SMS_TEKST, null)
 		);
 	}
-
 	@MethodSource
 	@ParameterizedTest
 	void serviceShouldSendToAltinn(Kanal kanal, String kontaktinformasjon, String fnr, String tekst, String tittel) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		altinnProps = altinnProps(true);
+		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
 		doReturn(new SendNotificationResultList()).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
+		doReturn("testname").when(altinnProps).getUsername();
+		doReturn("testpassword").when(altinnProps).getPassword();
 
 		consumer.sendVarsel(kanal, kontaktinformasjon, fnr, tekst, tittel);
 
@@ -123,9 +123,9 @@ public class AltinnVarselConsumerTest {
 
 	@Test
 	void serviceShouldNotSendToAltinn() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		altinnProps = altinnProps(false);
+		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(false, iNotificationAgencyExternalBasic, altinnProps);
 
 		consumer.sendVarsel(EPOST, null, null, null, null);
 
@@ -135,9 +135,9 @@ public class AltinnVarselConsumerTest {
 	@ParameterizedTest
 	@EnumSource(AltinnFunksjonellFeil.class)
 	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsFunksjonellException(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		altinnProps = altinnProps(true);
+		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
 
 		var altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", feil.beskrivelse));
@@ -150,6 +150,8 @@ public class AltinnVarselConsumerTest {
 		);
 		doThrow(altinnException)
 				.when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
+		doReturn("testname").when(altinnProps).getUsername();
+		doReturn("testpassword").when(altinnProps).getPassword();
 
 		AltinnFunctionalException altinnFunctionalException = assertThrows(AltinnFunctionalException.class, () ->
 				consumer.sendVarsel(EPOST, null, null, null, null));
@@ -161,9 +163,9 @@ public class AltinnVarselConsumerTest {
 	@ParameterizedTest
 	@MethodSource("provideTechnicalExceptions")
 	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsTechnicalException(Integer feilkode, String beskrivelse) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		altinnProps = altinnProps(true);
+		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(iNotificationAgencyExternalBasic, altinnProps);
+		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
 		AltinnFault altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", beskrivelse));
 		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
@@ -174,6 +176,8 @@ public class AltinnVarselConsumerTest {
 		);
 
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any())).thenThrow(altinnException);
+		doReturn("testname").when(altinnProps).getUsername();
+		doReturn("testpassword").when(altinnProps).getPassword();
 
 		AltinnTechnicalException altinnTechnicalException = assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 
@@ -191,9 +195,5 @@ public class AltinnVarselConsumerTest {
 
 	private JAXBElement<String> constructJaxbElement(String local, String value) {
 		return new JAXBElement<>(new QName("http://www.altinn.no/services/common/fault/2009/10", local), String.class, value);
-	}
-
-	private AltinnProps altinnProps(boolean sendTilAltinn) {
-		return new AltinnProps("username", "password", "localhost", false, sendTilAltinn);
 	}
 }

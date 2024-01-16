@@ -22,7 +22,6 @@ import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,9 +41,8 @@ public class AltinnVarselConsumerRetryTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		when(altinnProps.username()).thenReturn("username");
-		when(altinnProps.password()).thenReturn("password");
-		when(altinnProps.sendTilAltinn()).thenReturn(true);
+		when(altinnProps.getUsername()).thenReturn("username");
+		when(altinnProps.getPassword()).thenReturn("password");
 	}
 
 	@ParameterizedTest
@@ -52,10 +50,10 @@ public class AltinnVarselConsumerRetryTest {
 	void shouldRetryIfTechnicalError(Integer feilkode) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
 		var altinnFault = new AltinnFault();
 		altinnFault.setErrorID(feilkode);
-		doThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
-				"Feil i altinn", altinnFault
-		)).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
-
+		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any()))
+				.thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
+						"Feil i altinn", altinnFault
+						));
 
 		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 
@@ -67,9 +65,11 @@ public class AltinnVarselConsumerRetryTest {
 	void shouldNotRetryIfFunctionalError(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
 		var altinnFault = new AltinnFault();
 		altinnFault.setErrorID(feil.feilkode);
-		doThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
-				"Feil i altinn",
-				altinnFault)).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
+		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any()))
+				.thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
+						"Feil i altinn",
+						altinnFault)
+				);
 
 		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 

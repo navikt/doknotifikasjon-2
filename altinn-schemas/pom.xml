@@ -14,8 +14,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>jakarta.xml.ws</groupId>
-			<artifactId>jakarta.xml.ws-api</artifactId>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -26,22 +30,19 @@
 				<artifactId>cxf-codegen-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>wsdl2java-generate</id>
+						<id>generate-sources-altinn-notification</id>
 						<phase>generate-sources</phase>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
 						<configuration>
+							<sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/wsdl/NotificationAgencyExternalBasic.wsdl</wsdl>
-									<extraargs>
-										<extraarg>-autoNameResolution</extraarg>
-									</extraargs>
-									<wsdlLocation>classpath:wsdl/NotificationAgencyExternalBasic.wsdl</wsdlLocation>
+									<wsdl>${basedir}/src/main/resources/soap/NotificationAgencyExternalBasic.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
