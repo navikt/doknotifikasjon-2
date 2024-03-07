@@ -1,6 +1,5 @@
 package no.nav.doknotifikasjon.knot002;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import static no.nav.doknotifikasjon.mdc.MDCGenerate.clearDistribusjonId;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.generateNewCallIdIfThereAreNone;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.setDistribusjonId;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_CONSUMER;
-
 
 @Slf4j
 @Component
