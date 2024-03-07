@@ -2,7 +2,6 @@ package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
-import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonService;
@@ -15,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 
 @Slf4j
 @Component
@@ -79,7 +80,7 @@ public class Snot001NotifikasjonService {
 
 		NotifikasjonDistribusjon newNotifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
 				.notifikasjon(notifikasjonDistribusjon.getNotifikasjon())
-				.status(Status.OPPRETTET)
+				.status(OPPRETTET)
 				.kanal(kanal)
 				.kontaktInfo(notifikasjonDistribusjon.getKontaktInfo())
 				.tittel(notifikasjonDistribusjon.getTittel())

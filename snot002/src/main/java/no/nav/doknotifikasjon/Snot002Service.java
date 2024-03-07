@@ -63,7 +63,6 @@ public class Snot002Service {
 		return (sms.isEmpty() || FERDIGSTILT.equals(sms.get().getStatus())) && (epost.isEmpty() || FERDIGSTILT.equals(epost.get().getStatus()));
 	}
 
-
 	private void publishHendelseOnTopic(Notifikasjon notifikasjon) {
 		kafkaStatusEventProducer.publishDoknotifikasjonStatusFerdigstilt(
 				notifikasjon.getBestillingsId(),
