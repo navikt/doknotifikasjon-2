@@ -124,14 +124,6 @@
 		<dependency>
 			<groupId>io.confluent</groupId>
 			<artifactId>kafka-avro-serializer</artifactId>
-			<!-- Tok inn eldre versjon av swagger-annotations enn springdoc sin	-->
-			<!-- Får java.lang.ClassNotFoundException: io.swagger.v3.oas.annotations.media.Schema$RequiredMode -->
-			<exclusions>
-				<exclusion>
-					<groupId>io.swagger.core.v3</groupId>
-					<artifactId>swagger-annotations</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.teamdokumenthandtering</groupId>
