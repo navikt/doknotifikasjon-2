@@ -41,6 +41,14 @@
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
+			<!-- Ekskluderer for å unngå feilmelding 'Standard Commons Logging discovery in action with spring-jcl:
+			 please remove commons-logging.jar from classpath in order to avoid potential conflicts' -->
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -91,7 +99,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
+			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -124,14 +132,6 @@
 		<dependency>
 			<groupId>io.confluent</groupId>
 			<artifactId>kafka-avro-serializer</artifactId>
-			<!-- Tok inn eldre versjon av swagger-annotations enn springdoc sin	-->
-			<!-- Får java.lang.ClassNotFoundException: io.swagger.v3.oas.annotations.media.Schema$RequiredMode -->
-			<exclusions>
-				<exclusion>
-					<groupId>io.swagger.core.v3</groupId>
-					<artifactId>swagger-annotations</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.teamdokumenthandtering</groupId>
