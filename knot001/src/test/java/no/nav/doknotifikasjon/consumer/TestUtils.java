@@ -111,7 +111,7 @@ public final class TestUtils {
 		);
 	}
 
-	public static DigitalKontaktinformasjonTo createDKIFWithKanVarslesFalse() {
+	public static DigitalKontaktinformasjonTo createDigitalKontaktinformasjonWithKanVarslesFalse() {
 		return new DigitalKontaktinformasjonTo(
 				null,
 				singletonMap(FODSELSNUMMER, createKontaktInfo("bogus", "bogus", false, false))
