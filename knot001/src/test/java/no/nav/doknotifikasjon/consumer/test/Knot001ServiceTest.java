@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.FODSELSNUMMER;
-import static no.nav.doknotifikasjon.consumer.TestUtils.createDKIFWithKanVarslesFalse;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonWithKanVarslesFalse;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfo;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfoWithErrorMessage;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
@@ -71,7 +71,7 @@ class Knot001ServiceTest {
 	@Test
 	void shouldGetExceptionWhenKanVarslesErFalseAndAntallRenotifikasjonerGreaterThanZero() {
 		when(digitalKontaktinfoConsumer.hentDigitalKontaktinfo(FODSELSNUMMER))
-				.thenReturn(createDKIFWithKanVarslesFalse());
+				.thenReturn(createDigitalKontaktinformasjonWithKanVarslesFalse());
 
 		DoknotifikasjonTO doknotifikasjon = createDoknotifikasjonTO();
 		assertThrows(KontaktInfoValidationFunctionalException.class, () -> knot001Service.getKontaktInfoByFnr(doknotifikasjon));

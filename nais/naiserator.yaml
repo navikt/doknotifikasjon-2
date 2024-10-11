@@ -9,8 +9,6 @@ spec:
   kafka:
     pool: {{ KAFKA_POOL }}
   env:
-    - name: DKIF_URL
-      value: {{ DKIF_URL }}
     - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
       value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
     - name: MOUNT_PATH
