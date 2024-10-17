@@ -1,4 +1,5 @@
 {
+  "ENVIRONMENT": "p",
   "KAFKA_POOL": "nav-prod",
   "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
