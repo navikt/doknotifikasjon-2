@@ -17,8 +17,6 @@ spec:
       value: "{{ SEND_TIL_ALTINN }}"
     - name: SPRINGDOC_ENABLED
       value: "{{ SPRINGDOC_ENABLED }}"
-    - name: APPD_NAME
-      value: {{ APPD_NAME }}
     - name: DIGDIR_KRR_PROXY_SCOPE
       value: {{DIGDIR_KRR_PROXY_SCOPE}}
     - name: DIGDIR_KRR_PROXY_BASE_URL
@@ -61,8 +59,6 @@ spec:
         mountPath: /var/run/secrets/nais.io/srvdoknotifikasjon-2
       - kvPath: {{ VAULT }}
         mountPath: /var/run/secrets/nais.io/vault
-      - kvPath: {{ APPDYNAMICS }}
-        mountPath: "/var/run/secrets/nais.io/appdynamics"
   webproxy: true
   azure:
     application:
