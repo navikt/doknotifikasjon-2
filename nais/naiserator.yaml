@@ -17,14 +17,14 @@ spec:
       value: "{{ SEND_TIL_ALTINN }}"
     - name: SPRINGDOC_ENABLED
       value: "{{ SPRINGDOC_ENABLED }}"
-    - name: APPD_NAME
-      value: {{ APPD_NAME }}
     - name: DIGDIR_KRR_PROXY_SCOPE
       value: {{DIGDIR_KRR_PROXY_SCOPE}}
     - name: DIGDIR_KRR_PROXY_BASE_URL
       value: {{DIGDIR_KRR_PROXY_BASE_URL}}
     - name: NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL
       value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "deployment.environment.name={{ ENVIRONMENT }}"
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
@@ -61,9 +61,13 @@ spec:
         mountPath: /var/run/secrets/nais.io/srvdoknotifikasjon-2
       - kvPath: {{ VAULT }}
         mountPath: /var/run/secrets/nais.io/vault
-      - kvPath: {{ APPDYNAMICS }}
-        mountPath: "/var/run/secrets/nais.io/appdynamics"
   webproxy: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+      destinations:
+        - id: "elastic-apm"
   azure:
     application:
       enabled: true

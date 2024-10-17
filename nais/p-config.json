@@ -1,4 +1,5 @@
 {
+  "ENVIRONMENT": "p",
   "KAFKA_POOL": "nav-prod",
   "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
@@ -7,11 +8,9 @@
   "SEND_TIL_ALTINN": "true",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
-  "APPD_NAME": "doknotifikasjon-2",
   "SPRINGDOC_ENABLED": "false",
   "DIGDIR_KRR_PROXY_SCOPE": "api://prod-gcp.team-rocket.digdir-krr-proxy/.default",
   "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.intern.nav.no",
-  "APPDYNAMICS": "/apikey/appdynamics/prod",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
   "INGRESSES": [
     "https://doknotifikasjon-2.intern.nav.no"
