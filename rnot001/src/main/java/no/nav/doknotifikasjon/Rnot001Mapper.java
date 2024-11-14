@@ -12,9 +12,13 @@ public class Rnot001Mapper {
 				notifikasjon.getId(),
 				notifikasjon.getBestillerId(),
 				notifikasjon.getStatus(),
-				notifikasjon.getAntallRenotifikasjoner(),
+				mapNullToZero(notifikasjon.getAntallRenotifikasjoner()),
 				notifikasjon.getNotifikasjonDistribusjon().stream().map(Rnot001Mapper::mapNotifikasjonDistribusjon).toList()
 		);
+	}
+
+	private static int mapNullToZero(Integer value) {
+		return value == null ? 0 : value;
 	}
 
 	private static NotifikasjonDistribusjonDto mapNotifikasjonDistribusjon(NotifikasjonDistribusjon notifikasjonDistribusjon) {

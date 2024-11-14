@@ -48,6 +48,17 @@ public class Rnot001MapperTest {
 		assertNotifikasjonDistribusjon(distribusjonDtos.get(1), 2, EPOST, TITTEL);
 	}
 
+	@Test
+	public void shouldMapAntallRenotifikasjonerNull() {
+		Notifikasjon notifikasjon = createNotifikasjonWithId();
+		notifikasjon.setAntallRenotifikasjoner(null);
+		notifikasjon.setNotifikasjonDistribusjon(new HashSet<>());
+
+		NotifikasjonInfoTo notifikasjonInfoTo = mapNotifikasjon(notifikasjon);
+
+		assertThat(notifikasjonInfoTo.antallRenotifikasjoner(), is(0));
+	}
+
 	private void assertNotifikasjonDistribusjon(NotifikasjonDistribusjonDto notifDistDto, int id, Kanal kanal, String tittel) {
 		assertThat(notifDistDto.id(), is(id));
 		assertThat(notifDistDto.status(), is(FERDIGSTILT));
