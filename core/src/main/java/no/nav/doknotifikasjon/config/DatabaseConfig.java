@@ -15,46 +15,62 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
 
+import static java.lang.String.format;
+
 @Configuration
 @EnableJpaRepositories(basePackages = "no.nav.doknotifikasjon")
 @Profile("nais")
 @Slf4j
 public class DatabaseConfig {
 
-	private static final String DOKNOTIFIKASJON_DB_URL = "${doknotifikasjon_db_url}";
-	private static final String APPLICATION_NAME = "doknotifikasjon";
+	private static final String DB_URL = "${doknotifikasjon_db_url}";
+	private static final String DB_NAME = "doknotifikasjon";
 	private static final String CLUSTER_NAME = "${nais_cluster_name}";
-	private static final String ADMIN = "admin";
 	private static final String MOUNT_PATH = "${MOUNT_PATH}";
 
-	@Bean
-	public DataSource userDataSource(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl, @Value(CLUSTER_NAME) final String cluster,
-									 @Value(MOUNT_PATH) final String mountPath) {
-		return dataSource("user", doknotifikasjonDbUrl, cluster, mountPath);
-	}
+	// Roles used in the database
+	//   admin: extended permissions (create, alter, delete tables etc.). Useful in e.g. database schema migrations.
+	//   user: no access to create/alter/delete tables, but has normal CRUD access to insert, update, delete rows etc.
+	private static final String ROLE_ADMIN = "admin";
+	private static final String ROLE_USER = "user";
 
-	@SneakyThrows
-	private HikariDataSource dataSource(String user, String doknotifikasjonDbUrl, String cluster, String mountPath) {
-		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl(doknotifikasjonDbUrl);
-		config.setMaximumPoolSize(4);
-		config.setMinimumIdle(1);
-		log.info("Running on cluster={}", cluster);
-		log.info("Vault mountPath={}", mountPath);
-		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, dbRole(user));
+	@Bean
+	public DataSource userDataSource(
+			@Value(DB_URL) final String doknotifikasjonDbUrl,
+			@Value(CLUSTER_NAME) final String cluster,
+			@Value(MOUNT_PATH) final String mountPath
+	) {
+		return dataSource(ROLE_USER, doknotifikasjonDbUrl, cluster, mountPath);
 	}
 
 	@Bean
-	public FlywayMigrationStrategy flywayMigrationStrategy(@Value(DOKNOTIFIKASJON_DB_URL) final String doknotifikasjonDbUrl,
-														   @Value(CLUSTER_NAME) final String cluster, @Value(MOUNT_PATH) final String mountPath) {
+	public FlywayMigrationStrategy flywayMigrationStrategy(
+			@Value(DB_URL) final String doknotifikasjonDbUrl,
+			@Value(CLUSTER_NAME) final String cluster,
+			@Value(MOUNT_PATH) final String mountPath
+	) {
 		return flyway -> Flyway.configure()
-				.dataSource(dataSource(ADMIN, doknotifikasjonDbUrl, cluster, mountPath))
-				.initSql(String.format("SET ROLE \"%s\"", dbRole(ADMIN)))
+				.dataSource(dataSource(ROLE_ADMIN, doknotifikasjonDbUrl, cluster, mountPath))
+				.initSql(format("SET ROLE \"%s\"", formatDbRole(ROLE_ADMIN)))
 				.load()
 				.migrate();
 	}
 
-	private String dbRole(String role) {
-		return String.join("-", APPLICATION_NAME, role);
+	@SneakyThrows
+	private HikariDataSource dataSource(String role, String doknotifikasjonDbUrl, String cluster, String mountPath) {
+		log.info("Running on cluster={}", cluster);
+		log.info("Vault mountPath={}", mountPath);
+
+		HikariConfig config = new HikariConfig();
+		config.setJdbcUrl(doknotifikasjonDbUrl);
+		config.setMaximumPoolSize(4);
+		config.setMinimumIdle(1);
+
+		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, formatDbRole(role));
 	}
+
+	private String formatDbRole(String role) {
+		return String.join("-", DB_NAME, role);
+	}
+
 }
