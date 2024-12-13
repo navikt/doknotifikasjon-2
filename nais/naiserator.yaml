@@ -11,10 +11,8 @@ spec:
   env:
     - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
       value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
-    - name: POSTGRES_DB_URL
-      value: {{ POSTGRES_DB_URL }}
-    - name: POSTGRES_DB_CREDENTIALS_MOUNT_PATH
-      value: {{ POSTGRES_DB_CREDENTIALS_MOUNT_PATH }}
+    - name: DB_CREDENTIALS_MOUNT_PATH
+      value: {{ DB_CREDENTIALS_MOUNT_PATH }}
     - name: SEND_TIL_ALTINN
       value: "{{ SEND_TIL_ALTINN }}"
     - name: SPRINGDOC_ENABLED

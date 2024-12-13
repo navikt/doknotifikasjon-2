@@ -3,7 +3,7 @@ package no.nav.doknotifikasjon;
 import no.nav.doknotifikasjon.config.AzureConfig;
 import no.nav.doknotifikasjon.config.DigdirKrrProxyConfig;
 import no.nav.doknotifikasjon.config.ServiceuserAlias;
-import no.nav.doknotifikasjon.config.properties.PostgresProperties;
+import no.nav.doknotifikasjon.config.properties.DatabaseProperties;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,7 +16,7 @@ import org.springframework.retry.annotation.EnableRetry;
 		ServiceuserAlias.class,
 		AzureConfig.class,
 		DigdirKrrProxyConfig.class,
-		PostgresProperties.class
+		DatabaseProperties.class
 })
 @EnableRetry
 @EnableJwtTokenValidation(ignore = {"org.springframework", "org.springdoc"})

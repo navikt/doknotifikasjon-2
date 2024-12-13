@@ -7,8 +7,8 @@ import org.springframework.validation.annotation.Validated;
 
 @Data
 @Validated
-@ConfigurationProperties("postgres.db")
-public class PostgresProperties {
+@ConfigurationProperties("db")
+public class DatabaseProperties {
 
 	@NotEmpty
 	private String url;
