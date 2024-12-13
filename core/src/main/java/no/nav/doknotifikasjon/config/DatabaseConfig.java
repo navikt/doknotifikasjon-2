@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.config.properties.PostgresProperties;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,10 +24,7 @@ import static java.lang.String.format;
 @Slf4j
 public class DatabaseConfig {
 
-	private static final String DB_URL = "${doknotifikasjon_db_url}";
-	private static final String DB_NAME = "doknotifikasjon";
 	private static final String CLUSTER_NAME = "${nais_cluster_name}";
-	private static final String MOUNT_PATH = "${MOUNT_PATH}";
 
 	// Roles used in the database
 	//   admin: extended permissions (create, alter, delete tables etc.). Useful in e.g. database schema migrations.
@@ -36,41 +34,42 @@ public class DatabaseConfig {
 
 	@Bean
 	public DataSource userDataSource(
-			@Value(DB_URL) final String doknotifikasjonDbUrl,
 			@Value(CLUSTER_NAME) final String cluster,
-			@Value(MOUNT_PATH) final String mountPath
+			PostgresProperties postgresProperties
 	) {
-		return dataSource(ROLE_USER, doknotifikasjonDbUrl, cluster, mountPath);
+		return dataSource(cluster, postgresProperties.getUrl(), ROLE_USER, postgresProperties.getCredentialsMountPath());
 	}
 
 	@Bean
 	public FlywayMigrationStrategy flywayMigrationStrategy(
-			@Value(DB_URL) final String doknotifikasjonDbUrl,
 			@Value(CLUSTER_NAME) final String cluster,
-			@Value(MOUNT_PATH) final String mountPath
+			PostgresProperties postgresProperties
 	) {
 		return flyway -> Flyway.configure()
-				.dataSource(dataSource(ROLE_ADMIN, doknotifikasjonDbUrl, cluster, mountPath))
-				.initSql(format("SET ROLE \"%s\"", formatDbRole(ROLE_ADMIN)))
+				.dataSource(dataSource(cluster, postgresProperties.getUrl(), ROLE_ADMIN, postgresProperties.getCredentialsMountPath()))
+				.initSql(format("SET ROLE \"%s\"", formatDbRole(postgresProperties.getUrl(), ROLE_ADMIN)))
 				.load()
 				.migrate();
 	}
 
 	@SneakyThrows
-	private HikariDataSource dataSource(String role, String doknotifikasjonDbUrl, String cluster, String mountPath) {
-		log.info("Running on cluster={}", cluster);
-		log.info("Vault mountPath={}", mountPath);
+	private HikariDataSource dataSource(String cluster, String dbUrl, String role, String credentialsMountPath) {
+		log.info("Konfigurerer Postgres-db i cluster={} for rolle={} og credentials fra Vault mount path={}", cluster, role, credentialsMountPath);
 
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl(doknotifikasjonDbUrl);
+		config.setJdbcUrl(dbUrl);
 		config.setMaximumPoolSize(4);
 		config.setMinimumIdle(1);
 
-		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, formatDbRole(role));
+		return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, credentialsMountPath, formatDbRole(dbUrl, role));
 	}
 
-	private String formatDbRole(String role) {
-		return String.join("-", DB_NAME, role);
+	private String formatDbRole(String dbUrl, String role) {
+		return String.join("-", getDatabaseName(dbUrl), role);
+	}
+
+	private String getDatabaseName(String dbUrl) {
+		return dbUrl.substring(dbUrl.lastIndexOf("/") + 1);
 	}
 
 }
