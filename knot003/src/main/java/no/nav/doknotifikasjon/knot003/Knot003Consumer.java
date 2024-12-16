@@ -40,7 +40,8 @@ public class Knot003Consumer {
 
 	@KafkaListener(
 			topics = KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST,
-			groupId = "doknotifikasjon-knot003"
+			groupId = "doknotifikasjon-knot003",
+			autoStartup = "${autostartup.av.kafkalyttere.for.knot}"
 	)
 	@Transactional
 	@Metrics(value = DOK_KNOT003_CONSUMER, createErrorMetric = true)
