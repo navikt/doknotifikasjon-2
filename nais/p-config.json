@@ -4,7 +4,7 @@
   "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
   "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
-  "MOUNT_PATH": "postgresql/prod-fss",
+  "DB_CREDENTIALS_MOUNT_PATH": "postgresql/prod-fss",
   "SEND_TIL_ALTINN": "true",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
