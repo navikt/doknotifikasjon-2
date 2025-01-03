@@ -35,9 +35,9 @@
 		<java.version>21</java.version>
 
 		<logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
-		<apache-cxf.version>4.0.5</apache-cxf.version>
+		<apache-cxf.version>4.1.0</apache-cxf.version>
 		<commons-validator.version>1.9.0</commons-validator.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.7.0</springdoc-openapi-starter-webmvc-ui.version>
 
 		<!-- Dersom confluent blir oppgradert bør også teamdokumenthandtering-avro-schemas sin avro-versjon bli det for å være i synk med confluent -->
 		<!-- Confluent-versjon 7.7.1 av kafka-avro-serializer bruker avro-versjon 1.11.3 -->
@@ -48,11 +48,11 @@
 		<token-support.version>5.0.5</token-support.version>
 
 		<!-- Test -->
-		<spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
+		<spring-cloud-contract-wiremock.version>4.2.0</spring-cloud-contract-wiremock.version>
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
-		<cxf-codegen-plugin.version>4.0.5</cxf-codegen-plugin.version>
+		<cxf-codegen-plugin.version>4.1.0</cxf-codegen-plugin.version>
 	</properties>
 
 	<dependencyManagement>
