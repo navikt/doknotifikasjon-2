@@ -4,9 +4,9 @@ import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -22,7 +22,7 @@ class NotifikasjonServiceTest {
 
 	private static final String BESTILLINGS_ID = "12345";
 
-	@MockBean
+	@MockitoBean
 	private NotifikasjonRepository notifikasjonRepository;
 
 	@Autowired
@@ -40,7 +40,8 @@ class NotifikasjonServiceTest {
 
 	@Test
 	void shouldRetryAndThrowExceptionIfTechnicalErrorInKnot004() {
-		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall"){ });
+		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall") {
+		});
 
 		Exception e = assertThrows(DataAccessException.class, () -> notifikasjonService.findByBestillingsId(BESTILLINGS_ID));
 
@@ -60,7 +61,8 @@ class NotifikasjonServiceTest {
 
 	@Test
 	void shouldRetryAndThrowExceptionForNonSpecifiedExceptionsInKnot005() {
-		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall"){ });
+		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall") {
+		});
 
 		Exception e = assertThrows(DataAccessException.class, () -> notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(BESTILLINGS_ID));
 

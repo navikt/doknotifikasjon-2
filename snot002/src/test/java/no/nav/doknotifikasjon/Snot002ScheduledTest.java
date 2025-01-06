@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ class Snot002ScheduledTest extends AbstractKafkaBrokerTest {
 	@Autowired
 	private Snot002Scheduler scheduler;
 
-	@MockBean
+	@MockitoBean
 	private KafkaStatusEventProducer statusProducer;
 
 	@BeforeEach

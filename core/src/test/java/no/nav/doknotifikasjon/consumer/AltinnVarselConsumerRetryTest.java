@@ -15,8 +15,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles({"itest"})
 public class AltinnVarselConsumerRetryTest {
 
-	@MockBean
+	@MockitoBean
 	INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
-	@MockBean
+	@MockitoBean
 	AltinnProps altinnProps;
 
 	@Autowired
@@ -53,7 +53,7 @@ public class AltinnVarselConsumerRetryTest {
 		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any()))
 				.thenThrow(new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
 						"Feil i altinn", altinnFault
-						));
+				));
 
 		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
 

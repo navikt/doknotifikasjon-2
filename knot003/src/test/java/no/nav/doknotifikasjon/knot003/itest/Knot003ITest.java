@@ -16,18 +16,21 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static no.nav.doknotifikasjon.kafka.KafkaTopics.*;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
 import static no.nav.doknotifikasjon.knot003.itest.utils.TestUtils.generateAltinnResponse;
-import static no.nav.doknotifikasjon.kodeverk.Kanal.*;
-import static no.nav.doknotifikasjon.kodeverk.Status.*;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
+import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,10 +53,10 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 	@Autowired
 	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-	@SpyBean
+	@MockitoSpyBean
 	private KafkaEventProducer kafkaEventProducer;
 
-	@MockBean
+	@MockitoBean
 	private INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
 	@BeforeEach
@@ -111,10 +114,10 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 		await().atMost(10, SECONDS).untilAsserted(() ->
-			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
-			)
+				verify(kafkaEventProducer, atLeastOnce()).publish(
+						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id))
+				)
 		);
 	}
 
@@ -127,10 +130,10 @@ class Knot003ITest extends AbstractKafkaBrokerTest {
 		putMessageOnKafkaTopic(doknotifikasjonEpost);
 
 		await().atMost(10, SECONDS).untilAsserted(() ->
-			verify(kafkaEventProducer, atLeastOnce()).publish(
-					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
-			)
+				verify(kafkaEventProducer, atLeastOnce()).publish(
+						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id))
+				)
 		);
 	}
 
