@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjon;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonWithInvalidAntallRenotifikasjoner;
@@ -25,7 +25,7 @@ class DoknotifikasjonValidatorTest {
 	@Autowired
 	DoknotifikasjonValidator doknotifikasjonValidator;
 
-	@MockBean
+	@MockitoBean
 	KafkaStatusEventProducer statusProducer;
 
 	@Test

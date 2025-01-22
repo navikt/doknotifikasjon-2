@@ -14,12 +14,12 @@ import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.FODSELSNUMMER;
-import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonWithKanVarslesFalse;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfo;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonInfoWithErrorMessage;
+import static no.nav.doknotifikasjon.consumer.TestUtils.createDigitalKontaktinformasjonWithKanVarslesFalse;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createEmptyDigitalKontaktinformasjonInfo;
 import static no.nav.doknotifikasjon.consumer.TestUtils.createInvalidKontaktInfo;
@@ -42,16 +42,16 @@ class Knot001ServiceTest {
 	@Autowired
 	Knot001Service knot001Service;
 
-	@MockBean
+	@MockitoBean
 	KafkaStatusEventProducer statusProducer;
 
-	@MockBean
+	@MockitoBean
 	DigitalKontaktinfoConsumer digitalKontaktinfoConsumer;
 
-	@MockBean
+	@MockitoBean
 	NotifikasjonService notifikasjonService;
 
-	@MockBean
+	@MockitoBean
 	KafkaEventProducer producer;
 
 	@Test

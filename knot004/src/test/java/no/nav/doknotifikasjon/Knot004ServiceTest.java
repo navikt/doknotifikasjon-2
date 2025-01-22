@@ -7,7 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_FUNCTIONAL_EXCEPTION_DIGDIR_KRR_PROXY;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_TECHNICAL_EXCEPTION_DATABASE;
@@ -30,16 +30,16 @@ public class Knot004ServiceTest {
 	@Autowired
 	Knot004Service knot004Service;
 
-	@MockBean
+	@MockitoBean
 	NotifikasjonService notifikasjonService;
 
-	@MockBean
+	@MockitoBean
 	Validator validator;
 
-	@MockBean
+	@MockitoBean
 	KafkaStatusEventProducer kafkaStatusEventProducer;
 
-	@MockBean
+	@MockitoBean
 	MetricService metricService;
 
 	@ParameterizedTest

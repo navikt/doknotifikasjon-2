@@ -9,7 +9,7 @@ import no.nav.doknotifikasjon.repository.NotifikasjonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static no.nav.doknotifikasjon.consumer.TestUtils.createDoknotifikasjonTO;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.INFO_ALREADY_EXIST_IN_DATABASE;
@@ -24,13 +24,13 @@ class Knot006ServiceTest {
 	@Autowired
 	Knot006Service knot006Service;
 
-	@MockBean
+	@MockitoBean
 	KafkaStatusEventProducer statusProducer;
 
-	@MockBean
+	@MockitoBean
 	NotifikasjonService notifikasjonService;
 
-	@MockBean
+	@MockitoBean
 	KafkaEventProducer producer;
 
 

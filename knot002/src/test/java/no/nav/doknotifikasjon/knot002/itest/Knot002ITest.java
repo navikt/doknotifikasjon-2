@@ -17,8 +17,8 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
@@ -28,8 +28,9 @@ import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifik
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.generateAltinnResponse;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
-import static no.nav.doknotifikasjon.kodeverk.Status.*;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
+import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,10 +53,10 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 	@Autowired
 	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
-	@SpyBean
+	@MockitoSpyBean
 	private KafkaEventProducer kafkaEventProducer;
 
-	@MockBean
+	@MockitoBean
 	private INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
 	@BeforeEach

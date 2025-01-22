@@ -12,8 +12,8 @@ import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 	@Autowired
 	private KafkaEventProducer KafkaEventProducer;
 
-	@MockBean
+	@MockitoBean
 	private KafkaStatusEventProducer statusProducer;
 
 	@Autowired

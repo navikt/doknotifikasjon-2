@@ -5,8 +5,8 @@ import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,7 +20,7 @@ class NotifikasjonDistribusjonServiceTest {
 
 	private static final int NOTIFIKASJONDISTRIBUSJON_ID = 12345;
 
-	@MockBean
+	@MockitoBean
 	private NotifikasjonDistribusjonRepository notifikasjonDistribusjonRepository;
 
 	@Autowired
