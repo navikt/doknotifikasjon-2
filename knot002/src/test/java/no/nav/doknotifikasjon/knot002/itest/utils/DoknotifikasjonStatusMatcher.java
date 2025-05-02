@@ -19,11 +19,10 @@ public class DoknotifikasjonStatusMatcher implements ArgumentMatcher<Doknotifika
 
 	@Override
 	public boolean matches(DoknotifikasjonStatus right) {
-		boolean match = right.getBestillerId().equals(left.getBestillerId()) &&
-				right.getBestillingsId().equals(left.getBestillingsId()) &&
-				right.getStatus().equals(left.getStatus()) &&
-				right.getMelding().equals(left.getMelding()) &&
-				right.getDistribusjonId().equals(left.getDistribusjonId());
-		return match;
+		return right.getBestillerId().equals(left.getBestillerId()) &&
+			   right.getBestillingsId().equals(left.getBestillingsId()) &&
+			   right.getStatus().equals(left.getStatus()) &&
+			   right.getMelding().equals(left.getMelding()) &&
+			   right.getDistribusjonId().equals(left.getDistribusjonId());
 	}
 }

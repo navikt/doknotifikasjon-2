@@ -21,7 +21,7 @@ public final class TestUtils {
 	private static final int RENOTIFIKASJON_INTERVALL = 10;
 	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
 	private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
-	private static final String PREFERERTE_KANALER = Kanal.EPOST.toString() + ", " + Kanal.SMS.toString();
+	private static final String PREFERERTE_KANALER = Kanal.EPOST + ", " + Kanal.SMS;
 
 	public TestUtils() {
 	}
