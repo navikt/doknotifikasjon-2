@@ -23,7 +23,6 @@ import static java.lang.String.format;
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.AZURE_TOKEN_CACHE;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 
-
 @Slf4j
 @Component
 public class AzureToken {
@@ -58,7 +57,7 @@ public class AzureToken {
 				.body(BodyInserters.fromFormData(formData))
 				.retrieve()
 				.bodyToMono(String.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 
 		try {
@@ -69,11 +68,13 @@ public class AzureToken {
 		}
 	}
 
-	private void handleError(Throwable error) {
+	private Throwable mapError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new AzureTokenException(format("Klarte ikke hente token fra Azure. Feilet med statuskode=%s Feilmelding=%s", response.getStatusCode(), response.getMessage()), error);
+			return new AzureTokenException(format("Klarte ikke hente token fra Azure. Feilet med statuskode=%s Feilmelding=%s",
+					response.getStatusCode(), response.getMessage()), error);
 		} else {
-			throw new AzureTokenException(format("Kall mot Azure feilet med feilmelding=%s", error.getMessage()), error);
+			return new AzureTokenException(format("Kall mot Azure feilet med feilmelding=%s",
+					error.getMessage()), error);
 		}
 	}
 }

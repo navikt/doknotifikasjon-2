@@ -52,7 +52,7 @@ public class DigitalKontaktinfoConsumer {
 				.body(Mono.just(body), PostPersonerRequest.class)
 				.retrieve()
 				.bodyToMono(DigitalKontaktinformasjonTo.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 	}
 
@@ -70,18 +70,18 @@ public class DigitalKontaktinfoConsumer {
 				.header("Nav-Personident", fnrTrimmed)
 				.retrieve()
 				.bodyToMono(KontaktinfoTo.class)
-				.doOnError(this::handleError)
+				.onErrorMap(this::mapError)
 				.block();
 	}
 
-	private void handleError(Throwable error) {
+	private Throwable mapError(Throwable error) {
 		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
-			throw new DigitalKontaktinformasjonFunctionalException(
-					format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
-							response.getStatusCode(), response.getMessage()), error, (HttpStatus) response.getStatusCode()
+			return new DigitalKontaktinformasjonFunctionalException(format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
+					response.getStatusCode(), response.getMessage()), error, (HttpStatus) response.getStatusCode()
 			);
 		} else {
-			throw new DigitalKontaktinformasjonTechnicalException(format("Kall mot Digdir-krr-proxy feilet med feilmelding=%s", error.getMessage()), error);
+			return new DigitalKontaktinformasjonTechnicalException(format("Kall mot Digdir-krr-proxy feilet med feilmelding=%s",
+					error.getMessage()), error);
 		}
 	}
 
