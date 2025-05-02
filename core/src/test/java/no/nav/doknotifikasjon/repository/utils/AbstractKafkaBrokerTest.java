@@ -26,8 +26,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 				"aapen-dok-notifikasjon-status",
 				"privat-dok-notifikasjon-sms",
 				"privat-dok-notifikasjon-epost"
-		},
-		bootstrapServersProperty = "spring.kafka.bootstrap-servers"
+		}
 )
 @AutoConfigureWireMock(port = 0)
 public abstract class AbstractKafkaBrokerTest {
