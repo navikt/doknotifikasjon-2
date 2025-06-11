@@ -79,3 +79,5 @@ spec:
           namespace: {{namespace}}
           cluster: {{cluster}}
     {{/each}}
+  envFrom:
+    - secret: slack-alerts
