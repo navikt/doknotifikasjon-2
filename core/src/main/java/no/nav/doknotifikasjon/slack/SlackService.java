@@ -51,7 +51,7 @@ public class SlackService {
 
 		return ChatPostMessageRequest.builder()
 				.channel(slackProperties.getChannel())
-				.text(bodyText) //fallback tekst
+				.text(bodyText) //ved bruk av blocks fungerer dette som fallback-tekst for varsel
 				.blocks(Arrays.asList(
 						HeaderBlock.builder()
 								.text(PlainTextObject.builder().text(headerText).build())
