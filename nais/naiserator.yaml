@@ -68,6 +68,10 @@ spec:
       runtime: java
       destinations:
         - id: "elastic-apm"
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
   azure:
     application:
       enabled: true
@@ -79,3 +83,5 @@ spec:
           namespace: {{namespace}}
           cluster: {{cluster}}
     {{/each}}
+  envFrom:
+    - secret: slack-alerts
