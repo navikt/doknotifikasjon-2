@@ -42,7 +42,7 @@
 
 		<!-- Merk at pakkene kafka-avro-serializer og teamdokumenthandtering-avro-schemas sin avro-versjon bør være i synk -->
 		<kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
-		<teamdokumenthandtering-avro-schemas.version>1.1.6</teamdokumenthandtering-avro-schemas.version>
+		<teamdokumenthandtering-avro-schemas.version>873c5cdd</teamdokumenthandtering-avro-schemas.version>
 
 		<vault-jdbc.version>1.3.10</vault-jdbc.version>
 		<token-support.version>5.0.29</token-support.version>
