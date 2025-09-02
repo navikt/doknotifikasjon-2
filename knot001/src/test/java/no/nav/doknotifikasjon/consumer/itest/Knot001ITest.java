@@ -79,7 +79,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 			assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
 			assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-			assertEquals(doknotifikasjon.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+			assertEquals(doknotifikasjon.getPrefererteKanaler().getFirst().toString(), notifikasjon.getPrefererteKanaler());
 			assertEquals(OPPRETTET, notifikasjon.getStatus());
 
 			assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());
@@ -119,7 +119,7 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 			assertEquals(doknotifikasjon.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(doknotifikasjon.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
 			assertEquals(doknotifikasjon.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-			assertEquals(doknotifikasjon.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+			assertEquals(doknotifikasjon.getPrefererteKanaler().getFirst().toString(), notifikasjon.getPrefererteKanaler());
 			assertEquals(OPPRETTET, notifikasjon.getStatus());
 
 			assertEquals(doknotifikasjon.getFodselsnummer(), notifikasjon.getMottakerId());

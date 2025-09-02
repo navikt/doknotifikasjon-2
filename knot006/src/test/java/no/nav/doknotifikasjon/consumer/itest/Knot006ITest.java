@@ -68,7 +68,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
 			assertEquals(notifikasjonMedkontaktInfo.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().getFirst().toString(), notifikasjon.getPrefererteKanaler());
 			assertEquals(OPPRETTET, notifikasjon.getStatus());
 
 			assertEquals(notifikasjonMedkontaktInfo.getFodselsnummer(), notifikasjon.getMottakerId());
@@ -107,7 +107,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
 			assertEquals(notifikasjonMedkontaktInfo.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().getFirst().toString(), notifikasjon.getPrefererteKanaler());
 			assertEquals(OPPRETTET, notifikasjon.getStatus());
 
 			assertEquals(notifikasjonMedkontaktInfo.getFodselsnummer(), notifikasjon.getMottakerId());
@@ -147,7 +147,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
 			assertEquals(notifikasjonMedkontaktInfo.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().getFirst().toString(), notifikasjon.getPrefererteKanaler());
 			assertEquals(OPPRETTET, notifikasjon.getStatus());
 
 			assertEquals(notifikasjonMedkontaktInfo.getFodselsnummer(), notifikasjon.getMottakerId());
@@ -186,7 +186,7 @@ class Knot006ITest extends AbstractKafkaBrokerTest {
 			assertEquals(notifikasjonMedkontaktInfo.getBestillingsId(), notifikasjon.getBestillingsId());
 			assertEquals(notifikasjonMedkontaktInfo.getAntallRenotifikasjoner(), notifikasjon.getAntallRenotifikasjoner());
 			assertEquals(notifikasjonMedkontaktInfo.getRenotifikasjonIntervall(), notifikasjon.getRenotifikasjonIntervall());
-			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().get(0).toString(), notifikasjon.getPrefererteKanaler());
+			assertEquals(notifikasjonMedkontaktInfo.getPrefererteKanaler().getFirst().toString(), notifikasjon.getPrefererteKanaler());
 			assertEquals(OPPRETTET, notifikasjon.getStatus());
 
 			assertEquals(notifikasjonMedkontaktInfo.getFodselsnummer(), notifikasjon.getMottakerId());
