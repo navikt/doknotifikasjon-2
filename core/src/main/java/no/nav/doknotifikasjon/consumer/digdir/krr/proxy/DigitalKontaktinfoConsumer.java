@@ -75,7 +75,7 @@ public class DigitalKontaktinfoConsumer {
 	}
 
 	private Throwable mapError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
 			return new DigitalKontaktinformasjonFunctionalException(format("Kall mot Digdir-krr-proxy feilet med status=%s, feilmelding=%s",
 					response.getStatusCode(), response.getMessage()), error, (HttpStatus) response.getStatusCode()
 			);

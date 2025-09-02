@@ -69,7 +69,7 @@ public class AzureToken {
 	}
 
 	private Throwable mapError(Throwable error) {
-		if (error instanceof WebClientResponseException response && ((WebClientResponseException) error).getStatusCode().is4xxClientError()) {
+		if (error instanceof WebClientResponseException response && response.getStatusCode().is4xxClientError()) {
 			return new AzureTokenException(format("Klarte ikke hente token fra Azure. Feilet med statuskode=%s Feilmelding=%s",
 					response.getStatusCode(), response.getMessage()), error);
 		} else {

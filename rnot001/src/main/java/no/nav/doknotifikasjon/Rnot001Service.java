@@ -24,7 +24,7 @@ public class Rnot001Service {
 
 		Notifikasjon notifikasjon = notifikasjonRepository.findByBestillingsId(bestillingsId)
 				.orElseThrow(() -> {
-					log.info(format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
+					log.info("Notifikasjon med bestillingsId={} ble ikke funnet i databasen.", bestillingsId);
 
 					return new NotifikasjonIkkeFunnetException(format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
 				});

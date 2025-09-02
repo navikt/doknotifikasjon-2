@@ -98,12 +98,10 @@ public class MetricService {
 	) {
 		boolean existInList = false;
 
-		if (list.length > 0) {
-			for (Class<? extends Throwable> i : list) {
-				if (e.getClass().equals(i)) {
-					existInList = true;
-					break;
-				}
+		for (Class<? extends Throwable> i : list) {
+			if (e.getClass().equals(i)) {
+				existInList = true;
+				break;
 			}
 		}
 

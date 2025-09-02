@@ -11,15 +11,15 @@ import java.util.Collections;
 
 public final class TestUtils {
 
-	protected static final String BESTILLINGS_ID = "1234-5678-9101";
-	protected static final String BESTILLER_ID = "teamdokumenthandtering";
-	protected static final String KONTAKTINFO = "Hallohallo";
-	protected static final String TITTEL = "Melding";
-	protected static final String SNOT001 = "SNOT001";
-	protected static final String TEKST = "Lang tekst";
-	protected static final String PAAMINNELSE_TEKST = "Påminnelse: " + TEKST;
-	protected static final int ANTALL_RENOTIFIKASJONER = 3;
-	protected static final LocalDate NESTE_RENOTIFIKASJONS_DATO = LocalDate.parse("2020-10-01");
+	static final String BESTILLINGS_ID = "1234-5678-9101";
+	private static final String BESTILLER_ID = "teamdokumenthandtering";
+	static final String KONTAKTINFO = "Hallohallo";
+	static final String TITTEL = "Melding";
+	static final String SNOT001 = "SNOT001";
+	private static final String TEKST = "Lang tekst";
+	static final String PAAMINNELSE_TEKST = "Påminnelse: " + TEKST;
+	static final int ANTALL_RENOTIFIKASJONER = 3;
+	static final LocalDate NESTE_RENOTIFIKASJONS_DATO = LocalDate.parse("2020-10-01");
 	private static final String OPPRETTET_AV = "srvdokument";
 	private static final int RENOTIFIKASJON_INTERVALL = 10;
 	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
