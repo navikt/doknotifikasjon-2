@@ -1,8 +1,6 @@
 {
   "ENVIRONMENT": "p",
   "KAFKA_POOL": "nav-prod",
-  "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/prod/srvdoknotifikasjon-2",
-  "VAULT": "kv/prod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "DB_CREDENTIALS_MOUNT_PATH": "postgresql/prod-fss",
   "SEND_TIL_ALTINN": "true",

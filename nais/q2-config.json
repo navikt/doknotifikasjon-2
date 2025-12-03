@@ -1,8 +1,6 @@
 {
   "ENVIRONMENT": "q2",
   "KAFKA_POOL": "nav-dev",
-  "SRVDOKNOTIFIKASJON_2": "/serviceuser/data/dev/srvdoknotifikasjon-2",
-  "VAULT": "kv/preprod/fss/doknotifikasjon-2/teamdokumenthandtering",
   "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "DB_CREDENTIALS_MOUNT_PATH": "postgresql/preprod-fss",
   "SEND_TIL_ALTINN": "false",
