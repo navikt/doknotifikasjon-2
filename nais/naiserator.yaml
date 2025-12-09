@@ -59,9 +59,9 @@ spec:
     max: {{ MAX_REPLICAS }}
   resources:
     limits:
-      cpu: 2000m
       memory: 2048Mi
     requests:
+      cpu: 50m
       memory: 1024Mi
   vault:
     enabled: true
