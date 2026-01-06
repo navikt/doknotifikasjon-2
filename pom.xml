@@ -55,6 +55,13 @@
 		<cxf-codegen-plugin.version>4.1.4</cxf-codegen-plugin.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>confluent</id>
+			<url>https://packages.confluent.io/maven</url>
+		</repository>
+	</repositories>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
