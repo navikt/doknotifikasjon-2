@@ -16,4 +16,4 @@ jobs:
     uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
     secrets: inherit
     with:
-      java-version: '21'
+      java-version: '25'
