@@ -17,6 +17,7 @@ spec:
               -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
     - name: JDK_JAVA_OPTIONS
       value: "-XX:MaxRAMPercentage=75
+			  -Dspring.profiles.active=nais,altinn2
               $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
       value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}

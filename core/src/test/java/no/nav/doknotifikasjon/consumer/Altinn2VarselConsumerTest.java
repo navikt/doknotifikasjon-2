@@ -11,7 +11,7 @@ import no.altinn.services.serviceengine.notification._2010._10.INotificationAgen
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil;
-import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
+import no.nav.doknotifikasjon.consumer.altinn2.Altinn2VarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AltinnVarselConsumerTest {
+public class Altinn2VarselConsumerTest {
 
 	private static final String FOEDSELSNUMMER = "01010156798";
 	private static final String EPOST_TITTEL = "You've got mail!";
@@ -63,7 +63,7 @@ public class AltinnVarselConsumerTest {
 	void serviceShouldSendToAltinn(Kanal kanal, String kontaktinformasjon, String fnr, String tekst, String tittel) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
+		Altinn2VarselConsumer consumer = new Altinn2VarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
 		doReturn(new SendNotificationResultList()).when(iNotificationAgencyExternalBasic).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 		doReturn("testname").when(altinnProps).getUsername();
 		doReturn("testpassword").when(altinnProps).getPassword();
@@ -125,7 +125,7 @@ public class AltinnVarselConsumerTest {
 	void serviceShouldNotSendToAltinn() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(false, iNotificationAgencyExternalBasic, altinnProps);
+		Altinn2VarselConsumer consumer = new Altinn2VarselConsumer(false, iNotificationAgencyExternalBasic, altinnProps);
 
 		consumer.sendVarsel(EPOST, null, null, null, null);
 
@@ -137,7 +137,7 @@ public class AltinnVarselConsumerTest {
 	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsFunksjonellException(AltinnFunksjonellFeil feil) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
+		Altinn2VarselConsumer consumer = new Altinn2VarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
 
 		var altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", feil.beskrivelse));
@@ -165,7 +165,7 @@ public class AltinnVarselConsumerTest {
 	void shouldThrowUnwrappedMessageFromAltinnFaultWhenAltinnThrowsTechnicalException(Integer feilkode, String beskrivelse) throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
 		AltinnProps altinnProps = mock(AltinnProps.class);
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
-		AltinnVarselConsumer consumer = new AltinnVarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
+		Altinn2VarselConsumer consumer = new Altinn2VarselConsumer(true, iNotificationAgencyExternalBasic, altinnProps);
 		AltinnFault altinnFault = new AltinnFault();
 		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", beskrivelse));
 		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
