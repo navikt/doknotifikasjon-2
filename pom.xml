@@ -28,11 +28,11 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.8</version>
+		<version>3.5.7</version>
 	</parent>
 
 	<properties>
-		<java.version>25</java.version>
+		<java.version>21</java.version>
 
 		<cxf-bom.version>4.1.4</cxf-bom.version>
 		<logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
@@ -234,19 +234,6 @@
 							<vendor>openjdk</vendor>
 						</jdk>
 					</toolchains>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>${lombok.version}</version>
-						</path>
-					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 		</plugins>
