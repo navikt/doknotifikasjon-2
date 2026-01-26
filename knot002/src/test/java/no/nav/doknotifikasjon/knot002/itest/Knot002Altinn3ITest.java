@@ -1,11 +1,7 @@
 package no.nav.doknotifikasjon.knot002.itest;
 
 
-import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
-import no.altinn.schemas.services.serviceengine.standalonenotificationbe._2009._10.StandaloneNotificationBEList;
-import no.altinn.services.common.fault._2009._10.AltinnFault;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
+import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -21,23 +17,25 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
-import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.KONTAKTINFO;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
-import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.generateAltinnResponse;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -45,9 +43,12 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@ActiveProfiles("altinn2")
-class Knot002ITest extends AbstractKafkaBrokerTest {
+@ActiveProfiles({ "wiremock", "altinn3" })
+class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
 	private NotifikasjonRepository notifikasjonRepository;
@@ -59,18 +60,24 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 	private KafkaEventProducer kafkaEventProducer;
 
 	@MockitoBean
-	private INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
+	private NaisTexasConsumer naisTexasConsumer;
 
 	@BeforeEach
 	void setup() {
 		notifikasjonDistribusjonRepository.deleteAll();
 		notifikasjonRepository.deleteAll();
 		reset(kafkaEventProducer);
+
+		when(naisTexasConsumer.getMaskinportenToken(any())).thenReturn("token");
 	}
 
 	@Test
-	void shouldSetFerdigstilltStatusOnHappyPath() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenReturn(generateAltinnResponse(TransportType.SMS, KONTAKTINFO));
+	void shouldSetFerdigstilltStatusOnHappyPath() {
+		stubFor(post(urlEqualTo("/altinn-order-notification"))
+			.willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("altinn3/order-notification-ok.json")));
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 
@@ -142,18 +149,13 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		var altinnFault = new AltinnFault();
-		altinnFault.setAltinnErrorMessage(constructJaxbElement("AltinnErrorMessage", "Ugyldig norsk mobiltelefonnummer."));
-		altinnFault.setErrorGuid(constructJaxbElement("ErrorGuid", "fedcba"));
-		altinnFault.setErrorID(30303);
-		altinnFault.setUserGuid(constructJaxbElement("UserGuid", "abcdef"));
+	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() {
+		stubFor(post(urlEqualTo("/altinn-order-notification"))
+			.willReturn(aResponse()
+				.withStatus(UNPROCESSABLE_ENTITY.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBodyFile("altinn3/order-notification-notok.json")));
 
-		INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage altinnException = new INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage(
-				"Feil i altinn",
-				altinnFault
-		);
-		when(iNotificationAgencyExternalBasic.sendStandaloneNotificationBasicV3(anyString(), anyString(), any(StandaloneNotificationBEList.class))).thenThrow(altinnException);
 		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, SMS));
 		Integer id = notifikasjonDistribusjon.getId();
 		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
@@ -166,7 +168,7 @@ class Knot002ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-							"Funksjonell feil i kall mot Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=30303, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
+							"Funksjonell feil i kall mot Altinn. 422 UNPROCESSABLE_ENTITY, errorTitle=Ugyldig nummer, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
 			);
 		});
 	}

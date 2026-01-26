@@ -1,10 +1,9 @@
 package no.nav.doknotifikasjon.config.properties;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
-
-import jakarta.validation.constraints.NotNull;
 
 
 @ConfigurationProperties("doknotifikasjon.altinn")
@@ -12,11 +11,11 @@ import jakarta.validation.constraints.NotNull;
 @Getter
 public class AltinnProps {
 
-	@NotNull
+	@NotBlank
 	private final String username;
-	@NotNull
+	@NotBlank
 	private final String password;
-	@NotNull
+	@NotBlank
 	private final String url;
 
 	AltinnProps(String username, String password, String url) {

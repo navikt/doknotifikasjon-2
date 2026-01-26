@@ -1,0 +1,21 @@
+{
+	"type": "string",
+	"title": "Ugyldig nummer",
+	"status": 422,
+	"detail": "Ugyldig norsk mobiltelefonnummer.",
+	"instance": "string",
+	"errors": {
+		"additionalProp1": [
+			"string"
+		],
+		"additionalProp2": [
+			"string"
+		],
+		"additionalProp3": [
+			"string"
+		]
+	},
+	"additionalProp1": "string",
+	"additionalProp2": "string",
+	"additionalProp3": "string"
+}

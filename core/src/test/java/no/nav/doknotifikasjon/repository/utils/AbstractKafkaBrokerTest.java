@@ -18,7 +18,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		classes = {ApplicationTestConfig.class, RepositoryConfig.class},
 		webEnvironment = RANDOM_PORT
 )
-@ActiveProfiles({"itest", "itestKafka", "altinn2"})
+@ActiveProfiles({"itest", "itestKafka"})
 @EmbeddedKafka(
 		topics = {
 				"privat-dok-notifikasjon",

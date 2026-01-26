@@ -55,7 +55,7 @@ public class Altinn2VarselConsumerRetryTest {
 						"Feil i altinn", altinnFault
 				));
 
-		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
+		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null, null));
 
 		verify(iNotificationAgencyExternalBasic, times(5)).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}
@@ -71,7 +71,7 @@ public class Altinn2VarselConsumerRetryTest {
 						altinnFault)
 				);
 
-		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
+		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null, null));
 
 		verify(iNotificationAgencyExternalBasic, times(1)).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}

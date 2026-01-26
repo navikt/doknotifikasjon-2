@@ -68,7 +68,7 @@ public class Altinn2VarselConsumerTest {
 		doReturn("testname").when(altinnProps).getUsername();
 		doReturn("testpassword").when(altinnProps).getPassword();
 
-		consumer.sendVarsel(kanal, kontaktinformasjon, fnr, tekst, tittel);
+		consumer.sendVarsel(kanal, null, kontaktinformasjon, fnr, tekst, tittel);
 
 		ArgumentCaptor<StandaloneNotificationBEList> xmlItem = ArgumentCaptor.forClass(StandaloneNotificationBEList.class);
 		verify(iNotificationAgencyExternalBasic, times(1)).sendStandaloneNotificationBasicV3(anyString(), anyString(), xmlItem.capture());
@@ -127,7 +127,7 @@ public class Altinn2VarselConsumerTest {
 		INotificationAgencyExternalBasic iNotificationAgencyExternalBasic = mock(INotificationAgencyExternalBasic.class);
 		Altinn2VarselConsumer consumer = new Altinn2VarselConsumer(false, iNotificationAgencyExternalBasic, altinnProps);
 
-		consumer.sendVarsel(EPOST, null, null, null, null);
+		consumer.sendVarsel(EPOST, null, null, null, null, null);
 
 		verify(iNotificationAgencyExternalBasic, never()).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}
@@ -154,7 +154,7 @@ public class Altinn2VarselConsumerTest {
 		doReturn("testpassword").when(altinnProps).getPassword();
 
 		AltinnFunctionalException altinnFunctionalException = assertThrows(AltinnFunctionalException.class, () ->
-				consumer.sendVarsel(EPOST, null, null, null, null));
+				consumer.sendVarsel(EPOST, null, null, null, null, null));
 
 		String expectedMessage = String.format("Funksjonell feil i kall mot Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=%s, errorMessage=%s", feil.feilkode, feil.beskrivelse);
 		assertEquals(expectedMessage, altinnFunctionalException.getMessage());
@@ -179,7 +179,7 @@ public class Altinn2VarselConsumerTest {
 		doReturn("testname").when(altinnProps).getUsername();
 		doReturn("testpassword").when(altinnProps).getPassword();
 
-		AltinnTechnicalException altinnTechnicalException = assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
+		AltinnTechnicalException altinnTechnicalException = assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null, null));
 
 		String expectedMessage = String.format("Teknisk feil i kall mot Altinn. errorGuid=fedcba, userGuid=abcdef, errorId=%s, errorMessage=%s", feilkode, beskrivelse);
 		assertEquals(expectedMessage, altinnTechnicalException.getMessage());

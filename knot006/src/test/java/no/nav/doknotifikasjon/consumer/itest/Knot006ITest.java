@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 
-@ActiveProfiles("wiremock")
+@ActiveProfiles({ "wiremock", "altinn2" })
 class Knot006ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired

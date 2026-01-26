@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.config.properties;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,10 +17,10 @@ public class DoknotifikasjonProperties {
 	@Data
 	@Validated
 	public static class SlackProperties {
-		@NotEmpty
+		@NotBlank
 		@ToString.Exclude
 		private String token;
-		@NotEmpty
+		@NotBlank
 		private String channel;
 		private boolean enabled;
 	}

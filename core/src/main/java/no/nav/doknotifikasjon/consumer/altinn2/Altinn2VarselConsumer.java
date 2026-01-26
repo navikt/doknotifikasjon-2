@@ -26,6 +26,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.soap.SoapFaultException;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil.erFunksjonellFeil;
 import static no.nav.doknotifikasjon.consumer.altinn2.JAXBWrapper.ns;
@@ -60,10 +63,10 @@ public class Altinn2VarselConsumer implements AltinnVarselConsumer {
 			maxAttemptsExpression = "${retry.attempts:10}",
 			backoff = @Backoff(delayExpression = "${retry.delay:1000}", multiplier = 2, maxDelay = 60_000L)
 	)
-	public void sendVarsel(Kanal kanal, String kontaktInfo, String fnr, String tekst, String tittel) {
+	public Optional<UUID> sendVarsel(Kanal kanal, String bestillingsId, String kontaktInfo, String fnr, String tekst, String tittel) {
 		if (!sendTilAltinn) {
 			log.info("Sender ikke melding til Altinn. flagget sendTilAltinn=false");
-			return;
+			return Optional.empty();
 		}
 
 		StandaloneNotification standaloneNotificationItem = new StandaloneNotification();
@@ -84,6 +87,7 @@ public class Altinn2VarselConsumer implements AltinnVarselConsumer {
 					altinnProps.getPassword(),
 					standaloneNotification
 			);
+			return Optional.empty();
 		} catch (INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage e) {
 			final String altinnErrorMessage = constructAltinnErrorMessage(e);
 
@@ -118,7 +122,7 @@ public class Altinn2VarselConsumer implements AltinnVarselConsumer {
 	}
 
 	@Recover
-	public void altinnTechnicalExceptionRecovery(AltinnTechnicalException e) {
+	public Optional<UUID> altinnTechnicalExceptionRecovery(AltinnTechnicalException e) {
 		log.warn("Teknisk feil for sending av sms/epost til Altinn - maks. antall forsøk brukt");
 
 		throw e;
@@ -126,7 +130,7 @@ public class Altinn2VarselConsumer implements AltinnVarselConsumer {
 
 	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
 	@Recover
-	public void otherExceptionsRecovery(RuntimeException e) {
+	public Optional<UUID> otherExceptionsRecovery(RuntimeException e) {
 		throw e;
 	}
 

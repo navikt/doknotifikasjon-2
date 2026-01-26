@@ -10,6 +10,7 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ActiveProfiles("altinn2")
 class Knot004ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired

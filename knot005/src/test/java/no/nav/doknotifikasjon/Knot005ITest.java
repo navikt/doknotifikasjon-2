@@ -9,6 +9,7 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static no.nav.doknotifikasjon.TestUtils.ANTALL_RENOTIFIKASJONER;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ActiveProfiles("altinn2")
 class Knot005ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
