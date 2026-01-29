@@ -7,6 +7,6 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @Profile("altinn3")
-@ConfigurationProperties("doknotifikasjon.altinn3")
+@ConfigurationProperties("altinn3")
 public record Altinn3Props(@NotBlank String notificationOrderUri) {
 }
