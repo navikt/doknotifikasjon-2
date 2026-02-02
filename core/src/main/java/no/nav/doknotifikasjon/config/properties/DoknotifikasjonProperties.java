@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon.config.properties;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
@@ -12,10 +13,10 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("doknotifikasjon")
 public class DoknotifikasjonProperties {
 
+	@Valid
 	private final SlackProperties slack = new SlackProperties();
 
 	@Data
-	@Validated
 	public static class SlackProperties {
 		@NotBlank
 		@ToString.Exclude

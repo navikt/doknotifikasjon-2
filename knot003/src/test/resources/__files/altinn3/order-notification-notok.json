@@ -1,6 +1,6 @@
 {
-	"type": "string",
-	"title": "Ugyldig nummer",
+	"type": "NOT-00001",
+	"title": "NOT-00001",
 	"status": 422,
 	"detail": "Ugyldig norsk mobiltelefonnummer.",
 	"instance": "string",

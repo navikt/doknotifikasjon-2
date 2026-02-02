@@ -21,8 +21,8 @@ import static java.time.Duration.ofSeconds;
 public class Altinn3VarselConfiguration {
 
 	@Bean
-	public RestClient altinn3RestClient(NaisTexasConsumer naisTexasConsumer) {
-		return RestClient.builder()
+	public RestClient naisTexasMaskinportenAuthenticatedRestClient(RestClient.Builder restClientBuilder, NaisTexasConsumer naisTexasConsumer) {
+		return restClientBuilder
 			.requestInterceptor(new NaisTexasMaskinportenRequestInterceptor(naisTexasConsumer))
 			.requestFactory(jdkClientHttpRequestFactory())
 			.build();

@@ -54,7 +54,7 @@ public class Altinn3VarselConsumerTest {
 	private static final String TELEFONNUMMER = "+4712349876";
 	private static final String SMS_TEKST = "Viktig melding fra NAV";
 	private static final String MOCKED_URL = "url";
-	private static final String ERROR_TITLE = "Ugyldig nummer";
+	private static final String ERROR_TITLE = "NOT-00001";
 	private static final String ERROR_MESSAGE = "Ugyldig norsk mobiltelefonnummer.";
 	private static final Altinn3Props PROPS_FOR_TEST = new Altinn3Props(MOCKED_URL);
 
@@ -81,14 +81,14 @@ public class Altinn3VarselConsumerTest {
 		mockRestServiceServer.expect(requestTo("url"))
 			.andExpect(method(HttpMethod.POST))
 			.andExpect(jsonPath("$.sendersReference").value(bestillingsId))
-			.andExpect(jsonPath("$.subject").value(tittel))
-			.andExpect(jsonPath("$.body").value(tekst))
-			.andExpect(jsonPath("$.recipients.length()").value(1))
-			.andExpect(jsonPath("$.recipients[0].emailAddress").value(kontaktinformasjon))
-			.andExpect(jsonPath("$.recipients[0].nationalIdentityNumber").value(fnr))
+			.andExpect(jsonPath("$.idempotencyId").value(bestillingsId))
+			.andExpect(jsonPath("$.requestedSendTime").doesNotExist())
+			.andExpect(jsonPath("$.recipient.recipientEmail.emailSettings.subject").value(tittel))
+			.andExpect(jsonPath("$.recipient.recipientEmail.emailSettings.body").value(tekst))
+			.andExpect(jsonPath("$.recipient.recipientEmail.emailAddress").value(kontaktinformasjon))
 			.andRespond(withSuccess(new ClassPathResource("__files/altinn3/order-notification-ok.json"), MediaType.APPLICATION_JSON));
 
-		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(true, restClient, PROPS_FOR_TEST);
+		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(restClient, PROPS_FOR_TEST);
 
 		consumer.sendVarsel(EPOST, bestillingsId, kontaktinformasjon, fnr, tekst, tittel);
 
@@ -104,25 +104,16 @@ public class Altinn3VarselConsumerTest {
 		mockRestServiceServer.expect(requestTo("url"))
 			.andExpect(method(HttpMethod.POST))
 			.andExpect(jsonPath("$.sendersReference").value(bestillingsId))
-			.andExpect(jsonPath("$.body").value(tekst))
-			.andExpect(jsonPath("$.recipients.length()").value(1))
-			.andExpect(jsonPath("$.recipients[0].mobileNumber").value(kontaktinformasjon))
-			.andExpect(jsonPath("$.recipients[0].nationalIdentityNumber").value(fnr))
+			.andExpect(jsonPath("$.idempotencyId").value(bestillingsId))
+			.andExpect(jsonPath("$.requestedSendTime").doesNotExist())
+			.andExpect(jsonPath("$.recipient.recipientSms.smsSettings.body").value(tekst))
+			.andExpect(jsonPath("$.recipient.recipientSms.phoneNumber").value(kontaktinformasjon))
+			// .andExpect(jsonPath("$.recipient.").value(fnr))
 			.andRespond(withSuccess(new ClassPathResource("__files/altinn3/order-notification-ok.json"), MediaType.APPLICATION_JSON));
 
-		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(true, restClient, PROPS_FOR_TEST);
+		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(restClient, PROPS_FOR_TEST);
 
 		consumer.sendVarsel(SMS, bestillingsId, kontaktinformasjon, fnr, tekst, null);
-
-		mockRestServiceServer.verify();
-	}
-
-	@Test
-	void serviceShouldNotSendToAltinn() throws INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage {
-		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(false, restClient, PROPS_FOR_TEST);
-		mockRestServiceServer.expect(never(), requestTo("url"));
-
-		consumer.sendVarsel(EPOST, null, null, null, null, null);
 
 		mockRestServiceServer.verify();
 	}
@@ -134,7 +125,7 @@ public class Altinn3VarselConsumerTest {
 			.andExpect(method(HttpMethod.POST))
 			.andRespond(response);
 
-		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(true, restClient, PROPS_FOR_TEST);
+		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(restClient, PROPS_FOR_TEST);
 
 		Exception altinnTechnicalException = assertThrows(expectedException.getClass(), () -> consumer.sendVarsel(EPOST, null, null, null, null, null));
 

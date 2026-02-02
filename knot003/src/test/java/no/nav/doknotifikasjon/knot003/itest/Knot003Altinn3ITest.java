@@ -102,6 +102,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id))
 			);
+			verify(naisTexasConsumer, times(1)).getMaskinportenToken(any());
 		});
 	}
 
@@ -172,7 +173,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-						"Funksjonell feil i kall mot Altinn. 422 UNPROCESSABLE_ENTITY, errorTitle=Ugyldig nummer, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
+						"Funksjonell feil i kall mot Altinn. 422 UNPROCESSABLE_ENTITY, errorTitle=NOT-00001, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
 			);
 		});
 	}
