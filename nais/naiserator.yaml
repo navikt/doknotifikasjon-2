@@ -82,6 +82,11 @@ spec:
   azure:
     application:
       enabled: true
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: "altinn:serviceowner/notifications.create"
   accessPolicy:
     inbound:
       rules:
