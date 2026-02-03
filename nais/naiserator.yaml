@@ -12,8 +12,6 @@ spec:
     - secret: doknotifikasjon-2
     - secret: slack-alerts
   env:
-    - name: ALTINN_PROFILE
-      value: {{ ALTINN_PROFILE }}
     - name: JAVA_TRUSTSTORE_OPTIONS
       value: "-Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH)
               -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"

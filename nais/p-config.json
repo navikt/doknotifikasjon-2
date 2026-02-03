@@ -9,7 +9,6 @@
   "SPRINGDOC_ENABLED": "false",
   "DIGDIR_KRR_PROXY_SCOPE": "api://prod-gcp.team-rocket.digdir-krr-proxy/.default",
   "DIGDIR_KRR_PROXY_BASE_URL": "https://digdir-krr-proxy.intern.nav.no",
-  "ALTINN_PROFILE": "altinn2",
   "ALTINN3_NOTIFICATION_ORDER_URI": "https://platform.altinn.no/notifications/api/v1",
   "NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
   "INGRESSES": [
