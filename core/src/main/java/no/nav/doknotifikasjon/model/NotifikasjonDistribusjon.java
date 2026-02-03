@@ -34,8 +34,8 @@ public class NotifikasjonDistribusjon implements Serializable {
 	@JoinColumn(name = "NOTIFIKASJON_ID", foreignKey = @ForeignKey(name = "notifikasjonId"))
 	private Notifikasjon notifikasjon;
 
-	@Column(name = "downstream_order_id", length = 128)
-	private String downstreamOrderId;
+	@Column(name = "leverandor_ordre_id", length = 128)
+	private String leverandorOrdreId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "K_STATUS", length = 20)
@@ -70,6 +70,6 @@ public class NotifikasjonDistribusjon implements Serializable {
 	private LocalDateTime endretDato;
 
 	public void setAltinnNotificationOrderId(UUID altinnNotificationOrderId) {
-		this.downstreamOrderId = altinnNotificationOrderId.toString();
+		this.leverandorOrdreId = altinnNotificationOrderId.toString();
 	}
 }

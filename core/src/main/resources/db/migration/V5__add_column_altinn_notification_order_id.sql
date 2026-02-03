@@ -1,1 +1,1 @@
-alter table T_notifikasjon_distribusjon add column downstream_order_id varchar(128);
+alter table t_notifikasjon_distribusjon add column leverandor_ordre_id varchar(128);

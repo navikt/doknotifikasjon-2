@@ -178,12 +178,6 @@
 				<version>${token-support.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>${openapi-generator-maven-plugin.version}</version>
-			</dependency>
-
 			<!-- Test -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
@@ -219,6 +213,11 @@
 					<groupId>org.apache.cxf</groupId>
 					<artifactId>cxf-codegen-plugin</artifactId>
 					<version>${cxf-codegen-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.openapitools</groupId>
+					<artifactId>openapi-generator-maven-plugin</artifactId>
+					<version>${openapi-generator-maven-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
