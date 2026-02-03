@@ -1,7 +1,5 @@
 package no.nav.doknotifikasjon.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.Altinn3Props;
 import no.nav.doknotifikasjon.consumer.altinn3.Altinn3VarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
@@ -11,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +31,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
-import static org.springframework.test.web.client.ExpectedCount.never;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -62,12 +58,9 @@ public class Altinn3VarselConsumerTest {
 	MockRestServiceServer mockRestServiceServer;
 	@Autowired
 	RestClient restClient;
-	@Autowired
-	ObjectMapper objectMapper;
 
 	@BeforeEach
 	void setUp() {
-		objectMapper.registerModule(new JsonNullableModule());
 		mockRestServiceServer.reset();
 	}
 

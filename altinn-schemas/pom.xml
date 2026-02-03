@@ -22,16 +22,8 @@
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.openapitools</groupId>
-			<artifactId>jackson-databind-nullable</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -71,13 +63,15 @@
 								${project.basedir}/src/main/resources/altinn3/altinn-notifications-v1.json
 							</inputSpec>
 							<generatorName>java</generatorName>
-							<apiPackage>no.altinn.services.altinn3.openapi.api</apiPackage>
 							<modelPackage>no.altinn.services.altinn3.openapi.domain</modelPackage>
+							<generateApis>false</generateApis>
+							<generateModelTests>false</generateModelTests>
 							<configOptions>
 								<useJakartaEe>true</useJakartaEe>
 								<generateBuilders>true</generateBuilders>
 								<dateLibrary>java8</dateLibrary>
 								<library>native</library>
+								<openApiNullable>false</openApiNullable>
 							</configOptions>
 						</configuration>
 					</execution>

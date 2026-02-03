@@ -3,7 +3,6 @@ package no.nav.doknotifikasjon.config;
 import no.nav.doknotifikasjon.config.properties.Altinn3Props;
 import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
 import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasMaskinportenRequestInterceptor;
-import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -34,10 +33,5 @@ public class Altinn3VarselConfiguration {
 				jdkClientHttpRequestFactory.setReadTimeout(ofSeconds(20))
 			)
 			.build();
-	}
-
-	@Bean
-	public JsonNullableModule jsonNullableModule() {
-		return new JsonNullableModule();
 	}
 }
