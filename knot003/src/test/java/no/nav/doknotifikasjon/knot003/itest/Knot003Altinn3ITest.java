@@ -73,7 +73,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.deleteAll();
 		reset(kafkaEventProducer);
 
-		when(naisTexasConsumer.getMaskinportenToken(any())).thenReturn("token");
+		when(naisTexasConsumer.getMaskinportenToken(any(), any())).thenReturn("token");
 	}
 
 	@Test
@@ -102,7 +102,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id))
 			);
-			verify(naisTexasConsumer, times(1)).getMaskinportenToken(any());
+			verify(naisTexasConsumer, times(1)).getMaskinportenToken(any(), any());
 		});
 	}
 

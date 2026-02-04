@@ -86,6 +86,7 @@ spec:
     enabled: true
     scopes:
       consumes:
+        - name: "altinn:serviceowner"
         - name: "altinn:serviceowner/notifications.create"
   accessPolicy:
     inbound:
