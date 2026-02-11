@@ -76,6 +76,7 @@ public class Altinn3VarselConsumerTest {
 			.andExpect(jsonPath("$.sendersReference").value(bestillingsId))
 			.andExpect(jsonPath("$.idempotencyId").value(bestillingsId))
 			.andExpect(jsonPath("$.requestedSendTime").doesNotExist())
+			.andExpect(jsonPath("$.requestedSendTime").doesNotHaveJsonPath())
 			.andExpect(jsonPath("$.recipient.recipientEmail.emailSettings.subject").value(tittel))
 			.andExpect(jsonPath("$.recipient.recipientEmail.emailSettings.body").value(tekst))
 			.andExpect(jsonPath("$.recipient.recipientEmail.emailAddress").value(kontaktinformasjon))
@@ -99,9 +100,9 @@ public class Altinn3VarselConsumerTest {
 			.andExpect(jsonPath("$.sendersReference").value(bestillingsId))
 			.andExpect(jsonPath("$.idempotencyId").value(bestillingsId))
 			.andExpect(jsonPath("$.requestedSendTime").doesNotExist())
+			.andExpect(jsonPath("$.requestedSendTime").doesNotHaveJsonPath())
 			.andExpect(jsonPath("$.recipient.recipientSms.smsSettings.body").value(tekst))
 			.andExpect(jsonPath("$.recipient.recipientSms.phoneNumber").value(kontaktinformasjon))
-			// .andExpect(jsonPath("$.recipient.").value(fnr))
 			.andRespond(withSuccess(new ClassPathResource("__files/altinn3/order-notification-ok.json"), MediaType.APPLICATION_JSON));
 
 		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(restClient, PROPS_FOR_TEST);

@@ -72,6 +72,7 @@
 								<dateLibrary>java8</dateLibrary>
 								<library>native</library>
 								<openApiNullable>false</openApiNullable>
+								<additionalModelTypeAnnotations>@no.nav.doknotifikasjon.JsonIgnoreNullValues</additionalModelTypeAnnotations>
 							</configOptions>
 						</configuration>
 					</execution>
