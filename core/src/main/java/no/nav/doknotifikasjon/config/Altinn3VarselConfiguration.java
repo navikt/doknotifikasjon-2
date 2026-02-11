@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon.config;
 
 import no.nav.doknotifikasjon.config.properties.Altinn3Props;
-import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
-import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasMaskinportenRequestInterceptor;
+import no.nav.doknotifikasjon.consumer.altinn3.MaskinportenAltinn3RequestInterceptor;
+import no.nav.doknotifikasjon.consumer.altinn3.Altinn3TokenExchangeConsumer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +20,9 @@ import static java.time.Duration.ofSeconds;
 public class Altinn3VarselConfiguration {
 
 	@Bean
-	public RestClient naisTexasMaskinportenAuthenticatedRestClient(RestClient.Builder restClientBuilder, NaisTexasConsumer naisTexasConsumer) {
+	public RestClient naisTexasMaskinportenAuthenticatedRestClient(RestClient.Builder restClientBuilder, Altinn3TokenExchangeConsumer altinn3TokenExchangeConsumer) {
 		return restClientBuilder
-			.requestInterceptor(new NaisTexasMaskinportenRequestInterceptor(naisTexasConsumer))
+			.requestInterceptor(new MaskinportenAltinn3RequestInterceptor(altinn3TokenExchangeConsumer))
 			.requestFactory(jdkClientHttpRequestFactory())
 			.build();
 	}

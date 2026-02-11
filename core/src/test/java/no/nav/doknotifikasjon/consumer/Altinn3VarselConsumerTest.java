@@ -50,9 +50,10 @@ public class Altinn3VarselConsumerTest {
 	private static final String TELEFONNUMMER = "+4712349876";
 	private static final String SMS_TEKST = "Viktig melding fra NAV";
 	private static final String MOCKED_URL = "url";
+	private static final String MOCKED_URL_TOKEN_EXCHANGE = "token-exchange";
 	private static final String ERROR_TITLE = "NOT-00001";
 	private static final String ERROR_MESSAGE = "Ugyldig norsk mobiltelefonnummer.";
-	private static final Altinn3Props PROPS_FOR_TEST = new Altinn3Props(MOCKED_URL);
+	private static final Altinn3Props PROPS_FOR_TEST = new Altinn3Props(MOCKED_URL_TOKEN_EXCHANGE, MOCKED_URL);
 
 	@Autowired
 	MockRestServiceServer mockRestServiceServer;

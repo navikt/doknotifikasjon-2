@@ -15,7 +15,6 @@ import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
-import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -84,10 +82,12 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 			.sendersReference(bestillingsId)
 			.idempotencyId(bestillingsId)
 			.recipient(NotificationRecipientExt.builder()
-				.recipientEmail(RecipientEmailExt.builder().emailAddress(kontaktInfo).emailSettings(EmailSendingOptionsExt.builder()
+				.recipientEmail(RecipientEmailExt.builder()
+					.emailAddress(kontaktInfo)
+					.emailSettings(EmailSendingOptionsExt.builder()
+						.senderEmailAddress(IKKE_BESVAR_DENNE_NAV)
 						.subject(tittel)
 						.body(tekst)
-						.senderEmailAddress(IKKE_BESVAR_DENNE_NAV)
 						.build())
 					.build())
 				.build())
@@ -102,8 +102,8 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 				.recipientSms(RecipientSmsExt.builder()
 					.phoneNumber(kontaktInfo)
 					.smsSettings(SmsSendingOptionsExt.builder()
-						.body(tekst)
 						.sender(NAV_SMS_AVSENDER_DISPLAY_NAME)
+						.body(tekst)
 						.build())
 					.build())
 				.build())

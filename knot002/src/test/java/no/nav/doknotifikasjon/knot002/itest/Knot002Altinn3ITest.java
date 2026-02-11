@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon.knot002.itest;
 
 
-import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
+import no.nav.doknotifikasjon.consumer.altinn3.Altinn3TokenExchangeConsumer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
@@ -61,7 +61,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 	private KafkaEventProducer kafkaEventProducer;
 
 	@MockitoBean
-	private NaisTexasConsumer naisTexasConsumer;
+	private Altinn3TokenExchangeConsumer altinn3TokenExchangeConsumer;
 
 	@BeforeEach
 	void setup() {
@@ -69,7 +69,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.deleteAll();
 		reset(kafkaEventProducer);
 
-		when(naisTexasConsumer.getMaskinportenToken(any(), any())).thenReturn("token");
+		when(altinn3TokenExchangeConsumer.getAltinnToken(any(), any())).thenReturn("token");
 	}
 
 	@Test
@@ -99,7 +99,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via sms", id))
 			);
-			verify(naisTexasConsumer, times(1)).getMaskinportenToken(any(), any());
+			verify(altinn3TokenExchangeConsumer, times(1)).getAltinnToken(any(), any());
 		});
 	}
 
