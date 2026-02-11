@@ -72,6 +72,9 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s, errorTitle=%s, errorMessage=%s", e.getStatusCode(), validationProblemDetails.getTitle(), validationProblemDetails.getDetail()), e);
 			}
 			throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn. %s", e.getStatusCode()), e);
+		} catch (AltinnTechnicalException|AltinnFunctionalException e) {
+			// Videreformidle exceptions fra interceptor o.l.
+			throw e;
 		} catch (Exception e) {
 			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn.", e);
 		}

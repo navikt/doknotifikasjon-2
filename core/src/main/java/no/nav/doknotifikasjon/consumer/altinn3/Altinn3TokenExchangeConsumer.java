@@ -1,12 +1,15 @@
 package no.nav.doknotifikasjon.consumer.altinn3;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import no.nav.doknotifikasjon.config.properties.Altinn3Props;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 import static java.lang.String.format;
@@ -33,10 +36,15 @@ public class Altinn3TokenExchangeConsumer {
 				.header("Authorization", "Bearer " + naisTexasConsumer.getMaskinportenToken(scopes))
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.toEntity(String.class)
-				.getBody();
+				.toEntity(TextNode.class)
+				.getBody().textValue();
 		} catch (RestClientResponseException e) {
 			throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn ved exchange av maskinporten-token mot altinn-token. %s", e.getStatusCode()), e);
+		} catch (RestClientException e) {
+			if (e.getCause() instanceof HttpMessageNotReadableException f) {
+				throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn ved exchange av maskinporten-token mot altinn-token. Kunne ikke parse token: %s", f.getMessage()), f);
+			}
+			throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn ved exchange av maskinporten-token mot altinn-token. %s", e.getMessage()), e);
 		} catch (Exception e) {
 			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn ved exchange av maskinporten-token mot altinn-token.", e);
 		}

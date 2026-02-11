@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon.knot003.itest;
 
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.nav.doknotifikasjon.consumer.altinn3.Altinn3TokenExchangeConsumer;
+import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot003.itest.utils.DoknotifikasjonStatusMatcher;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
@@ -18,6 +19,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -63,9 +66,11 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 	@MockitoBean
 	private INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
-	@MockitoBean
+	@MockitoSpyBean
 	private Altinn3TokenExchangeConsumer altinn3TokenExchangeConsumer;
 
+	@MockitoBean
+	private NaisTexasConsumer naisTexasConsumer;
 
 	@BeforeEach
 	void setup() {
@@ -73,7 +78,14 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.deleteAll();
 		reset(kafkaEventProducer);
 
-		when(altinn3TokenExchangeConsumer.getAltinnToken(any(), any())).thenReturn("token");
+		when(naisTexasConsumer.getMaskinportenToken(any(), any())).thenReturn("maskinportentoken");
+
+		stubFor(get(urlEqualTo("/token-exchange"))
+			.withHeader("Authorization", equalTo("Bearer maskinportentoken"))
+			.willReturn(aResponse()
+				.withStatus(OK.value())
+				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+				.withBody("\"token\"")));
 	}
 
 	@Test
