@@ -25,6 +25,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static no.nav.doknotifikasjon.TestUtil.createErrorMessage;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
@@ -183,7 +184,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-							"Funksjonell feil i kall mot Altinn. 422 UNPROCESSABLE_ENTITY, errorTitle=NOT-00001, errorMessage=Ugyldig norsk mobiltelefonnummer.", id))
+							"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id))
 			);
 		});
 	}

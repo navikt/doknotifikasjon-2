@@ -69,7 +69,8 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 		} catch (RestClientResponseException e) {
 			if (e.getStatusCode() == HttpStatus.BAD_REQUEST || e.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
 				ValidationProblemDetails validationProblemDetails = e.getResponseBodyAs(ValidationProblemDetails.class);
-				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s, errorTitle=%s, errorMessage=%s", e.getStatusCode(), validationProblemDetails.getTitle(), validationProblemDetails.getDetail()), e);
+				String altinnErrorMessage = constructAltinnErrorMessage(validationProblemDetails);
+				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s", altinnErrorMessage), e);
 			}
 			throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn. %s", e.getStatusCode()), e);
 		} catch (AltinnTechnicalException|AltinnFunctionalException e) {
@@ -78,6 +79,14 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 		} catch (Exception e) {
 			throw new AltinnTechnicalException("Ukjent teknisk feil ved kall mot Altinn.", e);
 		}
+	}
+
+	private String constructAltinnErrorMessage(ValidationProblemDetails validationProblemDetails) {
+		return "instance=" + validationProblemDetails.getInstance() + ", " +
+			"status=" + validationProblemDetails.getStatus() + ", " +
+			"errorType=" + validationProblemDetails.getType() + ", " +
+			"errorTitle=" + validationProblemDetails.getTitle() + ", " +
+			"errorMessage=" + validationProblemDetails.getDetail();
 	}
 
 	private static NotificationOrderChainRequestExt createEmailOrder(String bestillingsId, String kontaktInfo, String tekst, String tittel) {

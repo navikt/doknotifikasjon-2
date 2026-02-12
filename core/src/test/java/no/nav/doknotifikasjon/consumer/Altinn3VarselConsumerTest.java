@@ -23,6 +23,7 @@ import org.springframework.web.client.RestClient;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static no.nav.doknotifikasjon.TestUtil.createErrorMessage;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,8 +52,6 @@ public class Altinn3VarselConsumerTest {
 	private static final String SMS_TEKST = "Viktig melding fra NAV";
 	private static final String MOCKED_URL = "url";
 	private static final String MOCKED_URL_TOKEN_EXCHANGE = "token-exchange";
-	private static final String ERROR_TITLE = "NOT-00001";
-	private static final String ERROR_MESSAGE = "Ugyldig norsk mobiltelefonnummer.";
 	private static final Altinn3Props PROPS_FOR_TEST = new Altinn3Props(MOCKED_URL_TOKEN_EXCHANGE, MOCKED_URL);
 
 	@Autowired
@@ -132,8 +131,8 @@ public class Altinn3VarselConsumerTest {
 		return Stream.of(
 			Arguments.of(new AltinnTechnicalException(String.format("Teknisk feil i kall mot Altinn. %s", UNAUTHORIZED), null), withUnauthorizedRequest()),
 			Arguments.of(new AltinnTechnicalException(String.format("Teknisk feil i kall mot Altinn. %s", FORBIDDEN), null), withForbiddenRequest()),
-			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s, errorTitle=%s, errorMessage=%s", BAD_REQUEST, ERROR_TITLE, ERROR_MESSAGE)), withBadRequest().contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-notok.json"))),
-			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s, errorTitle=%s, errorMessage=%s", UNPROCESSABLE_ENTITY, ERROR_TITLE, ERROR_MESSAGE)), withStatus(UNPROCESSABLE_ENTITY).contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-notok.json")))
+			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s", createErrorMessage(BAD_REQUEST))), withBadRequest().contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-badrequest.json"))),
+			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s", createErrorMessage(UNPROCESSABLE_ENTITY))), withStatus(UNPROCESSABLE_ENTITY).contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-notok.json")))
 		);
 	}
 
