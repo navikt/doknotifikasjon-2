@@ -1,0 +1,13 @@
+{
+	"notificationOrderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+	"notification": {
+		"shipmentId": "8094260b-fda8-4f62-96b1-34e6e5d8b7be",
+		"sendersReference": "string",
+		"reminders": [
+			{
+				"shipmentId": "4664884e-73cc-4186-9bb7-b14245590353",
+				"sendersReference": "string"
+			}
+		]
+	}
+}

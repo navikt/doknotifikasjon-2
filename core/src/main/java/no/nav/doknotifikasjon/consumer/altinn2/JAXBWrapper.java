@@ -1,4 +1,4 @@
-package no.nav.doknotifikasjon.consumer.altinn;
+package no.nav.doknotifikasjon.consumer.altinn2;
 
 import jakarta.xml.bind.JAXBElement;
 

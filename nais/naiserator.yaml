@@ -17,6 +17,7 @@ spec:
               -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
     - name: JDK_JAVA_OPTIONS
       value: "-XX:MaxRAMPercentage=75
+              -Dspring.profiles.active=nais,$(ALTINN_PROFILE)
               $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL
       value: {{ SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL }}
@@ -34,6 +35,10 @@ spec:
       value: {{ NO_NAV_SECURITY_JWT_ISSUER_AZUREV2_DISCOVERYURL }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "deployment.environment.name={{ ENVIRONMENT }}"
+    - name: ALTINN3_ALTINN_TOKEN_EXCHANGE_URI
+      value: "{{ ALTINN3_ALTINN_TOKEN_EXCHANGE_URI }}"
+    - name: ALTINN3_NOTIFICATION_ORDER_URI
+      value: "{{ ALTINN3_NOTIFICATION_ORDER_URI }}"
   ingresses:
     {{#each INGRESSES}}
        - {{this }}
@@ -79,6 +84,12 @@ spec:
   azure:
     application:
       enabled: true
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: "altinn:serviceowner"
+        - name: "altinn:serviceowner/notifications.create"
   accessPolicy:
     inbound:
       rules:

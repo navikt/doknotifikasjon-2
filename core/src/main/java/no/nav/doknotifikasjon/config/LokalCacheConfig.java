@@ -19,14 +19,19 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class LokalCacheConfig {
 
 	public static final String AZURE_TOKEN_CACHE = "AzureToken";
+	public static final String ALTINN_TOKEN_CACHE = "AltinnToken";
 
 	@Bean
 	@Primary
 	@Profile({"nais", "local"})
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
-		manager.setCaches(List.of(new CaffeineCache(AZURE_TOKEN_CACHE, Caffeine.newBuilder()
+		manager.setCaches(List.of(
+			new CaffeineCache(AZURE_TOKEN_CACHE, Caffeine.newBuilder()
 				.expireAfterWrite(55, MINUTES)
+				.build()),
+			new CaffeineCache(ALTINN_TOKEN_CACHE, Caffeine.newBuilder()
+				.expireAfterWrite(25, MINUTES)
 				.build())));
 		return manager;
 	}

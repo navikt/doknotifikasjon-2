@@ -13,7 +13,7 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import static no.nav.doknotifikasjon.consumer.altinn.JAXBWrapper.ns;
+import static no.nav.doknotifikasjon.consumer.altinn2.JAXBWrapper.ns;
 
 public final class TestUtils {
 

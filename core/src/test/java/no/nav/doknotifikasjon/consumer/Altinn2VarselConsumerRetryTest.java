@@ -5,7 +5,7 @@ import no.altinn.services.serviceengine.notification._2010._10.INotificationAgen
 import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasicSendStandaloneNotificationBasicV3AltinnFaultFaultFaultMessage;
 import no.nav.doknotifikasjon.config.properties.AltinnProps;
 import no.nav.doknotifikasjon.consumer.altinn.AltinnFunksjonellFeil;
-import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
+import no.nav.doknotifikasjon.consumer.altinn2.Altinn2VarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
@@ -27,8 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ApplicationTestConfig.class})
-@ActiveProfiles({"itest"})
-public class AltinnVarselConsumerRetryTest {
+@ActiveProfiles({"itest", "altinn2"})
+public class Altinn2VarselConsumerRetryTest {
 
 	@MockitoBean
 	INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
@@ -37,7 +37,7 @@ public class AltinnVarselConsumerRetryTest {
 	AltinnProps altinnProps;
 
 	@Autowired
-	AltinnVarselConsumer consumer;
+	Altinn2VarselConsumer consumer;
 
 	@BeforeEach
 	public void beforeEach() {
@@ -55,7 +55,7 @@ public class AltinnVarselConsumerRetryTest {
 						"Feil i altinn", altinnFault
 				));
 
-		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
+		assertThrows(AltinnTechnicalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null, null));
 
 		verify(iNotificationAgencyExternalBasic, times(5)).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}
@@ -71,7 +71,7 @@ public class AltinnVarselConsumerRetryTest {
 						altinnFault)
 				);
 
-		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null));
+		assertThrows(AltinnFunctionalException.class, () -> consumer.sendVarsel(EPOST, null, null, null, null, null));
 
 		verify(iNotificationAgencyExternalBasic, times(1)).sendStandaloneNotificationBasicV3(anyString(), anyString(), any());
 	}

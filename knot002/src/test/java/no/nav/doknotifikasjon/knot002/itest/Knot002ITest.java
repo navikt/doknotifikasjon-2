@@ -17,6 +17,7 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ActiveProfiles("altinn2")
 class Knot002ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired

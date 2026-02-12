@@ -1,6 +1,6 @@
 package no.nav.doknotifikasjon.config.properties;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -10,10 +10,10 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("db")
 public class DatabaseProperties {
 
-	@NotEmpty
+	@NotBlank
 	private String url;
 
-	@NotEmpty
+	@NotBlank
 	private String credentialsMountPath;
 
 }

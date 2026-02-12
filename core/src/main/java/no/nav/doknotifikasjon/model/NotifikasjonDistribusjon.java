@@ -9,6 +9,7 @@ import org.hibernate.annotations.Parameter;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -32,6 +33,9 @@ public class NotifikasjonDistribusjon implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "NOTIFIKASJON_ID", foreignKey = @ForeignKey(name = "notifikasjonId"))
 	private Notifikasjon notifikasjon;
+
+	@Column(name = "leverandor_ordre_id", length = 128)
+	private String leverandorOrdreId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "K_STATUS", length = 20)
@@ -64,4 +68,8 @@ public class NotifikasjonDistribusjon implements Serializable {
 
 	@Column(name = "ENDRET_DATO")
 	private LocalDateTime endretDato;
+
+	public void setAltinnNotificationOrderId(UUID altinnNotificationOrderId) {
+		this.leverandorOrdreId = altinnNotificationOrderId.toString();
+	}
 }

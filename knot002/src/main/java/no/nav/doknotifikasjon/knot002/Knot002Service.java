@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_KANAL;
 import static no.nav.doknotifikasjon.kafka.DoknotifikasjonStatusMessage.FEILET_SMS_UGYLDIG_STATUS;
@@ -62,8 +63,12 @@ public class Knot002Service {
 
 		try {
 			log.info("Knot002 kontakter Altinn for distribusjon av SMS. notifikasjonDistribusjonId={}, bestillingsId={}", notifikasjonDistribusjonId, bestillingsId);
-			altinnVarselConsumer.sendVarsel(Kanal.SMS, doknotifikasjonSmsObject.getKontaktInfo(), doknotifikasjonSmsObject.getFodselsnummer(), doknotifikasjonSmsObject.getTekst(), "");
+			Optional<UUID> notificationOrderIdOptional = altinnVarselConsumer.sendSmsVarsel(bestillingsId, doknotifikasjonSmsObject.getKontaktInfo(), doknotifikasjonSmsObject.getFodselsnummer(), doknotifikasjonSmsObject.getTekst());
 			log.info("Knot002 har sendt SMS notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}", notifikasjonDistribusjonId, bestillingsId);
+
+			updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId(), notificationOrderIdOptional);
+			publishStatus(doknotifikasjonSmsObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
+			metricService.metricKnot002SmsSent();
 		} catch (AltinnFunctionalException altinnFunctionalException) {
 			publishStatus(doknotifikasjonSmsObject, FEILET, altinnFunctionalException.getMessage());
 			throw altinnFunctionalException;
@@ -71,10 +76,6 @@ public class Knot002Service {
 			publishStatus(doknotifikasjonSmsObject, FEILET, Optional.of(unknownException).map(Exception::getMessage).orElse(""));
 			throw unknownException;
 		}
-
-		updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId());
-		publishStatus(doknotifikasjonSmsObject, Status.FERDIGSTILT, FERDIGSTILT_NOTIFIKASJON_SMS);
-		metricService.metricKnot002SmsSent();
 	}
 
 	private boolean validateDistribusjonStatusOgKanal(DoknotifikasjonSmsObject doknotifikasjonSmsObject, Notifikasjon notifikasjon) {
@@ -99,12 +100,13 @@ public class Knot002Service {
 		);
 	}
 
-	public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId) {
+	public void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId, Optional<UUID> altinnNotificationOrderId) {
 		LocalDateTime now = LocalDateTime.now();
 		notifikasjonDistribusjon.setEndretAv(bestillerId);
 		notifikasjonDistribusjon.setStatus(Status.FERDIGSTILT);
 		notifikasjonDistribusjon.setSendtDato(now);
 		notifikasjonDistribusjon.setEndretDato(now);
+		altinnNotificationOrderId.ifPresent(notifikasjonDistribusjon::setAltinnNotificationOrderId);
 
 		notifikasjonDistribusjonService.save(notifikasjonDistribusjon);
 	}

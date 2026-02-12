@@ -53,6 +53,7 @@
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
 		<cxf-codegen-plugin.version>4.1.4</cxf-codegen-plugin.version>
+		<openapi-generator-maven-plugin.version>7.19.0</openapi-generator-maven-plugin.version>
 	</properties>
 
 	<repositories>
@@ -212,6 +213,11 @@
 					<groupId>org.apache.cxf</groupId>
 					<artifactId>cxf-codegen-plugin</artifactId>
 					<version>${cxf-codegen-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.openapitools</groupId>
+					<artifactId>openapi-generator-maven-plugin</artifactId>
+					<version>${openapi-generator-maven-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

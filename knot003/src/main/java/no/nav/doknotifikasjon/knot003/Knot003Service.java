@@ -63,7 +63,7 @@ public class Knot003Service {
 
 		try {
 			log.info("Knot003 kontakter Altinn for distribusjon av EPOST. notifikasjonDistribusjonId={}, bestillingsId={}", notifikasjonDistribusjonId, bestillingsId);
-			altinnVarselConsumer.sendVarsel(Kanal.EPOST, doknotifikasjonEpostObject.getKontaktInfo(), doknotifikasjonEpostObject.getFodselsnummer(), doknotifikasjonEpostObject.getTekst(), doknotifikasjonEpostObject.getTittel());
+			altinnVarselConsumer.sendEpostVarsel(bestillingsId, doknotifikasjonEpostObject.getKontaktInfo(), doknotifikasjonEpostObject.getFodselsnummer(), doknotifikasjonEpostObject.getTekst(), doknotifikasjonEpostObject.getTittel());
 			log.info("Knot003 har sendt EPOST notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}", notifikasjonDistribusjonId, bestillingsId);
 		} catch (AltinnFunctionalException altinnFunctionalException) {
 			publishStatus(doknotifikasjonEpostObject, FEILET, altinnFunctionalException.getMessage());
