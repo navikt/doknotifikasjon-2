@@ -54,6 +54,10 @@ public class Knot003Service {
 		DoknotifikasjonEpostObject doknotifikasjonEpostObject = knot003Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
 		if (!validateDistribusjonStatusOgKanal(doknotifikasjonEpostObject, notifikasjon)) {
+			if (doknotifikasjonEpostObject.getDistribusjonStatus() == FERDIGSTILT) {
+				return;
+			}
+
 			String melding = doknotifikasjonEpostObject.getDistribusjonStatus() == OPPRETTET ? FEILET_EPOST_UGYLDIG_KANAL : FEILET_EPOST_UGYLDIG_STATUS;
 			publishStatus(doknotifikasjonEpostObject, FEILET, melding);
 

@@ -54,6 +54,10 @@ public class Knot002Service {
 		DoknotifikasjonSmsObject doknotifikasjonSmsObject = knot002Mapper.mapNotifikasjonDistrubisjon(notifikasjonDistribusjon, notifikasjon);
 
 		if (!validateDistribusjonStatusOgKanal(doknotifikasjonSmsObject, notifikasjon)) {
+			if (doknotifikasjonSmsObject.getDistribusjonStatus() == FERDIGSTILT) {
+				return;
+			}
+
 			String melding = doknotifikasjonSmsObject.getDistribusjonStatus() == Status.OPPRETTET ? FEILET_SMS_UGYLDIG_KANAL : FEILET_SMS_UGYLDIG_STATUS;
 			publishStatus(doknotifikasjonSmsObject, FEILET, melding);
 
