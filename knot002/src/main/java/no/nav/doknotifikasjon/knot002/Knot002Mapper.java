@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Knot002Mapper {
 
-    public DoknotifikasjonSmsObject mapNotifikasjonDistrubisjon(NotifikasjonDistribusjon notifikasjonDistribusjon, Notifikasjon notifikasjon) {
+    public DoknotifikasjonSmsObject mapNotifikasjonDistribusjon(NotifikasjonDistribusjon notifikasjonDistribusjon, Notifikasjon notifikasjon) {
         return DoknotifikasjonSmsObject.builder()
                 .notifikasjonDistribusjonId(notifikasjonDistribusjon.getId())
                 .bestillerId(notifikasjon.getBestillerId())

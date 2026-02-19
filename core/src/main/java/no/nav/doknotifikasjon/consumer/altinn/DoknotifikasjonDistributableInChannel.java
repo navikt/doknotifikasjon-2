@@ -9,8 +9,4 @@ public interface DoknotifikasjonDistributableInChannel {
 	String getBestillerId();
 	Status getDistribusjonStatus();
 	Kanal getKanal();
-	String getKontaktInfo();
-	String getTekst();
-	String getTittel();
-	String getFodselsnummer();
 }

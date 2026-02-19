@@ -17,8 +17,4 @@ public class DoknotifikasjonSmsObject implements DoknotifikasjonDistributableInC
 	String kontaktInfo;
 	String tekst;
 	String fodselsnummer;
-
-	public String getTittel() {
-		return "";
-	}
 }

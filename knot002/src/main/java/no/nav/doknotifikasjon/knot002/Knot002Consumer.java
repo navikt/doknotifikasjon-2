@@ -3,10 +3,6 @@ package no.nav.doknotifikasjon.knot002;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstiltFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
@@ -52,21 +48,10 @@ public class Knot002Consumer {
 			setDistribusjonId(String.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()));
 
 			log.info("Knot002 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
-			knot002Service.shouldSendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
+			knot002Service.sendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
+			metricService.metricKnot002SmsSent();
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
-			metricService.metricHandleException(e);
-		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
-			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot002 (SMS). Dette må følges opp.", e);
-			metricService.metricHandleException(e);
-		} catch (DoknotifikasjonValidationException e) {
-			log.error("Valideringsfeil i knot002. Avslutter behandlingen. ", e);
-			metricService.metricHandleException(e);
-		} catch (AltinnFunctionalException e) {
-			log.warn("Knot002 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
-			metricService.metricHandleException(e);
-		} catch (NotifikasjonFerdigstiltFunctionalException e) {
-			log.warn("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av sms for knot002.", e);
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
 			log.error("Ukjent teknisk feil for knot002 (sms). Konsumerer hendelse på nytt. Dette må følges opp.", e);

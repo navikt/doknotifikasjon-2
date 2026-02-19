@@ -4,10 +4,6 @@ package no.nav.doknotifikasjon.knot003;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
-import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstiltFunctionalException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
@@ -54,24 +50,13 @@ public class Knot003Consumer {
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
 
 			log.info("Knot003 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
-			knot003Service.shouldSendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
+			knot003Service.sendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
+			metricService.metricKnot003EpostSent();
 		} catch (JsonProcessingException e) {
 			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
-		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
-			log.error("Ingen NotifikasjonDistribusjon ble funnet i databasen for knot003 (Epost). Dette må følges opp.", e);
-			metricService.metricHandleException(e);
-		} catch (DoknotifikasjonValidationException e) {
-			log.error("Valideringsfeil i knot003. Avslutter behandlingen. ", e);
-			metricService.metricHandleException(e);
-		} catch (AltinnFunctionalException e) {
-			log.warn("Knot003 NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", e);
-			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
 			log.warn("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
-			metricService.metricHandleException(e);
-		} catch (NotifikasjonFerdigstiltFunctionalException e) {
-			log.warn("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av epost for knot003.", e);
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
 			log.error("Ukjent teknisk feil for knot003 (epost). Konsumerer hendelse på nytt. Dette må følges opp.", e);
