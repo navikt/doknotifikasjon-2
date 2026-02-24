@@ -51,7 +51,7 @@ public class Knot002Service extends SmsOrEpostSenderService<DoknotifikasjonSmsOb
 	}
 
 	@Override
-	protected String messageInvalidDisitribusjonStatusMessage() {
+	protected String messageInvalidDistribusjonStatusMessage() {
 		return FEILET_SMS_UGYLDIG_STATUS;
 	}
 

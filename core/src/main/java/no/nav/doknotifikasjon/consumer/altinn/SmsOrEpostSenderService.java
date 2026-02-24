@@ -41,7 +41,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 	protected abstract T mapNotifikasjonDistribusjon(NotifikasjonDistribusjon notifikasjonDistribusjon);
 
 	protected abstract String messageSuccessNotifikasjonStatus();
-	protected abstract String messageInvalidDisitribusjonStatusMessage();
+	protected abstract String messageInvalidDistribusjonStatusMessage();
 	protected abstract String messageInvalidChannelMessage();
 
 	protected void send(int notifikasjonDistribusjonId, Kanal kanal, String serviceName) {
@@ -58,8 +58,8 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 			return;
 		}
 		if (Status.OPPRETTET != doknotifikasjonDistributableInChannel.getDistribusjonStatus()) {
-			permanentlyFailMessageWithReason(doknotifikasjonDistributableInChannel, messageInvalidDisitribusjonStatusMessage(), DoknotifikasjonValidationException.class.getSimpleName());
-			log.error("{} behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", serviceName, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, messageInvalidDisitribusjonStatusMessage(), bestillingsId);
+			permanentlyFailMessageWithReason(doknotifikasjonDistributableInChannel, messageInvalidDistribusjonStatusMessage(), DoknotifikasjonValidationException.class.getSimpleName());
+			log.error("{} behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", serviceName, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, messageInvalidDistribusjonStatusMessage(), bestillingsId);
 			return;
 		}
 		if (kanal != doknotifikasjonDistributableInChannel.getKanal()) {
