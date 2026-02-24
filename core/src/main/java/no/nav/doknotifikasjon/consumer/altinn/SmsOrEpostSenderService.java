@@ -71,7 +71,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 		try {
 			log.info("{} kontakter Altinn for distribusjon av {}. notifikasjonDistribusjonId={}, bestillingsId={}", serviceName, kanal, notifikasjonDistribusjonId, bestillingsId);
 			Optional<UUID> notificationOrderIdOptional = sendVarselToKanal(bestillingsId, doknotifikasjonDistributableInChannel);
-			log.info("{} har sendt {} notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}", serviceName, kanal, notifikasjonDistribusjonId, bestillingsId);
+			log.info("{} har sendt {} notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}, notifikasjonOrdreId={}", serviceName, kanal, notifikasjonDistribusjonId, bestillingsId, notificationOrderIdOptional.map(UUID::toString).orElse("\"\""));
 
 			updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId(), notificationOrderIdOptional);
 			publishStatus(doknotifikasjonDistributableInChannel, Status.FERDIGSTILT, messageSuccessNotifikasjonStatus());
