@@ -111,11 +111,16 @@ public class MetricService {
 	public void metricHandleException(Exception e) {
 		Throwable throwable = e.getCause() == null ? e : e.getCause();
 		String exceptionName = throwable.getClass().getSimpleName();
+		String type = isFunctionalException(e) ? FUNCTIONAL : TECHNICAL;
 
+		metricHandleError(type, exceptionName);
+	}
+
+	public void metricHandleError(String type, String exceptionName) {
 		this.counter(
 				DOK_EXCEPTION,
 				TYPE,
-				isFunctionalException(e) ? FUNCTIONAL : TECHNICAL,
+				type,
 				EXCEPTION_NAME,
 				exceptionName
 		);

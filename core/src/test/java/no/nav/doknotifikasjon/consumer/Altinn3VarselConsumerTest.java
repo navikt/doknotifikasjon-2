@@ -136,6 +136,33 @@ public class Altinn3VarselConsumerTest {
 		);
 	}
 
+	@Test
+	void senderEmailShouldBeTheOneThatIsApprovedInAltinn_thisIsVeryImportant() {
+		/*
+		Sikkerhets-test for å unngå at vi endrer avsender-adresse for epost uten at den samtidig endres hos altinn
+
+		Om avsender-eposten ikke er i whitelist hos dem, eller om DMARC osv. ikke er riktig satt opp,
+		blir ikke eposter sendt ut, men det forårsaker ingen feilmeldinger i API-et. Derfor er det
+		veldig viktig at det ikke deployes endringer av det i prod uten at det er grundig testet først.
+		 */
+
+		String bestillingsId = UUID.randomUUID().toString();
+		String kontaktinformasjon = EPOST_ADRESSE;
+		String fnr = FOEDSELSNUMMER;
+		String tekst = EPOST_TEKST;
+		String tittel = EPOST_TITTEL;
+		mockRestServiceServer.expect(requestTo("url"))
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(jsonPath("$.recipient.recipientEmail.emailSettings.senderEmailAddress").value("ikke-besvar-denne@nav.no"))
+				.andRespond(withSuccess(new ClassPathResource("__files/altinn3/order-notification-ok.json"), MediaType.APPLICATION_JSON));
+
+		Altinn3VarselConsumer consumer = new Altinn3VarselConsumer(restClient, PROPS_FOR_TEST);
+
+		consumer.sendVarsel(EPOST, bestillingsId, kontaktinformasjon, fnr, tekst, tittel);
+
+		mockRestServiceServer.verify();
+	}
+
 	@Configuration
 	static class Config {
 		@Bean

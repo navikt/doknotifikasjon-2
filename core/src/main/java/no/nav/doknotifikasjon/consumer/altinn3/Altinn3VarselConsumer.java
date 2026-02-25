@@ -36,7 +36,7 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 @Service
 public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 	private static final String NAV_SMS_AVSENDER_DISPLAY_NAME = "Nav";
-	private static final String IKKE_BESVAR_DENNE_NAV = "ikke-besvar-denne@nav.no";
+	private static final String IKKE_BESVAR_DENNE_NAV = "ikke-besvar-denne@nav.no"; // NB! Det er et omstendelig godkjenningsløp hos Altinn om denne skal endres
 
 	private final RestClient restClient;
 

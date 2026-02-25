@@ -2,12 +2,13 @@ package no.nav.doknotifikasjon.knot002;
 
 import lombok.Builder;
 import lombok.Value;
+import no.nav.doknotifikasjon.consumer.altinn.DoknotifikasjonDistributableInChannel;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 
 @Value
 @Builder
-public class DoknotifikasjonSmsObject {
+public class DoknotifikasjonSmsObject implements DoknotifikasjonDistributableInChannel {
 	long notifikasjonDistribusjonId;
 	String bestillingsId;
 	String bestillerId;
