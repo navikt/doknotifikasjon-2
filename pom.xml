@@ -37,7 +37,7 @@
 		<cxf-bom.version>4.1.4</cxf-bom.version>
 		<logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
 		<commons-validator.version>1.10.1</commons-validator.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.8.14</springdoc-openapi-starter-webmvc-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>3.0.0</springdoc-openapi-starter-webmvc-ui.version>
 		<slack-api-client.version>1.46.0</slack-api-client.version>
 
 		<!-- Merk at pakkene kafka-avro-serializer og teamdokumenthandtering-avro-schemas sin avro-versjon bør være i synk -->
