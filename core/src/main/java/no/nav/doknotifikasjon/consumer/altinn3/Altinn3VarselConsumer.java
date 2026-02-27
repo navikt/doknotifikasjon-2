@@ -97,6 +97,7 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 				.recipientEmail(RecipientEmailExt.builder()
 					.emailAddress(kontaktInfo)
 					.emailSettings(EmailSendingOptionsExt.builder()
+						.contentType(EmailSendingOptionsExt.ContentTypeEnum.HTML)
 						.senderEmailAddress(IKKE_BESVAR_DENNE_NAV)
 						.subject(tittel)
 						.body(tekst)
