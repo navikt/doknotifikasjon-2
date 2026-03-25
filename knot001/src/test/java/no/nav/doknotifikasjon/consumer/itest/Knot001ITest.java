@@ -38,7 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@ActiveProfiles({ "wiremock", "altinn2" })
+@ActiveProfiles("wiremock")
 class Knot001ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired

@@ -16,7 +16,6 @@ import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -32,7 +31,6 @@ import static java.lang.String.format;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
 @Slf4j
-@Profile("altinn3")
 @Service
 public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 	private static final String NAV_SMS_AVSENDER_DISPLAY_NAME = "Nav";

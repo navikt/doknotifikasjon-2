@@ -34,7 +34,6 @@
 	<properties>
 		<java.version>25</java.version>
 
-		<cxf-bom.version>4.1.4</cxf-bom.version>
 		<logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
 		<commons-validator.version>1.10.1</commons-validator.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.8.14</springdoc-openapi-starter-webmvc-ui.version>
@@ -52,7 +51,6 @@
 
 		<!-- Plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
-		<cxf-codegen-plugin.version>4.1.4</cxf-codegen-plugin.version>
 		<openapi-generator-maven-plugin.version>7.19.0</openapi-generator-maven-plugin.version>
 	</properties>
 
@@ -126,13 +124,6 @@
 				<version>${project.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-bom</artifactId>
-				<version>${cxf-bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 			<dependency>
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
@@ -209,11 +200,6 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.cxf</groupId>
-					<artifactId>cxf-codegen-plugin</artifactId>
-					<version>${cxf-codegen-plugin.version}</version>
-				</plugin>
 				<plugin>
 					<groupId>org.openapitools</groupId>
 					<artifactId>openapi-generator-maven-plugin</artifactId>

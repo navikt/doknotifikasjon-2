@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon.knot003.itest;
 
 
-import no.altinn.services.serviceengine.notification._2010._10.INotificationAgencyExternalBasic;
 import no.nav.doknotifikasjon.consumer.altinn3.Altinn3TokenExchangeConsumer;
 import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
@@ -52,7 +51,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@ActiveProfiles({ "wiremock", "altinn3" })
+@ActiveProfiles("wiremock")
 class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired
@@ -63,9 +62,6 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 
 	@MockitoSpyBean
 	private KafkaEventProducer kafkaEventProducer;
-
-	@MockitoBean
-	private INotificationAgencyExternalBasic iNotificationAgencyExternalBasic;
 
 	@MockitoSpyBean
 	private Altinn3TokenExchangeConsumer altinn3TokenExchangeConsumer;
