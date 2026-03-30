@@ -23,7 +23,7 @@ public class LokalCacheConfig {
 
 	@Bean
 	@Primary
-	@Profile({"nais", "local"})
+	@Profile("nais")
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
 		manager.setCaches(List.of(

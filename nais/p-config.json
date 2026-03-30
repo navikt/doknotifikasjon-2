@@ -1,9 +1,7 @@
 {
   "ENVIRONMENT": "p",
   "KAFKA_POOL": "nav-prod",
-  "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
   "DB_CREDENTIALS_MOUNT_PATH": "postgresql/prod-fss",
-  "SEND_TIL_ALTINN": "true",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
   "SPRINGDOC_ENABLED": "false",

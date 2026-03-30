@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import no.nav.doknotifikasjon.config.properties.Altinn3Props;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestClientResponseException;
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.config.LokalCacheConfig.ALTINN_TOKEN_CACHE;
 
-@Profile("altinn3")
 @Component
 public class Altinn3TokenExchangeConsumer {
 

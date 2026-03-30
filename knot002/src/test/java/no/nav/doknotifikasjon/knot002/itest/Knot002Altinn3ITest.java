@@ -51,7 +51,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@ActiveProfiles({ "wiremock", "altinn3" })
+@ActiveProfiles("wiremock")
 class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 
 	@Autowired

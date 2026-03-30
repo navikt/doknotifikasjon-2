@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false" debug="false">
-    <springProfile name="!nais">
-        <include resource="logback-local.xml"/>
-    </springProfile>
     <springProfile name="nais">
         <include resource="logback-nais.xml"/>
     </springProfile>

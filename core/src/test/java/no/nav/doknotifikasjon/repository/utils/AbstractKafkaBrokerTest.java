@@ -8,10 +8,6 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 
-import jakarta.xml.bind.JAXBElement;
-
-import javax.xml.namespace.QName;
-
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(
@@ -35,7 +31,4 @@ public abstract class AbstractKafkaBrokerTest {
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	public EmbeddedKafkaBroker kafkaEmbedded;
 
-	protected JAXBElement<String> constructJaxbElement(String local, String value) {
-		return new JAXBElement<>(new QName("http://www.altinn.no/services/common/fault/2009/10", local), String.class, value);
-	}
 }

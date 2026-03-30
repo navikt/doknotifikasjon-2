@@ -7,7 +7,6 @@ import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIk
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.exception.functional.NotifikasjonFerdigstiltFunctionalException;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
-import no.nav.doknotifikasjon.kafka.KafkaTopics;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -20,8 +19,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.String.format;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
+import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FEILET;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
+import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.metrics.MetricTags.FUNCTIONAL;
 
 @Slf4j
@@ -52,19 +55,19 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 		T doknotifikasjonDistributableInChannel = mapNotifikasjonDistribusjon(notifikasjonDistribusjon);
 
 		if (notifikasjon.getStatus() == FERDIGSTILT) {
-			String reason = String.format("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av %s for %s.", kanal, serviceName);
+			String reason = format("Notifikasjonen har status ferdigstilt, vil avslutte utsendelsen av %s for %s.", kanal, serviceName);
 			log.warn(reason);
 			permanentlyFailMessageWithReason(doknotifikasjonDistributableInChannel, reason, NotifikasjonFerdigstiltFunctionalException.class.getSimpleName());
 			return;
 		}
-		if (Status.OPPRETTET != doknotifikasjonDistributableInChannel.getDistribusjonStatus()) {
+		if (OPPRETTET != doknotifikasjonDistributableInChannel.getDistribusjonStatus()) {
 			permanentlyFailMessageWithReason(doknotifikasjonDistributableInChannel, messageInvalidDistribusjonStatusMessage(), DoknotifikasjonValidationException.class.getSimpleName());
-			log.error("{} behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", serviceName, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, messageInvalidDistribusjonStatusMessage(), bestillingsId);
+			log.error("{} behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", serviceName, KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, messageInvalidDistribusjonStatusMessage(), bestillingsId);
 			return;
 		}
 		if (kanal != doknotifikasjonDistributableInChannel.getKanal()) {
 			permanentlyFailMessageWithReason(doknotifikasjonDistributableInChannel, messageInvalidChannelMessage(), DoknotifikasjonValidationException.class.getSimpleName());
-			log.error("{} behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", serviceName, KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, messageInvalidChannelMessage(), bestillingsId);
+			log.error("{} behandling av melding på kafka-topic={} avsluttes pga feil={}, bestillingsId={}", serviceName, KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS, messageInvalidChannelMessage(), bestillingsId);
 			return;
 		}
 
@@ -74,7 +77,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 			log.info("{} har sendt {} notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}, notifikasjonOrdreId={}", serviceName, kanal, notifikasjonDistribusjonId, bestillingsId, notificationOrderIdOptional.map(UUID::toString).orElse("\"\""));
 
 			updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId(), notificationOrderIdOptional);
-			publishStatus(doknotifikasjonDistributableInChannel, Status.FERDIGSTILT, messageSuccessNotifikasjonStatus());
+			publishStatus(doknotifikasjonDistributableInChannel, FERDIGSTILT, messageSuccessNotifikasjonStatus());
 		} catch (AltinnFunctionalException e) {
 			log.warn("{} NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", serviceName, e);
 			permanentlyFailMessageWithException(e, doknotifikasjonDistributableInChannel);
@@ -96,7 +99,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 
 	protected void publishStatus(DoknotifikasjonDistributableInChannel doknotifikasjonObject, Status status, String melding) {
 		kafkaEventProducer.publish(
-			KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
+			KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
 			DoknotifikasjonStatus.newBuilder()
 				.setBestillerId(doknotifikasjonObject.getBestillerId())
 				.setBestillingsId(doknotifikasjonObject.getBestillingsId())
@@ -110,7 +113,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 	private void updateEntity(NotifikasjonDistribusjon notifikasjonDistribusjon, String bestillerId, Optional<UUID> altinnNotificationOrderId) {
 		LocalDateTime now = LocalDateTime.now();
 		notifikasjonDistribusjon.setEndretAv(bestillerId);
-		notifikasjonDistribusjon.setStatus(Status.FERDIGSTILT);
+		notifikasjonDistribusjon.setStatus(FERDIGSTILT);
 		notifikasjonDistribusjon.setSendtDato(now);
 		notifikasjonDistribusjon.setEndretDato(now);
 		altinnNotificationOrderId.ifPresent(notifikasjonDistribusjon::setAltinnNotificationOrderId);

@@ -1,10 +1,5 @@
 package no.nav.doknotifikasjon.knot003.itest.utils;
 
-import no.altinn.schemas.serviceengine.formsengine._2009._10.TransportType;
-import no.altinn.schemas.services.serviceengine.notification._2015._06.EndPointResult;
-import no.altinn.schemas.services.serviceengine.notification._2015._06.EndPointResultList;
-import no.altinn.schemas.services.serviceengine.notification._2015._06.NotificationResult;
-import no.altinn.schemas.services.serviceengine.notification._2015._06.SendNotificationResultList;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.model.Notifikasjon;
@@ -12,8 +7,6 @@ import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-
-import static no.nav.doknotifikasjon.consumer.altinn2.JAXBWrapper.ns;
 
 public final class TestUtils {
 
@@ -26,6 +19,7 @@ public final class TestUtils {
 	private static final String OPPRETTET_AV = "srvdokument";
 	private static final LocalDateTime SENDT_DATO = LocalDateTime.parse("2020-10-04T10:15:30.000000");
 	private static final LocalDateTime OPPRETTET_DATO = LocalDateTime.parse("2020-10-01T10:15:30.000000");
+
 	public TestUtils() {
 	}
 
@@ -58,28 +52,4 @@ public final class TestUtils {
 				.build();
 	}
 
-	public static SendNotificationResultList generateAltinnResponse(TransportType transportType, String kontaktinfo) {
-		var endPointResult = new EndPointResult();
-		endPointResult.setName(ns("Name", "Knot To"));
-		endPointResult.setReceiverAddress(ns("ReceiverAddress", kontaktinfo));
-		endPointResult.setTransportType(transportType);
-
-		var endPointResultList = new EndPointResultList();
-		endPointResultList.getEndPointResult().add(endPointResult);
-
-		var notificationResult =
-				new NotificationResult();
-		notificationResult.setEndPoints(
-				ns(
-						"EndPointResultList",
-						EndPointResultList.class,
-						endPointResultList
-				)
-		);
-		notificationResult.setNotificationType(ns("NotificationType", "TokenTextOnly"));
-
-		SendNotificationResultList sendNotificationResultList = new SendNotificationResultList();
-		sendNotificationResultList.getNotificationResult().add(notificationResult);
-		return sendNotificationResultList;
-	}
 }

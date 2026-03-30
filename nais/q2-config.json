@@ -1,9 +1,7 @@
 {
   "ENVIRONMENT": "q2",
   "KAFKA_POOL": "nav-dev",
-  "SECURITY_TOKEN_SERVICE_SAML_TOKEN_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
   "DB_CREDENTIALS_MOUNT_PATH": "postgresql/preprod-fss",
-  "SEND_TIL_ALTINN": "false",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "3",
   "SPRINGDOC_ENABLED": "true",

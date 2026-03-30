@@ -8,7 +8,6 @@ import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -40,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ActiveProfiles("altinn2")
 class Snot001ScheduledTest extends AbstractKafkaBrokerTest {
 
 	@Autowired
