@@ -14,12 +14,9 @@ import no.nav.doknotifikasjon.consumer.altinn.AltinnVarselConsumer;
 import no.nav.doknotifikasjon.exception.functional.AltinnFunctionalException;
 import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
-import no.nav.doknotifikasjon.metrics.Metrics;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -28,7 +25,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static no.nav.doknotifikasjon.metrics.MetricName.DOK_ALTIN_CONSUMER;
 
 @Slf4j
 @Service
@@ -44,12 +40,6 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 			.build();
 	}
 
-	@Metrics(value = DOK_ALTIN_CONSUMER, createErrorMetric = true, errorMetricInclude = AltinnTechnicalException.class)
-	@Retryable(
-		retryFor = AltinnTechnicalException.class,
-		maxAttemptsExpression = "${retry.attempts:10}",
-		backoff = @Backoff(delayExpression = "${retry.delay:1000}", multiplier = 2, maxDelay = 60_000L)
-	)
 	public Optional<UUID> sendVarsel(Kanal kanal, String bestillingsId, String kontaktInfo, String fnr, String tekst, String tittel) {
 		try {
 			var entity = restClient.post().body(
@@ -71,7 +61,7 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s", altinnErrorMessage), e);
 			}
 			throw new AltinnTechnicalException(format("Teknisk feil i kall mot Altinn. %s", e.getStatusCode()), e);
-		} catch (AltinnTechnicalException|AltinnFunctionalException e) {
+		} catch (AltinnTechnicalException | AltinnFunctionalException e) {
 			// Videreformidle exceptions fra interceptor o.l.
 			throw e;
 		} catch (Exception e) {
@@ -121,6 +111,7 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 			.build();
 	}
 
+	@SuppressWarnings("unused")
 	@Recover
 	public Optional<UUID> altinnTechnicalExceptionRecovery(AltinnTechnicalException e) {
 		log.warn("Teknisk feil for sending av sms/epost til Altinn - maks. antall forsøk brukt");
@@ -129,6 +120,7 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 	}
 
 	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
+	@SuppressWarnings("unused")
 	@Recover
 	public Optional<UUID> otherExceptionsRecovery(RuntimeException e) {
 		throw e;
