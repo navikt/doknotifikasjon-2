@@ -109,7 +109,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 
 			verify(kafkaEventProducer).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id, "EPOST"))
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via epost", id, EPOST))
 			);
 			verify(altinn3TokenExchangeConsumer, times(1)).getAltinnToken(any(), any());
 		});
@@ -141,7 +141,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id, "EPOST"))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig status", id, EPOST))
 				)
 		);
 	}
@@ -157,7 +157,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id, "SMS"))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til epost feilet: ugyldig kanal", id, SMS))
 				)
 		);
 	}
@@ -182,7 +182,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-						"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id, "EPOST"))
+						"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id, EPOST))
 			);
 		});
 	}

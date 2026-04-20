@@ -1,5 +1,6 @@
 package no.nav.doknotifikasjon.knot002.itest.utils;
 
+import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
 import org.mockito.ArgumentMatcher;
 
@@ -7,14 +8,14 @@ public class DoknotifikasjonStatusMatcher implements ArgumentMatcher<Doknotifika
 
 	private final DoknotifikasjonStatus left;
 
-	public DoknotifikasjonStatusMatcher(String bestillerId, String bestillingsId, String status, String melding, long id, String kanal) {
+	public DoknotifikasjonStatusMatcher(String bestillerId, String bestillingsId, String status, String melding, long id, Kanal kanal) {
 		left = DoknotifikasjonStatus.newBuilder()
 				.setBestillerId(bestillerId)
 				.setBestillingsId(bestillingsId)
 				.setStatus(status)
 				.setMelding(melding)
 				.setDistribusjonId(id)
-				.setKanal(kanal)
+				.setKanal(kanal.name())
 				.build();
 	}
 

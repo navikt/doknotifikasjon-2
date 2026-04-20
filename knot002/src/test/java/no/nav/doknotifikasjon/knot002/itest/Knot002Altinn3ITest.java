@@ -110,7 +110,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 
 			verify(kafkaEventProducer).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via sms", id, "SMS"))
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via sms", id, SMS))
 			);
 			verify(altinn3TokenExchangeConsumer, times(1)).getAltinnToken(any(), any());
 		});
@@ -143,7 +143,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig status", id, "SMS"))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig status", id, SMS))
 				)
 		);
 	}
@@ -159,7 +159,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id, "EPOST"))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id, Kanal.EPOST))
 				)
 		);
 	}
@@ -184,7 +184,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-							"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id, "SMS"))
+							"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id, SMS))
 			);
 		});
 	}
