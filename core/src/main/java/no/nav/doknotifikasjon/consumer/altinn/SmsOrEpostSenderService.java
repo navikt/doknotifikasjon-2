@@ -106,6 +106,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 				.setStatus(status.name())
 				.setMelding(melding)
 				.setDistribusjonId(doknotifikasjonObject.getNotifikasjonDistribusjonId())
+				.setKanal(doknotifikasjonObject.getKanal().name())
 				.build()
 		);
 	}

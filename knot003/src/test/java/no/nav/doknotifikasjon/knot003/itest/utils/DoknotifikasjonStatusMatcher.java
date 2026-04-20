@@ -7,13 +7,14 @@ public class DoknotifikasjonStatusMatcher implements ArgumentMatcher<Doknotifika
 
 	private final DoknotifikasjonStatus left;
 
-	public DoknotifikasjonStatusMatcher(String bestillerId, String bestillingsId, String status, String melding, long id) {
+	public DoknotifikasjonStatusMatcher(String bestillerId, String bestillingsId, String status, String melding, long id, String kanal) {
 		left = DoknotifikasjonStatus.newBuilder()
 				.setBestillerId(bestillerId)
 				.setBestillingsId(bestillingsId)
 				.setStatus(status)
 				.setMelding(melding)
 				.setDistribusjonId(id)
+				.setKanal(kanal)
 				.build();
 	}
 
@@ -23,6 +24,7 @@ public class DoknotifikasjonStatusMatcher implements ArgumentMatcher<Doknotifika
 			   right.getBestillingsId().equals(left.getBestillingsId()) &&
 			   right.getStatus().equals(left.getStatus()) &&
 			   right.getMelding().equals(left.getMelding()) &&
-			   right.getDistribusjonId().equals(left.getDistribusjonId());
+			   right.getDistribusjonId().equals(left.getDistribusjonId()) &&
+			   right.getKanal() != null && right.getKanal().equals(left.getKanal());
 	}
 }
