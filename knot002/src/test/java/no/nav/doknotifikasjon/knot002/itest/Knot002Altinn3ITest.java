@@ -5,7 +5,6 @@ import no.nav.doknotifikasjon.consumer.altinn3.Altinn3TokenExchangeConsumer;
 import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
-import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
@@ -30,6 +29,7 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKAS
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
@@ -150,7 +150,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 
 	@Test
 	void shouldWriteToStatusQueueIfKanalIsInvalid() {
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, Kanal.EPOST));
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
 		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
 
@@ -159,7 +159,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id, Kanal.EPOST))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id, EPOST))
 				)
 		);
 	}
