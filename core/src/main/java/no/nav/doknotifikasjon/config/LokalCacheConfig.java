@@ -26,13 +26,18 @@ public class LokalCacheConfig {
 	@Profile("nais")
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
+
 		manager.setCaches(List.of(
 			new CaffeineCache(AZURE_TOKEN_CACHE, Caffeine.newBuilder()
 				.expireAfterWrite(55, MINUTES)
+				.recordStats()
 				.build()),
 			new CaffeineCache(ALTINN_TOKEN_CACHE, Caffeine.newBuilder()
 				.expireAfterWrite(25, MINUTES)
+				.recordStats()
 				.build())));
+
 		return manager;
 	}
+
 }
