@@ -77,7 +77,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 			log.info("{} har sendt {} notifikasjon til Altinn OK.  notifikasjonDistribusjonId={}, bestillingsId={}, notifikasjonOrdreId={}", serviceName, kanal, notifikasjonDistribusjonId, bestillingsId, notificationOrderIdOptional.map(UUID::toString).orElse("\"\""));
 
 			updateEntity(notifikasjonDistribusjon, notifikasjon.getBestillerId(), notificationOrderIdOptional);
-			publishStatus(doknotifikasjonDistributableInChannel, FERDIGSTILT, messageSuccessNotifikasjonStatus());
+			publishSuccess(doknotifikasjonDistributableInChannel, messageSuccessNotifikasjonStatus(), kanal);
 		} catch (AltinnFunctionalException e) {
 			log.warn("{} NotifikasjonDistribusjonConsumer funksjonell feil ved kall mot Altinn. ", serviceName, e);
 			permanentlyFailMessageWithException(e, doknotifikasjonDistributableInChannel);
@@ -88,16 +88,20 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 	}
 
 	private void permanentlyFailMessageWithException(AbstractDoknotifikasjonFunctionalException e, T doknotifikasjonDistributableInChannel) {
-		publishStatus(doknotifikasjonDistributableInChannel, FEILET, e.getMessage());
+		publish(doknotifikasjonDistributableInChannel, FEILET, e.getMessage(), null);
 		metricService.metricHandleException(e);
 	}
 
 	private void permanentlyFailMessageWithReason(T doknotifikasjonDistributableInChannel, String reason, String metricErrorName) {
-		publishStatus(doknotifikasjonDistributableInChannel, FEILET, reason);
+		publish(doknotifikasjonDistributableInChannel, FEILET, reason, null);
 		metricService.metricHandleError(FUNCTIONAL, metricErrorName);
 	}
 
-	protected void publishStatus(DoknotifikasjonDistributableInChannel doknotifikasjonObject, Status status, String melding) {
+	private void publishSuccess(DoknotifikasjonDistributableInChannel doknotifikasjonObject, String melding, Kanal kanal) {
+		publish(doknotifikasjonObject, FERDIGSTILT, melding, kanal.name());
+	}
+
+	private void publish(DoknotifikasjonDistributableInChannel doknotifikasjonObject, Status status, String melding, String kanal) {
 		kafkaEventProducer.publish(
 			KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS,
 			DoknotifikasjonStatus.newBuilder()
@@ -106,7 +110,7 @@ public abstract class SmsOrEpostSenderService<T extends DoknotifikasjonDistribut
 				.setStatus(status.name())
 				.setMelding(melding)
 				.setDistribusjonId(doknotifikasjonObject.getNotifikasjonDistribusjonId())
-				.setKanal(doknotifikasjonObject.getKanal().name())
+				.setKanal(kanal)
 				.build()
 		);
 	}
