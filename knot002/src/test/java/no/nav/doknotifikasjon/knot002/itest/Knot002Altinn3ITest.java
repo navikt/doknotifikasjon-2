@@ -5,7 +5,6 @@ import no.nav.doknotifikasjon.consumer.altinn3.Altinn3TokenExchangeConsumer;
 import no.nav.doknotifikasjon.consumer.altinn3.NaisTexasConsumer;
 import no.nav.doknotifikasjon.kafka.KafkaEventProducer;
 import no.nav.doknotifikasjon.knot002.itest.utils.DoknotifikasjonStatusMatcher;
-import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.model.NotifikasjonDistribusjon;
 import no.nav.doknotifikasjon.repository.NotifikasjonDistribusjonRepository;
 import no.nav.doknotifikasjon.repository.NotifikasjonRepository;
@@ -30,6 +29,7 @@ import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKAS
 import static no.nav.doknotifikasjon.kafka.KafkaTopics.KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjon;
 import static no.nav.doknotifikasjon.knot002.itest.utils.TestUtils.createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus;
+import static no.nav.doknotifikasjon.kodeverk.Kanal.EPOST;
 import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
@@ -110,7 +110,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 
 			verify(kafkaEventProducer).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via sms", id))
+					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FERDIGSTILT", "notifikasjon sendt via sms", id, SMS))
 			);
 			verify(altinn3TokenExchangeConsumer, times(1)).getAltinnToken(any(), any());
 		});
@@ -143,14 +143,14 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig status", id))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig status", id, null))
 				)
 		);
 	}
 
 	@Test
 	void shouldWriteToStatusQueueIfKanalIsInvalid() {
-		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, Kanal.EPOST));
+		NotifikasjonDistribusjon notifikasjonDistribusjon = notifikasjonDistribusjonRepository.saveAndFlush(createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(createNotifikasjon(), OPPRETTET, EPOST));
 		Integer id = notifikasjonDistribusjon.getId();
 		DoknotifikasjonSms doknotifikasjonSms = new DoknotifikasjonSms(id);
 
@@ -159,7 +159,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 		await().atMost(10, SECONDS).untilAsserted(() ->
 				verify(kafkaEventProducer, atLeastOnce()).publish(
 						eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
-						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id))
+						argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET", "distribusjon til sms feilet: ugyldig kanal", id, null))
 				)
 		);
 	}
@@ -184,7 +184,7 @@ class Knot002Altinn3ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-							"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id))
+							"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id, null))
 			);
 		});
 	}

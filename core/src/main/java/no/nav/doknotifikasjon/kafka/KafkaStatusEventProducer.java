@@ -46,7 +46,7 @@ public class KafkaStatusEventProducer {
 
 	public void publishDoknotifikasjonStatus(String bestillingsId, String bestillerId,
 											 Status status, String melding, Long distribusjonId) {
-		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId);
+		DoknotifikasjonStatus doknotifikasjonStatus = new DoknotifikasjonStatus(bestillingsId, bestillerId, status.toString(), melding, distribusjonId, null);
 
 		this.publishDoknotifikasjonStatus(doknotifikasjonStatus);
 	}

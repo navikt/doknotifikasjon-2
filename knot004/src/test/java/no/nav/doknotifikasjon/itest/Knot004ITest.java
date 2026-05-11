@@ -60,6 +60,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				FERDIGSTILT.toString(),
 				MELDING,
+				null,
 				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
@@ -80,6 +81,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				INFO.toString(),
 				MELDING,
+				null,
 				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
@@ -96,6 +98,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				OPPRETTET.toString(),
 				MELDING,
+				null,
 				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
@@ -114,6 +117,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				FERDIGSTILT.toString(),
 				MELDING,
+				null,
 				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
@@ -135,7 +139,8 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				OVERSENDT.toString(),
 				MELDING,
-				DISTRIBUSJON_ID
+				DISTRIBUSJON_ID,
+				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
@@ -156,7 +161,8 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				FERDIGSTILT.toString(),
 				MELDING,
-				DISTRIBUSJON_ID
+				DISTRIBUSJON_ID,
+				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
@@ -182,7 +188,8 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				OPPRETTET.toString(),
 				MELDING,
-				DISTRIBUSJON_ID
+				DISTRIBUSJON_ID,
+				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
@@ -208,7 +215,8 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 				BESTILLER_ID_2,
 				FEILET.toString(),
 				MELDING,
-				DISTRIBUSJON_ID
+				DISTRIBUSJON_ID,
+				null
 		);
 		putMessageOnKafkaTopic(doknotifikasjonStatus);
 
