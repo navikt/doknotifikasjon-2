@@ -33,7 +33,7 @@ class NotifikasjonDistribusjonServiceTest {
 		Exception e = assertThrows(DoknotifikasjonDistribusjonIkkeFunnetException.class, () -> notifikasjonDistribusjonService.findById(NOTIFIKASJONDISTRIBUSJON_ID));
 
 		assertEquals(DoknotifikasjonDistribusjonIkkeFunnetException.class, e.getClass());
-		verify(notifikasjonDistribusjonRepository, times(5)).findById(NOTIFIKASJONDISTRIBUSJON_ID);
+		verify(notifikasjonDistribusjonRepository, times(6)).findById(NOTIFIKASJONDISTRIBUSJON_ID);
 	}
 
 }

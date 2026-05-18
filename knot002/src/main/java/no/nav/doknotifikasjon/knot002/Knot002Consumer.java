@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon.knot002;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
@@ -47,19 +48,18 @@ public class Knot002Consumer {
 
 			DoknotifikasjonSms doknotifikasjonSms = objectMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()));
-			if(doknotifikasjonSms.getNotifikasjonDistribusjonId() == 162866399) {
-				log.info("Knot002 hopper over behandling av notifikasjonDistribusjon med id={}", 162866399);
-				return;
-			}
 
 			log.info("Knot002 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
 			knot002Service.sendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
 			metricService.metricKnot002SmsSent();
 		} catch (JsonProcessingException e) {
-			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
+			log.error("Knot002 har problemer med parsing av kafka-hendelse til Json. ", e);
+			metricService.metricHandleException(e);
+		} catch(DoknotifikasjonDistribusjonIkkeFunnetException e) {
+			log.error("Knot002 finner ikke notifikasjonDistribusjonId={} etter flere forsøk. Gir opp denne hendelsen", e.getNotifikasjonDistribusjonId());
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
-			log.error("Ukjent teknisk feil for knot002 (sms). Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			log.error("Knot002 ukjent teknisk feil. Konsumerer hendelse på nytt. Dette må følges opp.", e);
 			metricService.metricHandleException(e);
 			throw e;
 		} finally {

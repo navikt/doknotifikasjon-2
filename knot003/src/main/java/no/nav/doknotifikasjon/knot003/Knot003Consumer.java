@@ -4,6 +4,7 @@ package no.nav.doknotifikasjon.knot003;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
@@ -48,22 +49,21 @@ public class Knot003Consumer {
 		try {
 			DoknotifikasjonEpost doknotifikasjonEpost = objectMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
-			if(doknotifikasjonEpost.getNotifikasjonDistribusjonId() == 162869513) {
-				log.info("Knot002 hopper over behandling av notifikasjonDistribusjon med id={}", 162869513);
-				return;
-			}
 
 			log.info("Knot003 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 			knot003Service.sendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 			metricService.metricKnot003EpostSent();
 		} catch (JsonProcessingException e) {
-			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
+			log.error("Knot003 har problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
-			log.warn("Valideringsfeil i knot003: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+			log.warn("Knot003 valideringsfeil: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+			metricService.metricHandleException(e);
+		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
+			log.error("Knot003 finner ikke notifikasjonDistribusjonId={} etter flere forsøk. Gir opp denne hendelsen", e.getNotifikasjonDistribusjonId());
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
-			log.error("Ukjent teknisk feil for knot003 (epost). Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			log.error("Knot003 ukjent teknisk feil. Konsumerer hendelse på nytt. Dette må følges opp.", e);
 			metricService.metricHandleException(e);
 			throw e;
 		} finally {
