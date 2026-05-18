@@ -48,6 +48,10 @@ public class Knot003Consumer {
 		try {
 			DoknotifikasjonEpost doknotifikasjonEpost = objectMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
+			if(doknotifikasjonEpost.getNotifikasjonDistribusjonId() == 162869513) {
+				log.info("Knot002 hopper over behandling av notifikasjonDistribusjon med id={}", 162869513);
+				return;
+			}
 
 			log.info("Knot003 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 			knot003Service.sendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
