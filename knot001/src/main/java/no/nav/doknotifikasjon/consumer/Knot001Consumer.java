@@ -64,28 +64,28 @@ public class Knot001Consumer {
 			knot001Service.processDoknotifikasjon(doknotifikasjonMapper.map(doknotifikasjon));
 			metricService.metricKnot001RecordBehandlet();
 		} catch (JsonProcessingException e) {
-			log.error("Problemer med parsing av kafka-hendelse til Json. Feilmelding={}", e.getMessage());
+			log.error("Knot001 problemer med parsing av kafka-hendelse til Json. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.error("Validering av Doknotifikasjon-melding feilet. Feilmelding={}", e.getMessage());
+			log.error("Knot001 validering av Doknotifikasjon-melding feilet. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
-			log.warn("BestillingsId ligger allerede i database. Feilmelding={}", e.getMessage());
+			log.warn("Knot001 bestillingsId ligger allerede i database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoValidationFunctionalException e) {
-			log.info("Brukeren har ikke gyldig kontaktinfo hos Digdir KRR Proxy. Feilmelding={}", e.getMessage());
+			log.info("Knot001 brukeren har ikke gyldig kontaktinfo hos Digdir KRR Proxy. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (KontaktInfoUserReservedAgainstCommFunctionalException e) {
-			log.info("Brukeren reservert mot digital kommuniksasjon i KRR. Feilmelding={}", e.getMessage());
+			log.info("Knot001 brukeren er reservert mot digital kommunikasjon i KRR. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DigitalKontaktinformasjonFunctionalException e) {
-			log.warn("Funksjonell feil mot Digdir KRR Proxy. Feilmelding={}", e.getMessage());
+			log.warn("Knot001 funksjonell feil mot Digdir KRR Proxy. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DataIntegrityViolationException e) {
-			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
+			log.error("Knot001 får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
-			log.error("Ukjent teknisk feil for knot001. Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			log.error("Knot001 ukjent teknisk feil. Konsumerer hendelse på nytt. Dette må følges opp.", e);
 			metricService.metricHandleException(e);
 			throw e;
 		} finally {

@@ -64,7 +64,7 @@ public class Knot001Service {
 
 		DigitalKontaktinfo kontaktinfo = this.getKontaktInfoByFnr(doknotifikasjon);
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon, kontaktinfo);
-		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonDistrubisjon(n.getId(), n.getKanal()));
+		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishDoknotifikasjonDistribusjon(n.getId(), n.getKanal()));
 
 		statusProducer.publishDoknotifikasjonStatusOversendt(
 				doknotifikasjon.getBestillingsId(),
@@ -160,11 +160,11 @@ public class Knot001Service {
 		Notifikasjon notifikasjon = this.createNotifikasjonByDoknotifikasjonTO(doknotifikasjon);
 
 		if (kontaktinformasjon.epostadresse() != null && (shouldStoreEpost || kontaktinformasjon.mobiltelefonnummer() == null)) {
-			this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.epostadresse(), doknotifikasjon.getTittel());
+			this.createNotifikasjonDistribusjon(doknotifikasjon.getEpostTekst(), Kanal.EPOST, notifikasjon, kontaktinformasjon.epostadresse(), doknotifikasjon.getTittel());
 			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal EPOST for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 		if (kontaktinformasjon.mobiltelefonnummer() != null && (shouldStoreSms || kontaktinformasjon.epostadresse() == null)) {
-			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.mobiltelefonnummer(), doknotifikasjon.getTittel());
+			this.createNotifikasjonDistribusjon(doknotifikasjon.getSmsTekst(), Kanal.SMS, notifikasjon, kontaktinformasjon.mobiltelefonnummer(), doknotifikasjon.getTittel());
 			log.info("Knot001 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 
@@ -211,7 +211,7 @@ public class Knot001Service {
 		return stringBuilder.toString();
 	}
 
-	public void createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
+	public void createNotifikasjonDistribusjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
 		NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
 				.notifikasjon(notifikasjon)
 				.status(Status.OPPRETTET)
@@ -225,7 +225,7 @@ public class Knot001Service {
 		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
-	public void publishDoknotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
+	public void publishDoknotifikasjonDistribusjon(Integer bestillingsId, Kanal kanal) {
 		String topic = Kanal.EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 
 		log.info("Publiserer bestilling til kafka topic {}, med bestillingsId={}", topic, bestillingsId);
