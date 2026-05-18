@@ -61,19 +61,19 @@ public class Knot006Consumer {
 			knot006Service.processNotifikasjonMedkontaktInfo(doknotifikasjonMedKontaktInfoMapper.map(notifikasjonMedkontaktInfo));
 			metricService.metricKnot006RecordBehandlet();
 		} catch (JsonProcessingException e) {
-			log.warn("Problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
+			log.warn("Knot006 problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {
-			log.error("Validering av NotifikasjonMedkontaktInfo-melding feilet. Feilmelding: {}", e.getMessage());
+			log.error("Knot006 validering av NotifikasjonMedkontaktInfo-melding feilet. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DuplicateNotifikasjonInDBException e) {
-			log.warn("BestlingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
+			log.warn("Knot006 bestillingsId ligger allerede i database. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DataIntegrityViolationException e) {
-			log.error("Får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
+			log.error("Knot006 får ikke persistert bestilling til database. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
-			log.error("Ukjent teknisk feil for knot006. Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			log.error("Knot006 ukjent teknisk feil. Konsumerer hendelse på nytt. Dette må følges opp.", e);
 			metricService.metricHandleException(e);
 			throw e;
 		} finally {

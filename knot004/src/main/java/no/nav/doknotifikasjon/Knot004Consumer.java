@@ -51,16 +51,16 @@ public class Knot004Consumer {
 			DoknotifikasjonStatus doknotifikasjonStatus = objectMapper.readValue(record.value().toString(), DoknotifikasjonStatus.class);
 			knot004Service.shouldUpdateStatus(doknotifikasjonStatusMapper.map(doknotifikasjonStatus));
 		} catch (JsonProcessingException e) {
-			log.error("Problemer med parsing av kafka-hendelse til Json. ", e);
+			log.error("Knot004 problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {
-			log.error("Valideringsfeil i knot004. Avslutter behandlingen. ", e);
+			log.error("Knot004 valideringsfeil. Avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
-			log.warn("Valideringsfeil i knot004: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
+			log.warn("Knot004 valideringsfeil: Ugyldig status i hendelse på kafka-topic, avslutter behandlingen. ", e);
 			metricService.metricHandleException(e);
 		} catch (Exception e) {
-			log.error("Ukjent teknisk feil for knot004 (status). Konsumerer hendelse på nytt. Dette må følges opp.", e);
+			log.error("Knot004 ukjent teknisk feil. Konsumerer hendelse på nytt. Dette må følges opp.", e);
 			metricService.metricHandleException(e);
 			throw e;
 		} finally {

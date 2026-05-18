@@ -35,16 +35,16 @@ import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
 public class Knot006Service {
 
 	private final KafkaStatusEventProducer statusProducer;
-	private final NotifikasjonService notifkasjonService;
+	private final NotifikasjonService notifikasjonService;
 	private final KafkaEventProducer producer;
 
 	Knot006Service(
 			KafkaEventProducer producer,
-			NotifikasjonService notifkasjonService,
+			NotifikasjonService notifikasjonService,
 			KafkaStatusEventProducer statusProducer
 	) {
 		this.statusProducer = statusProducer;
-		this.notifkasjonService = notifkasjonService;
+		this.notifikasjonService = notifikasjonService;
 		this.producer = producer;
 	}
 
@@ -52,7 +52,7 @@ public class Knot006Service {
 		log.info("Knot006 begynner med prossesering av kafka event med bestillingsId={}", notifikasjonMedKontaktInfoTO.getBestillingsId());
 
 		Notifikasjon notifikasjon = this.createNotifikasjonByNotifikasjonMedKontaktInfoTO(notifikasjonMedKontaktInfoTO);
-		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishNotifikasjonDistrubisjon(n.getId(), n.getKanal()));
+		notifikasjon.getNotifikasjonDistribusjon().forEach(n -> this.publishNotifikasjonDistribusjon(n.getId(), n.getKanal()));
 
 		statusProducer.publishDoknotifikasjonStatusOversendt(
 				notifikasjonMedKontaktInfoTO.getBestillingsId(),
@@ -70,7 +70,7 @@ public class Knot006Service {
 		boolean shouldStoreSms = doknotifikasjon.getPrefererteKanaler().contains(SMS);
 		boolean shouldStoreEpost = doknotifikasjon.getPrefererteKanaler().contains(EPOST);
 
-		if (notifkasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
+		if (notifikasjonService.existsByBestillingsId(doknotifikasjon.getBestillingsId())) {
 			statusProducer.publishDoknotifikasjonStatusInfo(
 					doknotifikasjon.getBestillingsId(),
 					doknotifikasjon.getBestillerId(),
@@ -84,16 +84,16 @@ public class Knot006Service {
 		Notifikasjon notifikasjon = this.buildNotifikasjonByDoknotifikasjonTO(doknotifikasjon);
 
 		if (doknotifikasjon.getEpostadresse() != null && (shouldStoreEpost || doknotifikasjon.getMobiltelefonnummer() == null)) {
-			this.createNotifikasjonDistrubisjon(doknotifikasjon.getEpostTekst(), EPOST, notifikasjon, doknotifikasjon.getEpostadresse(), doknotifikasjon.getTittel());
+			this.createNotifikasjonDistribusjon(doknotifikasjon.getEpostTekst(), EPOST, notifikasjon, doknotifikasjon.getEpostadresse(), doknotifikasjon.getTittel());
 			log.info("Knot006 har opprettet notifikasjonDistribusjon med kanal EPOST for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 		if (doknotifikasjon.getMobiltelefonnummer() != null && (shouldStoreSms || doknotifikasjon.getEpostadresse() == null)) {
-			this.createNotifikasjonDistrubisjon(doknotifikasjon.getSmsTekst(), SMS, notifikasjon, doknotifikasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
+			this.createNotifikasjonDistribusjon(doknotifikasjon.getSmsTekst(), SMS, notifikasjon, doknotifikasjon.getMobiltelefonnummer(), doknotifikasjon.getTittel());
 			log.info("Knot006 har opprettet notifikasjonDistribusjon med kanal SMS for bestilling med bestillingsId={}", doknotifikasjon.getBestillingsId());
 		}
 
 		try {
-			return notifkasjonService.save(notifikasjon);
+			return notifikasjonService.save(notifikasjon);
 		} catch (DataIntegrityViolationException e) {
 			statusProducer.publishDoknotifikasjonStatusFeilet(
 					doknotifikasjon.getBestillingsId(),
@@ -135,7 +135,7 @@ public class Knot006Service {
 		return stringBuilder.toString();
 	}
 
-	public void createNotifikasjonDistrubisjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
+	public void createNotifikasjonDistribusjon(String tekst, Kanal kanal, Notifikasjon notifikasjon, String kontaktinformasjon, String tittel) {
 		NotifikasjonDistribusjon notifikasjonDistribusjon = NotifikasjonDistribusjon.builder()
 				.notifikasjon(notifikasjon)
 				.status(OPPRETTET)
@@ -149,11 +149,11 @@ public class Knot006Service {
 		notifikasjon.getNotifikasjonDistribusjon().add(notifikasjonDistribusjon);
 	}
 
-	public void publishNotifikasjonDistrubisjon(Integer bestillingsId, Kanal kanal) {
+	public void publishNotifikasjonDistribusjon(int notifikasjonDistribusjonId, Kanal kanal) {
 		String topic = EPOST.equals(kanal) ? KAFKA_TOPIC_DOK_NOTIFIKASJON_EPOST : KAFKA_TOPIC_DOK_NOTIFIKASJON_SMS;
 
-		log.info("Knot006 Publiserer bestilling med kontaktinfo til kafka topic={} med bestillingsId={}", topic, bestillingsId);
-		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(bestillingsId);
+		log.info("Knot006 Publiserer bestilling med kontaktinfo til kafka topic={} med notifikasjonDistribusjonId={}", topic, notifikasjonDistribusjonId);
+		DoknotifikasjonEpost doknotifikasjonEpostTo = new DoknotifikasjonEpost(notifikasjonDistribusjonId);
 		producer.publish(
 				topic,
 				doknotifikasjonEpostTo

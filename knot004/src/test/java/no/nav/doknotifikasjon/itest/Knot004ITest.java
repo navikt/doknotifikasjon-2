@@ -202,7 +202,7 @@ class Knot004ITest extends AbstractKafkaBrokerTest {
 	}
 
 	@Test
-	void shouldUpdateNotifikasjonWhenOneNotifikasjonDistrubisjonHaveStatusFeilet() {
+	void shouldUpdateNotifikasjonWhenOneNotifikasjonDistribusjonHaveStatusFeilet() {
 		Notifikasjon notifikasjon = createNotifikasjon();
 		NotifikasjonDistribusjon notifikasjonDistribusjon_1 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, OVERSENDT);
 		NotifikasjonDistribusjon notifikasjonDistribusjon_2 = createNotifikasjonDistribusjonWithNotifikasjonIdAndStatus(notifikasjon, FEILET);
