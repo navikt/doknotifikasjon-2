@@ -40,12 +40,12 @@ public class NotifikasjonDistribusjonService {
 		}
 	}
 
-	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:50}"))
+	@Retryable(maxAttempts = 6, backoff = @Backoff(delay = 200L, multiplier = 4, maxDelay = 60000L))
 	public NotifikasjonDistribusjon findById(int notifikasjonDistribusjonId) {
 		return notifikasjonDistribusjonRepository.findById(notifikasjonDistribusjonId).orElseThrow(() -> {
-			log.info(format("NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId));
+			log.info("NotifikasjonDistribusjon med id={} ble ikke funnet i databasen.", notifikasjonDistribusjonId);
 
-			return new DoknotifikasjonDistribusjonIkkeFunnetException(format(
+			return new DoknotifikasjonDistribusjonIkkeFunnetException(notifikasjonDistribusjonId, format(
 					"NotifikasjonDistribusjon med id=%s ble ikke funnet i databasen.", notifikasjonDistribusjonId)
 			);
 		});

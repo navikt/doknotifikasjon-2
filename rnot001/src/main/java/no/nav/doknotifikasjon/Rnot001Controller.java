@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
+import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.security.token.support.core.api.Protected;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,7 +62,7 @@ public class Rnot001Controller {
 		try {
 			handleMdc();
 			if (isBlank(bestillingsId)) {
-				throw new DoknotifikasjonDistribusjonIkkeFunnetException("Ugyldig bestillingsId for distribusjon oppgitt. BestillingsId kan ikke være tom");
+				throw new DoknotifikasjonValidationException("Ugyldig bestillingsId for distribusjon oppgitt. BestillingsId kan ikke være tom");
 			}
 			return rnot001Service.getNotifikasjonInfo(bestillingsId);
 		} finally {
