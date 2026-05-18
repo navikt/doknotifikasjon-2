@@ -44,8 +44,13 @@ public class Knot002Consumer {
 		log.info("Knot002 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
+
 			DoknotifikasjonSms doknotifikasjonSms = objectMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()));
+			if(doknotifikasjonSms.getNotifikasjonDistribusjonId() == 162866399) {
+				log.info("Knot002 hopper over behandling av notifikasjonDistribusjon med id={}", 162866399);
+				return;
+			}
 
 			log.info("Knot002 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
 			knot002Service.sendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
