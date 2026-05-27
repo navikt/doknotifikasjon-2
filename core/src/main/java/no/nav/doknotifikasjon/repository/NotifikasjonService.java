@@ -6,9 +6,7 @@ import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.Metrics;
 import no.nav.doknotifikasjon.model.Notifikasjon;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -16,7 +14,6 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 
 @Slf4j
 @Component
@@ -29,19 +26,19 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG), noRetryFor = DataIntegrityViolationException.class)
+	@Retryable(maxRetries = DATABASE_RETRIES, excludes = DataIntegrityViolationException.class)
 	public Notifikasjon save(Notifikasjon notifikasjon) {
 		return notifikasjonRepository.save(notifikasjon);
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxRetries = DATABASE_RETRIES)
 	public boolean existsByBestillingsId(String notifikasjon) {
 		return notifikasjonRepository.existsByBestillingsId(notifikasjon);
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxRetries = DATABASE_RETRIES)
 	public List<Notifikasjon> findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(Status status, Integer antallRenotifikasjoner, LocalDate nesteRenotifikasjonDato) {
 		return notifikasjonRepository.findAllByStatusAndAntallRenotifikasjonerGreaterThanAndNesteRenotifikasjonDatoIsLessThanEqual(
 				status,
@@ -51,37 +48,23 @@ public class NotifikasjonService {
 	}
 
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttempts = DATABASE_RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(maxRetries = DATABASE_RETRIES)
 	public List<Notifikasjon> findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner() {
 		return notifikasjonRepository.findAllWithStatusOpprettetOrOversendtAndNoRenotifikasjoner();
 	}
 
-	@Retryable(maxAttemptsExpression = "${retry.attempts:5}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
+	@Retryable(maxRetries = 4)
 	public Notifikasjon findByBestillingsId(String bestillingsId) {
 		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElseThrow(() -> {
-			log.info(format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
+			log.info("Notifikasjon med bestillingsId={} ble ikke funnet i databasen.", bestillingsId);
 
 			return new NotifikasjonIkkeFunnetException(format("Notifikasjon med bestillingsId=%s ble ikke funnet i databasen.", bestillingsId));
 		});
 	}
 
-	@Recover
-	public Notifikasjon notifikasjonIkkeFunnetRecovery(NotifikasjonIkkeFunnetException e, String bestillingsId) {
-		log.warn("Notifikasjon med bestillingsId={} ble ikke funnet i databasen etter maks. antall forsøk.", bestillingsId);
-
-		return null;
-	}
-
-	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
-	@Recover
-	public Notifikasjon otherExceptionsRecovery(RuntimeException e) {
-		throw e;
-	}
-
 	@Metrics(createErrorMetric = true)
-	@Retryable(maxAttemptsExpression = "${retry.attempts:200}", backoff = @Backoff(delayExpression = "${retry.delay:1000}"))
+	@Retryable(maxRetries = DATABASE_RETRIES)
 	public Notifikasjon findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(String bestillingsId) {
 		return notifikasjonRepository.findByBestillingsId(bestillingsId).orElse(null);
 	}
 }
-

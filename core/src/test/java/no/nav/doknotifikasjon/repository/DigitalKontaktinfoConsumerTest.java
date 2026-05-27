@@ -8,8 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
+import org.wiremock.spring.ConfigureWireMock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -28,8 +28,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @SpringBootTest(
 		classes = {ApplicationTestConfig.class},
 		webEnvironment = RANDOM_PORT)
-@AutoConfigureWireMock(port = 0)
-@ActiveProfiles({"itest", "wiremock"})
+@ConfigureWireMock
+@ActiveProfiles({"itest"})
 class DigitalKontaktinfoConsumerTest {
 
 	private static final String FNR = "12345678911";

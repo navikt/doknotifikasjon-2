@@ -10,14 +10,11 @@ import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
 
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
-import static no.nav.doknotifikasjon.constants.RetryConstants.RETRIES;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.getDefaultUuidIfNoCallIdIsSett;
 
 @Slf4j
@@ -34,13 +31,13 @@ public class KafkaEventProducer {
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
-	@Retryable(retryFor = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(includes = KafkaTechnicalException.class)
 	public void publish(String topic, Object event) {
 		publish(topic, event, getDefaultUuidIfNoCallIdIsSett());
 	}
 
 	@Metrics(createErrorMetric = true, errorMetricInclude = KafkaTechnicalException.class)
-	@Retryable(retryFor = KafkaTechnicalException.class, maxAttempts = RETRIES, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(includes = KafkaTechnicalException.class)
 	public void publishWithKey(String topic, Object event, String keyValue) {
 		publish(topic, event, keyValue);
 	}

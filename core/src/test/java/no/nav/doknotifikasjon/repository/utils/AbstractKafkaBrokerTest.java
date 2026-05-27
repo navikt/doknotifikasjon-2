@@ -3,10 +3,10 @@ package no.nav.doknotifikasjon.repository.utils;
 import no.nav.doknotifikasjon.repository.RepositoryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
+import org.wiremock.spring.ConfigureWireMock;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -16,15 +16,17 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 )
 @ActiveProfiles({"itest", "itestKafka"})
 @EmbeddedKafka(
+		partitions = 1,
 		topics = {
-				"privat-dok-notifikasjon",
-				"privat-dok-notifikasjon-med-kontakt-info",
-				"aapen-dok-notifikasjon-status",
-				"privat-dok-notifikasjon-sms",
-				"privat-dok-notifikasjon-epost"
+				"teamdokumenthandtering.privat-dok-notifikasjon",
+				"teamdokumenthandtering.privat-dok-notifikasjon-med-kontakt-info",
+				"teamdokumenthandtering.aapen-dok-notifikasjon-status",
+				"teamdokumenthandtering.privat-dok-notifikasjon-sms",
+				"teamdokumenthandtering.privat-dok-notifikasjon-epost",
+				"teamdokumenthandtering.privat-dok-notifikasjon-stopp"
 		}
 )
-@AutoConfigureWireMock(port = 0)
+@ConfigureWireMock
 public abstract class AbstractKafkaBrokerTest {
 
 	@Autowired

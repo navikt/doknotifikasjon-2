@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon.knot002;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -23,13 +23,13 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT002_CONSUMER;
 @Component
 public class Knot002Consumer {
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final Knot002Service knot002Service;
 	private final MetricService metricService;
 
-	Knot002Consumer(Knot002Service knot002Service, ObjectMapper objectMapper, MetricService metricService) {
+	Knot002Consumer(Knot002Service knot002Service, JsonMapper jsonMapper, MetricService metricService) {
 		this.knot002Service = knot002Service;
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 		this.metricService = metricService;
 	}
 
@@ -45,17 +45,16 @@ public class Knot002Consumer {
 		log.info("Knot002 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
-
-			DoknotifikasjonSms doknotifikasjonSms = objectMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);
+			DoknotifikasjonSms doknotifikasjonSms = jsonMapper.readValue(record.value().toString(), DoknotifikasjonSms.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonSms.getNotifikasjonDistribusjonId()));
 
 			log.info("Knot002 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonSms.getNotifikasjonDistribusjonId());
 			knot002Service.sendSms(doknotifikasjonSms.getNotifikasjonDistribusjonId());
 			metricService.metricKnot002SmsSent();
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.error("Knot002 har problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
-		} catch(DoknotifikasjonDistribusjonIkkeFunnetException e) {
+		} catch (DoknotifikasjonDistribusjonIkkeFunnetException e) {
 			log.error("Knot002 finner ikke notifikasjonDistribusjonId={} etter flere forsøk. Gir opp denne hendelsen", e.getNotifikasjonDistribusjonId());
 			metricService.metricHandleException(e);
 		} catch (Exception e) {

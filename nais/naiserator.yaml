@@ -17,6 +17,7 @@ spec:
               -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
     - name: JDK_JAVA_OPTIONS
       value: "-XX:MaxRAMPercentage=75
+              -Dio.netty.allocator.type=pooled
               -Dspring.profiles.active=nais
               $(JAVA_PROXY_OPTIONS) $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DB_CREDENTIALS_MOUNT_PATH

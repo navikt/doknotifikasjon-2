@@ -7,12 +7,12 @@ import no.nav.security.token.support.spring.test.EnableMockOAuth2Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.wiremock.spring.ConfigureWireMock;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +35,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 		webEnvironment = RANDOM_PORT
 )
 @AutoConfigureWebTestClient
-@AutoConfigureWireMock(port = 0)
+@ConfigureWireMock
 @EnableMockOAuth2Server
 @ActiveProfiles({"itest"})
 public class Rnot002ITest {

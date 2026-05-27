@@ -1,13 +1,16 @@
 package no.nav.doknotifikasjon.repository;
 
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetException;
 import no.nav.doknotifikasjon.repository.utils.ApplicationTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static no.nav.doknotifikasjon.constants.RetryConstants.DATABASE_RETRIES;
 
 @SpringBootTest(classes = {ApplicationTestConfig.class})
 @ActiveProfiles({"itest"})
@@ -29,13 +33,12 @@ class NotifikasjonServiceTest {
 	private NotifikasjonService notifikasjonService;
 
 	@Test
-	void shouldRetryAndReturnNullWhenBestillingsIdDoesNotExistForKnot004() {
+	void shouldRetryAndThrowExceptionWhenBestillingsIdDoesNotExistForKnot004() {
 		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenReturn(empty());
 
-		var result = notifikasjonService.findByBestillingsId(BESTILLINGS_ID);
+		assertThrows(NotifikasjonIkkeFunnetException.class, () -> notifikasjonService.findByBestillingsId(BESTILLINGS_ID));
 
 		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
-		assertNull(result);
 	}
 
 	@Test
@@ -60,14 +63,12 @@ class NotifikasjonServiceTest {
 	}
 
 	@Test
-	void shouldRetryAndThrowExceptionForNonSpecifiedExceptionsInKnot005() {
-		when(notifikasjonRepository.findByBestillingsId(BESTILLINGS_ID)).thenThrow(new DataAccessException("Feil i databasekall") {
-		});
+	void shouldKeepProductionRetryAttemptsForTechnicalErrorsInKnot005() throws NoSuchMethodException {
+		Retryable retryable = NotifikasjonService.class
+			.getMethod("findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet", String.class)
+			.getAnnotation(Retryable.class);
 
-		Exception e = assertThrows(DataAccessException.class, () -> notifikasjonService.findByBestillingsIdIngenRetryForNotifikasjonIkkeFunnet(BESTILLINGS_ID));
-
-		assertTrue(e.getMessage().contains("Feil i databasekall"));
-		verify(notifikasjonRepository, times(5)).findByBestillingsId(BESTILLINGS_ID);
+		assertThat(retryable.maxRetries()).isEqualTo(DATABASE_RETRIES);
 	}
 
 }

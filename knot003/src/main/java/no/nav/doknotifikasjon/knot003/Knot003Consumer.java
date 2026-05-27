@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon.knot003;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonDistribusjonIkkeFunnetException;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -25,13 +25,13 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT003_CONSUMER;
 @Component
 public class Knot003Consumer {
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final Knot003Service knot003Service;
 	private final MetricService metricService;
 
-	Knot003Consumer(Knot003Service knot003Service, ObjectMapper objectMapper, MetricService metricService) {
+	Knot003Consumer(Knot003Service knot003Service, JsonMapper jsonMapper, MetricService metricService) {
 		this.knot003Service = knot003Service;
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 		this.metricService = metricService;
 	}
 
@@ -47,13 +47,13 @@ public class Knot003Consumer {
 		log.info("Knot003 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
-			DoknotifikasjonEpost doknotifikasjonEpost = objectMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
+			DoknotifikasjonEpost doknotifikasjonEpost = jsonMapper.readValue(record.value().toString(), DoknotifikasjonEpost.class);
 			setDistribusjonId(String.valueOf(doknotifikasjonEpost.getNotifikasjonDistribusjonId()));
 
 			log.info("Knot003 starter behandling av notifikasjonDistribusjon med id={}", doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 			knot003Service.sendEpost(doknotifikasjonEpost.getNotifikasjonDistribusjonId());
 			metricService.metricKnot003EpostSent();
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.error("Knot003 har problemer med parsing av kafka-hendelse til Json. ", e);
 			metricService.metricHandleException(e);
 		} catch (IllegalArgumentException e) {
