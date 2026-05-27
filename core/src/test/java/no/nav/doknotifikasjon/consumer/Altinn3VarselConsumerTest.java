@@ -9,10 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -31,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -41,7 +37,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withUnauthorizedRequest;
 
-@RestClientTest(Altinn3VarselConsumer.class)
 public class Altinn3VarselConsumerTest {
 
 	private static final String FOEDSELSNUMMER = "01010156798";
@@ -54,14 +49,14 @@ public class Altinn3VarselConsumerTest {
 	private static final String MOCKED_URL_TOKEN_EXCHANGE = "token-exchange";
 	private static final Altinn3Props PROPS_FOR_TEST = new Altinn3Props(MOCKED_URL_TOKEN_EXCHANGE, MOCKED_URL);
 
-	@Autowired
-	MockRestServiceServer mockRestServiceServer;
-	@Autowired
-	RestClient restClient;
+	private MockRestServiceServer mockRestServiceServer;
+	private RestClient restClient;
 
 	@BeforeEach
 	void setUp() {
-		mockRestServiceServer.reset();
+		RestClient.Builder builder = RestClient.builder();
+		mockRestServiceServer = MockRestServiceServer.bindTo(builder).build();
+		restClient = builder.build();
 	}
 
 	@Test
@@ -132,7 +127,7 @@ public class Altinn3VarselConsumerTest {
 			Arguments.of(new AltinnTechnicalException(String.format("Teknisk feil i kall mot Altinn. %s", UNAUTHORIZED), null), withUnauthorizedRequest()),
 			Arguments.of(new AltinnTechnicalException(String.format("Teknisk feil i kall mot Altinn. %s", FORBIDDEN), null), withForbiddenRequest()),
 			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s", createErrorMessage(BAD_REQUEST))), withBadRequest().contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-badrequest.json"))),
-			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s", createErrorMessage(UNPROCESSABLE_ENTITY))), withStatus(UNPROCESSABLE_ENTITY).contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-notok.json")))
+			Arguments.of(new AltinnFunctionalException(String.format("Funksjonell feil i kall mot Altinn. %s", createErrorMessage(UNPROCESSABLE_CONTENT))), withStatus(UNPROCESSABLE_CONTENT).contentType(MediaType.APPLICATION_JSON).body(new ClassPathResource("__files/altinn3/order-notification-notok.json")))
 		);
 	}
 
@@ -161,13 +156,5 @@ public class Altinn3VarselConsumerTest {
 		consumer.sendVarsel(EPOST, bestillingsId, kontaktinformasjon, fnr, tekst, tittel);
 
 		mockRestServiceServer.verify();
-	}
-
-	@Configuration
-	static class Config {
-		@Bean
-		RestClient restClient(RestClient.Builder builder) {
-			return builder.build();
-		}
 	}
 }

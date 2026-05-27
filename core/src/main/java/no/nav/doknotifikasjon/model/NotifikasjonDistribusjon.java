@@ -3,8 +3,6 @@ package no.nav.doknotifikasjon.model;
 import lombok.*;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import no.nav.doknotifikasjon.kodeverk.Status;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -21,10 +19,7 @@ public class NotifikasjonDistribusjon implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notifikasjonDistribusjonIdSeq")
-	@GenericGenerator(name = "notifikasjonDistribusjonIdSeq", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-			@Parameter(name = "increment_size", value = "1"),
-			@Parameter(name = "sequence_name", value = "NOTIFIKASJON_DISTRIBUSJON_ID_SEQ")
-	})
+	@SequenceGenerator(name = "notifikasjonDistribusjonIdSeq", sequenceName = "NOTIFIKASJON_DISTRIBUSJON_ID_SEQ", allocationSize = 1)
 	@Column(name = "ID")
 	private Integer id;
 

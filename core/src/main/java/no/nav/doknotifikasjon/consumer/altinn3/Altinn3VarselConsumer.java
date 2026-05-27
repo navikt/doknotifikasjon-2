@@ -16,7 +16,6 @@ import no.nav.doknotifikasjon.exception.technical.AltinnTechnicalException;
 import no.nav.doknotifikasjon.kodeverk.Kanal;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -50,12 +49,12 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 				.retrieve()
 				.toEntity(NotificationOrderChainResponseExt.class);
 
-			if (entity.getStatusCode() == HttpStatus.OK) {
+			if (entity.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
 				log.info("Kall mot Altinn gikk OK men altinn mener de allerede har behandlet bestilling med denne ID-en. BestillingsId={}", bestillingsId);
 			}
 			return Optional.ofNullable(entity.getBody()).map(NotificationOrderChainResponseExt::getNotificationOrderId);
 		} catch (RestClientResponseException e) {
-			if (e.getStatusCode() == HttpStatus.BAD_REQUEST || e.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+			if (e.getStatusCode().isSameCodeAs(HttpStatus.BAD_REQUEST) || e.getStatusCode().isSameCodeAs(HttpStatus.UNPROCESSABLE_CONTENT)) {
 				ValidationProblemDetails validationProblemDetails = e.getResponseBodyAs(ValidationProblemDetails.class);
 				String altinnErrorMessage = constructAltinnErrorMessage(validationProblemDetails);
 				throw new AltinnFunctionalException(format("Funksjonell feil i kall mot Altinn. %s", altinnErrorMessage), e);
@@ -109,21 +108,6 @@ public class Altinn3VarselConsumer implements AltinnVarselConsumer {
 					.build())
 				.build())
 			.build();
-	}
-
-	@SuppressWarnings("unused")
-	@Recover
-	public Optional<UUID> altinnTechnicalExceptionRecovery(AltinnTechnicalException e) {
-		log.warn("Teknisk feil for sending av sms/epost til Altinn - maks. antall forsøk brukt");
-
-		throw e;
-	}
-
-	// Catch-all for alle andre exceptions - hvis ikke blir ExhaustedRetryException kastet med meldingen 'Cannot locate recovery method'
-	@SuppressWarnings("unused")
-	@Recover
-	public Optional<UUID> otherExceptionsRecovery(RuntimeException e) {
-		throw e;
 	}
 
 }

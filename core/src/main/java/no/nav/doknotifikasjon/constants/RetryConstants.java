@@ -2,9 +2,7 @@ package no.nav.doknotifikasjon.constants;
 
 public final class RetryConstants {
 
-	public static final int DATABASE_RETRIES = 200;
-	public static final int RETRIES = 5;
-	public static final int DELAY_LONG = 2000;
+	public static final int DATABASE_RETRIES = 199;
 
 	private RetryConstants() {
 	}

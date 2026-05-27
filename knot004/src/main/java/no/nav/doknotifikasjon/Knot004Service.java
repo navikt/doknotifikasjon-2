@@ -1,6 +1,7 @@
 package no.nav.doknotifikasjon;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetException;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.kodeverk.Status;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -43,11 +44,12 @@ public class Knot004Service {
 		if (validator.erStatusInfoEllerFeiletMedSpesiellFeilmelding(doknotifikasjonStatusTo.getStatus(), doknotifikasjonStatusTo.getMelding())) return;
 		validator.validateInput(doknotifikasjonStatusTo);
 
-		Notifikasjon notifikasjon = notifikasjonService.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
-
-		if (notifikasjon == null) {
+		Notifikasjon notifikasjon;
+		try {
+			notifikasjon = notifikasjonService.findByBestillingsId(doknotifikasjonStatusTo.getBestillingsId());
+		} catch (NotifikasjonIkkeFunnetException e) {
 			log.warn("Knot004 Notifikasjon med bestillingsId={} finnes ikke i notifikasjonsdatabasen. Avslutter behandlingen.",
-					doknotifikasjonStatusTo.getBestillingsId());
+					doknotifikasjonStatusTo.getBestillingsId(), e);
 			return;
 		}
 

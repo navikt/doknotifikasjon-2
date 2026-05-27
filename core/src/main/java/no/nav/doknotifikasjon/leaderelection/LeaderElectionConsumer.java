@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon.leaderelection;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,9 +18,9 @@ public class LeaderElectionConsumer implements LeaderElection {
 	private static final String ELECTOR_PATH = "ELECTOR_PATH";
 
 	private final RestTemplate restTemplate;
-	private final ObjectMapper mapper;
+	private final JsonMapper mapper;
 
-	public LeaderElectionConsumer(RestTemplateBuilder restTemplateBuilder, ObjectMapper mapper) {
+	public LeaderElectionConsumer(RestTemplateBuilder restTemplateBuilder, JsonMapper mapper) {
 		this.restTemplate = restTemplateBuilder
 				.readTimeout(Duration.ofSeconds(20))
 				.connectTimeout(Duration.ofSeconds(5))

@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon.consumer;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
 import no.nav.doknotifikasjon.exception.functional.InvalidAvroSchemaFieldException;
@@ -24,20 +24,20 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT006_CONSUMER;
 @Component
 public class Knot006Consumer {
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final MetricService metricService;
 	private final Knot006Service knot006Service;
 	private final DoknotifikasjonMedKontaktInfoMapper doknotifikasjonMedKontaktInfoMapper;
 	private final NotifikasjonValidator doknotifikasjonValidator;
 
 	Knot006Consumer(
-			ObjectMapper objectMapper,
+			JsonMapper jsonMapper,
 			Knot006Service knot006Service,
 			DoknotifikasjonMedKontaktInfoMapper doknotifikasjonMedKontaktInfoMapper,
 			MetricService metricService,
 			NotifikasjonValidator doknotifikasjonValidator
 	) {
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 		this.knot006Service = knot006Service;
 		this.doknotifikasjonMedKontaktInfoMapper = doknotifikasjonMedKontaktInfoMapper;
 		this.doknotifikasjonValidator = doknotifikasjonValidator;
@@ -56,11 +56,11 @@ public class Knot006Consumer {
 		log.info("Knot006 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
-			NotifikasjonMedkontaktInfo notifikasjonMedkontaktInfo = objectMapper.readValue(record.value().toString(), NotifikasjonMedkontaktInfo.class);
+			NotifikasjonMedkontaktInfo notifikasjonMedkontaktInfo = jsonMapper.readValue(record.value().toString(), NotifikasjonMedkontaktInfo.class);
 			doknotifikasjonValidator.validate(notifikasjonMedkontaktInfo);
 			knot006Service.processNotifikasjonMedkontaktInfo(doknotifikasjonMedKontaktInfoMapper.map(notifikasjonMedkontaktInfo));
 			metricService.metricKnot006RecordBehandlet();
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.warn("Knot006 problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {

@@ -1,7 +1,7 @@
 package no.nav.doknotifikasjon;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DoknotifikasjonValidationException;
 import no.nav.doknotifikasjon.metrics.MetricService;
@@ -21,15 +21,15 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT005_CONSUMER;
 @Component
 public class Knot005Consumer {
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final Knot005Service knot005Service;
 	private final MetricService metricService;
 	private final DoknotifikasjonStoppMapper doknotifikasjonStoppMapper;
 
-	public Knot005Consumer(ObjectMapper objectMapper, Knot005Service knot005Service,
+	public Knot005Consumer(JsonMapper jsonMapper, Knot005Service knot005Service,
 						   DoknotifikasjonStoppMapper doknotifikasjonStoppMapper,
 						   MetricService metricService) {
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 		this.knot005Service = knot005Service;
 		this.doknotifikasjonStoppMapper = doknotifikasjonStoppMapper;
 		this.metricService = metricService;
@@ -47,10 +47,10 @@ public class Knot005Consumer {
 		log.info("Knot005 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
-			DoknotifikasjonStopp doknotifikasjonStopp = objectMapper.readValue(record.value().toString(),
+			DoknotifikasjonStopp doknotifikasjonStopp = jsonMapper.readValue(record.value().toString(),
 					DoknotifikasjonStopp.class);
 			knot005Service.shouldStopResending(doknotifikasjonStoppMapper.map(doknotifikasjonStopp));
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.error("Knot005 problemer med parsing av kafka-hendelse til Json. Feilmelding: {}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (DoknotifikasjonValidationException e) {

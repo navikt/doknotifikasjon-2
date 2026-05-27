@@ -1,8 +1,8 @@
 package no.nav.doknotifikasjon.consumer;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.exception.functional.DigitalKontaktinformasjonFunctionalException;
 import no.nav.doknotifikasjon.exception.functional.DuplicateNotifikasjonInDBException;
@@ -27,20 +27,20 @@ import static no.nav.doknotifikasjon.metrics.MetricName.DOK_KNOT001_CONSUMER;
 @Component
 public class Knot001Consumer {
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 	private final MetricService metricService;
 	private final Knot001Service knot001Service;
 	private final DoknotifikasjonMapper doknotifikasjonMapper;
 	private final DoknotifikasjonValidator doknotifikasjonValidator;
 
 	Knot001Consumer(
-			ObjectMapper objectMapper,
+			JsonMapper jsonMapper,
 			Knot001Service knot001Service,
 			DoknotifikasjonMapper doknotifikasjonMapper,
 			MetricService metricService,
 			DoknotifikasjonValidator doknotifikasjonValidator
 	) {
-		this.objectMapper = objectMapper;
+		this.jsonMapper = jsonMapper;
 		this.knot001Service = knot001Service;
 		this.doknotifikasjonMapper = doknotifikasjonMapper;
 		this.doknotifikasjonValidator = doknotifikasjonValidator;
@@ -59,11 +59,11 @@ public class Knot001Consumer {
 		log.info("Knot001 Innkommende kafka record til topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
 
 		try {
-			Doknotifikasjon doknotifikasjon = objectMapper.readValue(record.value().toString(), Doknotifikasjon.class);
+			Doknotifikasjon doknotifikasjon = jsonMapper.readValue(record.value().toString(), Doknotifikasjon.class);
 			doknotifikasjonValidator.validate(doknotifikasjon);
 			knot001Service.processDoknotifikasjon(doknotifikasjonMapper.map(doknotifikasjon));
 			metricService.metricKnot001RecordBehandlet();
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			log.error("Knot001 problemer med parsing av kafka-hendelse til Json. Feilmelding={}", e.getMessage());
 			metricService.metricHandleException(e);
 		} catch (InvalidAvroSchemaFieldException e) {

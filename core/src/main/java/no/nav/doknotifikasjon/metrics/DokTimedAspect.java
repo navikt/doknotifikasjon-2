@@ -1,7 +1,6 @@
 package no.nav.doknotifikasjon.metrics;
 
 import io.micrometer.core.annotation.Incubating;
-import io.micrometer.core.lang.NonNullApi;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.doknotifikasjon.constants.MDCConstants;
 import no.nav.doknotifikasjon.exception.functional.AbstractDoknotifikasjonFunctionalException;
@@ -16,7 +15,6 @@ import java.lang.reflect.Method;
 import static java.util.Arrays.asList;
 
 @Aspect
-@NonNullApi
 @Incubating(since = "1.0.0")
 @Slf4j
 public class DokTimedAspect {

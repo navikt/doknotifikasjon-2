@@ -9,8 +9,7 @@ import no.nav.doknotifikasjon.security.AzureToken;
 import no.nav.doknotifikasjon.security.WebClientAzureAuthentication;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -20,7 +19,6 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static no.nav.doknotifikasjon.constants.MDCConstants.NAV_CALL_ID;
-import static no.nav.doknotifikasjon.constants.RetryConstants.DELAY_LONG;
 import static no.nav.doknotifikasjon.mdc.MDCGenerate.getDefaultUuidIfNoCallIdIsSett;
 import static no.nav.doknotifikasjon.metrics.MetricName.DOK_DIGDIR_KRR_PROXY_CONSUMER;
 
@@ -40,7 +38,7 @@ public class DigitalKontaktinfoConsumer {
 	}
 
 	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true, errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class)
-	@Retryable(retryFor = DigitalKontaktinformasjonTechnicalException.class, backoff = @Backoff(delay = DELAY_LONG))
+	@Retryable(includes = DigitalKontaktinformasjonTechnicalException.class)
 	public DigitalKontaktinformasjonTo hentDigitalKontaktinfo(final String personidentifikator) {
 
 		var fnrTrimmed = personidentifikator.trim();
@@ -59,7 +57,7 @@ public class DigitalKontaktinfoConsumer {
 	@Metrics(value = DOK_DIGDIR_KRR_PROXY_CONSUMER, createErrorMetric = true,
 			errorMetricInclude = DigitalKontaktinformasjonTechnicalException.class,
 			logExceptions = false)
-	@Retryable(retryFor = DigitalKontaktinformasjonTechnicalException.class)
+	@Retryable(includes = DigitalKontaktinformasjonTechnicalException.class)
 	public KontaktinfoTo hentDigitalKontaktinfoForPerson(final String personidentifikator) {
 
 		var fnrTrimmed = personidentifikator.trim();

@@ -34,7 +34,7 @@ import static no.nav.doknotifikasjon.kodeverk.Kanal.SMS;
 import static no.nav.doknotifikasjon.kodeverk.Status.FERDIGSTILT;
 import static no.nav.doknotifikasjon.kodeverk.Status.OPPRETTET;
 import static no.nav.doknotifikasjon.kodeverk.Status.OVERSENDT;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @ActiveProfiles("wiremock")
@@ -75,7 +75,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 		notifikasjonRepository.deleteAll();
 		reset(kafkaEventProducer);
 
-		when(naisTexasConsumer.getMaskinportenToken(any(), any())).thenReturn("maskinportentoken");
+		when(naisTexasConsumer.getMaskinportenToken(any(String[].class))).thenReturn("maskinportentoken");
 
 		stubFor(get(urlEqualTo("/token-exchange"))
 			.withHeader("Authorization", equalTo("Bearer maskinportentoken"))
@@ -166,7 +166,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 	void shouldWriteToStatusQueueIfAltinnThrowsFunctionalError() {
 		stubFor(post(urlEqualTo("/altinn-order-notification"))
 			.willReturn(aResponse()
-				.withStatus(UNPROCESSABLE_ENTITY.value())
+				.withStatus(UNPROCESSABLE_CONTENT.value())
 				.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 				.withBodyFile("altinn3/order-notification-notok.json")));
 
@@ -182,7 +182,7 @@ class Knot003Altinn3ITest extends AbstractKafkaBrokerTest {
 			verify(kafkaEventProducer, atLeastOnce()).publish(
 					eq(KAFKA_TOPIC_DOK_NOTIFIKASJON_STATUS),
 					argThat(new DoknotifikasjonStatusMatcher("teamdokumenthandtering", "1234-5678-9101", "FEILET",
-						"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_ENTITY), id, null))
+						"Funksjonell feil i kall mot Altinn. " + createErrorMessage(UNPROCESSABLE_CONTENT), id, null))
 			);
 		});
 	}

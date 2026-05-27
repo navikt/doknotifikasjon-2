@@ -3,6 +3,7 @@ package no.nav.doknotifikasjon;
 import no.nav.doknotifikasjon.kafka.KafkaStatusEventProducer;
 import no.nav.doknotifikasjon.metrics.MetricService;
 import no.nav.doknotifikasjon.repository.NotifikasjonService;
+import no.nav.doknotifikasjon.exception.functional.NotifikasjonIkkeFunnetException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,8 @@ public class Knot004ServiceTest {
 				.build();
 		when(validator.erStatusInfoEllerFeiletMedSpesiellFeilmelding(doknotifikasjonStatusTo.getStatus(), doknotifikasjonStatusTo.getMelding()))
 				.thenReturn(false);
-		when(notifikasjonService.findByBestillingsId(BESTILLINGS_ID)).thenReturn(null);
+		when(notifikasjonService.findByBestillingsId(BESTILLINGS_ID))
+				.thenThrow(new NotifikasjonIkkeFunnetException("Notifikasjon finnes ikke"));
 
 		knot004Service.shouldUpdateStatus(doknotifikasjonStatusTo);
 
