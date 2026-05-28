@@ -36,7 +36,7 @@
 
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 		<commons-validator.version>1.10.1</commons-validator.version>
-		<springdoc-openapi-starter-webmvc-ui.version>3.0.0</springdoc-openapi-starter-webmvc-ui.version>
+		<springdoc-openapi-starter-webmvc-ui.version>3.0.3</springdoc-openapi-starter-webmvc-ui.version>
 		<slack-api-client.version>1.46.0</slack-api-client.version>
 		<okhttp.version>5.2.1</okhttp.version>
 
