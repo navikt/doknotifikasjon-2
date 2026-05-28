@@ -11,6 +11,8 @@ import no.nav.doknotifikasjon.repository.utils.AbstractKafkaBrokerTest;
 import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -188,7 +190,11 @@ class Knot001ITest extends AbstractKafkaBrokerTest {
 		});
 	}
 
-	@Test
+	@ParameterizedTest
+	@ValueSource(strings = {
+			"digdir_krr_proxy_kanvarsles_false.json",
+			"digdir_krr_proxy_kanvarsles_null.json"
+	})
 	void shouldPutErrorMessageOnStatusTopicWhenKanVarslesIsFalseAndAntallRenotifikasjonerSatt() {
 		Doknotifikasjon doknotifikasjon = TestUtils.createDoknotifikasjon();
 
