@@ -68,6 +68,16 @@ public class Rnot002ITest {
 	}
 
 	@Test
+	void shouldDeserializeToFalseWhenPrimitiveBooleanFieldsAreNull() {
+		stubDigdirKRRProxyWithNullPrimitives();
+
+		var response = getKanVarsles();
+
+		assertNotNull(response);
+		assertFalse(response.kanVarsles());
+	}
+
+	@Test
 	void shouldReturnClientErrorOnInvalidPersonident() {
 		webTestClient
 				.post()
@@ -185,6 +195,14 @@ public class Rnot002ITest {
 						.withStatus(OK.value())
 						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
 						.withBodyFile("digdir_krr_proxy_person_happy.json")));
+	}
+
+	private void stubDigdirKRRProxyWithNullPrimitives() {
+		stubFor(get(urlEqualTo("/digdir_krr_proxy/rest/v1/person"))
+				.willReturn(aResponse()
+						.withStatus(OK.value())
+						.withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+						.withBodyFile("digdir_krr_proxy_person_null_booleans.json")));
 	}
 
 	private void stubDigdirKRRProxyWithStatus(HttpStatus httpStatus) {
