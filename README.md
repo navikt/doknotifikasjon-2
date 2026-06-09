@@ -13,5 +13,30 @@ For mer informasjon om appen kan du se på [funksjonell beskrivelse på confluen
  
 Merk at en tidligere versjon av appen som brukte onprem-Kafka, [doknotifikasjon](https://github.com/navikt/doknotifikasjon), nå har blitt erstattet av doknotifikasjon-2 som bruker managed Kafka (Aiven). 
 
+## Database fra lokal maskin
+OBS! Krever naisdevice, og JITA til postgres-prod om du skal kjøre spørringer mot prod-databasen.
+
+Database-URLer:
+
+```
+dev:   jdbc:postgresql://dev-pg.intern.nav.no:5432/doknotifikasjon-2
+prod:  jdbc:postgresql://prod-pg.intern.nav.no:5432/doknotifikasjon-2
+```
+
+Bruker og passord kan du hente fra [vault](https://vault.adeo.no/ui/vault/secrets) (klikk på "terminal" ikonet oppe i venstre hjørne og lim inn):
+
+```
+dev:   vault read postgresql/preprod-fss/creds/doknotifikasjon-q2-user
+prod:  vault read postgresql/prod-fss/creds/doknotifikasjon-p-user
+```
+
+Eller via [vault-cli](https://github.com/navikt/vault-iac/blob/master/doc/vault-cli.md):
+
+```
+1. vault login -method=oidc
+2. dev:  vault read postgresql/preprod-fss/creds/doknotifikasjon-q2-user
+   prod: vault read postgresql/prod-fss/creds/doknotifikasjon-p-user
+```
+
 ## Henvendelser
 Spørsmål om koden eller prosjektet kan rettes til [Slack-kanalen for \#Team Dokumentløsninger](https://nav-it.slack.com/archives/C6W9E5GPJ).
