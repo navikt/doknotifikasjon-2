@@ -19,8 +19,8 @@ OBS! Krever naisdevice, og JITA til postgres-prod om du skal kjøre spørringer 
 Database-URLer:
 
 ```
-dev:   jdbc:postgresql://dev-pg.intern.nav.no:5432/doknotifikasjon-2
-prod:  jdbc:postgresql://prod-pg.intern.nav.no:5432/doknotifikasjon-2
+dev:   jdbc:postgresql://dev-pg.intern.nav.no:5432/doknotifikasjon-q2
+prod:  jdbc:postgresql://prod-pg.intern.nav.no:5432/doknotifikasjon-p
 ```
 
 Bruker og passord kan du hente fra [vault](https://vault.adeo.no/ui/vault/secrets) (klikk på "terminal" ikonet oppe i venstre hjørne og lim inn):
