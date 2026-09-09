@@ -1,6 +1,13 @@
 package no.nav.doknotifikasjon.config;
 
 import lombok.extern.slf4j.Slf4j;
+import no.nav.doknotifikasjon.schemas.Doknotifikasjon;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonSms;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus;
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp;
+import no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo;
+import org.apache.avro.util.ClassSecurityValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +26,20 @@ import static org.springframework.util.backoff.FixedBackOff.UNLIMITED_ATTEMPTS;
 @EnableKafka
 @Configuration
 public class KafkaConfig {
+
+	static {
+		// Avro deserialiserer kun til klasser som er i en allowlist; alt som ikke er med her vil feile
+		ClassSecurityValidator.setGlobal(ClassSecurityValidator.composite(
+				ClassSecurityValidator.DEFAULT,
+				ClassSecurityValidator.builder()
+						.add(Doknotifikasjon.class)
+						.add(DoknotifikasjonEpost.class)
+						.add(DoknotifikasjonSms.class)
+						.add(DoknotifikasjonStatus.class)
+						.add(DoknotifikasjonStopp.class)
+						.add(NotifikasjonMedkontaktInfo.class)
+						.build()));
+	}
 
 	@Bean
 	@Primary
