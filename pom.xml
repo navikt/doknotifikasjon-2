@@ -44,14 +44,6 @@
 		<kafka-avro-serializer.version>8.3.1</kafka-avro-serializer.version>
 		<!-- Eksplisitt avro.versjon kan fjernes når kafka-avro-serializer bruker Avro 1.12.2 eller nyere. -->
 		<avro.version>1.12.2</avro.version>
-		<avro.serializable.classes>
-			no.nav.doknotifikasjon.schemas.Doknotifikasjon,
-			no.nav.doknotifikasjon.schemas.DoknotifikasjonEpost,
-			no.nav.doknotifikasjon.schemas.DoknotifikasjonSms,
-			no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus,
-			no.nav.doknotifikasjon.schemas.DoknotifikasjonStopp,
-			no.nav.doknotifikasjon.schemas.NotifikasjonMedkontaktInfo
-		</avro.serializable.classes>
 		<teamdokumenthandtering-avro-schemas.version>2.0.0</teamdokumenthandtering-avro-schemas.version>
 
 		<vault-jdbc.version>1.3.10</vault-jdbc.version>
@@ -266,24 +258,6 @@
 							<version>${lombok.version}</version>
 						</path>
 					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<org.apache.avro.SERIALIZABLE_CLASSES>${avro.serializable.classes}</org.apache.avro.SERIALIZABLE_CLASSES>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<org.apache.avro.SERIALIZABLE_CLASSES>${avro.serializable.classes}</org.apache.avro.SERIALIZABLE_CLASSES>
-					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 		</plugins>
